@@ -59,10 +59,14 @@ Quality settings are fixed: fp32, 8 steps, unchunked decode (retry chunked only 
 
 ## Layout
 
-- `src/` — React studio (Grimoire, Scroll, Incantation, Altar, First Watch)
+- `src/` — React studio (Library, Generate, Settings; First Watch)
 - `engine/` — JSON-lines Python sidecar
 - `src-tauri/` — Tauri 2 window, trim, sidecar spawn
 - `docs/designs/` — scene specs + HTML prototypes
 - `features/` — Gherkin acceptance specs
 
 App code is Apache-2.0 (see `LICENSE`). Model weights are downloaded separately and remain under Stability’s license.
+
+## Release notes
+
+See [CHANGELOG.md](CHANGELOG.md) for 0.2.0 (Library / Generate / Settings tabs, error log, hover hints).

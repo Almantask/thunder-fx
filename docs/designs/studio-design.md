@@ -1,12 +1,12 @@
 # Studio (Scroll, Incantation, Altar)
 
-**Problem:** The keeper needs one canvas to Cast, hear, trim, and export a clip without leaving the keep.
+**Problem:** The keeper needs one canvas to Cast, hear, trim, and export a clip without leaving Generate.
 
 **Prototype:** [studio.html](studio.html)
 
 ## Layout
 
-Custom titlebar · Grimoire rail · Scroll · Altar · Incantation console.
+Custom titlebar with **Library · Generate · Settings** tabs. Generate: Scroll · Altar · Incantation console. Settings: generated-sounds folder and the error ledger.
 
 Cast is the only primary action. Rites (CFG, negative, seed) stay collapsed.
 

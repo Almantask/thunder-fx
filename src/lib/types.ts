@@ -27,6 +27,7 @@ export type GenerateRequest = {
   seed: number
   cfg: number
   negative: string
+  libraryDir?: string
 }
 
 export type GenerateResult = {
@@ -50,11 +51,17 @@ export type KeepSettings = {
   defaultDuration: number
   alwaysOnTop: boolean
   defaultExportDir: string
+  libraryDir: string
 }
+
+export type KeepTab = 'library' | 'generate' | 'settings'
 
 export const DEFAULT_SETTINGS: KeepSettings = {
   hfToken: '',
   defaultDuration: 8,
   alwaysOnTop: false,
   defaultExportDir: '',
+  libraryDir: '',
 }
+
+export const DEFAULT_LIBRARY_PLACEHOLDER = '%LOCALAPPDATA%\\thunder-fx\\library'

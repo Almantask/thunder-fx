@@ -14,7 +14,10 @@ type CommandPaletteProps = {
   onExportWav: () => void
   onExportOgg: () => void
   onFocusPrompt: () => void
-  onOpenKeep: () => void
+  onOpenLogs: () => void
+  onOpenLibrary: () => void
+  onOpenGenerate: () => void
+  onOpenSettings: () => void
 }
 
 export function CommandPalette({
@@ -24,15 +27,43 @@ export function CommandPalette({
   onExportWav,
   onExportOgg,
   onFocusPrompt,
-  onOpenKeep,
+  onOpenLogs,
+  onOpenLibrary,
+  onOpenGenerate,
+  onOpenSettings,
 }: CommandPaletteProps) {
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <Command>
-        <CommandInput placeholder="Command the keep…" />
+        <CommandInput
+          placeholder="Command the keep…"
+          className="w-full"
+          title="Type to filter rites. Esc closes. Enter runs the selected command."
+        />
         <CommandList>
-          <CommandEmpty>No rite matches.</CommandEmpty>
+          <CommandEmpty title="No command matches that text. Try Library, Generate, Settings, or Cast.">
+            No rite matches.
+          </CommandEmpty>
           <CommandItem
+            title="Open the Grimoire of saved weaves."
+            onSelect={() => {
+              onOpenLibrary()
+              onOpenChange(false)
+            }}
+          >
+            Library
+          </CommandItem>
+          <CommandItem
+            title="Open the Cast canvas: Scroll, Altar, and incantation."
+            onSelect={() => {
+              onOpenGenerate()
+              onOpenChange(false)
+            }}
+          >
+            Generate
+          </CommandItem>
+          <CommandItem
+            title="Weave the current incantation with Stable Audio 3 Medium."
             onSelect={() => {
               onCast()
               onOpenChange(false)
@@ -41,6 +72,7 @@ export function CommandPalette({
             Cast
           </CommandItem>
           <CommandItem
+            title="Save the trimmed clip as 16-bit stereo WAV at 44.1 kHz."
             onSelect={() => {
               onExportWav()
               onOpenChange(false)
@@ -49,6 +81,7 @@ export function CommandPalette({
             Export WAV
           </CommandItem>
           <CommandItem
+            title="Encode the trim as OGG Vorbis through the Python sidecar."
             onSelect={() => {
               onExportOgg()
               onOpenChange(false)
@@ -57,6 +90,7 @@ export function CommandPalette({
             Export OGG
           </CommandItem>
           <CommandItem
+            title="Move keyboard focus to the incantation parchment."
             onSelect={() => {
               onFocusPrompt()
               onOpenChange(false)
@@ -65,12 +99,22 @@ export function CommandPalette({
             Focus incantation
           </CommandItem>
           <CommandItem
+            title="Open Settings: library folder, export folder, token, and the error ledger."
             onSelect={() => {
-              onOpenKeep()
+              onOpenSettings()
               onOpenChange(false)
             }}
           >
-            Open Keep
+            Settings
+          </CommandItem>
+          <CommandItem
+            title="Read Cast and sidecar errors on the Settings tab, newest first."
+            onSelect={() => {
+              onOpenLogs()
+              onOpenChange(false)
+            }}
+          >
+            Error log
           </CommandItem>
         </CommandList>
       </Command>

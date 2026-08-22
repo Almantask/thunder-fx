@@ -9,7 +9,7 @@ export default function App() {
   const [ready, setReady] = useState(isFirstWatchComplete)
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={200} skipDelayDuration={80}>
       <div className="keep-vignette h-full min-h-0">
         {ready ? (
           <Studio />

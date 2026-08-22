@@ -1,12 +1,12 @@
 # Grimoire
 
-**Problem:** Past incantations must stay one click away without unmounting the studio.
+**Problem:** Past incantations must stay one click away on the Library tab.
 
 **Prototype:** [grimoire.html](grimoire.html)
 
 ## Layout
 
-280px left rail. Search. Newest first. Empty: three starter incantation cards.
+Library tab. Search. Newest first in a card grid. Empty: three starter incantation cards. Choosing a page opens Generate.
 
 ## States
 

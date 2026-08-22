@@ -10,6 +10,10 @@ class ResizeObserverStub {
 
 globalThis.ResizeObserver = ResizeObserverStub
 
+if (!Element.prototype.scrollIntoView) {
+  Element.prototype.scrollIntoView = function scrollIntoView() {}
+}
+
 afterEach(() => {
   cleanup()
 })

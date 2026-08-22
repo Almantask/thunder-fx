@@ -24,6 +24,7 @@ import struct
 import sys
 import threading
 import time
+import traceback
 import uuid
 import wave
 from pathlib import Path
@@ -37,6 +38,8 @@ _model = None
 _model_lock = threading.Lock()
 _gen_lock = threading.Lock()
 _stdout_lock = threading.Lock()
+_log_lock = threading.Lock()
+_MAX_ERROR_LOG_BYTES = 2_000_000
 
 
 def _env_mock() -> bool:
@@ -81,6 +84,19 @@ def _try_load_model():
         return _model
 
 
+def _python_float(value, default: float) -> float:
+    if value is None:
+        return default
+    if isinstance(value, bool) or not hasattr(value, "item"):
+        return float(value)
+    size = getattr(value, "size", 1)
+    if callable(size):
+        size = value.numel() if hasattr(value, "numel") else 1
+    if int(size) != 1:
+        raise TypeError(f"expected a scalar, got shape {getattr(value, 'shape', None)}")
+    return float(value.item())
+
+
 def _write_wav(path: Path, frames: list[tuple[int, int]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     with wave.open(str(path), "wb") as wav:
@@ -89,6 +105,41 @@ def _write_wav(path: Path, frames: list[tuple[int, int]]) -> None:
         wav.setframerate(SAMPLE_RATE)
         packed = b"".join(struct.pack("<hh", l, r) for l, r in frames)
         wav.writeframes(packed)
+
+
+def _to_stereo_cpu(audio):
+    """SA3 returns [batch, channels, samples]. Export wants [channels, samples]."""
+    import torch
+
+    if not torch.is_tensor(audio):
+        audio = torch.as_tensor(audio)
+    wav = audio.detach().to(dtype=torch.float32, device="cpu").contiguous()
+    while wav.ndim > 2:
+        wav = wav[0]
+    if wav.ndim == 1:
+        wav = wav.unsqueeze(0).repeat(CHANNELS, 1)
+    elif wav.ndim == 2 and wav.shape[0] > CHANNELS and wav.shape[1] <= CHANNELS:
+        wav = wav.transpose(0, 1)
+    if wav.shape[0] == 1:
+        wav = wav.repeat(CHANNELS, 1)
+    elif wav.shape[0] > CHANNELS:
+        wav = wav[:CHANNELS]
+    return wav.clamp(-1.0, 1.0)
+
+
+def _save_generated_wav(path: Path, audio) -> None:
+    """Write 16-bit PCM stereo @ 44.1 kHz (the studio parser rejects float WAV)."""
+    import torch
+
+    wav = _to_stereo_cpu(audio)
+    pcm = (wav * 32767.0).round().clamp(-32768, 32767).to(torch.int16)
+    interleaved = pcm.transpose(0, 1).contiguous().numpy().tobytes()
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with wave.open(str(path), "wb") as out:
+        out.setnchannels(CHANNELS)
+        out.setsampwidth(2)
+        out.setframerate(SAMPLE_RATE)
+        out.writeframes(interleaved)
 
 
 def _mock_pcm(seconds: float, seed: int) -> list[tuple[int, int]]:
@@ -113,6 +164,69 @@ def _emit(payload: dict) -> None:
         sys.stdout.flush()
 
 
+def _logs_dir() -> Path:
+    override = os.environ.get("THUNDER_FX_LOG_DIR", "").strip()
+    if override:
+        return Path(override)
+    local = os.environ.get("LOCALAPPDATA") or os.environ.get("XDG_DATA_HOME")
+    if local:
+        return Path(local) / "thunder-fx" / "logs"
+    return Path.home() / ".thunder-fx" / "logs"
+
+
+def error_log_path() -> Path:
+    return _logs_dir() / "error.log"
+
+
+def _rotate_error_log(path: Path) -> None:
+    try:
+        if not path.is_file() or path.stat().st_size < _MAX_ERROR_LOG_BYTES:
+            return
+        backup = path.with_name("error.log.1")
+        if backup.exists():
+            backup.unlink()
+        path.replace(backup)
+    except OSError:
+        return
+
+
+def _log_error(
+    message: str,
+    exc: BaseException | None = None,
+    *,
+    context: dict | None = None,
+) -> None:
+    try:
+        path = error_log_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        _rotate_error_log(path)
+        stamp = time.strftime("%Y-%m-%dT%H:%M:%S")
+        block = [f"[{stamp}] ERROR {message}"]
+        if context:
+            block.append("context: " + json.dumps(context, default=str, ensure_ascii=True))
+        if exc is not None:
+            block.append("".join(traceback.format_exception(exc)).rstrip())
+        text = "\n".join(block) + "\n\n"
+        with _log_lock:
+            with path.open("a", encoding="utf-8") as fh:
+                fh.write(text)
+    except Exception:
+        return
+
+
+def _emit_error(
+    msg_id,
+    message: str,
+    exc: BaseException | None = None,
+    *,
+    log: bool = True,
+    context: dict | None = None,
+) -> None:
+    if log:
+        _log_error(message, exc, context=context)
+    _emit({"id": msg_id, "event": "error", "message": message})
+
+
 def _mock_step_s() -> float:
     raw = os.environ.get("THUNDER_FX_MOCK_STEP_MS", "50").strip()
     try:
@@ -121,14 +235,18 @@ def _mock_step_s() -> float:
         return 0.05
 
 
-def _library_dir() -> Path:
-    override = os.environ.get("THUNDER_FX_LIBRARY_DIR")
-    if override:
-        return Path(override)
-    local = os.environ.get("LOCALAPPDATA") or os.environ.get("XDG_DATA_HOME")
-    if local:
-        return Path(local) / "thunder-fx" / "library"
-    return Path.home() / ".thunder-fx" / "library"
+def _library_dir(override: str | None = None) -> Path:
+    chosen = (override or "").strip() or os.environ.get("THUNDER_FX_LIBRARY_DIR", "").strip()
+    if chosen:
+        path = Path(chosen)
+    else:
+        local = os.environ.get("LOCALAPPDATA") or os.environ.get("XDG_DATA_HOME")
+        if local:
+            path = Path(local) / "thunder-fx" / "library"
+        else:
+            path = Path.home() / ".thunder-fx" / "library"
+    path.mkdir(parents=True, exist_ok=True)
+    return path
 
 
 def cmd_status(msg_id: str) -> None:
@@ -222,20 +340,14 @@ def cmd_probe(msg_id: str, msg: dict | None = None) -> None:
 
 def cmd_generate(msg: dict) -> None:
     if not _gen_lock.acquire(blocking=False):
-        _emit(
-            {
-                "id": msg.get("id"),
-                "event": "error",
-                "message": "A weave is already in progress",
-            }
-        )
+        _emit_error(msg.get("id"), "A weave is already in progress")
         return
 
     def run() -> None:
         try:
             _generate_body(msg)
         except Exception as exc:  # noqa: BLE001
-            _emit({"id": msg.get("id"), "event": "error", "message": str(exc)})
+            _emit_error(msg.get("id"), str(exc), exc, context={"cmd": "generate"})
         finally:
             _gen_lock.release()
 
@@ -246,20 +358,20 @@ def _generate_body(msg: dict) -> None:
     _apply_hf_token(msg)
     msg_id = msg["id"]
     prompt = str(msg.get("prompt", "")).strip()
-    seconds = float(msg.get("seconds", 8))
-    seed = int(msg.get("seed", -1))
-    cfg = float(msg.get("cfg", 1.0))
+    seconds = _python_float(msg.get("seconds", 8), 8.0)
+    seed = int(_python_float(msg.get("seed", -1), -1.0))
+    cfg = _python_float(msg.get("cfg", 1.0), 1.0)
     negative = str(msg.get("negative") or "") or None
     _cancel.clear()
     if seed <= 0:
         seed = random.randint(1, 2_147_483_646)
-    out = _library_dir() / f"{uuid.uuid4()}.wav"
+    out = _library_dir(str(msg.get("library_dir") or msg.get("libraryDir") or "")) / f"{uuid.uuid4()}.wav"
     started = time.time()
     mock = _env_mock()
     if mock:
         for step in range(1, TOTAL_RITES + 1):
             if _cancel.is_set():
-                _emit({"id": msg_id, "event": "error", "message": "Cast dispelled"})
+                _emit_error(msg_id, "Cast dispelled", log=False)
                 return
             _emit(
                 {
@@ -287,7 +399,7 @@ def _generate_body(msg: dict) -> None:
     model = _try_load_model()
     for step in range(1, TOTAL_RITES + 1):
         if _cancel.is_set():
-            _emit({"id": msg_id, "event": "error", "message": "Cast dispelled"})
+            _emit_error(msg_id, "Cast dispelled", log=False)
             return
         _emit(
             {
@@ -299,6 +411,13 @@ def _generate_body(msg: dict) -> None:
             }
         )
     chunked = False
+    gen_context = {
+        "cmd": "generate",
+        "prompt": prompt,
+        "seconds": seconds,
+        "seed": seed,
+        "cfg": cfg,
+    }
     try:
         audio = model.generate(
             prompt=prompt,
@@ -311,6 +430,7 @@ def _generate_body(msg: dict) -> None:
         )
     except Exception as exc:  # noqa: BLE001
         if "out of memory" in str(exc).lower() or "oom" in str(exc).lower():
+            _log_error("CUDA OOM; retrying with chunked decode", exc, context=gen_context)
             chunked = True
             audio = model.generate(
                 prompt=prompt,
@@ -322,23 +442,18 @@ def _generate_body(msg: dict) -> None:
                 chunked_decode=True,
             )
         else:
-            _emit({"id": msg_id, "event": "error", "message": str(exc)})
+            _emit_error(msg_id, str(exc), exc, context=gen_context)
             return
     try:
-        import torchaudio
-
-        torchaudio.save(str(out), audio.cpu(), SAMPLE_RATE)
-    except Exception:
-        # Fallback: assume audio is a tensor-like [channels, samples]
-        samples = audio.detach().cpu().numpy()
-        frames = []
-        ch = samples if samples.ndim == 2 else [samples, samples]
-        n = ch[0].shape[-1]
-        for i in range(n):
-            l = int(max(-1, min(1, float(ch[0][i]))) * 32767)
-            r = int(max(-1, min(1, float(ch[1][i] if len(ch) > 1 else ch[0][i]))) * 32767)
-            frames.append((l, r))
-        _write_wav(out, frames)
+        _save_generated_wav(out, audio)
+    except Exception as exc:  # noqa: BLE001
+        _emit_error(
+            msg_id,
+            f"failed to write WAV: {exc}",
+            exc,
+            context=gen_context,
+        )
+        return
     _emit(
         {
             "id": msg_id,
@@ -364,7 +479,7 @@ def cmd_encode_ogg(msg: dict) -> None:
         sf.write(str(ogg_path), data, sr, format="OGG", subtype="VORBIS")
         _emit({"id": msg_id, "event": "done", "path": str(ogg_path)})
     except Exception as exc:  # noqa: BLE001
-        _emit({"id": msg_id, "event": "error", "message": str(exc)})
+        _emit_error(msg_id, str(exc), exc, context={"cmd": "encode_ogg"})
 
 
 def cmd_warmup(msg: dict) -> None:
@@ -394,10 +509,12 @@ def cmd_warmup(msg: dict) -> None:
             }
         )
     except Exception as exc:  # noqa: BLE001
-        _emit({"id": msg_id, "event": "error", "message": str(exc)})
+        _emit_error(msg_id, str(exc), exc, context={"cmd": "warmup"})
 
 
 def main() -> None:
+    sys.excepthook = _excepthook
+    threading.excepthook = _thread_excepthook
     for raw in sys.stdin:
         line = raw.strip()
         if not line:
@@ -405,7 +522,7 @@ def main() -> None:
         try:
             msg = json.loads(line)
         except json.JSONDecodeError as exc:
-            _emit({"id": None, "event": "error", "message": f"invalid json: {exc}"})
+            _emit_error(None, f"invalid json: {exc}", exc)
             continue
         cmd = msg.get("cmd")
         msg_id = msg.get("id")
@@ -424,9 +541,18 @@ def main() -> None:
             elif cmd == "warmup":
                 cmd_warmup(msg)
             else:
-                _emit({"id": msg_id, "event": "error", "message": f"unknown cmd {cmd}"})
+                _emit_error(msg_id, f"unknown cmd {cmd}")
         except Exception as exc:  # noqa: BLE001
-            _emit({"id": msg_id, "event": "error", "message": str(exc)})
+            _emit_error(msg_id, str(exc), exc, context={"cmd": cmd})
+
+
+def _excepthook(exc_type, exc, tb) -> None:
+    _log_error(str(exc) or getattr(exc_type, "__name__", "error"), exc)
+    sys.__excepthook__(exc_type, exc, tb)
+
+
+def _thread_excepthook(args: threading.ExceptHookArgs) -> None:
+    _log_error(str(args.exc_value or args.exc_type), args.exc_value)
 
 
 if __name__ == "__main__":

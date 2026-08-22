@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Hint } from '@/components/Hint'
 import { waveformPeaks } from '@/lib/wav'
 import { formatClock } from '@/lib/utils'
 
@@ -111,48 +112,65 @@ export function ScrollCanvas({
   return (
     <section className="flex min-h-0 flex-1 flex-col px-4 py-3" aria-label="Scroll">
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="font-display text-sm tracking-[0.2em] text-muted">SCROLL</h2>
+        <Hint label="Waveform of the current weave. Blank until you Cast or open a Grimoire page.">
+          <h2 className="font-display text-sm tracking-[0.2em] text-muted">SCROLL</h2>
+        </Hint>
         {weaving ? (
-          <p role="status" aria-live="polite" className="font-mono text-xs text-amber">
-            Rite {rite} of {totalRites} · {formatClock(elapsedMs / 1000)} elapsed
-            <span className="sr-only">
-              {`Generating, step ${rite} of ${totalRites}`}
-            </span>
-          </p>
+          <Hint label="Diffusion progress. Eight rites. Elapsed time is wall clock, not remaining.">
+            <p role="status" aria-live="polite" className="font-mono text-xs text-amber">
+              Rite {rite} of {totalRites} · {formatClock(elapsedMs / 1000)} elapsed
+              <span className="sr-only">
+                {`Generating, step ${rite} of ${totalRites}`}
+              </span>
+            </p>
+          </Hint>
         ) : (
-          <p className="font-mono text-xs text-muted">{formatClock(duration)}</p>
+          <Hint label="Length of the clip on the Scroll, in minutes:seconds.tenths.">
+            <p className="font-mono text-xs text-muted">{formatClock(duration)}</p>
+          </Hint>
         )}
       </div>
-      <div
-        role="slider"
-        tabIndex={0}
-        aria-label="Waveform. Click to seek. Drag gold handles to trim."
-        aria-valuemin={0}
-        aria-valuemax={duration}
-        aria-valuenow={playhead}
-        className="relative min-h-0 flex-1 overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)]"
-        onPointerDown={(e) => {
-          if (!wav || weaving) return
-          const mode = pickMode(e.clientX)
-          dragging.current = mode
-          ;(e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId)
-          applyPointer(e.clientX, mode)
-        }}
-        onPointerMove={(e) => {
-          if (!dragging.current) return
-          applyPointer(e.clientX, dragging.current)
-        }}
-        onPointerUp={() => {
-          dragging.current = null
-        }}
+      <Hint
+        className="flex min-h-0 w-full flex-1"
+        label={
+          weaving
+            ? 'The weave is in progress. The waveform appears when Medium finishes.'
+            : wav
+              ? 'Click to seek. Drag the gold handles to set In and Out for export.'
+              : 'The scroll is blank. Speak an incantation and Cast to weave a clip.'
+        }
       >
-        <canvas ref={canvasRef} width={960} height={280} className="size-full" />
-        {!wav && !weaving ? (
-          <p className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center text-muted">
-            The scroll is blank. Speak an incantation and Cast.
-          </p>
-        ) : null}
-      </div>
+        <div
+          role="slider"
+          tabIndex={0}
+          aria-label="Waveform. Click to seek. Drag gold handles to trim."
+          aria-valuemin={0}
+          aria-valuemax={duration}
+          aria-valuenow={playhead}
+          className="relative min-h-0 w-full flex-1 overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)]"
+          onPointerDown={(e) => {
+            if (!wav || weaving) return
+            const mode = pickMode(e.clientX)
+            dragging.current = mode
+            ;(e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId)
+            applyPointer(e.clientX, mode)
+          }}
+          onPointerMove={(e) => {
+            if (!dragging.current) return
+            applyPointer(e.clientX, dragging.current)
+          }}
+          onPointerUp={() => {
+            dragging.current = null
+          }}
+        >
+          <canvas ref={canvasRef} width={960} height={280} className="size-full" />
+          {!wav && !weaving ? (
+            <p className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center text-muted">
+              The scroll is blank. Speak an incantation and Cast.
+            </p>
+          ) : null}
+        </div>
+      </Hint>
     </section>
   )
 }

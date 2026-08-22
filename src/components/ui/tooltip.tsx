@@ -6,12 +6,17 @@ const TooltipProvider = TooltipPrimitive.Provider
 const Tooltip = TooltipPrimitive.Root
 const TooltipTrigger = TooltipPrimitive.Trigger
 
-function TooltipContent({ className, ...props }: ComponentProps<typeof TooltipPrimitive.Content>) {
+function TooltipContent({
+  className,
+  sideOffset = 6,
+  ...props
+}: ComponentProps<typeof TooltipPrimitive.Content>) {
   return (
     <TooltipPrimitive.Portal>
       <TooltipPrimitive.Content
+        sideOffset={sideOffset}
         className={cn(
-          'z-50 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-leather px-3 py-1.5 text-sm text-cream shadow',
+          'z-50 max-w-xs rounded-book border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-leather px-3 py-1.5 text-sm text-cream shadow',
           className,
         )}
         {...props}

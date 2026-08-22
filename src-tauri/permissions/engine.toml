@@ -11,5 +11,9 @@ commands.allow = [
   "trim_wav",
   "write_file_b64",
   "read_file_b64",
-  "temp_dir"
+  "temp_dir",
+  "log_error",
+  "error_log_path",
+  "library_path",
+  "read_error_log"
 ]

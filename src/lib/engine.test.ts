@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { base64ToBytes, bytesToBase64, generate, probeEngine, engineStatus } from '@/lib/engine'
+import { base64ToBytes, bytesToBase64, generate, probeEngine, engineStatus, reportError, readErrorLog } from '@/lib/engine'
 import { isTauri } from '@/lib/utils'
 
 describe('engine bridge', () => {
@@ -26,5 +26,17 @@ describe('engine bridge', () => {
     expect(steps).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
     expect(result.clip.prompt).toBe('iron gate')
     expect(result.wav.byteLength).toBeGreaterThan(44)
+  })
+
+  it('reportError returns the message and ignores abort', () => {
+    expect(reportError(new Error('omen'), 'fallback')).toBe('omen')
+    expect(reportError('x', 'fallback')).toBe('fallback')
+    expect(reportError(new DOMException('Cast dispelled', 'AbortError'), 'fallback')).toBe(
+      'Cast dispelled',
+    )
+  })
+
+  it('readErrorLog is empty outside the desktop keep', async () => {
+    await expect(readErrorLog()).resolves.toBe('')
   })
 })

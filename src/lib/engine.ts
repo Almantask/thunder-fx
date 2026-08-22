@@ -46,6 +46,80 @@ function throwIfEngineError(msg: EngineMsg): void {
   throw new Error(message)
 }
 
+export function reportError(err: unknown, fallback: string): string {
+  if (err instanceof DOMException && err.name === 'AbortError') {
+    return err.message || 'Cast dispelled'
+  }
+  const message = err instanceof Error ? err.message : fallback
+  const detail = err instanceof Error ? err.stack : undefined
+  void logClientError(message, detail)
+  return message
+}
+
+export async function logClientError(message: string, detail?: string): Promise<void> {
+  if (!isTauri()) return
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    await invoke('log_error', { message, detail: detail ?? null })
+  } catch {
+    /* logging must never break the studio */
+  }
+}
+
+export async function errorLogPath(): Promise<string | null> {
+  if (!isTauri()) return null
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<string>('error_log_path')
+  } catch {
+    return null
+  }
+}
+
+export async function revealErrorLog(): Promise<void> {
+  const path = await errorLogPath()
+  if (!path) return
+  const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
+  await revealItemInDir(path)
+}
+
+export async function libraryPath(): Promise<string | null> {
+  if (!isTauri()) return null
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<string>('library_path')
+  } catch {
+    return null
+  }
+}
+
+export async function revealLibrary(path?: string): Promise<void> {
+  const target = path?.trim() || (await libraryPath())
+  if (!target) return
+  const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
+  await revealItemInDir(target)
+}
+
+export async function pickDirectory(defaultPath?: string): Promise<string | null> {
+  if (!isTauri()) return null
+  const { open } = await import('@tauri-apps/plugin-dialog')
+  const selected = await open({
+    directory: true,
+    defaultPath: defaultPath?.trim() || undefined,
+  })
+  return typeof selected === 'string' ? selected : null
+}
+
+export async function readErrorLog(): Promise<string> {
+  if (!isTauri()) return ''
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<string>('read_error_log')
+  } catch {
+    return ''
+  }
+}
+
 export function bytesToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer)
   const chunk = 0x8000
@@ -133,6 +207,7 @@ export async function generate(
       cfg: request.cfg,
       negative: request.negative,
       hfToken: hfToken(),
+      libraryDir: request.libraryDir?.trim() || loadSettings().libraryDir.trim() || null,
     })
     throwIfEngineError(result)
     if (!result.path) throw new Error('Engine did not return a WAV path')

@@ -1,5 +1,5 @@
 Feature: Grimoire
-  Past incantations live in a rail beside the scroll.
+  Past incantations live on the Library tab.
 
   Scenario: Empty Grimoire offers starter incantations
     Given the Grimoire has no clips

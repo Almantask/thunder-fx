@@ -10,6 +10,7 @@ import sys
 import tempfile
 import time
 import unittest
+import wave
 from pathlib import Path
 
 WORKER = Path(__file__).resolve().parent / "worker.py"
@@ -64,6 +65,7 @@ def _env(library: Path) -> dict[str, str]:
     env = os.environ.copy()
     env["THUNDER_FX_MOCK_ENGINE"] = "1"
     env["THUNDER_FX_LIBRARY_DIR"] = str(library)
+    env["THUNDER_FX_LOG_DIR"] = str(library)
     env["THUNDER_FX_MOCK_STEP_MS"] = "80"
     env["PYTHONUNBUFFERED"] = "1"
     return env
@@ -112,6 +114,34 @@ class WorkerTests(unittest.TestCase):
         self.assertGreater(Path(done["path"]).stat().st_size, 44)
         self.assertEqual(done["seed"], 7)
 
+    def test_generate_honors_library_dir_in_message(self) -> None:
+        other = Path(self._tmp.name) / "custom-library"
+        self.client.send(
+            {
+                "id": "g2",
+                "cmd": "generate",
+                "prompt": "tavern latch",
+                "seconds": 0.3,
+                "seed": 3,
+                "cfg": 1,
+                "negative": "",
+                "library_dir": str(other),
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "g2":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        wav = Path(done["path"])
+        self.assertTrue(wav.is_file())
+        self.assertEqual(wav.parent.resolve(), other.resolve())
+
     def test_cancel_interrupts_generate(self) -> None:
         self.client.send(
             {
@@ -137,6 +167,9 @@ class WorkerTests(unittest.TestCase):
                 break
         self.assertEqual(terminal["event"], "error")
         self.assertIn("dispelled", terminal["message"].lower())
+        log = self.library / "error.log"
+        if log.is_file():
+            self.assertNotIn("Cast dispelled", log.read_text(encoding="utf-8"))
 
     def test_warmup_skips_weights_in_mock(self) -> None:
         self.client.send({"id": "w", "cmd": "warmup"})
@@ -186,6 +219,83 @@ class WorkerTests(unittest.TestCase):
                 self.assertTrue(Path(msg["path"]).is_file())
                 self.assertGreater(Path(msg["path"]).stat().st_size, 0)
                 break
+
+
+class SaveGeneratedWavTests(unittest.TestCase):
+    def test_batched_stereo_tensor_writes_wav(self) -> None:
+        try:
+            import torch
+        except ImportError:
+            self.skipTest("torch is not installed")
+        from worker import SAMPLE_RATE, _save_generated_wav, _to_stereo_cpu
+
+        batched = torch.zeros(1, 2, 441)
+        batched[0, 0, 10] = 0.5
+        stereo = _to_stereo_cpu(batched)
+        self.assertEqual(tuple(stereo.shape), (2, 441))
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "out.wav"
+            _save_generated_wav(path, batched)
+            self.assertTrue(path.is_file())
+            with wave.open(str(path), "rb") as wav:
+                self.assertEqual(wav.getnchannels(), 2)
+                self.assertEqual(wav.getsampwidth(), 2)
+                self.assertEqual(wav.getframerate(), SAMPLE_RATE)
+                self.assertEqual(wav.getnframes(), 441)
+                pcm = memoryview(wav.readframes(wav.getnframes())).cast("h")
+            self.assertIn(pcm[20], (16383, 16384))
+            self.assertEqual(pcm[21], 0)
+
+    def test_python_float_unwraps_size_one_array(self) -> None:
+        from worker import _python_float
+
+        try:
+            import numpy as np
+        except ImportError:
+            self.skipTest("numpy is not installed")
+        self.assertEqual(_python_float(np.array([8.0]), 0.0), 8.0)
+        self.assertEqual(_python_float(np.array(8.0), 0.0), 8.0)
+        with self.assertRaises(TypeError):
+            _python_float(np.array([8.0, 9.0]), 0.0)
+
+
+class ErrorLogTests(unittest.TestCase):
+    def test_unknown_cmd_is_appended_to_error_log(self) -> None:
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        library = Path(tmp.name)
+        client = WorkerClient(_env(library))
+        self.addCleanup(client.close)
+        client.send({"id": "bad", "cmd": "nope"})
+        msg = client.read()
+        self.assertEqual(msg["event"], "error")
+        log = library / "error.log"
+        self.assertTrue(log.is_file())
+        text = log.read_text(encoding="utf-8")
+        self.assertIn("unknown cmd nope", text)
+        self.assertIn("ERROR", text)
+
+    def test_log_error_includes_traceback(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            old = os.environ.get("THUNDER_FX_LOG_DIR")
+            os.environ["THUNDER_FX_LOG_DIR"] = tmp
+            try:
+                from worker import _log_error
+
+                try:
+                    raise RuntimeError("omen")
+                except RuntimeError as exc:
+                    _log_error("cast failed", exc, context={"cmd": "generate"})
+                text = (Path(tmp) / "error.log").read_text(encoding="utf-8")
+            finally:
+                if old is None:
+                    os.environ.pop("THUNDER_FX_LOG_DIR", None)
+                else:
+                    os.environ["THUNDER_FX_LOG_DIR"] = old
+        self.assertIn("cast failed", text)
+        self.assertIn("RuntimeError: omen", text)
+        self.assertIn("Traceback", text)
+        self.assertIn('"cmd": "generate"', text)
 
 
 if __name__ == "__main__":

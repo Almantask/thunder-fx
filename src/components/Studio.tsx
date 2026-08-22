@@ -4,9 +4,10 @@ import { Altar } from '@/components/Altar'
 import { CommandPalette } from '@/components/CommandPalette'
 import { GrimoireRail } from '@/components/GrimoireRail'
 import { IncantationConsole } from '@/components/IncantationConsole'
-import { KeepSheet } from '@/components/KeepSheet'
 import { ScrollCanvas } from '@/components/ScrollCanvas'
+import { SettingsPanel } from '@/components/SettingsPanel'
 import { Titlebar } from '@/components/Titlebar'
+import { Hint } from '@/components/Hint'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,14 +18,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { cancelGenerate, engineStatus, exportClipFile, generate } from '@/lib/engine'
+import { cancelGenerate, engineStatus, exportClipFile, generate, reportError } from '@/lib/engine'
 import { clipFilename } from '@/lib/filename'
 import { createIdbLibrary, createMemoryLibrary } from '@/lib/library'
 import { mockStatus } from '@/lib/mockEngine'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
 import { appendChip, canCast } from '@/lib/prompt'
 import { loadSettings, saveSettings } from '@/lib/setup'
-import type { Clip, EngineStatus, KeepSettings } from '@/lib/types'
+import type { Clip, EngineStatus, KeepSettings, KeepTab } from '@/lib/types'
 import { TOTAL_RITES } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
 import { trimWav, wavDurationSeconds } from '@/lib/wav'
@@ -55,7 +56,7 @@ export function Studio() {
   const [playing, setPlaying] = useState(false)
   const [looping, setLooping] = useState(false)
   const [playhead, setPlayhead] = useState(0)
-  const [keepOpen, setKeepOpen] = useState(false)
+  const [tab, setTab] = useState<KeepTab>('generate')
   const [commandOpen, setCommandOpen] = useState(false)
   const [pendingDelete, setPendingDelete] = useState<PendingDelete>(null)
   const [confirmDispel, setConfirmDispel] = useState(false)
@@ -76,7 +77,7 @@ export function Studio() {
     try {
       setEngine(await engineStatus())
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Engine status failed'
+      const message = reportError(err, 'Engine status failed')
       setEngine({ ready: false, mock: true, device: 'unknown', message })
     }
   }
@@ -183,6 +184,7 @@ export function Studio() {
           seed: Number.isFinite(parsedSeed) ? parsedSeed : -1,
           cfg,
           negative,
+          libraryDir: settings.libraryDir,
         },
         {
           signal: controller.signal,
@@ -204,9 +206,9 @@ export function Studio() {
       if (err instanceof DOMException && err.name === 'AbortError') {
         toast('The weave was dispelled.')
       } else {
-        const message = err instanceof Error ? err.message : 'Cast failed'
+        const message = reportError(err, 'Cast failed')
         setError(message)
-        toast.error('The omen soured.', { description: message })
+        toast.error('The omen soured.', { description: `${message} Saved to the error log.` })
       }
     } finally {
       setWeaving(false)
@@ -249,8 +251,8 @@ export function Studio() {
       })
       toast.success('WAV scribed.', { description: path ?? name })
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Export failed'
-      toast.error('The omen soured.', { description: message })
+      const message = reportError(err, 'Export failed')
+      toast.error('The omen soured.', { description: `${message} Saved to the error log.` })
     }
   }
 
@@ -273,8 +275,8 @@ export function Studio() {
       })
       toast.success('OGG scribed.', { description: path ?? name })
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'OGG export failed'
-      toast.error('The omen soured.', { description: message })
+      const message = reportError(err, 'OGG export failed')
+      toast.error('The omen soured.', { description: `${message} Saved to the error log.` })
     }
   }
 
@@ -294,128 +296,163 @@ export function Studio() {
       <Titlebar
         engineLabel={engine.mock ? 'mock brazier' : engine.device}
         weaving={weaving}
-        onOpenKeep={() => setKeepOpen(true)}
+        tab={tab}
+        onTabChange={setTab}
       />
       {error ? (
-        <div className="border-b border-danger/40 bg-leather px-4 py-2 text-sm text-danger" role="alert">
-          The omen soured. {error}
-        </div>
+        <Hint className="w-full" label="This Cast failed. Open Settings for the traceback. The incantation is still in the parchment.">
+          <div className="w-full border-b border-danger/40 bg-leather px-4 py-2 text-sm text-danger" role="alert">
+            The omen soured. {error}
+          </div>
+        </Hint>
       ) : null}
-      <div className="flex min-h-0 flex-1">
+      {tab === 'library' ? (
         <GrimoireRail
           clips={clips}
           selectedId={selectedId}
           query={query}
           onQuery={setQuery}
-          onSelect={(id) => void loadClip(id)}
-          onStarter={setPrompt}
+          onSelect={(id) => {
+            void loadClip(id)
+            setTab('generate')
+          }}
+          onStarter={(prompt) => {
+            setPrompt(prompt)
+            setTab('generate')
+          }}
           onDelete={setPendingDelete}
         />
-        <ScrollCanvas
-          wav={wav}
-          weaving={weaving}
-          rite={rite}
-          totalRites={TOTAL_RITES}
-          elapsedMs={elapsedMs}
-          duration={clipDuration}
-          trimStart={trimStart}
-          trimEnd={Math.min(trimEnd, clipDuration)}
-          playhead={playhead}
-          onTrim={(s, e) => {
-            setTrimStart(s)
-            setTrimEnd(e)
-          }}
-          onSeek={(s) => {
-            setPlayhead(s)
-            playbackRef.current?.seek(s)
-          }}
-        />
-        <Altar
-          hasClip={Boolean(wav)}
-          weaving={weaving}
-          playing={playing}
-          looping={looping}
-          trimStart={trimStart}
-          trimEnd={trimEnd}
-          duration={clipDuration}
-          onPlay={togglePlay}
-          onStop={() => {
-            playbackRef.current?.stop()
-            setPlaying(false)
-          }}
-          onLoop={setLooping}
-          onTrimStart={(v) => setTrimStart(Math.max(0, Math.min(v, trimEnd - 0.05)))}
-          onTrimEnd={(v) => setTrimEnd(Math.min(clipDuration, Math.max(v, trimStart + 0.05)))}
-          onExportWav={() => void exportWav()}
-          onExportOgg={() => void exportOgg()}
-        />
-      </div>
-      <IncantationConsole
-        prompt={prompt}
-        duration={duration}
-        cfg={cfg}
-        negative={negative}
-        seed={seed}
-        ritesOpen={ritesOpen}
-        weaving={weaving}
-        onPrompt={setPrompt}
-        onDuration={setDuration}
-        onCfg={setCfg}
-        onNegative={setNegative}
-        onSeed={setSeed}
-        onRitesOpen={setRitesOpen}
-        onChip={(chip) => setPrompt((p) => appendChip(p, chip))}
-        onCast={() => void cast()}
-        onDispel={requestDispel}
-      />
-      <KeepSheet
-        open={keepOpen}
-        settings={settings}
-        onOpenChange={setKeepOpen}
-        onChange={setSettings}
-      />
+      ) : null}
+      {tab === 'generate' ? (
+        <>
+          <div className="flex min-h-0 flex-1">
+            <ScrollCanvas
+              wav={wav}
+              weaving={weaving}
+              rite={rite}
+              totalRites={TOTAL_RITES}
+              elapsedMs={elapsedMs}
+              duration={clipDuration}
+              trimStart={trimStart}
+              trimEnd={Math.min(trimEnd, clipDuration)}
+              playhead={playhead}
+              onTrim={(s, e) => {
+                setTrimStart(s)
+                setTrimEnd(e)
+              }}
+              onSeek={(s) => {
+                setPlayhead(s)
+                playbackRef.current?.seek(s)
+              }}
+            />
+            <Altar
+              hasClip={Boolean(wav)}
+              weaving={weaving}
+              playing={playing}
+              looping={looping}
+              trimStart={trimStart}
+              trimEnd={trimEnd}
+              duration={clipDuration}
+              onPlay={togglePlay}
+              onStop={() => {
+                playbackRef.current?.stop()
+                setPlaying(false)
+              }}
+              onLoop={setLooping}
+              onTrimStart={(v) => setTrimStart(Math.max(0, Math.min(v, trimEnd - 0.05)))}
+              onTrimEnd={(v) => setTrimEnd(Math.min(clipDuration, Math.max(v, trimStart + 0.05)))}
+              onExportWav={() => void exportWav()}
+              onExportOgg={() => void exportOgg()}
+            />
+          </div>
+          <IncantationConsole
+            prompt={prompt}
+            duration={duration}
+            cfg={cfg}
+            negative={negative}
+            seed={seed}
+            ritesOpen={ritesOpen}
+            weaving={weaving}
+            onPrompt={setPrompt}
+            onDuration={setDuration}
+            onCfg={setCfg}
+            onNegative={setNegative}
+            onSeed={setSeed}
+            onRitesOpen={setRitesOpen}
+            onChip={(chip) => setPrompt((p) => appendChip(p, chip))}
+            onCast={() => void cast()}
+            onDispel={requestDispel}
+          />
+        </>
+      ) : null}
+      {tab === 'settings' ? <SettingsPanel settings={settings} onChange={setSettings} /> : null}
       <CommandPalette
         open={commandOpen}
         onOpenChange={setCommandOpen}
-        onCast={() => void cast()}
+        onCast={() => {
+          setTab('generate')
+          void cast()
+        }}
         onExportWav={() => void exportWav()}
         onExportOgg={() => void exportOgg()}
-        onFocusPrompt={() => document.getElementById('incantation')?.focus()}
-        onOpenKeep={() => setKeepOpen(true)}
+        onFocusPrompt={() => {
+          setTab('generate')
+          window.setTimeout(() => document.getElementById('incantation')?.focus(), 0)
+        }}
+        onOpenLogs={() => setTab('settings')}
+        onOpenLibrary={() => setTab('library')}
+        onOpenGenerate={() => setTab('generate')}
+        onOpenSettings={() => setTab('settings')}
       />
       <AlertDialog open={Boolean(pendingDelete)} onOpenChange={(o) => !o && setPendingDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Strike this page?</AlertDialogTitle>
-            <AlertDialogDescription>
-              The clip will be removed from the Grimoire. This cannot be undone.
-            </AlertDialogDescription>
+            <Hint label="Confirm before deleting a Grimoire page.">
+              <AlertDialogTitle>Strike this page?</AlertDialogTitle>
+            </Hint>
+            <Hint label="The WAV is deleted from the local library. Export copies on disk are left alone.">
+              <AlertDialogDescription>
+                The clip will be removed from the Grimoire. This cannot be undone.
+              </AlertDialogDescription>
+            </Hint>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Keep it</AlertDialogCancel>
-            <AlertDialogAction onClick={() => void confirmDelete()}>Strike</AlertDialogAction>
+            <Hint label="Leave this page in the Grimoire.">
+              <AlertDialogCancel>Keep it</AlertDialogCancel>
+            </Hint>
+            <Hint label="Delete this weave from the local library. The WAV file is removed.">
+              <AlertDialogAction onClick={() => void confirmDelete()}>Strike</AlertDialogAction>
+            </Hint>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
       <AlertDialog open={confirmDispel} onOpenChange={setConfirmDispel}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Dispel a long weave?</AlertDialogTitle>
-            <AlertDialogDescription>
-              More than ten seconds have already been spent on this Cast.
-            </AlertDialogDescription>
+            <Hint label="Cancel only if you want to stop GPU work. Continuing lets Medium finish.">
+              <AlertDialogTitle>Dispel a long weave?</AlertDialogTitle>
+            </Hint>
+            <Hint label="Shown when a Cast has already run more than ten seconds, so a misclick is costly.">
+              <AlertDialogDescription>
+                More than ten seconds have already been spent on this Cast.
+              </AlertDialogDescription>
+            </Hint>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Continue weaving</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                abortRef.current?.abort()
-                void cancelGenerate()
-                setConfirmDispel(false)
-              }}
-            >
-              Dispel
-            </AlertDialogAction>
+            <Hint label="Let Medium finish this Cast.">
+              <AlertDialogCancel>Continue weaving</AlertDialogCancel>
+            </Hint>
+            <Hint label="Cancel the weave. GPU work stops; no new clip is saved.">
+              <AlertDialogAction
+                onClick={() => {
+                  abortRef.current?.abort()
+                  void cancelGenerate()
+                  setConfirmDispel(false)
+                }}
+              >
+                Dispel
+              </AlertDialogAction>
+            </Hint>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

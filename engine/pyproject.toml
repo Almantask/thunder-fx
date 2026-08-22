@@ -1,0 +1,33 @@
+[project]
+name = "thunder-fx-engine"
+version = "0.1.0"
+description = "JSON-lines sidecar for Thunder FX (Stable Audio 3 Medium)"
+readme = "../README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "torch==2.7.1+cu128",
+  "torchaudio==2.7.1+cu128",
+  "stable-audio-3",
+  "flash-attn",
+]
+
+[tool.uv]
+# Direct +cu128 pins beat stable-audio-3's Linux-only cu126 sources, which
+# otherwise give Windows a CPU torchaudio wheel.
+override-dependencies = [
+  "torch==2.7.1+cu128",
+  "torchaudio==2.7.1+cu128",
+]
+
+[tool.uv.sources]
+stable-audio-3 = { git = "https://github.com/Stability-AI/stable-audio-3.git" }
+torch = { index = "pytorch-cu128" }
+torchaudio = { index = "pytorch-cu128" }
+# Prebuilt FA2 for Python 3.12 + Torch 2.7 + CUDA 12.8 on Windows.
+# Official flash-attn does not publish Windows wheels.
+flash-attn = { url = "https://github.com/kingbri1/flash-attention/releases/download/v2.8.3/flash_attn-2.8.3+cu128torch2.7.0cxx11abiFALSE-cp312-cp312-win_amd64.whl" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true

@@ -1,0 +1,15 @@
+[[permission]]
+identifier = "allow-engine"
+description = "Python sidecar, trim, and export helpers"
+commands.allow = [
+  "engine_status",
+  "engine_probe",
+  "engine_generate",
+  "engine_cancel",
+  "engine_encode_ogg",
+  "engine_warmup",
+  "trim_wav",
+  "write_file_b64",
+  "read_file_b64",
+  "temp_dir"
+]

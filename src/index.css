@@ -1,0 +1,128 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Cinzel", serif;
+  --font-ui: "Source Serif 4", "Source Serif", serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --color-keep: #120e0c;
+  --color-leather: #1c1612;
+  --color-leather-2: #261e18;
+  --color-gold: #c4a35a;
+  --color-gold-bright: #e4c36a;
+  --color-cream: #f3e6c8;
+  --color-muted: #b5a48a;
+  --color-wax: #8b2e2e;
+  --color-danger: #c45c4a;
+  --color-amber: #e0b15a;
+  --color-parchment: #e8d9c4;
+  --color-ink: #2a2218;
+  --radius-book: 0.65rem;
+}
+
+:root {
+  color-scheme: dark;
+  --background: #120e0c;
+  --foreground: #f3e6c8;
+  --card: #1c1612;
+  --card-foreground: #f3e6c8;
+  --popover: #1c1612;
+  --popover-foreground: #f3e6c8;
+  --primary: #8b2e2e;
+  --primary-foreground: #f3e6c8;
+  --secondary: #261e18;
+  --secondary-foreground: #f3e6c8;
+  --muted: #261e18;
+  --muted-foreground: #b5a48a;
+  --accent: #261e18;
+  --accent-foreground: #f3e6c8;
+  --destructive: #c45c4a;
+  --border: color-mix(in srgb, #c4a35a 42%, transparent);
+  --input: color-mix(in srgb, #c4a35a 42%, transparent);
+  --ring: #e4c36a;
+  --radius: 0.65rem;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: var(--font-ui);
+  background: var(--color-keep);
+  color: var(--color-cream);
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  max-width: none;
+  text-align: left;
+  border: 0;
+}
+
+* {
+  border-color: var(--border);
+}
+
+*:focus-visible {
+  outline: 2px solid var(--color-gold-bright);
+  outline-offset: 2px;
+}
+
+.keep-vignette {
+  background:
+    radial-gradient(120% 80% at 50% 0%, transparent 40%, rgb(0 0 0 / 0.45) 100%),
+    var(--color-keep);
+}
+
+.gold-rule {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-gold) 55%, transparent),
+    transparent
+  );
+}
+
+.parchment-well textarea {
+  background: var(--color-parchment);
+  color: var(--color-ink);
+  caret-color: var(--color-ink);
+}
+
+.parchment-well textarea::placeholder {
+  color: color-mix(in srgb, var(--color-ink) 45%, transparent);
+}
+
+.titlebar-drag {
+  -webkit-app-region: drag;
+}
+
+.titlebar-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+@keyframes ember {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.ember-pulse {
+  animation: ember 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ember-pulse {
+    animation: none;
+  }
+}

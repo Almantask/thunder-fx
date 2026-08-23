@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { extractInstruments, musicWavInfo } from '@/lib/instruments'
+import { extractBpm, extractInstruments, musicWavInfo } from '@/lib/instruments'
 
 describe('extractInstruments', () => {
   it('finds named instruments in a music prompt', () => {
@@ -39,6 +39,20 @@ describe('extractInstruments', () => {
   })
 })
 
+describe('extractBpm', () => {
+  it('extracts BPM number from music prompt', () => {
+    expect(
+      extractBpm('TrackType: Music, campaign main theme, French horn melody, 110 BPM, adventure'),
+    ).toBe(110)
+    expect(extractBpm('TrackType: Music, ruins ambient, 40 bpm, slow texture')).toBe(40)
+  })
+
+  it('returns undefined when no BPM is present', () => {
+    expect(extractBpm('TrackType: SFX, steel sword draw')).toBeUndefined()
+    expect(extractBpm('TrackType: Music, lute tavern theme')).toBeUndefined()
+  })
+})
+
 describe('musicWavInfo', () => {
   it('builds INFO fields for the WAV tag', () => {
     const info = musicWavInfo('TrackType: Music, lute tavern theme')
@@ -49,3 +63,4 @@ describe('musicWavInfo', () => {
     expect(info.title).toMatch(/lute tavern theme/i)
   })
 })
+

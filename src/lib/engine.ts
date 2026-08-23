@@ -206,8 +206,10 @@ export async function generate(
   }
   try {
     const mode = request.mode === 'music' ? 'music' : 'sfx'
-    const instruments =
-      mode === 'music' ? (request.instruments ?? extractInstruments(request.prompt)) : []
+    const detectedInstruments = request.instruments?.length
+      ? request.instruments
+      : extractInstruments(request.prompt)
+    const topInstruments = detectedInstruments.slice(0, 3)
     const result = await invoke<EngineMsg>('engine_generate', {
       prompt: request.prompt,
       seconds: request.seconds,
@@ -217,14 +219,14 @@ export async function generate(
       hfToken: hfToken(),
       libraryDir: request.libraryDir?.trim() || loadSettings().libraryDir.trim() || null,
       mode,
-      instruments,
+      instruments: topInstruments,
     })
     throwIfEngineError(result)
     if (!result.path) throw new Error('Engine did not return a WAV path')
     const b64 = await invoke<string>('read_file_b64', { path: result.path })
     let wav = base64ToBytes(b64)
     if (mode === 'music') {
-      wav = tagMusicWav(wav, musicWavInfo(request.prompt, instruments))
+      wav = tagMusicWav(wav, musicWavInfo(request.prompt, topInstruments))
       await invoke('write_file_b64', { path: result.path, data: bytesToBase64(wav) })
     }
     const clip: Clip = {
@@ -236,7 +238,9 @@ export async function generate(
       cfg: request.cfg,
       negative: request.negative,
       mode,
-      instruments: instruments.length ? instruments : undefined,
+      instruments: topInstruments.length ? topInstruments : undefined,
+      category: request.category,
+      intensity: request.intensity,
     }
     return { clip, wav }
   } finally {

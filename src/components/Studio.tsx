@@ -24,7 +24,7 @@ import { clipFilename } from '@/lib/filename'
 import { createIdbLibrary, createMemoryLibrary } from '@/lib/library'
 import { mockStatus } from '@/lib/mockEngine'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
-import { appendChip, canCast } from '@/lib/prompt'
+import { canCast } from '@/lib/prompt'
 import {
   loadPromptCatalog,
   mergeQueue,
@@ -160,6 +160,8 @@ export function Studio() {
   }, [settings])
 
   useEffect(() => {
+    cancelAnimationFrame(playRaf.current)
+    setPlaying(false)
     playbackRef.current?.dispose()
     playbackRef.current = null
     if (!wav) return
@@ -177,6 +179,7 @@ export function Studio() {
       })
     return () => {
       cancelled = true
+      cancelAnimationFrame(playRaf.current)
       playbackRef.current?.dispose()
       playbackRef.current = null
     }
@@ -299,6 +302,8 @@ export function Studio() {
       seconds: number
       negative: string
       mode: GenerateMode
+      category?: string
+      intensity?: string
     },
     options: { manageBusy?: boolean } = {},
   ): Promise<'ok' | 'abort' | 'error'> {
@@ -323,6 +328,8 @@ export function Studio() {
           negative: request.negative,
           libraryDir: settings.libraryDir,
           mode: request.mode,
+          category: request.category,
+          intensity: request.intensity,
         },
         {
           signal: controller.signal,
@@ -395,6 +402,8 @@ export function Studio() {
             seconds: item.duration,
             negative: item.negative.trim() || GENERATE_MODES[nextMode].defaultNegative,
             mode: nextMode,
+            category: item.category,
+            intensity: item.intensity,
           },
           { manageBusy: false },
         )
@@ -421,12 +430,15 @@ export function Studio() {
       cancelAnimationFrame(playRaf.current)
       return
     }
-    void playbackRef.current?.play(trimStart, trimEnd, looping)
+    const startAt = playhead >= trimEnd || playhead < trimStart ? trimStart : playhead
+    void playbackRef.current?.play(trimStart, trimEnd, looping, startAt)
     setPlaying(true)
+    cancelAnimationFrame(playRaf.current)
     const tick = () => {
       const t = playbackRef.current?.getCurrentTime() ?? trimStart
       setPlayhead(t)
       if (t >= trimEnd && !looping) {
+        playbackRef.current?.stop()
         setPlaying(false)
         return
       }
@@ -530,6 +542,8 @@ export function Studio() {
             setTab('generate')
           }}
           onDelete={setPendingDelete}
+          onModeChange={selectMode}
+          getWav={(id) => library.getWav(id)}
         />
       ) : null}
       {tab === 'generate' ? (
@@ -585,6 +599,7 @@ export function Studio() {
               onStop={() => {
                 playbackRef.current?.stop()
                 setPlaying(false)
+                cancelAnimationFrame(playRaf.current)
               }}
               onLoop={setLooping}
               onTrimStart={(v) => setTrimStart(Math.max(0, Math.min(v, trimEnd - 0.05)))}
@@ -605,6 +620,7 @@ export function Studio() {
             loadingModel={loadingModel}
             modelLoaded={engine.loaded}
             engineReady={engine.ready}
+            engineMessage={engine.message}
             queue={queue}
             onMode={selectMode}
             onPrompt={setPrompt}
@@ -613,7 +629,6 @@ export function Studio() {
             onNegative={setNegative}
             onSeed={setSeed}
             onRitesOpen={setRitesOpen}
-            onChip={(chip) => setPrompt((p) => appendChip(p, chip))}
             onCast={() => void cast()}
             onDispel={requestDispel}
             onLoadModel={() => void loadWeights()}

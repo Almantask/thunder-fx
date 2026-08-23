@@ -1,17 +1,24 @@
 export type PlaybackHandle = {
-  play(startSec: number, endSec: number, loop: boolean): Promise<void>
+  play(startSec: number, endSec: number, loop: boolean, fromSec?: number): Promise<void>
   stop(): void
   seek(seconds: number): void
   getCurrentTime(): number
   dispose(): void
 }
 
-export async function createPlayback(buffer: ArrayBuffer): Promise<PlaybackHandle> {
+export async function createPlayback(
+  buffer: ArrayBuffer,
+  onEnded?: () => void,
+): Promise<PlaybackHandle> {
   const Ctx = globalThis.AudioContext
   if (typeof Ctx === 'undefined') {
     let offset = 0
     return {
-      async play() {},
+      async play(_startSec, _endSec, _loop, fromSec) {
+        if (typeof fromSec === 'number') {
+          offset = fromSec
+        }
+      },
       stop() {},
       seek(seconds) {
         offset = seconds
@@ -34,13 +41,16 @@ export async function createPlayback(buffer: ArrayBuffer): Promise<PlaybackHandl
 
   const stop = () => {
     if (source) {
+      const s = source
+      source = null
+      s.onended = null
       try {
-        source.stop()
+        s.stop()
       } catch {
         /* already stopped */
       }
-      source.disconnect()
-      source = null
+      s.disconnect()
+      offset = Math.min(trimEnd, offset + (ctx.currentTime - startedAt))
     }
     playing = false
   }
@@ -51,18 +61,24 @@ export async function createPlayback(buffer: ArrayBuffer): Promise<PlaybackHandl
       void ctx.resume()
     }
     const clamped = Math.max(trimStart, Math.min(from, trimEnd - 0.01))
-    source = ctx.createBufferSource()
-    source.buffer = decoded
-    source.loop = looping
+    const currentSource = ctx.createBufferSource()
+    source = currentSource
+    currentSource.buffer = decoded
+    currentSource.loop = looping
     if (looping) {
-      source.loopStart = trimStart
-      source.loopEnd = trimEnd
+      currentSource.loopStart = trimStart
+      currentSource.loopEnd = trimEnd
     }
-    source.connect(ctx.destination)
-    source.onended = () => {
-      playing = false
+    currentSource.connect(ctx.destination)
+    currentSource.onended = () => {
+      if (source === currentSource) {
+        source = null
+        playing = false
+        offset = trimEnd
+        onEnded?.()
+      }
     }
-    source.start(0, clamped, looping ? undefined : Math.max(0.01, trimEnd - clamped))
+    currentSource.start(0, clamped, looping ? undefined : Math.max(0.01, trimEnd - clamped))
     startedAt = ctx.currentTime
     offset = clamped
     playing = true
@@ -74,11 +90,17 @@ export async function createPlayback(buffer: ArrayBuffer): Promise<PlaybackHandl
   document.addEventListener('visibilitychange', onVisibility)
 
   return {
-    async play(startSec, endSec, loop) {
+    async play(startSec, endSec, loop, fromSec) {
       trimStart = startSec
       trimEnd = endSec
       looping = loop
-      startFrom(startSec)
+      const startPoint =
+        typeof fromSec === 'number'
+          ? fromSec
+          : offset >= startSec && offset < endSec
+            ? offset
+            : startSec
+      startFrom(startPoint)
     },
     stop,
     seek(seconds) {
@@ -87,7 +109,16 @@ export async function createPlayback(buffer: ArrayBuffer): Promise<PlaybackHandl
     },
     getCurrentTime() {
       if (!playing) return offset
-      return offset + (ctx.currentTime - startedAt)
+      if (looping && trimEnd > trimStart) {
+        const elapsed = ctx.currentTime - startedAt
+        const firstSegment = trimEnd - offset
+        if (elapsed < firstSegment) {
+          return offset + elapsed
+        }
+        const loopDuration = trimEnd - trimStart
+        return trimStart + ((elapsed - firstSegment) % loopDuration)
+      }
+      return Math.min(trimEnd, offset + (ctx.currentTime - startedAt))
     },
     dispose() {
       stop()

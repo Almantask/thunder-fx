@@ -19,4 +19,17 @@ describe('Hint', () => {
       'Keeps the Hugging Face token and export folder on this machine.',
     )
   })
+
+  it('does not capture pointer events over nearby controls', async () => {
+    const user = userEvent.setup()
+    render(
+      <TooltipProvider delayDuration={0}>
+        <Hint label="Open the prompt pack.">
+          <button type="button">Browse prompts</button>
+        </Hint>
+      </TooltipProvider>,
+    )
+    await user.hover(screen.getByRole('button', { name: 'Browse prompts' }))
+    expect(await screen.findByRole('tooltip')).toHaveClass('pointer-events-none')
+  })
 })

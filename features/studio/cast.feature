@@ -27,13 +27,13 @@ Feature: Generate a sound
   Scenario: Sound effects is the default generate mode
     Given the studio is open
     Then Sound effects mode is selected
-    And sound-effect prompt shortcuts are shown
+    And Browse prompts is shown
+    And Generate queue is shown
 
   Scenario: Instrumental mode prepares a music prompt
     Given the studio is open
     When the user chooses Instrumental mode
     Then Instrumental mode is selected
-    And music prompt shortcuts are shown
     And the prompt uses a music track type
     And vocals are listed in the negative prompt
 
@@ -68,3 +68,20 @@ Feature: Generate a sound
   Scenario: Duration can use the full Medium length
     Given the studio is open
     Then Duration can be set to 380 seconds
+
+  Scenario: Generate shows an estimated time from past clips
+    Given the studio has generated a clip before
+    When the prompt is long enough
+    Then Generate shows an estimated duration
+
+  Scenario: Load model shows an estimated time from past loads
+    Given the studio has loaded the model before
+    And the model is not loaded
+    Then Load model shows an estimated duration
+
+  Scenario: A generate shows remaining time
+    Given the studio is open
+    When the user writes a tavern door prompt
+    And Generates
+    Then remaining time is shown
+

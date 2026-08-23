@@ -70,8 +70,10 @@ describe('Studio', () => {
       await screen.findByRole('button', { name: /generate music/i }, { timeout: 5000 }),
     ).toBeInTheDocument()
     await user.click(screen.getByRole('tab', { name: 'Library' }))
+    await user.click(screen.getByRole('button', { name: /main theme/i }))
+    await user.click(screen.getByRole('button', { name: /level/i }))
     expect(screen.getByText(/lute tavern theme/i)).toBeInTheDocument()
-    expect(screen.getByLabelText('Music clip')).toBeInTheDocument()
+    expect(screen.queryByLabelText('Music clip')).not.toBeInTheDocument()
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
   })
 
@@ -100,21 +102,32 @@ describe('Studio', () => {
     ).toBeInTheDocument()
   })
 
-  it('loads a catalog prompt into a queue and generates it', async () => {
-    const user = userEvent.setup()
-    renderStudio()
-    await user.click(screen.getByRole('button', { name: /prompt catalog/i }))
-    expect(screen.getByRole('dialog', { name: /prompt catalog/i })).toBeInTheDocument()
-    await user.click(screen.getByRole('checkbox', { name: /steel sword draw/i }))
-    await user.click(screen.getByRole('button', { name: /add selected/i }))
-    await user.keyboard('{Escape}')
-    expect(screen.getByText(/steel sword draw/i)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /generate queue/i }))
-    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
-    expect(
-      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
-    ).toBeInTheDocument()
-    await user.click(screen.getByRole('tab', { name: 'Library' }))
-    expect(screen.getByText(/steel shortsword/i)).toBeInTheDocument()
-  })
+  it(
+    'loads a catalog prompt into a queue and generates it',
+    async () => {
+      const user = userEvent.setup()
+      renderStudio()
+      await user.click(screen.getByRole('button', { name: /browse prompts/i }))
+      expect(screen.getByRole('dialog', { name: /browse prompts/i })).toBeInTheDocument()
+      await user.click(screen.getByRole('option', { name: /^combat/i }))
+      await user.click(screen.getByRole('checkbox', { name: /steel sword draw/i }))
+      await user.click(screen.getByRole('button', { name: /add selected/i }))
+      await user.keyboard('{Escape}')
+      expect(screen.getByText(/steel sword draw/i)).toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: /generate queue/i }))
+      expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+      expect(
+        await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
+      ).toBeInTheDocument()
+      await user.click(screen.getByRole('tab', { name: 'Library' }))
+      await user.click(screen.getByRole('button', { name: /combat/i }))
+      expect(screen.getByText(/steel shortsword/i)).toBeInTheDocument()
+      expect(screen.queryByText(/TrackType: SFX/i)).not.toBeInTheDocument()
+      await user.click(screen.getByRole('button', { name: /steel shortsword/i }))
+      expect((screen.getByRole('textbox', { name: 'Prompt' }) as HTMLTextAreaElement).value).toMatch(
+        /TrackType: SFX, steel shortsword/i,
+      )
+    },
+    10000,
+  )
 })

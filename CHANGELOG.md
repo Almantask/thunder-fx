@@ -6,15 +6,20 @@ All notable Thunder FX changes are listed here.
 
 ### Added
 
-- **Instrumental** generate mode beside Sound effects. Same local Medium engine; music prompts use `TrackType: Music`, music shortcuts, a 20s default duration, and a vocals/speech negative prompt.
+- **Instrumental** generate mode beside Sound effects. Same local Medium engine; music prompts use `TrackType: Music`, a 20s default duration, and a vocals/speech negative prompt.
 - Music clips embed named instruments in the WAVE file (RIFF INFO `IKEY` / `ICMT`) and show them in the library.
 - Library empty state shows music starters when Instrumental is selected. Saved clips are tagged SFX or Music.
-- **Prompt catalog** on Generate loads the shipped `prompts/` markdown pack. Add effects or a whole category to a queue, then **Generate queue** to create them in order. **Use** fills the current prompt without queueing.
+- **Browse prompts** on Generate loads the shipped markdown. Filter **FX** (`prompts/fx`) or **Ambience** (`prompts/ambience`). **Preview** shows the full prompt text. **Use** fills the current prompt without queueing. Add items or a whole category to a queue, then **Generate queue**.
+- Load, generate, and queue actions show a `~m:ss` estimate from past runs on this machine. While a load or generate is in progress, the waveform clock adds estimated remaining time.
 
 ### Changed
 
 - Duration can go to 380 seconds, the Stable Audio 3 Medium maximum (6m 20s).
+- Ambience catalog cues use varying lengths (about 40–380s) instead of a fixed 20s/30s, including takes at the Medium maximum.
 - Generate no longer loads Medium. After an app restart, click **Load model** once, then Generate only runs the clip.
+- Phrase chips that appended text to the prompt are gone. **Browse prompts** and **Generate queue** are large primary buttons.
+- Hover hints wait longer, do not chain instantly between nearby controls, and no longer steal clicks from buttons they overlap.
+- Library cards show a short prompt name. The full prompt appears in Generate after you open the clip.
 
 ## 0.2.0 — 2026-08-23
 

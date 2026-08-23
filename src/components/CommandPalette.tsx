@@ -49,7 +49,7 @@ export function CommandPalette({
           title="Type to filter commands. Esc closes. Enter runs the selected command."
         />
         <CommandList>
-          <CommandEmpty title="No command matches that text. Try Library, Generate, Settings, Load model, Instrumental, Prompt catalog, or Generate sound.">
+          <CommandEmpty title="No command matches that text. Try Library, Generate, Settings, Load model, Instrumental, Browse prompts, or Generate sound.">
             No matching command.
           </CommandEmpty>
           <CommandItem
@@ -92,13 +92,13 @@ export function CommandPalette({
           ) : null}
           {onPromptCatalog ? (
             <CommandItem
-              title="Open the shipped /prompts catalog and add effects to the generate queue."
+              title="Open the shipped /prompts pack and add effects to the generate queue."
               onSelect={() => {
                 onPromptCatalog()
                 onOpenChange(false)
               }}
             >
-              Prompt catalog
+              Browse prompts
             </CommandItem>
           ) : null}
           {onGenerateQueue ? (

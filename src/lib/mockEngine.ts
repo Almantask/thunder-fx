@@ -67,14 +67,16 @@ export async function mockGenerate(
     }
   }
   const mode = request.mode === 'music' ? 'music' : 'sfx'
-  const instruments =
-    mode === 'music' ? (request.instruments ?? extractInstruments(request.prompt)) : []
+  const detectedInstruments = request.instruments?.length
+    ? request.instruments
+    : extractInstruments(request.prompt)
+  const topInstruments = detectedInstruments.slice(0, 3)
   let wav =
     mode === 'music'
       ? generateMockMusicWav(request.seconds, seed)
       : generateMockSfxWav(request.seconds, seed)
   if (mode === 'music') {
-    wav = tagMusicWav(wav, musicWavInfo(request.prompt, instruments))
+    wav = tagMusicWav(wav, musicWavInfo(request.prompt, topInstruments))
   }
   const clip: Clip = {
     id: randomId(),
@@ -85,7 +87,9 @@ export async function mockGenerate(
     cfg: request.cfg,
     negative: request.negative,
     mode,
-    instruments: instruments.length ? instruments : undefined,
+    instruments: topInstruments.length ? topInstruments : undefined,
+    category: request.category,
+    intensity: request.intensity,
   }
   return { clip, wav }
 }

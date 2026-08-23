@@ -20,7 +20,6 @@ const props = {
   onNegative: vi.fn(),
   onSeed: vi.fn(),
   onRitesOpen: vi.fn(),
-  onChip: vi.fn(),
   onCast: vi.fn(),
   onDispel: vi.fn(),
   onLoadModel: vi.fn(),
@@ -32,8 +31,9 @@ const props = {
 
 const queued: CatalogEffect[] = [
   {
-    id: 'ui:soft-button-click',
-    categoryId: 'ui',
+    id: 'fx:ui:soft-button-click',
+    library: 'fx',
+    categoryId: 'fx:ui',
     category: 'UI',
     title: 'Soft button click',
     prompt: 'TrackType: SFX, short UI button click',
@@ -75,10 +75,23 @@ describe('IncantationConsole', () => {
       'aria-checked',
       'false',
     )
-    expect(screen.getByRole('button', { name: 'TrackType: SFX' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'TrackType: SFX' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'close mic' })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/prompt shortcuts/i)).not.toBeInTheDocument()
   })
 
-  it('switches chips and generate label in instrumental mode', async () => {
+  it('does not add phrase shortcuts to the prompt', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="" />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByRole('button', { name: 'TrackType: SFX' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'large stone hall' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'fast decay' })).not.toBeInTheDocument()
+  })
+
+  it('switches generate label in instrumental mode', async () => {
     const user = userEvent.setup()
     const onMode = vi.fn()
     render(
@@ -91,8 +104,8 @@ describe('IncantationConsole', () => {
       'true',
     )
     expect(screen.getByRole('button', { name: /generate music/i })).toBeEnabled()
-    expect(screen.getByRole('button', { name: 'TrackType: Music' })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: 'TrackType: SFX' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'TrackType: Music' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'no vocals' })).not.toBeInTheDocument()
     await user.click(screen.getByRole('radio', { name: /sound effects/i }))
     expect(onMode).toHaveBeenCalledWith('sfx')
   })
@@ -117,6 +130,20 @@ describe('IncantationConsole', () => {
     expect(screen.getByRole('button', { name: /^load model$/i })).toBeEnabled()
   })
 
+  it('does not allow Load model when the engine is not ready', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole
+          {...props}
+          modelLoaded={false}
+          engineReady={false}
+          prompt="tavern door"
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('button', { name: /^load model$/i })).toBeDisabled()
+  })
+
   it('calls onLoadModel from Load model', async () => {
     const user = userEvent.setup()
     const onLoadModel = vi.fn()
@@ -134,7 +161,7 @@ describe('IncantationConsole', () => {
     expect(onLoadModel).toHaveBeenCalled()
   })
 
-  it('opens the prompt catalog from Generate', async () => {
+  it('opens Browse prompts from Generate', async () => {
     const user = userEvent.setup()
     const onOpenCatalog = vi.fn()
     render(
@@ -142,8 +169,22 @@ describe('IncantationConsole', () => {
         <IncantationConsole {...props} prompt="" onOpenCatalog={onOpenCatalog} />
       </TooltipProvider>,
     )
-    await user.click(screen.getByRole('button', { name: /prompt catalog/i }))
+    await user.click(screen.getByRole('button', { name: /browse prompts/i }))
     expect(onOpenCatalog).toHaveBeenCalled()
+  })
+
+  it('shows Browse prompts and Generate queue as prominent actions', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="" queue={queued} />
+      </TooltipProvider>,
+    )
+    const browse = screen.getByRole('button', { name: /browse prompts/i })
+    const generateQueue = screen.getByRole('button', { name: /generate queue/i })
+    expect(browse.className).toMatch(/h-11/)
+    expect(generateQueue.className).toMatch(/h-11/)
+    expect(browse.className).not.toMatch(/\bh-8\b/)
+    expect(generateQueue.className).not.toMatch(/\bh-8\b/)
   })
 
   it('does not allow Generate queue when the queue is empty', () => {
@@ -173,7 +214,7 @@ describe('IncantationConsole', () => {
     expect(screen.getByText(/soft button click/i)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /generate queue/i })).toBeEnabled()
     await user.click(screen.getByRole('button', { name: /remove soft button click/i }))
-    expect(onRemoveQueued).toHaveBeenCalledWith('ui:soft-button-click')
+    expect(onRemoveQueued).toHaveBeenCalledWith('fx:ui:soft-button-click')
     await user.click(screen.getByRole('button', { name: /generate queue/i }))
     expect(onGenerateQueue).toHaveBeenCalled()
   })
@@ -195,5 +236,36 @@ describe('IncantationConsole', () => {
       </TooltipProvider>,
     )
     expect(screen.getByRole('slider')).toHaveAttribute('aria-valuemax', '380')
+  })
+
+  it('shows a load-time estimate before Medium is in VRAM', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole
+          {...props}
+          modelLoaded={false}
+          prompt="tavern door"
+          loadEstimateMs={45_000}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText('~0:45')).toBeInTheDocument()
+  })
+
+  it('shows generate and queue time estimates from past clips', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole
+          {...props}
+          prompt="tavern door"
+          queue={queued}
+          castEstimateMs={40_000}
+          queueEstimateMs={8_000}
+          clipEstimateMs={() => 8_000}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText('~0:40')).toBeInTheDocument()
+    expect(screen.getAllByText(/~0:08/).length).toBeGreaterThanOrEqual(2)
   })
 })

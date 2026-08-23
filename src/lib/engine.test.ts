@@ -63,4 +63,20 @@ describe('engine bridge', () => {
   it('readErrorLog is empty outside the desktop keep', async () => {
     await expect(readErrorLog()).resolves.toBe('')
   })
+
+  it('adds top 3 instruments to generated clip', async () => {
+    const result = await generate(
+      {
+        prompt:
+          'TrackType: Music, ancient ruins ambient, cello swells, lone flute, soft harp, taiko drums, 45 BPM',
+        seconds: 2,
+        seed: 1,
+        cfg: 1,
+        negative: '',
+        mode: 'music',
+      },
+      { stepDelayMs: 0 },
+    )
+    expect(result.clip.instruments).toEqual(['cello', 'flute', 'harp'])
+  })
 })

@@ -1,11 +1,23 @@
 Feature: Generate a prompt queue
   The user loads shipped /prompts entries into a queue and generates them in order.
 
-  Scenario: Prompt catalog lists shipped effects
+  Scenario: Browse prompts lists shipped effects
     Given the studio is open
-    When the user opens the Prompt catalog
+    When the user opens Browse prompts
     Then Combat prompts are shown
     And Steel sword draw can be added to the queue
+
+  Scenario: Ambience library lists instrumental beds
+    Given the studio is open
+    When the user opens Browse prompts
+    And the user selects Ambience
+    Then Forest prompts are shown
+
+  Scenario: Preview shows the prompt text
+    Given the studio is open
+    When the user opens Browse prompts
+    And the user previews Steel sword draw
+    Then the sword draw prompt text is shown
 
   Scenario: Selected catalog prompts join the generate queue
     Given the studio is open

@@ -168,7 +168,9 @@ export function ScrollCanvas({
     const canvas = canvasRef.current
     if (!canvas || duration <= 0) return 0
     const rect = canvas.getBoundingClientRect()
-    const ratioX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    const width = rect.width || canvas.clientWidth || canvas.width || 1
+    const left = rect.left || 0
+    const ratioX = Math.max(0, Math.min(1, (clientX - left) / width))
     return ratioX * duration
   }
 
@@ -185,6 +187,17 @@ export function ScrollCanvas({
     if (Math.abs(t - trimStart) <= threshold) return 'start'
     if (Math.abs(t - trimEnd) <= threshold) return 'end'
     return 'seek'
+  }
+
+  const releaseCapture = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragging.current = null
+    try {
+      if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+        e.currentTarget.releasePointerCapture(e.pointerId)
+      }
+    } catch {
+      /* ignore */
+    }
   }
 
   return (
@@ -267,14 +280,20 @@ export function ScrollCanvas({
             if (!wav || busy) return
             const mode = pickMode(e.clientX)
             dragging.current = mode
-            ;(e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId)
+            try {
+              (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId)
+            } catch {
+              /* ignore */
+            }
             applyPointer(e.clientX, mode)
           }}
           onPointerMove={(e) => {
             if (!dragging.current) return
             applyPointer(e.clientX, dragging.current)
           }}
-          onPointerUp={() => {
+          onPointerUp={releaseCapture}
+          onPointerCancel={releaseCapture}
+          onLostPointerCapture={() => {
             dragging.current = null
           }}
         >

@@ -10,6 +10,8 @@ export type Clip = {
   negative: string
   mode?: GenerateMode
   instruments?: string[]
+  category?: string
+  intensity?: string
 }
 
 export type EngineStatus = {
@@ -40,6 +42,8 @@ export type GenerateRequest = {
   libraryDir?: string
   mode?: GenerateMode
   instruments?: string[]
+  category?: string
+  intensity?: string
 }
 
 export type GenerateResult = {

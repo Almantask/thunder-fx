@@ -85,7 +85,7 @@ describe('CommandPalette', () => {
     expect(onInstrumental).toHaveBeenCalled()
   })
 
-  it('offers Prompt catalog', async () => {
+  it('offers Browse prompts', async () => {
     const user = userEvent.setup()
     const onPromptCatalog = vi.fn()
     render(
@@ -93,7 +93,7 @@ describe('CommandPalette', () => {
         <CommandPalette {...props} onPromptCatalog={onPromptCatalog} />
       </TooltipProvider>,
     )
-    await user.click(screen.getByRole('option', { name: /prompt catalog/i }))
+    await user.click(screen.getByRole('option', { name: /browse prompts/i }))
     expect(onPromptCatalog).toHaveBeenCalled()
   })
 })

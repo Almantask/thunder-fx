@@ -126,17 +126,50 @@ fn worker_path(app: &AppHandle) -> PathBuf {
         .join("worker.py")
 }
 
-fn venv_python(script: &Path) -> Option<PathBuf> {
-    let engine_dir = script.parent()?;
-    let windows = engine_dir.join(".venv").join("Scripts").join("python.exe");
+fn python_in_venv(root: &Path) -> Option<PathBuf> {
+    let windows = root.join("Scripts").join("python.exe");
     if windows.exists() {
         return Some(windows);
     }
-    let unix = engine_dir.join(".venv").join("bin").join("python");
+    let unix = root.join("bin").join("python");
     if unix.exists() {
         return Some(unix);
     }
     None
+}
+
+fn venv_root_candidates(script: &Path) -> Vec<PathBuf> {
+    let mut roots = Vec::new();
+    let mut push = |path: PathBuf| {
+        if !roots.iter().any(|existing| existing == &path) {
+            roots.push(path);
+        }
+    };
+    if let Some(dir) = script.parent() {
+        push(dir.join(".venv"));
+        if dir.file_name().is_some_and(|name| name == "engine") {
+            if let Some(parent) = dir.parent() {
+                push(parent.join(".venv"));
+                if parent.file_name().is_some_and(|name| name == "_up_") {
+                    if let Some(release_dir) = parent.parent() {
+                        push(release_dir.join(".venv"));
+                    }
+                }
+            }
+        }
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(parent) = exe.parent() {
+            push(parent.join(".venv"));
+        }
+    }
+    roots
+}
+
+fn venv_python(script: &Path) -> Option<PathBuf> {
+    venv_root_candidates(script)
+        .into_iter()
+        .find_map(|root| python_in_venv(&root))
 }
 
 fn python_commands(script: &Path) -> Vec<Command> {
@@ -573,6 +606,36 @@ mod tests {
         let path = library_path().unwrap();
         assert!(path.contains("thunder-fx-lib-"));
         assert!(dir.is_dir());
+    }
+
+    fn write_dummy_venv_python(root: &Path) -> PathBuf {
+        let scripts = root.join("Scripts");
+        std::fs::create_dir_all(&scripts).unwrap();
+        let python = scripts.join("python.exe");
+        std::fs::write(&python, []).unwrap();
+        python
+    }
+
+    #[test]
+    fn venv_python_uses_venv_beside_worker() {
+        let root = std_temp().join(format!("thunder-fx-venv-dev-{}", std::process::id()));
+        let python = write_dummy_venv_python(&root.join(".venv"));
+        let worker = root.join("worker.py");
+        std::fs::write(&worker, []).unwrap();
+        assert_eq!(venv_python(&worker).as_deref(), Some(python.as_path()));
+        let _ = std::fs::remove_dir_all(&root);
+    }
+
+    #[test]
+    fn venv_python_uses_parent_venv_when_worker_is_nested_in_engine() {
+        let dest = std_temp().join(format!("thunder-fx-venv-portable-{}", std::process::id()));
+        let python = write_dummy_venv_python(&dest.join(".venv"));
+        let engine = dest.join("engine");
+        std::fs::create_dir_all(&engine).unwrap();
+        let worker = engine.join("worker.py");
+        std::fs::write(&worker, []).unwrap();
+        assert_eq!(venv_python(&worker).as_deref(), Some(python.as_path()));
+        let _ = std::fs::remove_dir_all(&dest);
     }
 }
 

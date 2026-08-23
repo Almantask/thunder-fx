@@ -588,6 +588,7 @@ def cmd_status(msg_id: str) -> None:
             message = "CUDA ready." if ready else "CUDA not available."
         except Exception as exc:  # noqa: BLE001
             ready = False
+            device = "unknown"
             message = str(exc)
     _emit(
         {

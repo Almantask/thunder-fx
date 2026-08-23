@@ -2,8 +2,11 @@ import { render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { ScrollCanvas } from '@/components/ScrollCanvas'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { generateMockSfxWav } from '@/lib/wav'
 
 const base = {
+  weaving: false,
+  rite: 0,
   totalRites: 8,
   elapsedMs: 0,
   duration: 8,
@@ -60,5 +63,36 @@ describe('ScrollCanvas', () => {
     )
     expect(screen.queryByRole('progressbar', { name: /generation progress/i })).not.toBeInTheDocument()
     expect(screen.queryByRole('progressbar', { name: /model load progress/i })).not.toBeInTheDocument()
+  })
+
+  it('allows clicking to seek multiple times', () => {
+    const onSeek = vi.fn()
+    const mockWav = generateMockSfxWav(1.0, 1)
+    render(
+      <TooltipProvider>
+        <ScrollCanvas {...base} wav={mockWav} duration={10} onSeek={onSeek} />
+      </TooltipProvider>,
+    )
+    const slider = screen.getByRole('slider', { name: /waveform/i })
+
+    // First seek click
+    slider.dispatchEvent(
+      new MouseEvent('pointerdown', { bubbles: true, clientX: 500 }),
+    )
+    slider.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+
+    // Second seek click
+    slider.dispatchEvent(
+      new MouseEvent('pointerdown', { bubbles: true, clientX: 200 }),
+    )
+    slider.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+
+    // Third seek click
+    slider.dispatchEvent(
+      new MouseEvent('pointerdown', { bubbles: true, clientX: 700 }),
+    )
+    slider.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+
+    expect(onSeek).toHaveBeenCalledTimes(3)
   })
 })

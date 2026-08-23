@@ -176,3 +176,13 @@ export function parseInstrumentKeywords(value: string): string[] {
     .map((part) => part.trim())
     .filter(Boolean)
 }
+
+const BPM_PATTERN = /\b(\d{2,3})\s*bpm\b/i
+
+export function extractBpm(prompt: string): number | undefined {
+  const match = prompt.match(BPM_PATTERN)
+  if (!match) return undefined
+  const num = Number(match[1])
+  return Number.isFinite(num) && num > 0 ? num : undefined
+}
+

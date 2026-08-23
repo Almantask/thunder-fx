@@ -12,7 +12,7 @@ type HintProps = {
 
 export function Hint({ label, children, side = 'top', className, asChild = false }: HintProps) {
   return (
-    <Tooltip>
+    <Tooltip disableHoverableContent>
       <TooltipTrigger asChild>
         {asChild ? (
           (children as ReactElement)

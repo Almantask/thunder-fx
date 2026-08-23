@@ -20,3 +20,22 @@ Feature: Library
     When that clip is chosen
     Then the waveform shows that clip
     And the prompt is the tavern door text
+
+  Scenario: Playing visible sounds
+    Given the library has saved clips
+    When the user clicks Play visible sounds
+    Then playback starts for the visible sounds
+    And the button shows Pause
+
+  Scenario: Categories are collapsed by default and expandable
+    Given the library has saved clips across categories
+    Then the category headers are displayed in a collapsed state
+    When the user expands a category
+    Then the clips within that category are revealed
+
+  Scenario: Switching between browsing sounds and browsing ambiences
+    Given the library has sound effects and ambience clips
+    When the user switches browsing mode to Ambiences
+    Then only ambience clips and categories are shown
+    When the user switches browsing mode to Sounds
+    Then only sound effect clips and categories are shown

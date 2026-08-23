@@ -1,4 +1,4 @@
-import { ChevronDown } from 'lucide-react'
+import { BookOpen, ChevronDown, ListOrdered } from 'lucide-react'
 import { Hint } from '@/components/Hint'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +13,7 @@ import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from
 import { GENERATE_MODES } from '@/lib/generateMode'
 import { canCast } from '@/lib/prompt'
 import type { CatalogEffect } from '@/lib/promptCatalog'
+import { formatEstimateMs } from '@/lib/timing'
 import type { GenerateMode } from '@/lib/types'
 import { cn } from '@/lib/utils'
 
@@ -32,18 +33,22 @@ type IncantationConsoleProps = {
   onNegative: (value: string) => void
   onSeed: (value: string) => void
   onRitesOpen: (open: boolean) => void
-  onChip: (chip: string) => void
   onCast: () => void
   onDispel: () => void
   onLoadModel?: () => void
   modelLoaded?: boolean
   loadingModel?: boolean
   engineReady?: boolean
+  engineMessage?: string
   queue?: CatalogEffect[]
   onOpenCatalog?: () => void
   onGenerateQueue?: () => void
   onClearQueue?: () => void
   onRemoveQueued?: (id: string) => void
+  loadEstimateMs?: number
+  castEstimateMs?: number
+  queueEstimateMs?: number
+  clipEstimateMs?: (seconds: number) => number | undefined
 }
 
 export function IncantationConsole({
@@ -62,18 +67,22 @@ export function IncantationConsole({
   onNegative,
   onSeed,
   onRitesOpen,
-  onChip,
   onCast,
   onDispel,
   onLoadModel,
   modelLoaded = true,
   loadingModel = false,
   engineReady = true,
+  engineMessage = '',
   queue = [],
   onOpenCatalog,
   onGenerateQueue,
   onClearQueue,
   onRemoveQueued,
+  loadEstimateMs,
+  castEstimateMs,
+  queueEstimateMs,
+  clipEstimateMs,
 }: IncantationConsoleProps) {
   const spec = GENERATE_MODES[mode]
   const ready = canCast(prompt)
@@ -81,6 +90,9 @@ export function IncantationConsole({
   const canGenerate = ready && modelLoaded && !busy
   const canLoad = engineReady && !modelLoaded && !busy
   const canGenerateQueue = queue.length > 0 && modelLoaded && !busy
+  const loadEta = formatEstimateMs(loadEstimateMs)
+  const castEta = formatEstimateMs(castEstimateMs)
+  const queueEta = formatEstimateMs(queueEstimateMs)
 
   let loadLabel = 'Load model'
   if (loadingModel) loadLabel = 'Loading model…'
@@ -92,7 +104,11 @@ export function IncantationConsole({
   } else if (modelLoaded) {
     loadHint = 'Medium is already in VRAM. Generate only creates a clip.'
   } else if (!engineReady) {
-    loadHint = 'CUDA is not available. Load model needs a working GPU engine.'
+    loadHint = engineMessage.trim()
+      ? engineMessage
+      : 'The GPU engine is not ready. Load model needs CUDA Medium.'
+  } else if (loadEta) {
+    loadHint = `Load Medium into VRAM once. About ${loadEta} from past loads on this machine. Generate stays a separate, shorter step.`
   }
 
   return (
@@ -134,37 +150,32 @@ export function IncantationConsole({
             )
           })}
         </div>
-        <Hint label="Open the shipped /prompts catalog. Check effects and add them to a generate queue.">
-          <Button type="button" size="sm" variant="outline" onClick={() => onOpenCatalog?.()}>
-            Prompt catalog
+        <Hint label="Open the shipped sound-effect and ambience prompt packs. Check items and add them to a generate queue.">
+          <Button type="button" size="lg" onClick={() => onOpenCatalog?.()}>
+            <BookOpen />
+            Browse prompts
           </Button>
         </Hint>
         <Hint
           label={
             queue.length === 0
-              ? 'Add prompts from the catalog to generate several effects in order.'
-              : `Generate ${queue.length} queued effects one after another. Cancel stops the rest.`
+              ? 'Add prompts from Browse prompts to generate several effects in order.'
+              : queueEta
+                ? `Generate ${queue.length} queued effects one after another. About ${queueEta} from past clips on this machine. Cancel stops the rest.`
+                : `Generate ${queue.length} queued effects one after another. Cancel stops the rest.`
           }
         >
           <Button
             type="button"
-            size="sm"
-            variant="outline"
+            size="lg"
             disabled={!canGenerateQueue}
             onClick={() => onGenerateQueue?.()}
           >
+            <ListOrdered />
             Generate queue
+            {queueEta ? <span className="font-mono text-[11px] text-muted">{queueEta}</span> : null}
           </Button>
         </Hint>
-      </div>
-      <div className="mb-2 flex flex-wrap gap-2" aria-label="Prompt shortcuts">
-        {spec.chips.map((chip) => (
-          <Hint key={chip} label={`Add “${chip}” to the prompt.`}>
-            <Button type="button" size="sm" variant="outline" onClick={() => onChip(chip)}>
-              {chip}
-            </Button>
-          </Hint>
-        ))}
       </div>
       {queue.length > 0 ? (
         <div className="mb-2 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_28%,transparent)] bg-leather-2 px-3 py-2">
@@ -172,6 +183,7 @@ export function IncantationConsole({
             <Hint label="These prompts will generate in order. Each clip is saved to the library.">
               <p className="text-xs tracking-[0.12em] text-muted uppercase">
                 Queue · {queue.length}
+                {queueEta ? ` · ${queueEta}` : ''}
               </p>
             </Hint>
             <Hint label="Remove every queued prompt. Does not delete library clips.">
@@ -187,12 +199,16 @@ export function IncantationConsole({
             </Hint>
           </div>
           <ul className="max-h-24 space-y-1 overflow-y-auto" aria-label="Generate queue">
-            {queue.map((item) => (
+            {queue.map((item) => {
+              const itemEta = formatEstimateMs(clipEstimateMs?.(item.duration))
+              return (
               <li key={item.id} className="flex items-center gap-2 text-sm text-cream">
                 <span className="min-w-0 flex-1 truncate">
                   {item.category} · {item.title}
                 </span>
-                <span className="shrink-0 font-mono text-[11px] text-muted">{item.duration}s</span>
+                <span className="shrink-0 font-mono text-[11px] text-muted">
+                  {item.duration}s{itemEta ? ` ${itemEta}` : ''}
+                </span>
                 <Hint label={`Remove ${item.title} from the queue.`}>
                   <Button
                     type="button"
@@ -206,7 +222,8 @@ export function IncantationConsole({
                   </Button>
                 </Hint>
               </li>
-            ))}
+              )
+            })}
           </ul>
         </div>
       ) : null}
@@ -235,7 +252,11 @@ export function IncantationConsole({
         </Hint>
         <Hint
           className="w-full flex-col"
-          label="How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. Instrumental often uses 20s."
+          label={
+            castEta
+              ? `How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. About ${castEta} at this duration, from past clips on this machine.`
+              : 'How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. Instrumental often uses 20s.'
+          }
         >
           <div className="w-full">
             <Label htmlFor="duration">Duration {duration.toFixed(1)}s</Label>
@@ -262,6 +283,9 @@ export function IncantationConsole({
               aria-label={loadingModel ? 'Loading model' : modelLoaded ? 'Model ready' : 'Load model'}
             >
               {loadLabel}
+              {!loadingModel && !modelLoaded && loadEta ? (
+                <span className="font-mono text-[11px] text-muted">{loadEta}</span>
+              ) : null}
             </Button>
           </Hint>
           {weaving ? (
@@ -276,7 +300,7 @@ export function IncantationConsole({
                 !modelLoaded
                   ? 'Load the model first. Generate only creates a clip after Medium is in VRAM.'
                   : ready
-                    ? `Generate this prompt with Stable Audio 3 Medium: fp32, 8 steps, stereo 44.1 kHz. Mode: ${spec.label.toLowerCase()}.`
+                    ? `Generate this prompt with Stable Audio 3 Medium: fp32, 8 steps, stereo 44.1 kHz. Mode: ${spec.label.toLowerCase()}.${castEta ? ` About ${castEta} at this duration, from past clips on this machine.` : ''}`
                     : 'Write at least 3 characters to generate.'
               }
             >
@@ -289,6 +313,7 @@ export function IncantationConsole({
                 aria-label={spec.generateAria}
               >
                 Generate
+                {castEta ? <span className="font-mono text-[11px] text-cream/80">{castEta}</span> : null}
               </Button>
             </Hint>
           )}

@@ -28,5 +28,11 @@ engine/output
 coverage
 .thunder-fx
 .cursor/hooks/state/exe-dirty.txt
+
+# Antigravity skill mirrors of .cursor. Track the git symlinks, not expanded copies.
+.agent/**
+!/.agent
+.agents/**
+!/.agents
 models
 *.tsbuildinfo

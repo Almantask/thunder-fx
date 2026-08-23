@@ -11,11 +11,23 @@ describe('extractInstruments', () => {
     expect(extractInstruments('lute and bodhran')).toEqual(['lute', 'bodhran'])
     expect(extractInstruments('heroic brass fanfare')).toEqual(['brass'])
     expect(extractInstruments('fiddle and flute')).toEqual(['fiddle', 'flute'])
+    expect(extractInstruments('staccato low strings, sparse war drums, taiko pulses')).toEqual([
+      'strings',
+      'war drums',
+      'taiko',
+    ])
+    expect(extractInstruments('ambient synth pads, duduk, and tin whistle')).toEqual([
+      'synth',
+      'duduk',
+      'whistle',
+    ])
   })
 
   it('prefers the longer name when one term contains another', () => {
     expect(extractInstruments('fingerpicked acoustic guitar')).toEqual(['acoustic guitar'])
     expect(extractInstruments('plucked strings')).toEqual(['strings'])
+    expect(extractInstruments('taiko drums')).toEqual(['taiko'])
+    expect(extractInstruments('hurdy gurdy')).toEqual(['hurdy-gurdy'])
   })
 
   it('dedupes aliases', () => {

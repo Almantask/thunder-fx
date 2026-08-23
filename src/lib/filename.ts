@@ -11,6 +11,22 @@ export function slugifyPrompt(prompt: string): string {
   return slug || 'sound'
 }
 
+const GENERIC_PREFIXES = /^(instrumental|music|sfx|sound effects?|ambience)$/i
+
+export function promptName(prompt: string): string {
+  const stripped = prompt.replace(/^tracktype:\s*\w+\s*,?\s*/i, '').trim()
+  const clauses = stripped
+    .split(',')
+    .map((part) => part.trim())
+    .filter(Boolean)
+
+  if (clauses.length === 0) return 'Untitled sound'
+
+  const meaningful = clauses.find((clause) => !GENERIC_PREFIXES.test(clause))
+  const target = meaningful || clauses[0]
+  return target.charAt(0).toUpperCase() + target.slice(1)
+}
+
 export function clipFilename(
   prompt: string,
   durationSeconds: number,

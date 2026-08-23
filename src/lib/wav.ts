@@ -1,3 +1,4 @@
+import { clampGenerateSeconds } from '@/lib/duration'
 import { parseInstrumentKeywords, type WavInfo } from '@/lib/instruments'
 
 export const SAMPLE_RATE = 44_100
@@ -222,7 +223,7 @@ export function trimWav(
 }
 
 export function generateMockMusicWav(seconds: number, seed: number): ArrayBuffer {
-  const duration = Math.min(30, Math.max(0.5, seconds))
+  const duration = clampGenerateSeconds(seconds)
   const frames = Math.round(duration * SAMPLE_RATE)
   const pcm = new Int16Array(frames * CHANNELS)
   const rand = mulberry32(seed <= 0 ? 1 : seed)
@@ -251,7 +252,7 @@ export function generateMockMusicWav(seconds: number, seed: number): ArrayBuffer
 }
 
 export function generateMockSfxWav(seconds: number, seed: number): ArrayBuffer {
-  const duration = Math.min(30, Math.max(0.5, seconds))
+  const duration = clampGenerateSeconds(seconds)
   const frames = Math.round(duration * SAMPLE_RATE)
   const pcm = new Int16Array(frames * CHANNELS)
   const rand = mulberry32(seed <= 0 ? 1 : seed)

@@ -42,4 +42,9 @@ describe('SettingsPanel', () => {
     const log = await screen.findByRole('log')
     expect(log.textContent ?? '').toMatch(/ERROR later/)
   })
+
+  it('accepts a default duration up to the Medium model limit', () => {
+    renderPanel()
+    expect(screen.getByLabelText(/default duration/i)).toHaveAttribute('max', '380')
+  })
 })

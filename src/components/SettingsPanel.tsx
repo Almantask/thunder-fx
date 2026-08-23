@@ -11,6 +11,7 @@ import {
   pickDirectory,
   revealLibrary,
 } from '@/lib/engine'
+import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from '@/lib/duration'
 import { DEFAULT_LIBRARY_PLACEHOLDER, type KeepSettings } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
 
@@ -126,7 +127,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             </Hint>
             <Hint
               className="w-full flex-col"
-              label="Duration pre-filled in the prompt for new sound-effect generations. 0.5–30 seconds. Instrumental mode starts at 20s unless you already changed the slider."
+              label="Duration pre-filled in the prompt for new sound-effect generations. 0.5–380 seconds (Stable Audio 3 Medium max). Instrumental mode starts at 20s unless you already changed the slider."
             >
               <div className="w-full">
                 <Label htmlFor="default-duration">Default duration (seconds)</Label>
@@ -134,12 +135,12 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
                   id="default-duration"
                   className="mt-1"
                   type="number"
-                  min={0.5}
-                  max={30}
+                  min={MIN_GENERATE_SECONDS}
+                  max={MAX_GENERATE_SECONDS}
                   step={0.5}
                   value={settings.defaultDuration}
                   onChange={(e) =>
-                    onChange({ ...settings, defaultDuration: Number(e.target.value) || 8 })
+                    onChange({ ...settings, defaultDuration: clampGenerateSeconds(Number(e.target.value) || 8) })
                   }
                 />
               </div>

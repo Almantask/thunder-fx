@@ -17,6 +17,7 @@ import type {
 import { isTauri } from '@/lib/utils'
 import { tagMusicWav, wavDurationSeconds } from '@/lib/wav'
 import { extractInstruments, musicWavInfo } from '@/lib/instruments'
+import { clampGenerateSeconds } from '@/lib/duration'
 import { loadSettings } from '@/lib/setup'
 
 function hfToken(): string {
@@ -189,6 +190,7 @@ export async function generate(
   request: GenerateRequest,
   handlers: GenerateHandlers = {},
 ): Promise<GenerateResult> {
+  request = { ...request, seconds: clampGenerateSeconds(request.seconds) }
   if (!isTauri()) return mockGenerate(request, handlers)
   const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')

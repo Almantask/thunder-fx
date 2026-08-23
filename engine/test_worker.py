@@ -391,5 +391,15 @@ class ErrorLogTests(unittest.TestCase):
         self.assertIn('"cmd": "generate"', text)
 
 
+class ClampSecondsTests(unittest.TestCase):
+    def test_clamps_to_stable_audio_3_medium_max(self) -> None:
+        from worker import clamp_seconds
+
+        self.assertEqual(clamp_seconds(380), 380)
+        self.assertEqual(clamp_seconds(381), 380)
+        self.assertEqual(clamp_seconds(0.1), 0.5)
+        self.assertEqual(clamp_seconds(float("nan")), 8.0)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -61,6 +61,21 @@ describe('parsePromptMarkdown', () => {
     })
   })
 
+  it('clamps catalog duration to the Medium model limit', () => {
+    const parsed = parsePromptMarkdown(
+      'beds.md',
+      `# Beds
+
+### Tavern loop
+- Duration: 400s
+- Negative: vocals
+
+TrackType: Music, looping tavern lute bed, no vocals
+`,
+    )
+    expect(parsed.effects[0]?.duration).toBe(380)
+  })
+
   it('skips remix tails that are not complete generate prompts', () => {
     const parsed = parsePromptMarkdown('flavors.md', flavorsMd)
     expect(parsed.effects.map((e) => e.title)).toEqual(['Sword draw, vintage'])

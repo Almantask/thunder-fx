@@ -41,6 +41,16 @@ import {
   inferGenerateMode,
 } from '@/lib/generateMode'
 import { loadSettings, saveSettings } from '@/lib/setup'
+import {
+  estimateGenerateMs,
+  estimateLoadMs,
+  estimateQueueMs,
+  loadTimingLog,
+  recordGenerate,
+  recordLoad,
+  saveTimingLog,
+  type TimingLog,
+} from '@/lib/timing'
 import type { Clip, EngineStatus, GenerateMode, KeepSettings, KeepTab, WeavePhase } from '@/lib/types'
 import { TOTAL_RITES } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
@@ -89,14 +99,19 @@ export function Studio() {
   const [confirmDispel, setConfirmDispel] = useState(false)
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [queue, setQueue] = useState<CatalogEffect[]>([])
+  const [timing, setTiming] = useState(loadTimingLog)
+  const [queueRunning, setQueueRunning] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
   const weaveStartedRef = useRef(0)
   const playbackRef = useRef<PlaybackHandle | null>(null)
   const playRaf = useRef<number>(0)
   const queueRef = useRef(queue)
   const stopQueueRef = useRef(false)
+  const timingRef = useRef(timing)
+  const engineMockRef = useRef(false)
   const catalog = useMemo(() => loadPromptCatalog(), [])
   queueRef.current = queue
+  timingRef.current = timing
 
   const [engine, setEngine] = useState<EngineStatus>(() =>
     isTauri()
@@ -109,7 +124,14 @@ export function Studio() {
         }
       : mockStatus(),
   )
+  engineMockRef.current = engine.mock
   const clipDuration = wav ? wavDurationSeconds(wav) : duration
+
+  function rememberTiming(next: TimingLog) {
+    timingRef.current = next
+    saveTimingLog(next)
+    setTiming(next)
+  }
 
   async function refreshLibrary() {
     setClips(await library.list())
@@ -256,6 +278,9 @@ export function Studio() {
         setWeaveRatio(ratio)
         setWeavePhase('loading')
       })
+      if (!engineMockRef.current) {
+        rememberTiming(recordLoad(timingRef.current, Date.now() - started))
+      }
       await refreshEngine()
       setEngine((current) => ({ ...current, loaded: true }))
       toast.success('Model ready.', { description: 'Generate will only create a clip.' })
@@ -317,6 +342,11 @@ export function Studio() {
       setTrimStart(0)
       setTrimEnd(result.clip.duration)
       setPlayhead(0)
+      if (!engineMockRef.current) {
+        rememberTiming(
+          recordGenerate(timingRef.current, request.seconds, Date.now() - weaveStartedRef.current),
+        )
+      }
       return 'ok'
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') {
@@ -350,6 +380,7 @@ export function Studio() {
   async function castQueue() {
     if (weaving || loadingModel || !engine.loaded || queueRef.current.length === 0) return
     stopQueueRef.current = false
+    setQueueRunning(true)
     setWeaving(true)
     let saved = 0
     try {
@@ -377,6 +408,7 @@ export function Studio() {
         toast.success(saved === 1 ? 'Queue finished.' : `Queue finished. ${saved} clips saved.`)
       }
     } finally {
+      setQueueRunning(false)
       setWeaving(false)
     }
   }
@@ -512,6 +544,21 @@ export function Studio() {
               elapsedMs={elapsedMs}
               phase={weavePhase}
               ratio={weaveRatio}
+              historicalEstimateMs={
+                loadingModel
+                  ? estimateLoadMs(timing)
+                  : weaving
+                    ? estimateGenerateMs(
+                        timing,
+                        queueRunning ? (queue[0]?.duration ?? duration) : duration,
+                      )
+                    : undefined
+              }
+              queueTailEstimateMs={
+                queueRunning && queue.length > 1
+                  ? estimateQueueMs(timing, queue.slice(1))
+                  : undefined
+              }
               duration={clipDuration}
               trimStart={trimStart}
               trimEnd={Math.min(trimEnd, clipDuration)}
@@ -581,6 +628,10 @@ export function Studio() {
               queueRef.current = remaining
               setQueue(remaining)
             }}
+            loadEstimateMs={estimateLoadMs(timing)}
+            castEstimateMs={estimateGenerateMs(timing, duration)}
+            queueEstimateMs={estimateQueueMs(timing, queue)}
+            clipEstimateMs={(seconds) => estimateGenerateMs(timing, seconds)}
           />
         </>
       ) : null}

@@ -9,6 +9,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
+import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from '@/lib/duration'
 import { GENERATE_MODES } from '@/lib/generateMode'
 import { canCast } from '@/lib/prompt'
 import type { CatalogEffect } from '@/lib/promptCatalog'
@@ -234,18 +235,18 @@ export function IncantationConsole({
         </Hint>
         <Hint
           className="w-full flex-col"
-          label="How many seconds of audio to generate. 0.5–30s. Longer takes more VRAM and time. Instrumental often uses 20s."
+          label="How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. Instrumental often uses 20s."
         >
           <div className="w-full">
             <Label htmlFor="duration">Duration {duration.toFixed(1)}s</Label>
             <Slider
               id="duration"
               className="mt-4"
-              min={0.5}
-              max={30}
+              min={MIN_GENERATE_SECONDS}
+              max={MAX_GENERATE_SECONDS}
               step={0.5}
               value={[duration]}
-              onValueChange={(v) => onDuration(v[0] ?? duration)}
+              onValueChange={(v) => onDuration(clampGenerateSeconds(v[0] ?? duration))}
               aria-label="Duration in seconds"
             />
           </div>

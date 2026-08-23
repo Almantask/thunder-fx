@@ -13,6 +13,7 @@ All notable Thunder FX changes are listed here.
 
 ### Changed
 
+- Duration can go to 380 seconds, the Stable Audio 3 Medium maximum (6m 20s).
 - Generate no longer loads Medium. After an app restart, click **Load model** once, then Generate only runs the clip.
 
 ## 0.2.0 — 2026-08-23

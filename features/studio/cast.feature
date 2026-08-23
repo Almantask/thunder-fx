@@ -64,3 +64,7 @@ Feature: Generate a sound
     When the prompt is long enough
     Then Generate is not available
     And Load model is available
+
+  Scenario: Duration can use the full Medium length
+    Given the studio is open
+    Then Duration can be set to 380 seconds

@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { Studio } from '@/components/Studio'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { TIMING_STORAGE_KEY } from '@/lib/timing'
 
 function renderStudio() {
   return render(
@@ -72,6 +73,31 @@ describe('Studio', () => {
     expect(screen.getByText(/lute tavern theme/i)).toBeInTheDocument()
     expect(screen.getByLabelText('Music clip')).toBeInTheDocument()
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
+  })
+
+  it('shows a generate time estimate from past clips', () => {
+    localStorage.setItem(
+      TIMING_STORAGE_KEY,
+      JSON.stringify({ loads: [], generates: [{ seconds: 8, elapsedMs: 40_000 }] }),
+    )
+    renderStudio()
+    expect(screen.getByText('~0:40')).toBeInTheDocument()
+  })
+
+  it('shows remaining time while a generate runs', async () => {
+    localStorage.setItem(
+      TIMING_STORAGE_KEY,
+      JSON.stringify({ loads: [], generates: [{ seconds: 8, elapsedMs: 40_000 }] }),
+    )
+    const user = userEvent.setup()
+    renderStudio()
+    await user.type(screen.getByRole('textbox', { name: 'Prompt' }), 'tavern door')
+    await user.click(screen.getByRole('button', { name: /generate sound/i }))
+    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(/~0:\d{2} remaining/)
+    expect(
+      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
+    ).toBeInTheDocument()
   })
 
   it('loads a catalog prompt into a queue and generates it', async () => {

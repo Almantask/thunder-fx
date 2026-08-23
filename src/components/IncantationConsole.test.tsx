@@ -187,4 +187,13 @@ describe('IncantationConsole', () => {
     expect(screen.getByRole('button', { name: /loading model/i })).toBeDisabled()
     expect(screen.getByRole('button', { name: /generate sound/i })).toBeDisabled()
   })
+
+  it('lets Duration use the Medium model limit', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="tavern door" />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('slider')).toHaveAttribute('aria-valuemax', '380')
+  })
 })

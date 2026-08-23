@@ -36,6 +36,22 @@ describe('ScrollCanvas', () => {
     expect(screen.getByRole('status')).toHaveTextContent(/step 1 of 8/i)
   })
 
+  it('shows remaining time while generating', () => {
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          weaving
+          rite={4}
+          phase="weaving"
+          elapsedMs={20_000}
+          historicalEstimateMs={40_000}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('status')).toHaveTextContent(/~0:20 remaining/)
+  })
+
   it('hides the loading bar when the waveform is idle', () => {
     render(
       <TooltipProvider>

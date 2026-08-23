@@ -1,10 +1,10 @@
 import { useEffect, useRef } from 'react'
 import { Hint } from '@/components/Hint'
 import { Progress } from '@/components/ui/progress'
-import { waveformPeaks } from '@/lib/wav'
-import { formatClock } from '@/lib/utils'
 import type { WeavePhase } from '@/lib/types'
-import { weaveBarPercent, weaveStatusLabel } from '@/lib/weaveProgress'
+import { formatClock } from '@/lib/utils'
+import { waveformPeaks } from '@/lib/wav'
+import { weaveBarPercent, weaveBusyStatus } from '@/lib/weaveProgress'
 
 type ScrollCanvasProps = {
   wav?: ArrayBuffer
@@ -19,6 +19,8 @@ type ScrollCanvasProps = {
   playhead: number
   phase?: WeavePhase
   ratio?: number
+  historicalEstimateMs?: number
+  queueTailEstimateMs?: number
   onTrim: (start: number, end: number) => void
   onSeek: (seconds: number) => void
   emptyLabel?: string
@@ -61,6 +63,8 @@ export function ScrollCanvas({
   playhead,
   phase,
   ratio,
+  historicalEstimateMs,
+  queueTailEstimateMs,
   onTrim,
   onSeek,
   emptyLabel = 'Describe a sound, then click Generate.',
@@ -70,12 +74,18 @@ export function ScrollCanvas({
   const statusRef = useRef<HTMLSpanElement>(null)
   const peaksRef = useRef<Float32Array>(new Float32Array(0))
   const riteRef = useRef(rite)
-  const phaseRef = useRef(phase)
+  const phaseRef = useRef<WeavePhase | undefined>(loadingModel ? 'loading' : phase)
+  const ratioRef = useRef(ratio)
+  const etaRef = useRef(historicalEstimateMs)
+  const tailRef = useRef(queueTailEstimateMs)
 
   useEffect(() => {
     riteRef.current = rite
     phaseRef.current = loadingModel ? 'loading' : phase
-  }, [rite, phase, loadingModel])
+    ratioRef.current = ratio
+    etaRef.current = historicalEstimateMs
+    tailRef.current = queueTailEstimateMs
+  }, [rite, phase, loadingModel, ratio, historicalEstimateMs, queueTailEstimateMs])
 
   const barValue = weaveBarPercent({
     step: rite,
@@ -136,12 +146,15 @@ export function ScrollCanvas({
       ctx.fillRect(0, 0, width, height)
       drawSigil(ctx, width, height, localElapsed, riteRef.current, totalRites)
       if (statusRef.current) {
-        statusRef.current.textContent = weaveStatusLabel(
-          phaseRef.current,
-          riteRef.current,
-          totalRites,
-          localElapsed,
-        )
+        statusRef.current.textContent = weaveBusyStatus({
+          phase: phaseRef.current,
+          rite: riteRef.current,
+          total: totalRites,
+          elapsedMs: localElapsed,
+          ratio: ratioRef.current,
+          historicalEstimateMs: etaRef.current,
+          queueTailEstimateMs: tailRef.current,
+        })
       }
       raf = requestAnimationFrame(tick)
     }
@@ -184,13 +197,21 @@ export function ScrollCanvas({
           <Hint
             label={
               loadingModel
-                ? 'Model load progress. Elapsed time is wall clock, not remaining.'
-                : 'Generation progress. Eight steps. Elapsed time is wall clock, not remaining.'
+                ? 'Model load progress. Elapsed is wall clock. Remaining is an estimate from this machine and current pace.'
+                : 'Generation progress. Eight steps. Elapsed is wall clock. Remaining is an estimate from this machine and current pace.'
             }
           >
             <p role="status" aria-live="polite" className="font-mono text-xs text-amber">
               <span ref={statusRef}>
-                {weaveStatusLabel(loadingModel ? 'loading' : phase, rite, totalRites, elapsedMs)}
+                {weaveBusyStatus({
+                  phase: loadingModel ? 'loading' : phase,
+                  rite,
+                  total: totalRites,
+                  elapsedMs,
+                  ratio,
+                  historicalEstimateMs,
+                  queueTailEstimateMs,
+                })}
               </span>
               <span className="sr-only">
                 {loadingModel || phase === 'loading'

@@ -34,6 +34,9 @@ from pathlib import Path
 SAMPLE_RATE = 44100
 CHANNELS = 2
 TOTAL_RITES = 8
+MIN_SECONDS = 0.5
+# Stable Audio 3 Medium max length (6m 20s).
+MAX_SECONDS = 380.0
 
 _cancel = threading.Event()
 _model = None
@@ -97,6 +100,12 @@ def _python_float(value, default: float) -> float:
     if int(size) != 1:
         raise TypeError(f"expected a scalar, got shape {getattr(value, 'shape', None)}")
     return float(value.item())
+
+
+def clamp_seconds(seconds: float) -> float:
+    if not math.isfinite(seconds):
+        return 8.0
+    return max(MIN_SECONDS, min(MAX_SECONDS, seconds))
 
 
 def _write_wav(path: Path, frames: list[tuple[int, int]]) -> None:
@@ -675,7 +684,7 @@ def _generate_body(msg: dict) -> None:
     _apply_hf_token(msg)
     msg_id = msg["id"]
     prompt = str(msg.get("prompt", "")).strip()
-    seconds = _python_float(msg.get("seconds", 8), 8.0)
+    seconds = clamp_seconds(_python_float(msg.get("seconds", 8), 8.0))
     seed = int(_python_float(msg.get("seed", -1), -1.0))
     cfg = _python_float(msg.get("cfg", 1.0), 1.0)
     negative = str(msg.get("negative") or "") or None

@@ -24,3 +24,8 @@ Feature: Generate a prompt queue
     When the user uses Steel sword draw from the catalog
     Then the prompt is the sword draw text
     And Duration is 1.5 seconds
+
+  Scenario: Generate queue shows an estimated total time
+    Given the studio has generated a clip before
+    And Steel sword draw is in the generate queue
+    Then Generate queue shows an estimated duration

@@ -1,3 +1,5 @@
+import { clampGenerateSeconds } from '@/lib/duration'
+
 export type CatalogEffect = {
   id: string
   categoryId: string
@@ -46,7 +48,7 @@ function parseDuration(block: string): number | undefined {
   if (!match) return undefined
   const seconds = Number(match[1])
   if (!Number.isFinite(seconds) || seconds <= 0) return undefined
-  return Math.min(30, Math.max(0.5, seconds))
+  return clampGenerateSeconds(seconds)
 }
 
 function parseNegative(block: string): string {

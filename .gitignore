@@ -21,8 +21,8 @@ src-tauri/target
 src-tauri/gen
 engine/.venv
 engine/.hf-cache
-engine/__pycache__
-engine/**/*.pyc
+__pycache__
+*.pyc
 engine/output
 .coverage
 coverage

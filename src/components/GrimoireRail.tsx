@@ -1,4 +1,5 @@
 import { Hint } from '@/components/Hint'
+import { promptName } from '@/lib/filename'
 import { GENERATE_MODES, clipMode } from '@/lib/generateMode'
 import { extractInstruments } from '@/lib/instruments'
 import type { Clip, GenerateMode } from '@/lib/types'
@@ -34,7 +35,9 @@ export function GrimoireRail({
 }: GrimoireRailProps) {
   const filtered = clips.filter((c) => {
     const q = query.toLowerCase()
+    if (!q) return true
     if (c.prompt.toLowerCase().includes(q)) return true
+    if (promptName(c.prompt).toLowerCase().includes(q)) return true
     const names = c.instruments?.length ? c.instruments : extractInstruments(c.prompt)
     return names.some((name) => name.toLowerCase().includes(q))
   })
@@ -46,7 +49,7 @@ export function GrimoireRail({
         <Hint label="Sounds saved on this machine. Open a clip to load it in Generate.">
           <h2 className="font-display text-sm tracking-[0.2em] text-muted">LIBRARY</h2>
         </Hint>
-        <Hint className="mt-3 w-full" label="Filter clips by prompt text. Does not search the audio.">
+        <Hint className="mt-3 w-full" label="Filter clips by name or prompt text. Does not search the audio.">
           <Input
             className="w-full"
             value={query}
@@ -112,7 +115,7 @@ export function GrimoireRail({
                         selectedId === clip.id ? 'bg-leather-2' : 'hover:bg-leather-2/60'
                       }`}
                     >
-                      <p className="line-clamp-3 text-sm text-cream">{clip.prompt}</p>
+                      <p className="line-clamp-2 text-sm text-cream">{promptName(clip.prompt)}</p>
                       {instruments.length ? (
                         <p
                           className="mt-2 text-xs text-gold"

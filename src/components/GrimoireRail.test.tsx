@@ -77,4 +77,33 @@ describe('GrimoireRail', () => {
     )
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
   })
+
+  it('lists a prompt name instead of the full prompt', () => {
+    render(
+      <TooltipProvider>
+        <GrimoireRail
+          clips={[
+            {
+              id: '1',
+              prompt:
+                'TrackType: SFX, steel shortsword leaving a leather scabbard, close mic, dry studio, fast decay',
+              duration: 1.5,
+              seed: 1,
+              createdAt: new Date().toISOString(),
+              cfg: 1,
+              negative: '',
+            },
+          ]}
+          query=""
+          onQuery={() => undefined}
+          onSelect={() => undefined}
+          onStarter={() => undefined}
+          onDelete={() => undefined}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText('Steel shortsword leaving a leather scabbard')).toBeInTheDocument()
+    expect(screen.queryByText(/TrackType: SFX/i)).not.toBeInTheDocument()
+    expect(screen.queryByText(/close mic, dry studio/i)).not.toBeInTheDocument()
+  })
 })

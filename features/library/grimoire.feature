@@ -10,7 +10,13 @@ Feature: Library
     And Instrumental mode is selected
     Then three instrumental starter prompts are shown
 
-  Scenario: Choosing a clip loads the waveform
+  Scenario: Library cards show a prompt name
+    Given the library has a tavern door clip
+    Then the library lists Tavern door
+    And the full prompt is not shown
+
+  Scenario: Choosing a clip loads the waveform and prompt
     Given the library has a tavern door clip
     When that clip is chosen
     Then the waveform shows that clip
+    And the prompt is the tavern door text

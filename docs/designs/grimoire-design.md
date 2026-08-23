@@ -6,7 +6,7 @@
 
 ## Layout
 
-Library tab. Search. Newest first in a card grid. Empty: three starter cards for the current generate mode (sound effects or instrumental). Choosing a page opens Generate and matches that mode.
+Library tab. Search. Newest first in a card grid. Cards show a short **prompt name**, not the full prompt. Opening a clip loads Generate, where the full prompt is visible. Empty: three starter cards for the current generate mode (sound effects or instrumental). Choosing a page opens Generate and matches that mode.
 
 ## States
 

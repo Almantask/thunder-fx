@@ -1,0 +1,14 @@
+---
+description: Rebuild Thunder FX desktop exe after requests that change the shipped app
+alwaysApply: true
+---
+
+# Update the desktop exe before finishing
+
+When this request created or modified shipped app files, **update** `E:\thunder-fx-engine\thunder-fx.exe` before the final reply. Do not leave the user on a stale exe. Do not treat `npm run tauri:dev` or the Vite browser app as a replacement.
+
+Shipped paths: `src/`, `src-tauri/` (not `target/` or `gen/`), `engine/` (not `.venv`, `.hf-cache`, or `__pycache__`), plus `package.json`, `package-lock.json`, `index.html`, `vite.config.*`, `components.json`, and `tsconfig*.json`. Ignore test-only files (`*.test.*`, `*.spec.*`, `test_*.py`).
+
+1. Read `.cursor/skills/update-desktop-exe/SKILL.md` and run its rebuild script.
+2. Skip only when no shipped files changed, the user forbade a rebuild, or the session cannot write files.
+3. If the running app has the exe locked, stop those `thunder-fx` processes so the copy can succeed, then say the app was closed.

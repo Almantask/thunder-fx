@@ -13,27 +13,82 @@ function renderStudio() {
 }
 
 describe('Studio', () => {
-  it('opens on Generate with the incantation console', () => {
+  it('opens on Generate with the prompt console', () => {
     renderStudio()
     expect(screen.getByRole('tab', { name: 'Generate' })).toHaveAttribute('aria-selected', 'true')
-    expect(screen.getByRole('button', { name: /cast, generate sound/i })).toBeInTheDocument()
-    expect(screen.queryByLabelText('Search Grimoire')).not.toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /generate sound/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /model ready/i })).toBeInTheDocument()
+    expect(screen.queryByLabelText('Search library')).not.toBeInTheDocument()
   })
 
-  it('shows the Grimoire on Library and hides Cast', async () => {
+  it('shows the library on Library and hides Generate', async () => {
     const user = userEvent.setup()
     renderStudio()
     await user.click(screen.getByRole('tab', { name: 'Library' }))
-    expect(screen.getByLabelText('Search Grimoire')).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /cast, generate sound/i })).not.toBeInTheDocument()
+    expect(screen.getByLabelText('Search library')).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /generate sound/i })).not.toBeInTheDocument()
   })
 
-  it('shows the library folder and error ledger on Settings', async () => {
+  it('shows the library folder and error log on Settings', async () => {
     const user = userEvent.setup()
     renderStudio()
     await user.click(screen.getByRole('tab', { name: 'Settings' }))
     expect(screen.getByLabelText(/generated sounds folder/i)).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: /error log/i })).toBeInTheDocument()
-    expect(screen.queryByRole('button', { name: /cast, generate sound/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /generate sound/i })).not.toBeInTheDocument()
+  })
+
+  it('shows a loading bar while generating and then returns control', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+    await user.type(screen.getByRole('textbox', { name: 'Prompt' }), 'tavern door')
+    await user.click(screen.getByRole('button', { name: /generate sound/i }))
+    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
+    ).toBeInTheDocument()
+  })
+
+  it('switches to instrumental mode and generates a music clip', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+    await user.click(screen.getByRole('radio', { name: /instrumental/i }))
+    expect(screen.getByRole('radio', { name: /instrumental/i })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    )
+    expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveValue('TrackType: Music')
+    await user.click(screen.getByRole('button', { name: /advanced/i }))
+    expect(screen.getByLabelText(/negative prompt/i)).toHaveValue(
+      'vocals, singing, speech, lyrics, choir',
+    )
+    await user.type(screen.getByRole('textbox', { name: 'Prompt' }), ', lute tavern theme')
+    await user.click(screen.getByRole('button', { name: /generate music/i }))
+    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /generate music/i }, { timeout: 5000 }),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: 'Library' }))
+    expect(screen.getByText(/lute tavern theme/i)).toBeInTheDocument()
+    expect(screen.getByLabelText('Music clip')).toBeInTheDocument()
+    expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
+  })
+
+  it('loads a catalog prompt into a queue and generates it', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+    await user.click(screen.getByRole('button', { name: /prompt catalog/i }))
+    expect(screen.getByRole('dialog', { name: /prompt catalog/i })).toBeInTheDocument()
+    await user.click(screen.getByRole('checkbox', { name: /steel sword draw/i }))
+    await user.click(screen.getByRole('button', { name: /add selected/i }))
+    await user.keyboard('{Escape}')
+    expect(screen.getByText(/steel sword draw/i)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /generate queue/i }))
+    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('tab', { name: 'Library' }))
+    expect(screen.getByText(/steel shortsword/i)).toBeInTheDocument()
   })
 })

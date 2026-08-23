@@ -27,5 +27,6 @@ engine/output
 .coverage
 coverage
 .thunder-fx
+.cursor/hooks/state/exe-dirty.txt
 models
 *.tsbuildinfo

@@ -60,4 +60,40 @@ describe('CommandPalette', () => {
     await user.click(screen.getByRole('option', { name: /^generate$/i }))
     expect(onOpenGenerate).toHaveBeenCalled()
   })
+
+  it('offers Load model', async () => {
+    const user = userEvent.setup()
+    const onLoadModel = vi.fn()
+    render(
+      <TooltipProvider>
+        <CommandPalette {...props} onLoadModel={onLoadModel} />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('option', { name: /load model/i }))
+    expect(onLoadModel).toHaveBeenCalled()
+  })
+
+  it('offers Instrumental mode', async () => {
+    const user = userEvent.setup()
+    const onInstrumental = vi.fn()
+    render(
+      <TooltipProvider>
+        <CommandPalette {...props} onInstrumental={onInstrumental} />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('option', { name: /instrumental/i }))
+    expect(onInstrumental).toHaveBeenCalled()
+  })
+
+  it('offers Prompt catalog', async () => {
+    const user = userEvent.setup()
+    const onPromptCatalog = vi.fn()
+    render(
+      <TooltipProvider>
+        <CommandPalette {...props} onPromptCatalog={onPromptCatalog} />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('option', { name: /prompt catalog/i }))
+    expect(onPromptCatalog).toHaveBeenCalled()
+  })
 })

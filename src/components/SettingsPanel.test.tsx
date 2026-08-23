@@ -28,7 +28,7 @@ function renderPanel(initial: KeepSettings = DEFAULT_SETTINGS) {
 }
 
 describe('SettingsPanel', () => {
-  it('lets the keeper set where generated sounds are stored', async () => {
+  it('lets you set where generated sounds are stored', async () => {
     const user = userEvent.setup()
     renderPanel()
     const folder = screen.getByLabelText(/generated sounds folder/i)

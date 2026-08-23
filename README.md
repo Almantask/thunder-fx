@@ -1,10 +1,10 @@
 # Thunder FX
 
-A Windows-first desktop **spellbook for sound**: describe an effect, weave it locally with **Stable Audio 3 Medium**, trim it, export **WAV** / **OGG** for games and video.
+A Windows-first desktop app for **local sound effects and instrumental music**: describe a clip, generate it with **Stable Audio 3 Medium**, trim it, and export **WAV** / **OGG** for games and video.
 
-The UI is a D&D-inspired keep (candlelit, gold leaf, parchment well). It does **not** use Wizards of the Coast trademarks or art.
+The studio uses a dark gold-and-leather look. It does **not** use Wizards of the Coast trademarks or art.
 
-## Run the studio (UI + mock weave)
+## Run the app (UI + mock engine)
 
 Node 22+:
 
@@ -13,7 +13,11 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:1420. First Watch uses a **mock engine** so you can Cast without GPU weights. Mock audio is a deterministic impact tone, not Medium quality.
+On Generate, switch **Sound effects** (default) and **Instrumental**. Instrumental uses the same Medium engine with `TrackType: Music` prompts and a vocals-avoiding negative prompt. Named instruments from the prompt are written into the WAVE file as RIFF INFO tags.
+
+**Prompt catalog** loads the markdown pack in `prompts/`. Add effects (or a whole category) to a queue, then **Generate queue** to create them one after another. **Use** puts one prompt into Generate without queueing.
+
+**Load model** puts Medium into VRAM. **Generate** only creates a clip. After an app restart, load the model once so generation time is not mixed with that wait.
 
 ```bash
 npm test
@@ -29,7 +33,7 @@ Requires [Rust](https://rustup.rs/) and WebView2.
 npm run tauri:dev
 ```
 
-The sidecar is `engine/worker.py`. Desktop (`npm run tauri:dev`) prefers `engine/.venv` and runs CUDA Medium once that env is installed. Browser `npm run dev` still uses the mock engine. Force mock with `THUNDER_FX_MOCK_ENGINE=1`.
+The engine process is `engine/worker.py`. Desktop (`npm run tauri:dev`) prefers `engine/.venv` and runs CUDA Medium once that env is installed. Browser `npm run dev` still uses the mock engine. Force mock with `THUNDER_FX_MOCK_ENGINE=1`.
 
 ## CUDA Medium (top quality, local)
 
@@ -45,7 +49,7 @@ cd engine
 uv sync
 ```
 
-`pyproject.toml` pulls `stable-audio-3` from GitHub and a matching Windows FA2 wheel. If `import flash_attn` fails, First Watch will show the technical error — do not skip it.
+`pyproject.toml` pulls `stable-audio-3` from GitHub and a matching Windows FA2 wheel. If `import flash_attn` fails, setup will show the technical error — do not skip it.
 
 3. Run the worker (mock is off unless `THUNDER_FX_MOCK_ENGINE=1`):
 
@@ -53,20 +57,21 @@ uv sync
 engine\.venv\Scripts\python.exe -u engine\worker.py
 ```
 
-The CUDA venv is ~4 GB and Medium + T5Gemma weights are several more GB. If `C:` is full, set `UV_CACHE_DIR` and `HF_HUB_CACHE` to a larger drive and junction `engine/.venv` / `engine/.hf-cache` there. First Watch scribing downloads weights into `HF_HUB_CACHE` (needs a Hugging Face login that has accepted the Stability Community License and Gemma Terms).
+The CUDA venv is ~4 GB and Medium + T5Gemma weights are several more GB. If `C:` is full, set `UV_CACHE_DIR` and `HF_HUB_CACHE` to a larger drive and junction `engine/.venv` / `engine/.hf-cache` there. Setup downloads weights into `HF_HUB_CACHE` (needs a Hugging Face login that has accepted the Stability Community License and Gemma Terms).
 
 Quality settings are fixed: fp32, 8 steps, unchunked decode (retry chunked only on CUDA OOM).
 
 ## Layout
 
-- `src/` — React studio (Library, Generate, Settings; First Watch)
-- `engine/` — JSON-lines Python sidecar
-- `src-tauri/` — Tauri 2 window, trim, sidecar spawn
+- `src/` — React studio (Library, Generate, Settings; first-run setup)
+- `engine/` — JSON-lines Python engine
+- `src-tauri/` — Tauri 2 window, trim, engine spawn
 - `docs/designs/` — scene specs + HTML prototypes
 - `features/` — Gherkin acceptance specs
+- `prompts/` — game SFX prompt catalog (also loaded in Generate → Prompt catalog)
 
 App code is Apache-2.0 (see `LICENSE`). Model weights are downloaded separately and remain under Stability’s license.
 
 ## Release notes
 
-See [CHANGELOG.md](CHANGELOG.md) for 0.2.0 (Library / Generate / Settings tabs, error log, hover hints).
+See [CHANGELOG.md](CHANGELOG.md) for 0.3.0 (instrumental generate mode, prompt catalog queue) and 0.2.0 (Library / Generate / Settings tabs).

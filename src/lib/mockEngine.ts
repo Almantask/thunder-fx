@@ -1,4 +1,5 @@
-import { generateMockSfxWav, wavDurationSeconds } from '@/lib/wav'
+import { generateMockMusicWav, generateMockSfxWav, tagMusicWav, wavDurationSeconds } from '@/lib/wav'
+import { extractInstruments, musicWavInfo } from '@/lib/instruments'
 import type {
   Clip,
   EngineStatus,
@@ -27,7 +28,7 @@ function pickSeed(seed: number): number {
 export function mockProbe(): SetupProbe {
   return {
     ok: true,
-    flavor: 'The brazier catches. A mock weave is ready until CUDA Medium is installed.',
+    flavor: 'Mock engine is ready. Install CUDA Medium for full quality.',
     technical: 'THUNDER_FX_MOCK_ENGINE=1 — no PyTorch / Flash Attention loaded.',
     device: 'mock',
   }
@@ -37,6 +38,7 @@ export function mockStatus(): EngineStatus {
   return {
     ready: true,
     mock: true,
+    loaded: true,
     device: 'mock',
     message: 'Mock engine (install CUDA Medium for production quality).',
   }
@@ -50,19 +52,30 @@ export async function mockGenerate(
   const seed = pickSeed(request.seed)
   for (let step = 1; step <= TOTAL_RITES; step += 1) {
     if (handlers.signal?.aborted) {
-      throw new DOMException('Cast dispelled', 'AbortError')
+      throw new DOMException('Generation cancelled', 'AbortError')
     }
     handlers.onProgress?.({
       step,
       total: TOTAL_RITES,
       elapsedMs: Date.now() - started,
+      phase: 'weaving',
+      ratio: step / TOTAL_RITES,
     })
     const delay = handlers.stepDelayMs ?? 0
     if (delay > 0) {
       await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
-  const wav = generateMockSfxWav(request.seconds, seed)
+  const mode = request.mode === 'music' ? 'music' : 'sfx'
+  const instruments =
+    mode === 'music' ? (request.instruments ?? extractInstruments(request.prompt)) : []
+  let wav =
+    mode === 'music'
+      ? generateMockMusicWav(request.seconds, seed)
+      : generateMockSfxWav(request.seconds, seed)
+  if (mode === 'music') {
+    wav = tagMusicWav(wav, musicWavInfo(request.prompt, instruments))
+  }
   const clip: Clip = {
     id: randomId(),
     prompt: request.prompt.trim(),
@@ -71,6 +84,8 @@ export async function mockGenerate(
     createdAt: new Date().toISOString(),
     cfg: request.cfg,
     negative: request.negative,
+    mode,
+    instruments: instruments.length ? instruments : undefined,
   }
   return { clip, wav }
 }

@@ -5,7 +5,7 @@ Protocol (one JSON object per line):
 
   {"id":"1","cmd":"status"}
   {"id":"2","cmd":"probe"}
-  {"id":"3","cmd":"generate","prompt":"...","seconds":8,"seed":-1,"cfg":1.0,"negative":""}
+  {"id":"3","cmd":"generate","prompt":"...","seconds":8,"seed":-1,"cfg":1.0,"negative":"","mode":"music","instruments":["lute"]}
   {"id":"3","cmd":"cancel"}
   {"id":"4","cmd":"encode_ogg","wav_path":"...","ogg_path":"..."}
   {"id":"5","cmd":"warmup"}
@@ -20,6 +20,7 @@ import json
 import math
 import os
 import random
+import re
 import struct
 import sys
 import threading
@@ -27,6 +28,7 @@ import time
 import traceback
 import uuid
 import wave
+from contextlib import contextmanager
 from pathlib import Path
 
 SAMPLE_RATE = 44100
@@ -107,6 +109,175 @@ def _write_wav(path: Path, frames: list[tuple[int, int]]) -> None:
         wav.writeframes(packed)
 
 
+_INSTRUMENT_TERMS = (
+    ("acoustic guitar", "acoustic guitar"),
+    ("classical guitar", "classical guitar"),
+    ("electric guitar", "electric guitar"),
+    ("plucked strings", "strings"),
+    ("double bass", "double bass"),
+    ("french horn", "french horn"),
+    ("english horn", "english horn"),
+    ("steel drum", "steel drum"),
+    ("hurdy-gurdy", "hurdy-gurdy"),
+    ("pan flute", "pan flute"),
+    ("woodwinds", "woodwinds"),
+    ("woodwind", "woodwinds"),
+    ("synthesizer", "synth"),
+    ("harpsichord", "harpsichord"),
+    ("glockenspiel", "glockenspiel"),
+    ("percussion", "percussion"),
+    ("accordion", "accordion"),
+    ("bagpipes", "bagpipes"),
+    ("mandolin", "mandolin"),
+    ("clarinet", "clarinet"),
+    ("trombone", "trombone"),
+    ("trumpet", "trumpet"),
+    ("bassoon", "bassoon"),
+    ("piccolo", "piccolo"),
+    ("dulcimer", "dulcimer"),
+    ("ocarina", "ocarina"),
+    ("bodhran", "bodhran"),
+    ("timpani", "timpani"),
+    ("strings", "strings"),
+    ("violin", "violin"),
+    ("fiddle", "fiddle"),
+    ("guitar", "guitar"),
+    ("piano", "piano"),
+    ("cello", "cello"),
+    ("viola", "viola"),
+    ("flute", "flute"),
+    ("brass", "brass"),
+    ("drums", "drums"),
+    ("organ", "organ"),
+    ("banjo", "banjo"),
+    ("harp", "harp"),
+    ("lute", "lute"),
+    ("oboe", "oboe"),
+    ("horn", "horn"),
+    ("tuba", "tuba"),
+    ("bass", "bass"),
+    ("drum", "drums"),
+    ("synth", "synth"),
+    ("chimes", "chimes"),
+    ("bells", "bells"),
+)
+
+
+def _fold_text(text: str) -> str:
+    import unicodedata
+
+    return "".join(
+        ch for ch in unicodedata.normalize("NFD", text.lower()) if unicodedata.category(ch) != "Mn"
+    )
+
+
+def extract_instruments(prompt: str) -> list[str]:
+    hay = _fold_text(prompt)
+    hits: list[tuple[int, str]] = []
+    occupied: list[tuple[int, int]] = []
+    for term, name in sorted(_INSTRUMENT_TERMS, key=lambda item: -len(item[0])):
+        start = 0
+        while True:
+            idx = hay.find(term, start)
+            if idx < 0:
+                break
+            before = hay[idx - 1] if idx > 0 else " "
+            after_i = idx + len(term)
+            after = hay[after_i] if after_i < len(hay) else " "
+            if (not before.isalnum()) and (not after.isalnum()):
+                if not any(idx < end and after_i > begin for begin, end in occupied):
+                    hits.append((idx, name))
+                    occupied.append((idx, after_i))
+            start = idx + 1
+    hits.sort()
+    names: list[str] = []
+    seen: set[str] = set()
+    for _, name in hits:
+        if name in seen:
+            continue
+        seen.add(name)
+        names.append(name)
+    return names
+
+
+def _resolve_instruments(msg: dict, prompt: str) -> list[str]:
+    raw = msg.get("instruments")
+    if isinstance(raw, list):
+        names = [str(item).strip() for item in raw if str(item).strip()]
+        if names:
+            return names
+    if _wants_music(msg):
+        return extract_instruments(prompt)
+    return []
+
+
+def _music_info_fields(prompt: str, instruments: list[str]) -> dict[str, str]:
+    fields = {"ISFT": "Thunder FX", "IGNR": "Instrumental"}
+    title = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).strip()
+    if title:
+        fields["INAM"] = title[:80]
+    if instruments:
+        fields["IKEY"] = ";".join(instruments)
+        fields["ICMT"] = "Instruments: " + ", ".join(instruments)
+    return fields
+
+
+def _info_subchunk(tag: bytes, text: str) -> bytes:
+    payload = text.encode("latin-1", "replace") + b"\x00"
+    pad = b"\x00" if len(payload) % 2 else b""
+    return tag + struct.pack("<I", len(payload)) + payload + pad
+
+
+def _list_info_chunk(fields: dict[str, str]) -> bytes:
+    body = b"INFO"
+    for key in ("INAM", "IGNR", "ISFT", "IKEY", "ICMT"):
+        value = fields.get(key, "").strip()
+        if value:
+            body += _info_subchunk(key.encode("ascii"), value)
+    pad = b"\x00" if len(body) % 2 else b""
+    return b"LIST" + struct.pack("<I", len(body)) + body + pad
+
+
+def embed_wav_info(path: Path, fields: dict[str, str]) -> None:
+    if not fields:
+        return
+    data = path.read_bytes()
+    if data[0:4] != b"RIFF" or data[8:12] != b"WAVE":
+        return
+    list_chunk = _list_info_chunk(fields)
+    offset = 12
+    while offset + 8 <= len(data):
+        chunk_id = data[offset : offset + 4]
+        size = struct.unpack_from("<I", data, offset + 4)[0]
+        next_off = offset + 8 + size + (size % 2)
+        if chunk_id == b"fmt ":
+            patched = data[:next_off] + list_chunk + data[next_off:]
+            patched = patched[:4] + struct.pack("<I", len(patched) - 8) + patched[8:]
+            path.write_bytes(patched)
+            return
+        offset = next_off
+
+
+def read_wav_info(path: Path) -> dict[str, str]:
+    data = path.read_bytes()
+    offset = 12
+    fields: dict[str, str] = {}
+    while offset + 8 <= len(data):
+        chunk_id = data[offset : offset + 4]
+        size = struct.unpack_from("<I", data, offset + 4)[0]
+        body = data[offset + 8 : offset + 8 + size]
+        if chunk_id == b"LIST" and body[:4] == b"INFO":
+            cursor = 4
+            while cursor + 8 <= len(body):
+                tag = body[cursor : cursor + 4].decode("ascii", "replace")
+                sub = struct.unpack_from("<I", body, cursor + 4)[0]
+                raw = body[cursor + 8 : cursor + 8 + sub]
+                fields[tag] = raw.split(b"\x00", 1)[0].decode("latin-1", "replace")
+                cursor += 8 + sub + (sub % 2)
+        offset += 8 + size + (size % 2)
+    return fields
+
+
 def _to_stereo_cpu(audio):
     """SA3 returns [batch, channels, samples]. Export wants [channels, samples]."""
     import torch
@@ -142,10 +313,33 @@ def _save_generated_wav(path: Path, audio) -> None:
         out.writeframes(interleaved)
 
 
-def _mock_pcm(seconds: float, seed: int) -> list[tuple[int, int]]:
+def _wants_music(msg: dict) -> bool:
+    mode = str(msg.get("mode") or "").strip().lower()
+    if mode in {"music", "instrumental"}:
+        return True
+    prompt = str(msg.get("prompt") or "")
+    return bool(re.search(r"tracktype:\s*music\b", prompt, re.I))
+
+
+def _mock_pcm(seconds: float, seed: int, *, music: bool = False) -> list[tuple[int, int]]:
     rng = random.Random(seed if seed > 0 else 1)
     n = max(1, int(seconds * SAMPLE_RATE))
     frames: list[tuple[int, int]] = []
+    if music:
+        roots = (261.63, 329.63, 392.0, 349.23)
+        for i in range(n):
+            t = i / SAMPLE_RATE
+            root = roots[int(t / 0.5) % len(roots)]
+            fifth = root * 1.5
+            octv = root * 2
+            pulse = 0.72 + 0.18 * math.sin(2 * math.pi * 2 * t)
+            melody = math.sin(2 * math.pi * octv * t) * 0.22
+            drone = math.sin(2 * math.pi * root * t) * 0.28 + math.sin(2 * math.pi * fifth * t) * 0.16
+            air = (rng.random() * 2 - 1) * 0.02
+            sample = max(-1.0, min(1.0, (drone + melody + air) * pulse))
+            v = int(sample * 0.7 * 32767)
+            frames.append((v, int(v * 0.94)))
+        return frames
     for i in range(n):
         t = i / SAMPLE_RATE
         env = math.exp(-t * 3.2) * (1.0 if t >= 0.012 else t / 0.012)
@@ -162,6 +356,128 @@ def _emit(payload: dict) -> None:
     with _stdout_lock:
         sys.stdout.write(json.dumps(payload) + "\n")
         sys.stdout.flush()
+
+
+def _emit_progress(
+    msg_id,
+    started: float,
+    *,
+    step: int,
+    phase: str,
+    ratio: float | None = None,
+    message: str = "",
+) -> None:
+    payload: dict = {
+        "id": msg_id,
+        "event": "progress",
+        "step": int(step),
+        "total": TOTAL_RITES,
+        "elapsedMs": int((time.time() - started) * 1000),
+        "phase": phase,
+    }
+    if ratio is not None:
+        payload["ratio"] = float(ratio)
+    if message:
+        payload["message"] = message
+    _emit(payload)
+
+
+class _Heartbeat:
+    """Keep the loading bar alive while CUDA or Hugging Face blocks."""
+
+    def __init__(self, msg_id, started: float, phase: str = "loading") -> None:
+        self._stop = threading.Event()
+        self._lock = threading.Lock()
+        self._phase = phase
+        self._step = 0
+        self._ratio: float | None = None
+        self._msg_id = msg_id
+        self._started = started
+        self._thread = threading.Thread(
+            target=self._run, name="thunder-fx-heartbeat", daemon=True
+        )
+
+    def start(self) -> _Heartbeat:
+        self._thread.start()
+        return self
+
+    def update(
+        self,
+        *,
+        phase: str | None = None,
+        step: int | None = None,
+        ratio: float | None = None,
+    ) -> None:
+        with self._lock:
+            if phase is not None:
+                self._phase = phase
+            if step is not None:
+                self._step = step
+            if ratio is not None:
+                self._ratio = ratio
+
+    def stop(self) -> None:
+        self._stop.set()
+        self._thread.join(timeout=1.0)
+
+    def _snapshot(self) -> tuple[str, int, float | None]:
+        with self._lock:
+            return self._phase, self._step, self._ratio
+
+    def _run(self) -> None:
+        while not self._stop.wait(0.25):
+            phase, step, ratio = self._snapshot()
+            _emit_progress(self._msg_id, self._started, step=step, phase=phase, ratio=ratio)
+
+
+@contextmanager
+def _hub_progress(heartbeat: _Heartbeat):
+    """Forward Hugging Face / tqdm download ratios when weights are still missing."""
+
+    restore = []
+
+    def on_ratio(ratio: float) -> None:
+        if ratio > 0:
+            heartbeat.update(phase="loading", ratio=min(1.0, ratio))
+
+    try:
+        from tqdm.auto import tqdm as BaseTqdm
+    except Exception:
+        try:
+            from tqdm import tqdm as BaseTqdm
+        except Exception:
+            BaseTqdm = None  # type: ignore[assignment]
+
+    if BaseTqdm is not None:
+
+        class EmitTqdm(BaseTqdm):
+            def update(self, n=1):
+                result = super().update(n)
+                total = getattr(self, "total", None) or 0
+                current = getattr(self, "n", 0) or 0
+                if total:
+                    on_ratio(current / total)
+                return result
+
+        for mod_name in ("huggingface_hub.utils.tqdm", "tqdm.auto", "tqdm"):
+            try:
+                mod = __import__(mod_name, fromlist=["tqdm"])
+            except Exception:
+                continue
+            original = getattr(mod, "tqdm", None)
+            if original is None:
+                continue
+            setattr(mod, "tqdm", EmitTqdm)
+            restore.append((mod, original))
+
+    try:
+        yield
+    finally:
+        for mod, original in restore:
+            try:
+                setattr(mod, "tqdm", original)
+            except Exception:
+                pass
 
 
 def _logs_dir() -> Path:
@@ -270,6 +586,7 @@ def cmd_status(msg_id: str) -> None:
             "event": "status",
             "ready": ready,
             "mock": mock,
+            "loaded": True if mock else _model is not None,
             "device": device,
             "message": message,
         }
@@ -285,7 +602,7 @@ def cmd_probe(msg_id: str, msg: dict | None = None) -> None:
                 "id": msg_id,
                 "event": "probe",
                 "ok": True,
-                "flavor": "The brazier catches. A mock weave is ready until CUDA Medium is installed.",
+                "flavor": "Mock engine is ready. Install CUDA Medium for full quality.",
                 "technical": "THUNDER_FX_MOCK_ENGINE=1 — no PyTorch / Flash Attention loaded.",
                 "device": "mock",
             }
@@ -322,9 +639,9 @@ def cmd_probe(msg_id: str, msg: dict | None = None) -> None:
         ok = False
         technical.append(f"stable_audio_3 import failed: {exc}")
     flavor = (
-        "The brazier is lit."
+        "The hardware looks good."
         if ok
-        else "The signs fail. The keep cannot host Medium until CUDA and Flash Attention are present."
+        else "Hardware check failed. CUDA and Flash Attention are required for Medium."
     )
     _emit(
         {
@@ -340,7 +657,7 @@ def cmd_probe(msg_id: str, msg: dict | None = None) -> None:
 
 def cmd_generate(msg: dict) -> None:
     if not _gen_lock.acquire(blocking=False):
-        _emit_error(msg.get("id"), "A weave is already in progress")
+        _emit_error(msg.get("id"), "A generation or model load is already in progress")
         return
 
     def run() -> None:
@@ -371,19 +688,21 @@ def _generate_body(msg: dict) -> None:
     if mock:
         for step in range(1, TOTAL_RITES + 1):
             if _cancel.is_set():
-                _emit_error(msg_id, "Cast dispelled", log=False)
+                _emit_error(msg_id, "Generation cancelled", log=False)
                 return
-            _emit(
-                {
-                    "id": msg_id,
-                    "event": "progress",
-                    "step": step,
-                    "total": TOTAL_RITES,
-                    "elapsedMs": int((time.time() - started) * 1000),
-                }
+            _emit_progress(
+                msg_id,
+                started,
+                step=step,
+                phase="weaving",
+                ratio=step / TOTAL_RITES,
             )
             time.sleep(_mock_step_s())
-        _write_wav(out, _mock_pcm(seconds, seed))
+        music = _wants_music(msg)
+        _write_wav(out, _mock_pcm(seconds, seed, music=music))
+        instruments = _resolve_instruments(msg, prompt)
+        if music:
+            embed_wav_info(out, _music_info_fields(prompt, instruments))
         _emit(
             {
                 "id": msg_id,
@@ -392,46 +711,27 @@ def _generate_body(msg: dict) -> None:
                 "seed": seed,
                 "duration": seconds,
                 "prompt": prompt,
+                "instruments": instruments,
             }
         )
         return
 
-    model = _try_load_model()
-    for step in range(1, TOTAL_RITES + 1):
-        if _cancel.is_set():
-            _emit_error(msg_id, "Cast dispelled", log=False)
-            return
-        _emit(
-            {
-                "id": msg_id,
-                "event": "progress",
-                "step": step,
-                "total": TOTAL_RITES,
-                "elapsedMs": int((time.time() - started) * 1000),
-            }
-        )
-    chunked = False
-    gen_context = {
-        "cmd": "generate",
-        "prompt": prompt,
-        "seconds": seconds,
-        "seed": seed,
-        "cfg": cfg,
-    }
+    if _model is None:
+        _emit_error(msg_id, "The model is not loaded. Click Load model first.")
+        return
+    model = _model
+    heartbeat = _Heartbeat(msg_id, started, "weaving").start()
     try:
-        audio = model.generate(
-            prompt=prompt,
-            duration=seconds,
-            steps=8,
-            seed=seed,
-            cfg_scale=cfg,
-            negative_prompt=negative,
-            chunked_decode=False,
-        )
-    except Exception as exc:  # noqa: BLE001
-        if "out of memory" in str(exc).lower() or "oom" in str(exc).lower():
-            _log_error("CUDA OOM; retrying with chunked decode", exc, context=gen_context)
-            chunked = True
+        _emit_progress(msg_id, started, step=0, phase="weaving")
+        chunked = False
+        gen_context = {
+            "cmd": "generate",
+            "prompt": prompt,
+            "seconds": seconds,
+            "seed": seed,
+            "cfg": cfg,
+        }
+        try:
             audio = model.generate(
                 prompt=prompt,
                 duration=seconds,
@@ -439,32 +739,59 @@ def _generate_body(msg: dict) -> None:
                 seed=seed,
                 cfg_scale=cfg,
                 negative_prompt=negative,
-                chunked_decode=True,
+                chunked_decode=False,
             )
-        else:
-            _emit_error(msg_id, str(exc), exc, context=gen_context)
-            return
-    try:
-        _save_generated_wav(out, audio)
-    except Exception as exc:  # noqa: BLE001
-        _emit_error(
+        except Exception as exc:  # noqa: BLE001
+            if "out of memory" in str(exc).lower() or "oom" in str(exc).lower():
+                _log_error("CUDA OOM; retrying with chunked decode", exc, context=gen_context)
+                chunked = True
+                audio = model.generate(
+                    prompt=prompt,
+                    duration=seconds,
+                    steps=8,
+                    seed=seed,
+                    cfg_scale=cfg,
+                    negative_prompt=negative,
+                    chunked_decode=True,
+                )
+            else:
+                _emit_error(msg_id, str(exc), exc, context=gen_context)
+                return
+        heartbeat.update(phase="writing", step=TOTAL_RITES, ratio=0.95)
+        _emit_progress(
             msg_id,
-            f"failed to write WAV: {exc}",
-            exc,
-            context=gen_context,
+            started,
+            step=TOTAL_RITES,
+            phase="writing",
+            ratio=0.95,
         )
-        return
-    _emit(
-        {
-            "id": msg_id,
-            "event": "done",
-            "path": str(out),
-            "seed": seed,
-            "duration": seconds,
-            "prompt": prompt,
-            "chunkedDecode": chunked,
-        }
-    )
+        try:
+            _save_generated_wav(out, audio)
+        except Exception as exc:  # noqa: BLE001
+            _emit_error(
+                msg_id,
+                f"failed to write WAV: {exc}",
+                exc,
+                context=gen_context,
+            )
+            return
+        instruments = _resolve_instruments(msg, prompt)
+        if _wants_music(msg):
+            embed_wav_info(out, _music_info_fields(prompt, instruments))
+        _emit(
+            {
+                "id": msg_id,
+                "event": "done",
+                "path": str(out),
+                "seed": seed,
+                "duration": seconds,
+                "prompt": prompt,
+                "chunkedDecode": chunked,
+                "instruments": instruments,
+            }
+        )
+    finally:
+        heartbeat.stop()
 
 
 def cmd_encode_ogg(msg: dict) -> None:
@@ -483,23 +810,43 @@ def cmd_encode_ogg(msg: dict) -> None:
 
 
 def cmd_warmup(msg: dict) -> None:
+    if not _gen_lock.acquire(blocking=False):
+        _emit_error(msg.get("id"), "A generation or model load is already in progress")
+        return
+
+    def run() -> None:
+        try:
+            _warmup_body(msg)
+        except Exception as exc:  # noqa: BLE001
+            _emit_error(msg.get("id"), str(exc), exc, context={"cmd": "warmup"})
+        finally:
+            _gen_lock.release()
+
+    threading.Thread(target=run, name="thunder-fx-warmup", daemon=True).start()
+
+
+def _warmup_body(msg: dict) -> None:
     _apply_hf_token(msg)
     msg_id = msg.get("id")
+    _cancel.clear()
     if _env_mock():
-        _emit({"id": msg_id, "event": "done", "message": "Mock engine — no weights to scribe."})
+        _emit({"id": msg_id, "event": "done", "message": "Mock engine — no model download needed."})
+        return
+    if _model is not None:
+        _emit({"id": msg_id, "event": "done", "message": "Medium already loaded."})
         return
     started = time.time()
-    _emit(
-        {
-            "id": msg_id,
-            "event": "progress",
-            "step": 1,
-            "total": TOTAL_RITES,
-            "elapsedMs": 0,
-        }
-    )
+    heartbeat = _Heartbeat(msg_id, started, "loading").start()
     try:
-        _try_load_model()
+        _emit_progress(msg_id, started, step=0, phase="loading", message="Loading model")
+        with _hub_progress(heartbeat):
+            _try_load_model()
+        if _cancel.is_set():
+            _emit_error(msg_id, "Model load cancelled", log=False)
+            return
+        if _model is None:
+            _emit_error(msg_id, "Medium failed to load")
+            return
         _emit(
             {
                 "id": msg_id,
@@ -510,6 +857,8 @@ def cmd_warmup(msg: dict) -> None:
         )
     except Exception as exc:  # noqa: BLE001
         _emit_error(msg_id, str(exc), exc, context={"cmd": "warmup"})
+    finally:
+        heartbeat.stop()
 
 
 def main() -> None:

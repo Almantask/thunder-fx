@@ -87,6 +87,7 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(msg["event"], "status")
         self.assertTrue(msg["mock"])
         self.assertTrue(msg["ready"])
+        self.assertTrue(msg["loaded"])
 
     def test_generate_writes_wav(self) -> None:
         self.client.send(
@@ -113,6 +114,95 @@ class WorkerTests(unittest.TestCase):
         self.assertTrue(Path(done["path"]).is_file())
         self.assertGreater(Path(done["path"]).stat().st_size, 44)
         self.assertEqual(done["seed"], 7)
+
+    def test_generate_music_mock_differs_from_sfx(self) -> None:
+        def run(msg_id: str, mode: str, prompt: str) -> Path:
+            self.client.send(
+                {
+                    "id": msg_id,
+                    "cmd": "generate",
+                    "prompt": prompt,
+                    "seconds": 0.4,
+                    "seed": 7,
+                    "cfg": 1,
+                    "negative": "",
+                    "mode": mode,
+                }
+            )
+            while True:
+                msg = self.client.read()
+                if msg.get("id") != msg_id:
+                    continue
+                if msg.get("event") == "error":
+                    self.fail(msg.get("message"))
+                if msg.get("event") == "done":
+                    return Path(msg["path"])
+
+        sfx = run("gs", "sfx", "sword clang")
+        music = run("gm", "music", "TrackType: Music, lute")
+        self.assertNotEqual(sfx.read_bytes(), music.read_bytes())
+        with wave.open(str(music), "rb") as wav:
+            frames = wav.readframes(wav.getnframes())
+        tail = memoryview(frames).cast("h")[-882:]
+        self.assertGreater(max(abs(s) for s in tail), 2000)
+
+    def test_generate_music_embeds_instrument_info(self) -> None:
+        self.client.send(
+            {
+                "id": "gi",
+                "cmd": "generate",
+                "prompt": "TrackType: Music, lute and cello, no vocals",
+                "seconds": 0.4,
+                "seed": 7,
+                "cfg": 1,
+                "negative": "",
+                "mode": "music",
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "gi":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        self.assertEqual(done.get("instruments"), ["lute", "cello"])
+        from worker import read_wav_info
+
+        info = read_wav_info(Path(done["path"]))
+        self.assertEqual(info.get("IKEY"), "lute;cello")
+        self.assertIn("lute", info.get("ICMT", ""))
+        self.assertEqual(info.get("ISFT"), "Thunder FX")
+
+    def test_generate_progress_includes_weaving_phase(self) -> None:
+        self.client.send(
+            {
+                "id": "gp",
+                "cmd": "generate",
+                "prompt": "loading bar",
+                "seconds": 0.3,
+                "seed": 2,
+                "cfg": 1,
+                "negative": "",
+            }
+        )
+        phases = []
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "gp":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "progress":
+                phases.append(msg.get("phase"))
+                self.assertIn("ratio", msg)
+            if msg.get("event") == "done":
+                break
+        self.assertIn("weaving", phases)
+        self.assertNotIn("loading", phases)
 
     def test_generate_honors_library_dir_in_message(self) -> None:
         other = Path(self._tmp.name) / "custom-library"
@@ -166,16 +256,19 @@ class WorkerTests(unittest.TestCase):
                 terminal = msg
                 break
         self.assertEqual(terminal["event"], "error")
-        self.assertIn("dispelled", terminal["message"].lower())
+        self.assertIn("cancelled", terminal["message"].lower())
         log = self.library / "error.log"
         if log.is_file():
-            self.assertNotIn("Cast dispelled", log.read_text(encoding="utf-8"))
+            self.assertNotIn("Generation cancelled", log.read_text(encoding="utf-8"))
 
     def test_warmup_skips_weights_in_mock(self) -> None:
         self.client.send({"id": "w", "cmd": "warmup"})
         msg = self.client.read()
         self.assertEqual(msg["event"], "done")
         self.assertIn("mock", msg["message"].lower())
+        self.client.send({"id": "s2", "cmd": "status"})
+        status = self.client.read()
+        self.assertTrue(status["loaded"])
 
     def test_encode_ogg(self) -> None:
         try:

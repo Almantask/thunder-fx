@@ -7,7 +7,22 @@ export type PlaybackHandle = {
 }
 
 export async function createPlayback(buffer: ArrayBuffer): Promise<PlaybackHandle> {
-  const ctx = new AudioContext()
+  const Ctx = globalThis.AudioContext
+  if (typeof Ctx === 'undefined') {
+    let offset = 0
+    return {
+      async play() {},
+      stop() {},
+      seek(seconds) {
+        offset = seconds
+      },
+      getCurrentTime() {
+        return offset
+      },
+      dispose() {},
+    }
+  }
+  const ctx = new Ctx()
   const decoded = await ctx.decodeAudioData(buffer.slice(0))
   let source: AudioBufferSourceNode | null = null
   let startedAt = 0

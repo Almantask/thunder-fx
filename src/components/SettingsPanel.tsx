@@ -42,18 +42,18 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
       <ScrollArea className="min-h-0 flex-1">
         <div className="mx-auto w-full max-w-3xl space-y-8 px-6 py-6">
           <div>
-            <Hint label="Local keep. Thunder FX does not add sliders that lower Medium quality.">
+            <Hint label="Local settings. Thunder FX does not add sliders that lower Medium quality.">
               <h2 className="font-display text-xl text-cream">Settings</h2>
             </Hint>
             <p className="mt-1 text-sm text-muted">
-              Where weaves land, where exports prefer to go, and the error ledger.
+              Where generated sounds are stored, where exports prefer to go, and the error log.
             </p>
           </div>
 
           <div className="space-y-4">
             <Hint
               className="w-full flex-col"
-              label="Folder where Cast writes WAV files. Empty uses the default under Local AppData."
+              label="Folder where Generate writes WAV files. Empty uses the default under Local AppData."
             >
               <div className="w-full">
                 <Label htmlFor="library-dir">Generated sounds folder</Label>
@@ -68,7 +68,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             </Hint>
             {isTauri() ? (
               <div className="flex flex-wrap gap-2">
-                <Hint label="Pick a folder in Explorer. New Casts write WAV files there.">
+                <Hint label="Pick a folder in Explorer. New generations write WAV files there.">
                   <Button type="button" variant="outline" onClick={() => void browseLibrary()}>
                     Browse
                   </Button>
@@ -85,7 +85,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
               </div>
             ) : (
               <p className="text-xs text-muted">
-                Browser weaves stay in IndexedDB. Desktop Casts write WAV files to this folder
+                Browser generations stay in IndexedDB. The desktop app writes WAV files to this folder
                 ({DEFAULT_LIBRARY_PLACEHOLDER} by default).
               </p>
             )}
@@ -110,7 +110,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
           <div className="space-y-4">
             <Hint
               className="w-full flex-col"
-              label="Gated-repo token (hf_…). Used for Scribing and Casts. Never sent anywhere except Hugging Face."
+              label="Gated-repo token (hf_…). Used for model download and generation. Never sent anywhere except Hugging Face."
             >
               <div className="w-full">
                 <Label htmlFor="hf-token">Hugging Face token (optional)</Label>
@@ -126,7 +126,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             </Hint>
             <Hint
               className="w-full flex-col"
-              label="Duration pre-filled in the incantation console for new Casts. 0.5–30 seconds."
+              label="Duration pre-filled in the prompt for new sound-effect generations. 0.5–30 seconds. Instrumental mode starts at 20s unless you already changed the slider."
             >
               <div className="w-full">
                 <Label htmlFor="default-duration">Default duration (seconds)</Label>
@@ -147,7 +147,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
           </div>
 
           <div>
-            <Hint label="Where Cast failures are appended, including Python tracebacks.">
+            <Hint label="Where generation failures are appended, including Python tracebacks.">
               <Label>Error log path</Label>
             </Hint>
             <Hint className="mt-1 w-full" label="Full path of error.log on this machine.">

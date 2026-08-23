@@ -1,3 +1,5 @@
+export type GenerateMode = 'sfx' | 'music'
+
 export type Clip = {
   id: string
   prompt: string
@@ -6,19 +8,27 @@ export type Clip = {
   createdAt: string
   cfg: number
   negative: string
+  mode?: GenerateMode
+  instruments?: string[]
 }
 
 export type EngineStatus = {
   ready: boolean
   mock: boolean
+  loaded: boolean
   device: string
   message: string
 }
+
+export type WeavePhase = 'loading' | 'weaving' | 'writing'
 
 export type WeaveProgress = {
   step: number
   total: number
   elapsedMs: number
+  phase?: WeavePhase
+  ratio?: number
+  message?: string
 }
 
 export type GenerateRequest = {
@@ -28,6 +38,8 @@ export type GenerateRequest = {
   cfg: number
   negative: string
   libraryDir?: string
+  mode?: GenerateMode
+  instruments?: string[]
 }
 
 export type GenerateResult = {
@@ -52,6 +64,7 @@ export type KeepSettings = {
   alwaysOnTop: boolean
   defaultExportDir: string
   libraryDir: string
+  generateMode: GenerateMode
 }
 
 export type KeepTab = 'library' | 'generate' | 'settings'
@@ -62,6 +75,7 @@ export const DEFAULT_SETTINGS: KeepSettings = {
   alwaysOnTop: false,
   defaultExportDir: '',
   libraryDir: '',
+  generateMode: 'sfx',
 }
 
 export const DEFAULT_LIBRARY_PLACEHOLDER = '%LOCALAPPDATA%\\thunder-fx\\library'

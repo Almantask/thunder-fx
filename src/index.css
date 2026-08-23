@@ -126,3 +126,25 @@ body {
     animation: none;
   }
 }
+
+@keyframes weave-indeterminate {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+
+.progress-indeterminate {
+  width: 35%;
+  animation: weave-indeterminate 1.35s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-indeterminate {
+    animation: none;
+    width: 100%;
+    opacity: 0.55;
+  }
+}

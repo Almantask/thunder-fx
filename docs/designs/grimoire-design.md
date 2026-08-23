@@ -6,7 +6,7 @@
 
 ## Layout
 
-Library tab. Search. Newest first in a card grid. Empty: three starter incantation cards. Choosing a page opens Generate.
+Library tab. Search. Newest first in a card grid. Empty: three starter cards for the current generate mode (sound effects or instrumental). Choosing a page opens Generate and matches that mode.
 
 ## States
 

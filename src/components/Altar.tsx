@@ -46,15 +46,15 @@ export function Altar({
 }: AltarProps) {
   return (
     <aside className="flex w-[220px] shrink-0 flex-col gap-3 border-l border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather p-3">
-      <Hint label="Preview, trim, and export the weave currently on the Scroll.">
-        <h2 className="font-display text-sm tracking-[0.2em] text-muted">ALTAR</h2>
+      <Hint label="Preview, trim, and export the clip on the waveform.">
+        <h2 className="font-display text-sm tracking-[0.2em] text-muted">PREVIEW</h2>
       </Hint>
       <div className="flex flex-wrap gap-2">
         <Hint
           label={
             playing
               ? 'Stop playback of the trimmed region.'
-              : 'Play the trimmed region (In to Out) through the keep speakers.'
+              : 'Play the trimmed region (In to Out).'
           }
         >
           <Button
@@ -84,7 +84,7 @@ export function Altar({
           </Button>
         </Hint>
       </div>
-      <Hint className="w-full flex-col" label="Export start time in seconds. Drag the left gold handle on the Scroll, or type here.">
+      <Hint className="w-full flex-col" label="Export start time in seconds. Drag the left gold handle on the waveform, or type here.">
         <div className="w-full">
           <Label htmlFor="trim-in">In</Label>
           <Input
@@ -96,7 +96,7 @@ export function Altar({
           />
         </div>
       </Hint>
-      <Hint className="w-full flex-col" label="Export end time in seconds. Drag the right gold handle on the Scroll, or type here.">
+      <Hint className="w-full flex-col" label="Export end time in seconds. Drag the right gold handle on the waveform, or type here.">
         <div className="w-full">
           <Label htmlFor="trim-out">Out</Label>
           <Input
@@ -126,7 +126,7 @@ export function Altar({
             <Download /> Export WAV
           </Button>
         </Hint>
-        <Hint className="w-full" label="Other containers. OGG Vorbis is smaller; the sidecar encodes it.">
+        <Hint className="w-full" label="Other formats. OGG Vorbis is smaller; the engine encodes it.">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="ghost" className="w-full" disabled={!hasClip || weaving}>
@@ -135,7 +135,7 @@ export function Altar({
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem
-                title="Encode the trim as OGG Vorbis through the sidecar. Smaller than WAV."
+                title="Encode the trim as OGG Vorbis. Smaller than WAV."
                 onSelect={onExportOgg}
               >
                 Export OGG Vorbis

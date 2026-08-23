@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Altar } from '@/components/Altar'
 import { CommandPalette } from '@/components/CommandPalette'
 import { GrimoireRail } from '@/components/GrimoireRail'
 import { IncantationConsole } from '@/components/IncantationConsole'
+import { PromptCatalogDialog } from '@/components/PromptCatalogDialog'
 import { ScrollCanvas } from '@/components/ScrollCanvas'
 import { SettingsPanel } from '@/components/SettingsPanel'
 import { Titlebar } from '@/components/Titlebar'
@@ -18,14 +19,29 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { cancelGenerate, engineStatus, exportClipFile, generate, reportError } from '@/lib/engine'
+import { cancelGenerate, engineStatus, exportClipFile, generate, loadModel, reportError } from '@/lib/engine'
 import { clipFilename } from '@/lib/filename'
 import { createIdbLibrary, createMemoryLibrary } from '@/lib/library'
 import { mockStatus } from '@/lib/mockEngine'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
 import { appendChip, canCast } from '@/lib/prompt'
+import {
+  loadPromptCatalog,
+  mergeQueue,
+  removeFromQueue,
+  type CatalogEffect,
+} from '@/lib/promptCatalog'
+import {
+  GENERATE_MODES,
+  applyGenerateMode,
+  applyModeDuration,
+  applyModeNegative,
+  clipMode,
+  ensureTrackType,
+  inferGenerateMode,
+} from '@/lib/generateMode'
 import { loadSettings, saveSettings } from '@/lib/setup'
-import type { Clip, EngineStatus, KeepSettings, KeepTab } from '@/lib/types'
+import type { Clip, EngineStatus, GenerateMode, KeepSettings, KeepTab, WeavePhase } from '@/lib/types'
 import { TOTAL_RITES } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
 import { trimWav, wavDurationSeconds } from '@/lib/wav'
@@ -37,8 +53,16 @@ type PendingDelete = string | null
 
 export function Studio() {
   const [settings, setSettings] = useState<KeepSettings>(loadSettings)
+  const [mode, setMode] = useState<GenerateMode>(() =>
+    settings.generateMode === 'music' ? 'music' : 'sfx',
+  )
   const [prompt, setPrompt] = useState('')
-  const [duration, setDuration] = useState(settings.defaultDuration)
+  const [duration, setDuration] = useState(() => {
+    if (mode === 'music' && settings.defaultDuration === GENERATE_MODES.sfx.defaultDuration) {
+      return GENERATE_MODES.music.defaultDuration
+    }
+    return settings.defaultDuration
+  })
   const [cfg, setCfg] = useState(1)
   const [negative, setNegative] = useState('')
   const [seed, setSeed] = useState('-1')
@@ -48,8 +72,11 @@ export function Studio() {
   const [wav, setWav] = useState<ArrayBuffer>()
   const [query, setQuery] = useState('')
   const [weaving, setWeaving] = useState(false)
+  const [loadingModel, setLoadingModel] = useState(false)
   const [rite, setRite] = useState(0)
   const [elapsedMs, setElapsedMs] = useState(0)
+  const [weavePhase, setWeavePhase] = useState<WeavePhase>('weaving')
+  const [weaveRatio, setWeaveRatio] = useState<number>()
   const [error, setError] = useState<string>()
   const [trimStart, setTrimStart] = useState(0)
   const [trimEnd, setTrimEnd] = useState(8)
@@ -60,12 +87,28 @@ export function Studio() {
   const [commandOpen, setCommandOpen] = useState(false)
   const [pendingDelete, setPendingDelete] = useState<PendingDelete>(null)
   const [confirmDispel, setConfirmDispel] = useState(false)
+  const [catalogOpen, setCatalogOpen] = useState(false)
+  const [queue, setQueue] = useState<CatalogEffect[]>([])
   const abortRef = useRef<AbortController | null>(null)
   const weaveStartedRef = useRef(0)
   const playbackRef = useRef<PlaybackHandle | null>(null)
   const playRaf = useRef<number>(0)
+  const queueRef = useRef(queue)
+  const stopQueueRef = useRef(false)
+  const catalog = useMemo(() => loadPromptCatalog(), [])
+  queueRef.current = queue
 
-  const [engine, setEngine] = useState<EngineStatus>(mockStatus)
+  const [engine, setEngine] = useState<EngineStatus>(() =>
+    isTauri()
+      ? {
+          ready: false,
+          mock: false,
+          loaded: false,
+          device: 'unknown',
+          message: 'Checking engine…',
+        }
+      : mockStatus(),
+  )
   const clipDuration = wav ? wavDurationSeconds(wav) : duration
 
   async function refreshLibrary() {
@@ -78,7 +121,7 @@ export function Studio() {
       setEngine(await engineStatus())
     } catch (err: unknown) {
       const message = reportError(err, 'Engine status failed')
-      setEngine({ ready: false, mock: true, device: 'unknown', message })
+      setEngine({ ready: false, mock: true, loaded: false, device: 'unknown', message })
     }
   }
 
@@ -99,13 +142,17 @@ export function Studio() {
     playbackRef.current = null
     if (!wav) return
     let cancelled = false
-    void createPlayback(wav).then((handle) => {
-      if (cancelled) {
-        handle.dispose()
-        return
-      }
-      playbackRef.current = handle
-    })
+    void createPlayback(wav)
+      .then((handle) => {
+        if (cancelled) {
+          handle.dispose()
+          return
+        }
+        playbackRef.current = handle
+      })
+      .catch(() => {
+        /* Preview is optional; generate already saved the clip. */
+      })
     return () => {
       cancelled = true
       playbackRef.current?.dispose()
@@ -145,12 +192,22 @@ export function Studio() {
   })
 
   function requestDispel() {
+    stopQueueRef.current = true
     if (Date.now() - weaveStartedRef.current > 10_000) {
       setConfirmDispel(true)
       return
     }
     abortRef.current?.abort()
     void cancelGenerate()
+  }
+
+  function applyCatalogEffect(effect: CatalogEffect) {
+    const next = inferGenerateMode(effect.prompt)
+    setMode(next)
+    setSettings((s) => ({ ...s, generateMode: next }))
+    setPrompt(effect.prompt)
+    setDuration(effect.duration)
+    setNegative(effect.negative)
   }
 
   async function loadClip(id: string) {
@@ -163,15 +220,70 @@ export function Studio() {
     setTrimEnd(d)
     setPlayhead(0)
     const clip = clips.find((c) => c.id === id)
-    if (clip) setPrompt(clip.prompt)
+    if (clip) {
+      setPrompt(clip.prompt)
+      const next = clipMode(clip)
+      if (next !== mode) {
+        setNegative((n) => applyModeNegative(n, mode, next))
+        setDuration((d) => applyModeDuration(d, mode, next))
+        setMode(next)
+        setSettings((s) => ({ ...s, generateMode: next }))
+      }
+    }
   }
 
-  async function cast() {
-    if (!canCast(prompt) || weaving) return
+  function selectMode(next: GenerateMode) {
+    if (next === mode) return
+    setPrompt((p) => applyGenerateMode(p, next))
+    setNegative((n) => applyModeNegative(n, mode, next))
+    setDuration((d) => applyModeDuration(d, mode, next))
+    setMode(next)
+    setSettings((s) => ({ ...s, generateMode: next }))
+  }
+
+  async function loadWeights() {
+    if (loadingModel || weaving || engine.loaded) return
     setError(undefined)
-    setWeaving(true)
+    setLoadingModel(true)
     setRite(0)
     setElapsedMs(0)
+    setWeavePhase('loading')
+    setWeaveRatio(undefined)
+    const started = Date.now()
+    try {
+      await loadModel((ratio) => {
+        setElapsedMs(Date.now() - started)
+        setWeaveRatio(ratio)
+        setWeavePhase('loading')
+      })
+      await refreshEngine()
+      setEngine((current) => ({ ...current, loaded: true }))
+      toast.success('Model ready.', { description: 'Generate will only create a clip.' })
+    } catch (err) {
+      const message = reportError(err, 'Model load failed')
+      setError(message)
+      toast.error('Model load failed.', { description: `${message} Saved to the error log.` })
+    } finally {
+      setLoadingModel(false)
+    }
+  }
+
+  async function generateOne(
+    request: {
+      prompt: string
+      seconds: number
+      negative: string
+      mode: GenerateMode
+    },
+    options: { manageBusy?: boolean } = {},
+  ): Promise<'ok' | 'abort' | 'error'> {
+    const manageBusy = options.manageBusy ?? true
+    setError(undefined)
+    if (manageBusy) setWeaving(true)
+    setRite(0)
+    setElapsedMs(0)
+    setWeavePhase('weaving')
+    setWeaveRatio(undefined)
     weaveStartedRef.current = Date.now()
     const controller = new AbortController()
     abortRef.current = controller
@@ -179,12 +291,13 @@ export function Studio() {
     try {
       const result = await generate(
         {
-          prompt,
-          seconds: duration,
+          prompt: request.prompt,
+          seconds: request.seconds,
           seed: Number.isFinite(parsedSeed) ? parsedSeed : -1,
           cfg,
-          negative,
+          negative: request.negative,
           libraryDir: settings.libraryDir,
+          mode: request.mode,
         },
         {
           signal: controller.signal,
@@ -192,6 +305,8 @@ export function Studio() {
           onProgress: (p) => {
             setRite(p.step)
             setElapsedMs(p.elapsedMs)
+            if (p.phase) setWeavePhase(p.phase)
+            setWeaveRatio(p.ratio)
           },
         },
       )
@@ -202,17 +317,67 @@ export function Studio() {
       setTrimStart(0)
       setTrimEnd(result.clip.duration)
       setPlayhead(0)
+      return 'ok'
     } catch (err) {
       if (err instanceof DOMException && err.name === 'AbortError') {
-        toast('The weave was dispelled.')
-      } else {
-        const message = reportError(err, 'Cast failed')
-        setError(message)
-        toast.error('The omen soured.', { description: `${message} Saved to the error log.` })
+        toast('Generation cancelled.')
+        return 'abort'
+      }
+      const message = reportError(err, 'Generation failed')
+      setError(message)
+      toast.error('Generation failed.', { description: `${message} Saved to the error log.` })
+      return 'error'
+    } finally {
+      if (manageBusy) setWeaving(false)
+      abortRef.current = null
+    }
+  }
+
+  async function cast() {
+    if (!canCast(prompt) || weaving || loadingModel || !engine.loaded) return
+    const requestPrompt = ensureTrackType(prompt, mode)
+    const requestNegative = negative.trim() || GENERATE_MODES[mode].defaultNegative
+    setPrompt(requestPrompt)
+    if (!negative.trim() && requestNegative) setNegative(requestNegative)
+    await generateOne({
+      prompt: requestPrompt,
+      seconds: duration,
+      negative: requestNegative,
+      mode,
+    })
+  }
+
+  async function castQueue() {
+    if (weaving || loadingModel || !engine.loaded || queueRef.current.length === 0) return
+    stopQueueRef.current = false
+    setWeaving(true)
+    let saved = 0
+    try {
+      while (queueRef.current.length > 0 && !stopQueueRef.current) {
+        const item = queueRef.current[0]
+        if (!item) break
+        const nextMode = inferGenerateMode(item.prompt)
+        applyCatalogEffect(item)
+        const outcome = await generateOne(
+          {
+            prompt: ensureTrackType(item.prompt, nextMode),
+            seconds: item.duration,
+            negative: item.negative.trim() || GENERATE_MODES[nextMode].defaultNegative,
+            mode: nextMode,
+          },
+          { manageBusy: false },
+        )
+        if (outcome !== 'ok') break
+        const remaining = queueRef.current.filter((effect) => effect.id !== item.id)
+        queueRef.current = remaining
+        setQueue(remaining)
+        saved += 1
+      }
+      if (saved > 0 && queueRef.current.length === 0) {
+        toast.success(saved === 1 ? 'Queue finished.' : `Queue finished. ${saved} clips saved.`)
       }
     } finally {
       setWeaving(false)
-      abortRef.current = null
     }
   }
 
@@ -249,18 +414,18 @@ export function Studio() {
         format: 'wav',
         defaultDir: settings.defaultExportDir,
       })
-      toast.success('WAV scribed.', { description: path ?? name })
+      toast.success('WAV saved.', { description: path ?? name })
     } catch (err) {
       const message = reportError(err, 'Export failed')
-      toast.error('The omen soured.', { description: `${message} Saved to the error log.` })
+      toast.error('Export failed.', { description: `${message} Saved to the error log.` })
     }
   }
 
   async function exportOgg() {
     if (!wav) return
     if (!isTauri()) {
-      toast('OGG Vorbis needs the desktop sidecar.', {
-        description: 'soundfile encodes OGG from the Tauri keep. Export WAV here.',
+      toast('OGG export needs the desktop app.', {
+        description: 'In the browser, export WAV. OGG is available in the Windows app.',
       })
       return
     }
@@ -273,10 +438,10 @@ export function Studio() {
         format: 'ogg',
         defaultDir: settings.defaultExportDir,
       })
-      toast.success('OGG scribed.', { description: path ?? name })
+      toast.success('OGG saved.', { description: path ?? name })
     } catch (err) {
       const message = reportError(err, 'OGG export failed')
-      toast.error('The omen soured.', { description: `${message} Saved to the error log.` })
+      toast.error('Export failed.', { description: `${message} Saved to the error log.` })
     }
   }
 
@@ -294,15 +459,19 @@ export function Studio() {
   return (
     <div className="flex h-full min-h-0 flex-col">
       <Titlebar
-        engineLabel={engine.mock ? 'mock brazier' : engine.device}
+        engineLabel={
+          engine.mock ? 'mock engine' : engine.loaded ? engine.device : 'model not loaded'
+        }
         weaving={weaving}
+        loadingModel={loadingModel}
+        weavePhase={weavePhase}
         tab={tab}
         onTabChange={setTab}
       />
       {error ? (
-        <Hint className="w-full" label="This Cast failed. Open Settings for the traceback. The incantation is still in the parchment.">
+        <Hint className="w-full" label="This step failed. Open Settings for the traceback. The prompt is unchanged.">
           <div className="w-full border-b border-danger/40 bg-leather px-4 py-2 text-sm text-danger" role="alert">
-            The omen soured. {error}
+            {error}
           </div>
         </Hint>
       ) : null}
@@ -311,13 +480,21 @@ export function Studio() {
           clips={clips}
           selectedId={selectedId}
           query={query}
+          mode={mode}
           onQuery={setQuery}
           onSelect={(id) => {
             void loadClip(id)
             setTab('generate')
           }}
-          onStarter={(prompt) => {
-            setPrompt(prompt)
+          onStarter={(starter) => {
+            const next = inferGenerateMode(starter)
+            if (next !== mode) {
+              setNegative((n) => applyModeNegative(n, mode, next))
+              setDuration((d) => applyModeDuration(d, mode, next))
+              setMode(next)
+              setSettings((s) => ({ ...s, generateMode: next }))
+            }
+            setPrompt(starter)
             setTab('generate')
           }}
           onDelete={setPendingDelete}
@@ -329,9 +506,12 @@ export function Studio() {
             <ScrollCanvas
               wav={wav}
               weaving={weaving}
+              loadingModel={loadingModel}
               rite={rite}
               totalRites={TOTAL_RITES}
               elapsedMs={elapsedMs}
+              phase={weavePhase}
+              ratio={weaveRatio}
               duration={clipDuration}
               trimStart={trimStart}
               trimEnd={Math.min(trimEnd, clipDuration)}
@@ -344,10 +524,11 @@ export function Studio() {
                 setPlayhead(s)
                 playbackRef.current?.seek(s)
               }}
+              emptyLabel={GENERATE_MODES[mode].emptyWaveform}
             />
             <Altar
               hasClip={Boolean(wav)}
-              weaving={weaving}
+              weaving={weaving || loadingModel}
               playing={playing}
               looping={looping}
               trimStart={trimStart}
@@ -366,6 +547,7 @@ export function Studio() {
             />
           </div>
           <IncantationConsole
+            mode={mode}
             prompt={prompt}
             duration={duration}
             cfg={cfg}
@@ -373,6 +555,11 @@ export function Studio() {
             seed={seed}
             ritesOpen={ritesOpen}
             weaving={weaving}
+            loadingModel={loadingModel}
+            modelLoaded={engine.loaded}
+            engineReady={engine.ready}
+            queue={queue}
+            onMode={selectMode}
             onPrompt={setPrompt}
             onDuration={setDuration}
             onCfg={setCfg}
@@ -382,10 +569,36 @@ export function Studio() {
             onChip={(chip) => setPrompt((p) => appendChip(p, chip))}
             onCast={() => void cast()}
             onDispel={requestDispel}
+            onLoadModel={() => void loadWeights()}
+            onOpenCatalog={() => setCatalogOpen(true)}
+            onGenerateQueue={() => void castQueue()}
+            onClearQueue={() => {
+              queueRef.current = []
+              setQueue([])
+            }}
+            onRemoveQueued={(id) => {
+              const remaining = removeFromQueue(queueRef.current, id)
+              queueRef.current = remaining
+              setQueue(remaining)
+            }}
           />
         </>
       ) : null}
       {tab === 'settings' ? <SettingsPanel settings={settings} onChange={setSettings} /> : null}
+      <PromptCatalogDialog
+        open={catalogOpen}
+        catalog={catalog}
+        onOpenChange={setCatalogOpen}
+        onEnqueue={(effects) => {
+          const next = mergeQueue(queueRef.current, effects)
+          queueRef.current = next
+          setQueue(next)
+        }}
+        onUse={(effect) => {
+          applyCatalogEffect(effect)
+          setCatalogOpen(false)
+        }}
+      />
       <CommandPalette
         open={commandOpen}
         onOpenChange={setCommandOpen}
@@ -397,31 +610,47 @@ export function Studio() {
         onExportOgg={() => void exportOgg()}
         onFocusPrompt={() => {
           setTab('generate')
-          window.setTimeout(() => document.getElementById('incantation')?.focus(), 0)
+          window.setTimeout(() => document.getElementById('prompt')?.focus(), 0)
         }}
         onOpenLogs={() => setTab('settings')}
         onOpenLibrary={() => setTab('library')}
         onOpenGenerate={() => setTab('generate')}
         onOpenSettings={() => setTab('settings')}
+        onInstrumental={() => {
+          setTab('generate')
+          selectMode('music')
+        }}
+        onLoadModel={() => {
+          setTab('generate')
+          void loadWeights()
+        }}
+        onPromptCatalog={() => {
+          setTab('generate')
+          setCatalogOpen(true)
+        }}
+        onGenerateQueue={() => {
+          setTab('generate')
+          void castQueue()
+        }}
       />
       <AlertDialog open={Boolean(pendingDelete)} onOpenChange={(o) => !o && setPendingDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <Hint label="Confirm before deleting a Grimoire page.">
-              <AlertDialogTitle>Strike this page?</AlertDialogTitle>
+            <Hint label="Confirm before deleting a library clip.">
+              <AlertDialogTitle>Delete this sound?</AlertDialogTitle>
             </Hint>
             <Hint label="The WAV is deleted from the local library. Export copies on disk are left alone.">
               <AlertDialogDescription>
-                The clip will be removed from the Grimoire. This cannot be undone.
+                The clip will be removed from the library. This cannot be undone.
               </AlertDialogDescription>
             </Hint>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <Hint label="Leave this page in the Grimoire.">
-              <AlertDialogCancel>Keep it</AlertDialogCancel>
+            <Hint label="Leave this clip in the library.">
+              <AlertDialogCancel>Keep</AlertDialogCancel>
             </Hint>
-            <Hint label="Delete this weave from the local library. The WAV file is removed.">
-              <AlertDialogAction onClick={() => void confirmDelete()}>Strike</AlertDialogAction>
+            <Hint label="Delete this clip from the local library. The WAV file is removed.">
+              <AlertDialogAction onClick={() => void confirmDelete()}>Delete</AlertDialogAction>
             </Hint>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -429,28 +658,29 @@ export function Studio() {
       <AlertDialog open={confirmDispel} onOpenChange={setConfirmDispel}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <Hint label="Cancel only if you want to stop GPU work. Continuing lets Medium finish.">
-              <AlertDialogTitle>Dispel a long weave?</AlertDialogTitle>
+            <Hint label="Cancel only if you want to stop GPU work. Continuing lets the model finish.">
+              <AlertDialogTitle>Cancel generation?</AlertDialogTitle>
             </Hint>
-            <Hint label="Shown when a Cast has already run more than ten seconds, so a misclick is costly.">
+            <Hint label="Shown when a generation has already run more than ten seconds, so a misclick is costly.">
               <AlertDialogDescription>
-                More than ten seconds have already been spent on this Cast.
+                More than ten seconds have already been spent on this generation.
               </AlertDialogDescription>
             </Hint>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <Hint label="Let Medium finish this Cast.">
-              <AlertDialogCancel>Continue weaving</AlertDialogCancel>
+            <Hint label="Let the model finish this generation.">
+              <AlertDialogCancel>Keep generating</AlertDialogCancel>
             </Hint>
-            <Hint label="Cancel the weave. GPU work stops; no new clip is saved.">
+            <Hint label="Cancel generation. GPU work stops; no new clip is saved.">
               <AlertDialogAction
                 onClick={() => {
+                  stopQueueRef.current = true
                   abortRef.current?.abort()
                   void cancelGenerate()
                   setConfirmDispel(false)
                 }}
               >
-                Dispel
+                Cancel
               </AlertDialogAction>
             </Hint>
           </AlertDialogFooter>

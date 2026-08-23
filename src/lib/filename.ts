@@ -3,12 +3,12 @@ const MAX_SLUG = 48
 export function slugifyPrompt(prompt: string): string {
   const slug = prompt
     .toLowerCase()
-    .replace(/tracktype:\s*sfx,?/g, '')
+    .replace(/tracktype:\s*\w+,?/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, MAX_SLUG)
     .replace(/-+$/g, '')
-  return slug || 'incantation'
+  return slug || 'sound'
 }
 
 export function clipFilename(

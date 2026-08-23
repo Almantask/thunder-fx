@@ -32,6 +32,12 @@ struct WeaveProgressPayload {
     total: u32,
     #[serde(rename = "elapsedMs")]
     elapsed_ms: u64,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    phase: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    ratio: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    message: Option<String>,
 }
 
 #[derive(Serialize)]
@@ -267,6 +273,15 @@ fn read_until_terminal(
                             .get("elapsedMs")
                             .and_then(|v| v.as_u64())
                             .unwrap_or(0),
+                        phase: parsed
+                            .get("phase")
+                            .and_then(|v| v.as_str())
+                            .map(|s| s.to_string()),
+                        ratio: parsed.get("ratio").and_then(|v| v.as_f64()),
+                        message: parsed
+                            .get("message")
+                            .and_then(|v| v.as_str())
+                            .map(|s| s.to_string()),
                     };
                     let _ = app.emit(name, payload);
                 }
@@ -276,30 +291,44 @@ fn read_until_terminal(
     }
 }
 
-#[tauri::command]
-fn engine_status(app: AppHandle, state: State<Engine>) -> Result<serde_json::Value, String> {
-    let proc = ensure_engine(&app, &state)?;
-    let payload = serde_json::json!({"id":"status","cmd":"status"});
-    send_line(&proc, &payload)?;
-    read_until_terminal(&proc, &payload["id"], None, None)
+async fn run_blocking<T: Send + 'static>(
+    work: impl FnOnce() -> Result<T, String> + Send + 'static,
+) -> Result<T, String> {
+    tauri::async_runtime::spawn_blocking(work)
+        .await
+        .map_err(|e| fail(e.to_string()))?
 }
 
 #[tauri::command]
-fn engine_probe(
+async fn engine_status(app: AppHandle, state: State<'_, Engine>) -> Result<serde_json::Value, String> {
+    let proc = ensure_engine(&app, &state)?;
+    let payload = serde_json::json!({"id":"status","cmd":"status"});
+    run_blocking(move || {
+        send_line(&proc, &payload)?;
+        read_until_terminal(&proc, &payload["id"], None, None)
+    })
+    .await
+}
+
+#[tauri::command]
+async fn engine_probe(
     app: AppHandle,
-    state: State<Engine>,
+    state: State<'_, Engine>,
     hf_token: Option<String>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
     let payload = serde_json::json!({"id":"probe","cmd":"probe", "hf_token": hf_token});
-    send_line(&proc, &payload)?;
-    read_until_terminal(&proc, &payload["id"], None, None)
+    run_blocking(move || {
+        send_line(&proc, &payload)?;
+        read_until_terminal(&proc, &payload["id"], None, None)
+    })
+    .await
 }
 
 #[tauri::command]
-fn engine_generate(
+async fn engine_generate(
     app: AppHandle,
-    state: State<Engine>,
+    state: State<'_, Engine>,
     prompt: String,
     seconds: f32,
     seed: i64,
@@ -307,6 +336,8 @@ fn engine_generate(
     negative: String,
     hf_token: Option<String>,
     library_dir: Option<String>,
+    mode: Option<String>,
+    instruments: Option<Vec<String>>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
     let payload = serde_json::json!({
@@ -318,10 +349,15 @@ fn engine_generate(
         "cfg": cfg,
         "negative": negative,
         "hf_token": hf_token,
-        "library_dir": library_dir
+        "library_dir": library_dir,
+        "mode": mode,
+        "instruments": instruments
     });
-    send_line(&proc, &payload)?;
-    read_until_terminal(&proc, &payload["id"], Some(&app), Some("weave-progress"))
+    run_blocking(move || {
+        send_line(&proc, &payload)?;
+        read_until_terminal(&proc, &payload["id"], Some(&app), Some("weave-progress"))
+    })
+    .await
 }
 
 #[tauri::command]
@@ -333,9 +369,9 @@ fn engine_cancel(app: AppHandle, state: State<Engine>) -> Result<serde_json::Val
 }
 
 #[tauri::command]
-fn engine_encode_ogg(
+async fn engine_encode_ogg(
     app: AppHandle,
-    state: State<Engine>,
+    state: State<'_, Engine>,
     wav_path: String,
     ogg_path: String,
 ) -> Result<serde_json::Value, String> {
@@ -346,20 +382,26 @@ fn engine_encode_ogg(
         "wav_path": wav_path,
         "ogg_path": ogg_path
     });
-    send_line(&proc, &payload)?;
-    read_until_terminal(&proc, &payload["id"], None, None)
+    run_blocking(move || {
+        send_line(&proc, &payload)?;
+        read_until_terminal(&proc, &payload["id"], None, None)
+    })
+    .await
 }
 
 #[tauri::command]
-fn engine_warmup(
+async fn engine_warmup(
     app: AppHandle,
-    state: State<Engine>,
+    state: State<'_, Engine>,
     hf_token: Option<String>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
     let payload = serde_json::json!({"id":"warmup","cmd":"warmup", "hf_token": hf_token});
-    send_line(&proc, &payload)?;
-    read_until_terminal(&proc, &payload["id"], Some(&app), Some("scribe-progress"))
+    run_blocking(move || {
+        send_line(&proc, &payload)?;
+        read_until_terminal(&proc, &payload["id"], Some(&app), Some("scribe-progress"))
+    })
+    .await
 }
 
 #[tauri::command]
@@ -386,18 +428,24 @@ fn trim_wav(src: String, dest: String, start: f32, end: f32) -> Result<TrimResul
 }
 
 #[tauri::command]
-fn write_file_b64(path: String, data: String) -> Result<(), String> {
-    let bytes = STANDARD.decode(data).map_err(|e| fail(e.to_string()))?;
-    if let Some(parent) = Path::new(&path).parent() {
-        std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
-    }
-    std::fs::write(path, bytes).map_err(|e| fail(e.to_string()))
+async fn write_file_b64(path: String, data: String) -> Result<(), String> {
+    run_blocking(move || {
+        let bytes = STANDARD.decode(data).map_err(|e| fail(e.to_string()))?;
+        if let Some(parent) = Path::new(&path).parent() {
+            std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
+        }
+        std::fs::write(path, bytes).map_err(|e| fail(e.to_string()))
+    })
+    .await
 }
 
 #[tauri::command]
-fn read_file_b64(path: String) -> Result<String, String> {
-    let bytes = std::fs::read(path).map_err(|e| fail(e.to_string()))?;
-    Ok(STANDARD.encode(bytes))
+async fn read_file_b64(path: String) -> Result<String, String> {
+    run_blocking(move || {
+        let bytes = std::fs::read(path).map_err(|e| fail(e.to_string()))?;
+        Ok(STANDARD.encode(bytes))
+    })
+    .await
 }
 
 #[tauri::command]

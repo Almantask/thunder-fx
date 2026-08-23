@@ -18,16 +18,16 @@ async function advanceToScribing() {
   await user.click(screen.getByLabelText(/stability ai community license/i))
   await user.click(screen.getByLabelText(/gemma terms/i))
   await user.click(screen.getByRole('button', { name: 'Continue' }))
-  expect(await screen.findByRole('heading', { name: 'Augury' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Hardware' })).toBeInTheDocument()
   const next = await screen.findByRole('button', { name: 'Continue' })
   await waitFor(() => expect(next).toBeEnabled())
   await user.click(next)
-  expect(await screen.findByRole('heading', { name: 'Scribing' })).toBeInTheDocument()
+  expect(await screen.findByRole('heading', { name: 'Download' })).toBeInTheDocument()
   return user
 }
 
 describe('FirstWatch', () => {
-  it('keeps Continue disabled until both oaths are sworn', async () => {
+  it('keeps Continue disabled until both licenses are accepted', async () => {
     const user = userEvent.setup()
     renderWatch()
     const cont = screen.getByRole('button', { name: 'Continue' })
@@ -38,23 +38,23 @@ describe('FirstWatch', () => {
     expect(cont).toBeEnabled()
   })
 
-  it('moves to Augury after oaths', async () => {
+  it('moves to Hardware after licenses', async () => {
     const user = userEvent.setup()
     renderWatch()
     await user.click(screen.getByLabelText(/stability ai community license/i))
     await user.click(screen.getByLabelText(/gemma terms/i))
     await user.click(screen.getByRole('button', { name: 'Continue' }))
-    expect(await screen.findByRole('heading', { name: 'Augury' })).toBeInTheDocument()
+    expect(await screen.findByRole('heading', { name: 'Hardware' })).toBeInTheDocument()
   })
 
-  it('hides full token instructions until the keeper asks', async () => {
+  it('hides full token instructions until asked', async () => {
     await advanceToScribing()
     expect(screen.getByRole('button', { name: /show full token instructions/i })).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: /how to get a hugging face token/i })).not.toBeInTheDocument()
     expect(screen.queryByText(/huggingface\.co\/settings\/tokens/i)).not.toBeInTheDocument()
   })
 
-  it('opens detailed token steps from the scribing card', async () => {
+  it('opens detailed token steps from the download card', async () => {
     const user = await advanceToScribing()
     await user.click(screen.getByRole('button', { name: /show full token instructions/i }))
     expect(

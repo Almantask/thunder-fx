@@ -8,7 +8,13 @@ describe('clipFilename', () => {
     ).toBe('steel-shortsword-leaving-a-leather-scabbard-8s.wav')
   })
 
+  it('strips a music TrackType the same way', () => {
+    expect(clipFilename('TrackType: Music, instrumental tavern lute theme', 20, 'wav')).toBe(
+      'instrumental-tavern-lute-theme-20s.wav',
+    )
+  })
+
   it('falls back when the prompt is empty', () => {
-    expect(slugifyPrompt('!!!')).toBe('incantation')
+    expect(slugifyPrompt('!!!')).toBe('sound')
   })
 })

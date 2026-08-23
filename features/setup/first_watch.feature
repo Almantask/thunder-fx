@@ -1,18 +1,18 @@
-Feature: First Watch
-  The keeper must swear oaths and light the brazier before the studio opens.
+Feature: Setup
+  The user must accept licenses and check the engine before the studio opens.
 
-  Scenario: Continue stays sealed until both oaths are sworn
-    Given the First Watch is on Oaths
+  Scenario: Continue stays disabled until both licenses are accepted
+    Given setup is on Licenses
     When only the Community License is accepted
     Then Continue is not available
 
-  Scenario: The keeper proceeds after both oaths
-    Given the First Watch is on Oaths
+  Scenario: The user proceeds after both licenses
+    Given setup is on Licenses
     When the Community License and Gemma Terms are accepted
     And Continue is chosen
-    Then Augury is shown
+    Then Hardware is shown
 
-  Scenario: A failed omen stays technical
-    Given Augury reports that CUDA is missing
-    Then the keeper sees an in-world warning
+  Scenario: A failed check stays technical
+    Given Hardware reports that CUDA is missing
+    Then the user sees a short warning
     And the technical details name CUDA

@@ -7,7 +7,7 @@ describe('canCast', () => {
     expect(canCast('  ab  ')).toBe(false)
   })
 
-  it('allows a real incantation', () => {
+  it('allows a real prompt', () => {
     expect(canCast('fireball')).toBe(true)
   })
 })

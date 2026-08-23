@@ -49,7 +49,7 @@ export function HfTokenGuideDialog({ open, onOpenChange }: HfTokenGuideDialogPro
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[85vh] max-w-2xl flex-col">
-        <Hint label="Step-by-step: account, two licenses, Read token, then paste it into Scribing.">
+        <Hint label="Step-by-step: account, two licenses, Read token, then paste it into Download.">
           <DialogTitle>How to get a Hugging Face token</DialogTitle>
         </Hint>
         <Hint label="401 Unauthorized until both gates are cleared on the same account that created the token.">
@@ -132,22 +132,22 @@ export function HfTokenGuideDialog({ open, onOpenChange }: HfTokenGuideDialogPro
               </p>
             </li>
             <li>
-              <Hint label="Paste into Hugging Face token on Scribing, then Finish the watch.">
-                <p className="font-medium">Paste it into First Watch</p>
+              <Hint label="Paste into Hugging Face token on Download, then Download and continue.">
+                <p className="font-medium">Paste it into setup</p>
               </Hint>
-              <Hint label="Paste the hf_ token into Scribing. If you still get 401, the licenses and token must be the same account.">
+              <Hint label="Paste the hf_ token into Download. If you still get 401, the licenses and token must be the same account.">
                 <p className="mt-1 text-muted">
                   Return here and paste the token into Hugging Face token. It should start with hf_.
-                  The keep stores it only on this machine. Then choose Finish the watch. If scribing
-                  still returns 401, the licenses were not accepted on the same account that created
-                  the token.
+                  Thunder FX stores it only on this machine. Then choose Download and continue. If
+                  download still returns 401, the licenses were not accepted on the same account that
+                  created the token.
                 </p>
               </Hint>
             </li>
           </ol>
         </ScrollArea>
         <div className="mt-4">
-          <Hint label="Return to Scribing and paste the token. The guide stays until you close it.">
+          <Hint label="Return to Download and paste the token. The guide stays until you close it.">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Close
             </Button>

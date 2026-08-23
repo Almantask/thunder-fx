@@ -39,4 +39,34 @@ describe('Titlebar', () => {
     await user.click(screen.getByRole('tab', { name: 'Settings' }))
     expect(onTabChange).toHaveBeenCalledWith('settings')
   })
+
+  it('shows loading model while weights go into VRAM', () => {
+    render(
+      <TooltipProvider>
+        <Titlebar
+          engineLabel="cuda"
+          weaving={false}
+          loadingModel
+          tab="generate"
+          onTabChange={vi.fn()}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText('loading model')).toBeInTheDocument()
+  })
+
+  it('shows generating while a clip is being made', () => {
+    render(
+      <TooltipProvider>
+        <Titlebar
+          engineLabel="cuda"
+          weaving
+          weavePhase="weaving"
+          tab="generate"
+          onTabChange={vi.fn()}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText('generating')).toBeInTheDocument()
+  })
 })

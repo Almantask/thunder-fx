@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "hooks": {
+    "afterFileEdit": [
+      {
+        "command": "python .cursor/hooks/mark-exe-dirty.py"
+      }
+    ],
+    "stop": [
+      {
+        "command": "python .cursor/hooks/remind-update-exe.py",
+        "loop_limit": 1,
+        "timeout": 30
+      }
+    ]
+  }
+}

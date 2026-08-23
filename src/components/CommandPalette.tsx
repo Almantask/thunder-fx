@@ -18,6 +18,10 @@ type CommandPaletteProps = {
   onOpenLibrary: () => void
   onOpenGenerate: () => void
   onOpenSettings: () => void
+  onInstrumental?: () => void
+  onLoadModel?: () => void
+  onPromptCatalog?: () => void
+  onGenerateQueue?: () => void
 }
 
 export function CommandPalette({
@@ -31,21 +35,25 @@ export function CommandPalette({
   onOpenLibrary,
   onOpenGenerate,
   onOpenSettings,
+  onInstrumental,
+  onLoadModel,
+  onPromptCatalog,
+  onGenerateQueue,
 }: CommandPaletteProps) {
   return (
     <CommandDialog open={open} onOpenChange={onOpenChange}>
       <Command>
         <CommandInput
-          placeholder="Command the keep…"
+          placeholder="Search commands…"
           className="w-full"
-          title="Type to filter rites. Esc closes. Enter runs the selected command."
+          title="Type to filter commands. Esc closes. Enter runs the selected command."
         />
         <CommandList>
-          <CommandEmpty title="No command matches that text. Try Library, Generate, Settings, or Cast.">
-            No rite matches.
+          <CommandEmpty title="No command matches that text. Try Library, Generate, Settings, Load model, Instrumental, Prompt catalog, or Generate sound.">
+            No matching command.
           </CommandEmpty>
           <CommandItem
-            title="Open the Grimoire of saved weaves."
+            title="Open saved sounds."
             onSelect={() => {
               onOpenLibrary()
               onOpenChange(false)
@@ -54,7 +62,7 @@ export function CommandPalette({
             Library
           </CommandItem>
           <CommandItem
-            title="Open the Cast canvas: Scroll, Altar, and incantation."
+            title="Open Generate: waveform, preview, and prompt."
             onSelect={() => {
               onOpenGenerate()
               onOpenChange(false)
@@ -63,14 +71,58 @@ export function CommandPalette({
             Generate
           </CommandItem>
           <CommandItem
-            title="Weave the current incantation with Stable Audio 3 Medium."
+            title="Generate the current prompt with Stable Audio 3 Medium."
             onSelect={() => {
               onCast()
               onOpenChange(false)
             }}
           >
-            Cast
+            Generate sound
           </CommandItem>
+          {onLoadModel ? (
+            <CommandItem
+              title="Load Medium into VRAM. This is not generating a clip. Generate stays a separate step."
+              onSelect={() => {
+                onLoadModel()
+                onOpenChange(false)
+              }}
+            >
+              Load model
+            </CommandItem>
+          ) : null}
+          {onPromptCatalog ? (
+            <CommandItem
+              title="Open the shipped /prompts catalog and add effects to the generate queue."
+              onSelect={() => {
+                onPromptCatalog()
+                onOpenChange(false)
+              }}
+            >
+              Prompt catalog
+            </CommandItem>
+          ) : null}
+          {onGenerateQueue ? (
+            <CommandItem
+              title="Generate every queued catalog prompt in order. Cancel stops the rest."
+              onSelect={() => {
+                onGenerateQueue()
+                onOpenChange(false)
+              }}
+            >
+              Generate queue
+            </CommandItem>
+          ) : null}
+          {onInstrumental ? (
+            <CommandItem
+              title="Switch Generate to instrumental music: TrackType Music, no vocals."
+              onSelect={() => {
+                onInstrumental()
+                onOpenChange(false)
+              }}
+            >
+              Instrumental mode
+            </CommandItem>
+          ) : null}
           <CommandItem
             title="Save the trimmed clip as 16-bit stereo WAV at 44.1 kHz."
             onSelect={() => {
@@ -81,7 +133,7 @@ export function CommandPalette({
             Export WAV
           </CommandItem>
           <CommandItem
-            title="Encode the trim as OGG Vorbis through the Python sidecar."
+            title="Encode the trim as OGG Vorbis through the Python engine."
             onSelect={() => {
               onExportOgg()
               onOpenChange(false)
@@ -90,16 +142,16 @@ export function CommandPalette({
             Export OGG
           </CommandItem>
           <CommandItem
-            title="Move keyboard focus to the incantation parchment."
+            title="Move keyboard focus to the prompt."
             onSelect={() => {
               onFocusPrompt()
               onOpenChange(false)
             }}
           >
-            Focus incantation
+            Focus prompt
           </CommandItem>
           <CommandItem
-            title="Open Settings: library folder, export folder, token, and the error ledger."
+            title="Open Settings: library folder, export folder, token, and the error log."
             onSelect={() => {
               onOpenSettings()
               onOpenChange(false)
@@ -108,7 +160,7 @@ export function CommandPalette({
             Settings
           </CommandItem>
           <CommandItem
-            title="Read Cast and sidecar errors on the Settings tab, newest first."
+            title="Read generate and engine errors on the Settings tab, newest first."
             onSelect={() => {
               onOpenLogs()
               onOpenChange(false)

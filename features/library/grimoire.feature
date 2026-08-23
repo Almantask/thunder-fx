@@ -1,11 +1,16 @@
-Feature: Grimoire
-  Past incantations live on the Library tab.
+Feature: Library
+  Past sounds live on the Library tab.
 
-  Scenario: Empty Grimoire offers starter incantations
-    Given the Grimoire has no clips
-    Then three starter incantations are shown
+  Scenario: Empty library offers starter prompts
+    Given the library has no clips
+    Then three starter prompts are shown
 
-  Scenario: Choosing a page loads the scroll
-    Given the Grimoire has a tavern door clip
-    When that page is chosen
-    Then the scroll shows that clip
+  Scenario: Empty library in instrumental mode offers music starters
+    Given the library has no clips
+    And Instrumental mode is selected
+    Then three instrumental starter prompts are shown
+
+  Scenario: Choosing a clip loads the waveform
+    Given the library has a tavern door clip
+    When that clip is chosen
+    Then the waveform shows that clip

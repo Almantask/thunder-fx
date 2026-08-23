@@ -1,11 +1,15 @@
 import { useEffect, useRef } from 'react'
 import { Hint } from '@/components/Hint'
+import { Progress } from '@/components/ui/progress'
 import { waveformPeaks } from '@/lib/wav'
 import { formatClock } from '@/lib/utils'
+import type { WeavePhase } from '@/lib/types'
+import { weaveBarPercent, weaveStatusLabel } from '@/lib/weaveProgress'
 
 type ScrollCanvasProps = {
   wav?: ArrayBuffer
   weaving: boolean
+  loadingModel?: boolean
   rite: number
   totalRites: number
   elapsedMs: number
@@ -13,13 +17,41 @@ type ScrollCanvasProps = {
   trimStart: number
   trimEnd: number
   playhead: number
+  phase?: WeavePhase
+  ratio?: number
   onTrim: (start: number, end: number) => void
   onSeek: (seconds: number) => void
+  emptyLabel?: string
+}
+
+function drawSigil(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  elapsedMs: number,
+  rite: number,
+  totalRites: number,
+) {
+  const mid = height / 2
+  ctx.strokeStyle = '#c4a35a'
+  ctx.lineWidth = 2
+  const radius = 42 + Math.sin(elapsedMs / 400) * 4
+  ctx.beginPath()
+  ctx.arc(width / 2, mid, radius, 0, Math.PI * 2)
+  ctx.stroke()
+  for (let i = 0; i < totalRites; i += 1) {
+    const a = (Math.PI * 2 * i) / totalRites - Math.PI / 2
+    ctx.beginPath()
+    ctx.arc(width / 2 + Math.cos(a) * 70, mid + Math.sin(a) * 70, 5, 0, Math.PI * 2)
+    ctx.fillStyle = i < rite ? '#e4c36a' : '#3a2e24'
+    ctx.fill()
+  }
 }
 
 export function ScrollCanvas({
   wav,
   weaving,
+  loadingModel = false,
   rite,
   totalRites,
   elapsedMs,
@@ -27,17 +59,37 @@ export function ScrollCanvas({
   trimStart,
   trimEnd,
   playhead,
+  phase,
+  ratio,
   onTrim,
   onSeek,
+  emptyLabel = 'Describe a sound, then click Generate.',
 }: ScrollCanvasProps) {
+  const busy = weaving || loadingModel
   const canvasRef = useRef<HTMLCanvasElement>(null)
+  const statusRef = useRef<HTMLSpanElement>(null)
   const peaksRef = useRef<Float32Array>(new Float32Array(0))
+  const riteRef = useRef(rite)
+  const phaseRef = useRef(phase)
+
+  useEffect(() => {
+    riteRef.current = rite
+    phaseRef.current = loadingModel ? 'loading' : phase
+  }, [rite, phase, loadingModel])
+
+  const barValue = weaveBarPercent({
+    step: rite,
+    total: totalRites,
+    phase,
+    ratio,
+  })
 
   useEffect(() => {
     peaksRef.current = wav ? waveformPeaks(wav, 240) : new Float32Array(0)
   }, [wav])
 
   useEffect(() => {
+    if (busy) return
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
@@ -48,41 +100,54 @@ export function ScrollCanvas({
     ctx.fillRect(0, 0, width, height)
     const peaks = peaksRef.current
     const mid = height / 2
-    if (peaks.length && !weaving) {
-      const bar = width / peaks.length
-      ctx.fillStyle = '#c4a35a'
-      for (let i = 0; i < peaks.length; i += 1) {
-        const h = Math.max(2, peaks[i] * (height * 0.78))
-        ctx.globalAlpha = 0.85
-        ctx.fillRect(i * bar, mid - h / 2, Math.max(1, bar - 1), h)
-      }
-      ctx.globalAlpha = 1
-      const x0 = (trimStart / duration) * width
-      const x1 = (trimEnd / duration) * width
-      ctx.fillStyle = 'rgba(228, 195, 106, 0.16)'
-      ctx.fillRect(x0, 0, x1 - x0, height)
-      ctx.fillStyle = '#e4c36a'
-      ctx.fillRect(x0 - 1, 0, 3, height)
-      ctx.fillRect(x1 - 1, 0, 3, height)
-      const px = (playhead / duration) * width
-      ctx.fillStyle = '#f3e6c8'
-      ctx.fillRect(px, 0, 2, height)
-    } else if (weaving) {
-      ctx.strokeStyle = '#c4a35a'
-      ctx.lineWidth = 2
-      const radius = 42 + Math.sin(elapsedMs / 400) * 4
-      ctx.beginPath()
-      ctx.arc(width / 2, mid, radius, 0, Math.PI * 2)
-      ctx.stroke()
-      for (let i = 0; i < totalRites; i += 1) {
-        const a = (Math.PI * 2 * i) / totalRites - Math.PI / 2
-        ctx.beginPath()
-        ctx.arc(width / 2 + Math.cos(a) * 70, mid + Math.sin(a) * 70, 5, 0, Math.PI * 2)
-        ctx.fillStyle = i < rite ? '#e4c36a' : '#3a2e24'
-        ctx.fill()
-      }
+    if (!peaks.length) return
+    const bar = width / peaks.length
+    ctx.fillStyle = '#c4a35a'
+    for (let i = 0; i < peaks.length; i += 1) {
+      const h = Math.max(2, peaks[i] * (height * 0.78))
+      ctx.globalAlpha = 0.85
+      ctx.fillRect(i * bar, mid - h / 2, Math.max(1, bar - 1), h)
     }
-  }, [wav, weaving, rite, totalRites, elapsedMs, duration, trimStart, trimEnd, playhead])
+    ctx.globalAlpha = 1
+    const x0 = (trimStart / duration) * width
+    const x1 = (trimEnd / duration) * width
+    ctx.fillStyle = 'rgba(228, 195, 106, 0.16)'
+    ctx.fillRect(x0, 0, x1 - x0, height)
+    ctx.fillStyle = '#e4c36a'
+    ctx.fillRect(x0 - 1, 0, 3, height)
+    ctx.fillRect(x1 - 1, 0, 3, height)
+    const px = (playhead / duration) * width
+    ctx.fillStyle = '#f3e6c8'
+    ctx.fillRect(px, 0, 2, height)
+  }, [wav, busy, duration, trimStart, trimEnd, playhead])
+
+  useEffect(() => {
+    if (!busy) return
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) return
+    const started = performance.now()
+    let raf = 0
+    const tick = (now: number) => {
+      const localElapsed = now - started
+      const { width, height } = canvas
+      ctx.clearRect(0, 0, width, height)
+      ctx.fillStyle = '#16110d'
+      ctx.fillRect(0, 0, width, height)
+      drawSigil(ctx, width, height, localElapsed, riteRef.current, totalRites)
+      if (statusRef.current) {
+        statusRef.current.textContent = weaveStatusLabel(
+          phaseRef.current,
+          riteRef.current,
+          totalRites,
+          localElapsed,
+        )
+      }
+      raf = requestAnimationFrame(tick)
+    }
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
+  }, [busy, totalRites])
 
   const dragging = useRef<'start' | 'end' | 'seek' | null>(null)
 
@@ -90,8 +155,8 @@ export function ScrollCanvas({
     const canvas = canvasRef.current
     if (!canvas || duration <= 0) return 0
     const rect = canvas.getBoundingClientRect()
-    const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
-    return ratio * duration
+    const ratioX = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width))
+    return ratioX * duration
   }
 
   function applyPointer(clientX: number, mode: 'start' | 'end' | 'seek' | null) {
@@ -110,34 +175,63 @@ export function ScrollCanvas({
   }
 
   return (
-    <section className="flex min-h-0 flex-1 flex-col px-4 py-3" aria-label="Scroll">
+    <section className="flex min-h-0 flex-1 flex-col px-4 py-3" aria-label="Waveform" aria-busy={busy}>
       <div className="mb-2 flex items-center justify-between">
-        <Hint label="Waveform of the current weave. Blank until you Cast or open a Grimoire page.">
-          <h2 className="font-display text-sm tracking-[0.2em] text-muted">SCROLL</h2>
+        <Hint label="Waveform of the current clip. Blank until you generate or open a library clip.">
+          <h2 className="font-display text-sm tracking-[0.2em] text-muted">WAVEFORM</h2>
         </Hint>
-        {weaving ? (
-          <Hint label="Diffusion progress. Eight rites. Elapsed time is wall clock, not remaining.">
+        {busy ? (
+          <Hint
+            label={
+              loadingModel
+                ? 'Model load progress. Elapsed time is wall clock, not remaining.'
+                : 'Generation progress. Eight steps. Elapsed time is wall clock, not remaining.'
+            }
+          >
             <p role="status" aria-live="polite" className="font-mono text-xs text-amber">
-              Rite {rite} of {totalRites} · {formatClock(elapsedMs / 1000)} elapsed
+              <span ref={statusRef}>
+                {weaveStatusLabel(loadingModel ? 'loading' : phase, rite, totalRites, elapsedMs)}
+              </span>
               <span className="sr-only">
-                {`Generating, step ${rite} of ${totalRites}`}
+                {loadingModel || phase === 'loading'
+                  ? 'Loading model'
+                  : `Generating, step ${rite} of ${totalRites}`}
               </span>
             </p>
           </Hint>
         ) : (
-          <Hint label="Length of the clip on the Scroll, in minutes:seconds.tenths.">
+          <Hint label="Length of the clip, in minutes:seconds.tenths.">
             <p className="font-mono text-xs text-muted">{formatClock(duration)}</p>
           </Hint>
         )}
       </div>
+      {busy ? (
+        <Hint
+          className="mb-2 w-full"
+          label={
+            loadingModel
+              ? 'Model load progress. Putting Medium into VRAM. This is not generating a clip.'
+              : 'Generation progress. The bar stays in motion so the app does not look frozen.'
+          }
+        >
+          <Progress
+            className="w-full"
+            value={barValue ?? 0}
+            indeterminate={barValue == null}
+            aria-label={loadingModel ? 'Model load progress' : 'Generation progress'}
+          />
+        </Hint>
+      ) : null}
       <Hint
         className="flex min-h-0 w-full flex-1"
         label={
-          weaving
-            ? 'The weave is in progress. The waveform appears when Medium finishes.'
-            : wav
-              ? 'Click to seek. Drag the gold handles to set In and Out for export.'
-              : 'The scroll is blank. Speak an incantation and Cast to weave a clip.'
+          loadingModel
+            ? 'Putting Medium into VRAM. This is not generating a clip.'
+            : weaving
+              ? 'Generation is in progress. The waveform appears when it finishes.'
+              : wav
+                ? 'Click to seek. Drag the gold handles to set In and Out for export.'
+                : emptyLabel
         }
       >
         <div
@@ -149,7 +243,7 @@ export function ScrollCanvas({
           aria-valuenow={playhead}
           className="relative min-h-0 w-full flex-1 overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)]"
           onPointerDown={(e) => {
-            if (!wav || weaving) return
+            if (!wav || busy) return
             const mode = pickMode(e.clientX)
             dragging.current = mode
             ;(e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId)
@@ -164,9 +258,9 @@ export function ScrollCanvas({
           }}
         >
           <canvas ref={canvasRef} width={960} height={280} className="size-full" />
-          {!wav && !weaving ? (
+          {!wav && !busy ? (
             <p className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center text-muted">
-              The scroll is blank. Speak an incantation and Cast.
+              {emptyLabel}
             </p>
           ) : null}
         </div>

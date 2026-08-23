@@ -15,7 +15,8 @@ import type {
   WeaveProgress,
 } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
-import { wavDurationSeconds } from '@/lib/wav'
+import { tagMusicWav, wavDurationSeconds } from '@/lib/wav'
+import { extractInstruments, musicWavInfo } from '@/lib/instruments'
 import { loadSettings } from '@/lib/setup'
 
 function hfToken(): string {
@@ -31,6 +32,7 @@ type EngineMsg = {
   prompt?: string
   ready?: boolean
   mock?: boolean
+  loaded?: boolean
   device?: string
   ok?: boolean
   flavor?: string
@@ -40,15 +42,15 @@ type EngineMsg = {
 function throwIfEngineError(msg: EngineMsg): void {
   if (msg.event !== 'error') return
   const message = msg.message ?? 'Engine error'
-  if (/dispelled/i.test(message)) {
-    throw new DOMException('Cast dispelled', 'AbortError')
+  if (/dispelled|cancelled/i.test(message)) {
+    throw new DOMException('Generation cancelled', 'AbortError')
   }
   throw new Error(message)
 }
 
 export function reportError(err: unknown, fallback: string): string {
   if (err instanceof DOMException && err.name === 'AbortError') {
-    return err.message || 'Cast dispelled'
+    return err.message || 'Generation cancelled'
   }
   const message = err instanceof Error ? err.message : fallback
   const detail = err instanceof Error ? err.stack : undefined
@@ -171,6 +173,7 @@ export async function engineStatus(): Promise<EngineStatus> {
   return {
     ready: Boolean(result.ready),
     mock: Boolean(result.mock),
+    loaded: Boolean(result.loaded) || Boolean(result.mock),
     device: result.device ?? 'unknown',
     message: result.message ?? '',
   }
@@ -200,6 +203,9 @@ export async function generate(
     onAbort()
   }
   try {
+    const mode = request.mode === 'music' ? 'music' : 'sfx'
+    const instruments =
+      mode === 'music' ? (request.instruments ?? extractInstruments(request.prompt)) : []
     const result = await invoke<EngineMsg>('engine_generate', {
       prompt: request.prompt,
       seconds: request.seconds,
@@ -208,11 +214,17 @@ export async function generate(
       negative: request.negative,
       hfToken: hfToken(),
       libraryDir: request.libraryDir?.trim() || loadSettings().libraryDir.trim() || null,
+      mode,
+      instruments,
     })
     throwIfEngineError(result)
     if (!result.path) throw new Error('Engine did not return a WAV path')
     const b64 = await invoke<string>('read_file_b64', { path: result.path })
-    const wav = base64ToBytes(b64)
+    let wav = base64ToBytes(b64)
+    if (mode === 'music') {
+      wav = tagMusicWav(wav, musicWavInfo(request.prompt, instruments))
+      await invoke('write_file_b64', { path: result.path, data: bytesToBase64(wav) })
+    }
     const clip: Clip = {
       id: clipIdFromPath(result.path),
       prompt: request.prompt.trim(),
@@ -221,12 +233,18 @@ export async function generate(
       createdAt: new Date().toISOString(),
       cfg: request.cfg,
       negative: request.negative,
+      mode,
+      instruments: instruments.length ? instruments : undefined,
     }
     return { clip, wav }
   } finally {
     handlers.signal?.removeEventListener('abort', onAbort)
     unlisten()
   }
+}
+
+export async function loadModel(onProgress?: (ratio: number) => void): Promise<void> {
+  await scribeWeights(onProgress ?? (() => {}))
 }
 
 export async function scribeWeights(onProgress: (ratio: number) => void): Promise<void> {
@@ -239,6 +257,12 @@ export async function scribeWeights(onProgress: (ratio: number) => void): Promis
   const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
   const unlisten = await listen<WeaveProgress>('scribe-progress', (ev) => {
+    const ratio = ev.payload.ratio
+    if (typeof ratio === 'number' && Number.isFinite(ratio) && ratio > 0) {
+      onProgress(Math.min(1, ratio))
+      return
+    }
+    if (ev.payload.phase === 'loading' && ev.payload.step <= 0) return
     const total = ev.payload.total || 1
     onProgress(Math.min(1, ev.payload.step / total))
   })
@@ -259,7 +283,7 @@ export async function exportClipFile(options: {
 }): Promise<string | null> {
   if (!isTauri()) {
     if (options.format === 'ogg') {
-      throw new Error('OGG Vorbis needs the desktop sidecar.')
+      throw new Error('OGG export needs the desktop app.')
     }
     downloadArrayBuffer(options.buffer, options.filename, 'audio/wav')
     return null

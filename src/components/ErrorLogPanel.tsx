@@ -36,21 +36,21 @@ export function ErrorLogPanel() {
 
   return (
     <section className="flex min-h-0 flex-col" aria-label="Error log">
-      <Hint label="Failures from Cast, scribing, and the sidecar, newest first.">
+      <Hint label="Failures from generate, setup download, and the engine, newest first.">
         <h2 className="font-display text-xl text-cream">Error log</h2>
       </Hint>
-      <Hint label="Each block is one omen. Refresh after a new failure. Reveal file opens Explorer.">
-        <p className="mt-1 text-sm text-muted">Omens scribed when a rite fails. Newest first.</p>
+      <Hint label="Each block is one failure. Refresh after a new error. Reveal file opens Explorer.">
+        <p className="mt-1 text-sm text-muted">Errors recorded when something fails. Newest first.</p>
       </Hint>
       <Hint
         className="mt-4 w-full"
-        label="Newest omens first. Each block is one failure, including traceback when the sidecar logged one."
+        label="Newest first. Each block is one failure, including traceback when the engine logged one."
       >
         <ScrollArea className="h-[40vh] w-full">
           {loading ? (
-            <p role="status">Reading the ledger…</p>
+            <p role="status">Loading the log…</p>
           ) : entries.length === 0 ? (
-            <p className="text-sm text-muted">The ledger is blank. Cast failures are scribed here.</p>
+            <p className="text-sm text-muted">No errors yet. Failed generations are recorded here.</p>
           ) : (
             <div role="log" className="space-y-3 pr-3">
               {entries.map((entry, index) => (
@@ -66,7 +66,7 @@ export function ErrorLogPanel() {
         </ScrollArea>
       </Hint>
       <div className="mt-4 flex gap-2">
-        <Hint label="Reload error.log from disk. New Cast failures appear after Refresh.">
+        <Hint label="Reload error.log from disk. New failures appear after Refresh.">
           <Button type="button" variant="outline" onClick={() => void reload()}>
             Refresh
           </Button>

@@ -74,6 +74,8 @@ if (-not (Test-Path -LiteralPath $builtSetup)) {
     throw "Missing NSIS installer: $builtSetup"
 }
 
+Stop-LockingProcess -ExePath $destExe
+Start-Sleep -Milliseconds 200
 Copy-Item -LiteralPath $builtExe -Destination $destExe -Force
 Copy-Item -LiteralPath $builtSetup -Destination $destSetup -Force
 

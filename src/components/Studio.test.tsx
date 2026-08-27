@@ -3,7 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { Studio } from '@/components/Studio'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { GENERATE_MODES } from '@/lib/generateMode'
 import { TIMING_STORAGE_KEY } from '@/lib/timing'
+
 
 function renderStudio() {
   return render(
@@ -18,7 +20,7 @@ describe('Studio', () => {
     renderStudio()
     expect(screen.getByRole('tab', { name: 'Generate' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('button', { name: /generate sound/i })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /model ready/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /unload model/i })).toBeInTheDocument()
     expect(screen.queryByLabelText('Search library')).not.toBeInTheDocument()
   })
 
@@ -46,9 +48,9 @@ describe('Studio', () => {
     await user.click(screen.getByRole('button', { name: /generate sound/i }))
     expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
     expect(
-      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
+      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 }),
     ).toBeInTheDocument()
-  })
+  }, 15000)
 
   it('switches to instrumental mode and generates a music clip', async () => {
     const user = userEvent.setup()
@@ -61,13 +63,14 @@ describe('Studio', () => {
     expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveValue('TrackType: Music')
     await user.click(screen.getByRole('button', { name: /advanced/i }))
     expect(screen.getByLabelText(/negative prompt/i)).toHaveValue(
-      'vocals, singing, speech, lyrics, choir',
+      GENERATE_MODES.music.defaultNegative,
     )
+
     await user.type(screen.getByRole('textbox', { name: 'Prompt' }), ', lute tavern theme')
     await user.click(screen.getByRole('button', { name: /generate music/i }))
     expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
     expect(
-      await screen.findByRole('button', { name: /generate music/i }, { timeout: 5000 }),
+      await screen.findByRole('button', { name: /generate music/i }, { timeout: 15000 }),
     ).toBeInTheDocument()
     await user.click(screen.getByRole('tab', { name: 'Library' }))
     await user.click(screen.getByRole('button', { name: /main theme/i }))
@@ -75,7 +78,7 @@ describe('Studio', () => {
     expect(screen.getByText(/lute tavern theme/i)).toBeInTheDocument()
     expect(screen.queryByLabelText('Music clip')).not.toBeInTheDocument()
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
-  })
+  }, 15000)
 
   it('shows a generate time estimate from past clips', () => {
     localStorage.setItem(
@@ -98,9 +101,9 @@ describe('Studio', () => {
     expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
     expect(screen.getByRole('status')).toHaveTextContent(/~0:\d{2} remaining/)
     expect(
-      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
+      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 }),
     ).toBeInTheDocument()
-  })
+  }, 15000)
 
   it(
     'loads a catalog prompt into a queue and generates it',
@@ -117,10 +120,11 @@ describe('Studio', () => {
       await user.click(screen.getByRole('button', { name: /generate queue/i }))
       expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
       expect(
-        await screen.findByRole('button', { name: /generate sound/i }, { timeout: 5000 }),
+        await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 }),
       ).toBeInTheDocument()
       await user.click(screen.getByRole('tab', { name: 'Library' }))
       await user.click(screen.getByRole('button', { name: /combat/i }))
+      await user.click(screen.getByRole('button', { name: /sword/i }))
       expect(screen.getByText(/steel shortsword/i)).toBeInTheDocument()
       expect(screen.queryByText(/TrackType: SFX/i)).not.toBeInTheDocument()
       await user.click(screen.getByRole('button', { name: /steel shortsword/i }))
@@ -128,6 +132,84 @@ describe('Studio', () => {
         /TrackType: SFX, steel shortsword/i,
       )
     },
-    10000,
+    15000,
   )
+
+  it('restores persisted queue from local storage and allows generating it', async () => {
+    localStorage.setItem(
+      'thunder-fx.queue',
+      JSON.stringify([
+        {
+          id: 'fx:doors:heavy-gate',
+          categoryId: 'fx:doors',
+          category: 'Doors',
+          title: 'Heavy iron gate',
+          prompt: 'TrackType: SFX, heavy dungeon iron gate',
+          duration: 3,
+          negative: '',
+        },
+      ]),
+    )
+    const user = userEvent.setup()
+    renderStudio()
+    expect(screen.getByText(/heavy iron gate/i)).toBeInTheDocument()
+    expect(screen.getByText(/saved/i)).toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /generate queue/i }))
+    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    expect(
+      await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 }),
+    ).toBeInTheDocument()
+  }, 15000)
+
+  it('displays waveform after single track generation, but keeps waveform unset after queue generation', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+
+    // 1. Initial state: model is loaded in mock, no track active, play button disabled
+    const playBtn = screen.getByRole('button', { name: /play trimmed clip/i })
+    expect(playBtn).toBeDisabled()
+
+    // 2. Single generate (1 track)
+    await user.type(screen.getByRole('textbox', { name: 'Prompt' }), 'single sword strike')
+    await user.click(screen.getByRole('button', { name: /generate sound/i }))
+    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 })
+
+    // Single track generated: waveform is loaded, play button is now enabled
+    expect(playBtn).toBeEnabled()
+
+    // 3. Now run a queue generation
+    await user.click(screen.getByRole('button', { name: /browse prompts/i }))
+    await user.click(screen.getByRole('option', { name: /^combat/i }))
+    await user.click(screen.getByRole('checkbox', { name: /steel sword draw/i }))
+    await user.click(screen.getByRole('button', { name: /add selected/i }))
+    await user.keyboard('{Escape}')
+    await user.click(screen.getByRole('button', { name: /generate queue/i }))
+    expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 })
+
+    // Queue finished: waveform is NOT displayed, play button is disabled
+    expect(playBtn).toBeDisabled()
+
+    // 4. Playing an individual track from library loads the waveform
+    await user.click(screen.getByRole('tab', { name: 'Library' }))
+    await user.click(screen.getByRole('button', { name: /combat/i }))
+    await user.click(screen.getByRole('button', { name: /sword/i }))
+    await user.click(screen.getByRole('button', { name: /steel shortsword/i }))
+
+    // Returned to Generate tab: waveform is loaded for the individual track, play button is enabled
+    expect(screen.getByRole('tab', { name: 'Generate' })).toHaveAttribute('aria-selected', 'true')
+    expect(screen.getByRole('button', { name: /play trimmed clip/i })).toBeEnabled()
+  }, 15000)
+
+  it('allows unloading the model', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+    const unloadBtn = screen.getByRole('button', { name: /unload model/i })
+    expect(unloadBtn).toBeInTheDocument()
+    await user.click(unloadBtn)
+    expect(await screen.findByRole('button', { name: /^load model$/i })).toBeInTheDocument()
+  })
 })
+

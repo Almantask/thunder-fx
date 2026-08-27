@@ -8,6 +8,7 @@ export type GenerateModeSpec = {
   generateAria: string
   emptyWaveform: string
   defaultDuration: number
+  defaultCfg: number
   defaultNegative: string
   negativeHint: string
   chips: readonly string[]
@@ -23,8 +24,9 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
     generateAria: 'Generate sound',
     emptyWaveform: 'Describe a sound, then click Generate.',
     defaultDuration: 8,
-    defaultNegative: '',
-    negativeHint: 'Sounds to avoid, such as music, voice, or rain.',
+    defaultCfg: 4.0,
+    defaultNegative: 'speech, music, vocals, singing, melody, distortion, clipping, muffled, background noise',
+    negativeHint: 'Sounds to avoid, such as music, voice, or distortion.',
     chips: [
       'TrackType: SFX',
       'close mic',
@@ -50,7 +52,8 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
     generateAria: 'Generate music',
     emptyWaveform: 'Describe instrumental music, then click Generate.',
     defaultDuration: 20,
-    defaultNegative: 'vocals, singing, speech, lyrics, choir',
+    defaultCfg: 3.0,
+    defaultNegative: 'vocals, singing, speech, lyrics, choir, pop drums, trap beats, EDM, clipping, distortion',
     negativeHint: 'Parts to avoid, such as vocals, singing, or speech.',
     chips: [
       'TrackType: Music',
@@ -70,6 +73,7 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
     ],
   },
 }
+
 
 const TRACK_TYPE = /^tracktype:\s*\w+/i
 const TRACK_TYPE_ONLY = /^tracktype:\s*\w+\s*$/i
@@ -118,6 +122,17 @@ export function applyModeDuration(
     return GENERATE_MODES[to].defaultDuration
   }
   return duration
+}
+
+export function applyModeCfg(
+  cfg: number,
+  from: GenerateMode,
+  to: GenerateMode,
+): number {
+  if (cfg === GENERATE_MODES[from].defaultCfg) {
+    return GENERATE_MODES[to].defaultCfg
+  }
+  return cfg
 }
 
 export function clipMode(clip: { mode?: GenerateMode; prompt: string }): GenerateMode {

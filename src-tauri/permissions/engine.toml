@@ -7,13 +7,20 @@ commands.allow = [
   "engine_generate",
   "engine_cancel",
   "engine_encode_ogg",
+  "engine_encode_audio",
   "engine_warmup",
+  "engine_unload",
   "trim_wav",
   "write_file_b64",
   "read_file_b64",
+  "delete_file",
+  "zip_files",
   "temp_dir",
   "log_error",
   "error_log_path",
   "library_path",
-  "read_error_log"
+  "read_error_log",
+  "scan_library_dir",
+  "scan_library_categories",
+  "scan_folder_tracks"
 ]

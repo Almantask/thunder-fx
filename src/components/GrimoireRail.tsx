@@ -5,17 +5,35 @@ import { promptName } from '@/lib/filename'
 import { GENERATE_MODES, clipMode } from '@/lib/generateMode'
 import { extractBpm, extractInstruments } from '@/lib/instruments'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
-import { inferClipCategory, inferClipIntensity } from '@/lib/promptCatalog'
+import { inferClipCategory, inferClipIntensity, inferClipSubcategory } from '@/lib/promptCatalog'
+import type { AudioFormat } from '@/lib/audioExport'
+import { DEFAULT_PACK_TEMPLATE } from '@/lib/packNaming'
 import type { Clip, GenerateMode } from '@/lib/types'
 import { cn, relativeTime } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
+
+export type PackExportRequest = {
+  ids: string[]
+  template: string
+  format: AudioFormat
+  zip: boolean
+  includeManifest: boolean
+}
 
 type GrimoireRailProps = {
   clips: Clip[]
@@ -29,6 +47,7 @@ type GrimoireRailProps = {
   onStarter: (prompt: string) => void
   onDelete: (id: string) => void
   onModeChange?: (mode: GenerateMode) => void
+  onExportPack?: (request: PackExportRequest) => void
   getWav?: (id: string) => Promise<ArrayBuffer | undefined>
 }
 
@@ -37,10 +56,16 @@ type IntensityGroup = {
   clips: Clip[]
 }
 
+type SubcategoryGroup = {
+  name: string
+  clips: Clip[]
+}
+
 type CategoryGroup = {
   name: string
   clips: Clip[]
   intensityGroups?: IntensityGroup[]
+  subcategoryGroups?: SubcategoryGroup[]
 }
 
 export function GrimoireRail({
@@ -55,13 +80,23 @@ export function GrimoireRail({
   onStarter,
   onDelete,
   onModeChange,
+  onExportPack,
   getWav,
 }: GrimoireRailProps) {
   const [selectedMode, setSelectedMode] = useState<GenerateMode | null>(null)
   const [openCategories, setOpenCategories] = useState<Set<string>>(() => new Set())
+  const [openSubcategories, setOpenSubcategories] = useState<Set<string>>(() => new Set())
   const [openIntensities, setOpenIntensities] = useState<Set<string>>(() => new Set())
   const [playingId, setPlayingId] = useState<string | null>(null)
   const [isPlaying, setIsPlaying] = useState(false)
+  const [fxPlayingIds, setFxPlayingIds] = useState<Set<string>>(() => new Set())
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
+  const [packOpen, setPackOpen] = useState(false)
+  const [packTemplate, setPackTemplate] = useState(DEFAULT_PACK_TEMPLATE)
+  const [packFormat, setPackFormat] = useState<AudioFormat>('wav')
+  const [packZip, setPackZip] = useState(true)
+  const [packManifest, setPackManifest] = useState(true)
+  const fxPlaybacksRef = useRef<Map<string, PlaybackHandle>>(new Map())
   const playbackRef = useRef<PlaybackHandle | null>(null)
   const activeIdRef = useRef<string | null>(null)
   const isPlayingRef = useRef(false)
@@ -87,8 +122,10 @@ export function GrimoireRail({
     if (!q) return modeClips
     return modeClips.filter((c) => {
       if (c.prompt.toLowerCase().includes(q)) return true
-      if (promptName(c.prompt).toLowerCase().includes(q)) return true
+      if (promptName(c.prompt, c).toLowerCase().includes(q)) return true
       if (c.category?.toLowerCase().includes(q)) return true
+      if (c.subcategory?.toLowerCase().includes(q)) return true
+      if (inferClipSubcategory(c).toLowerCase().includes(q)) return true
       const names = c.instruments?.length ? c.instruments : extractInstruments(c.prompt)
       return names.some((name) => name.toLowerCase().includes(q))
     })
@@ -119,7 +156,23 @@ export function GrimoireRail({
         intensityGroups.sort((a, b) => a.name.localeCompare(b.name))
         groups.push({ name, clips: groupClips, intensityGroups })
       } else {
-        groups.push({ name, clips: groupClips })
+        const subcategoryMap = new Map<string, Clip[]>()
+        for (const clip of groupClips) {
+          const subcat = inferClipSubcategory(clip)
+          const list = subcategoryMap.get(subcat) ?? []
+          list.push(clip)
+          subcategoryMap.set(subcat, list)
+        }
+        const subcategoryGroups: SubcategoryGroup[] = []
+        for (const [subName, subClips] of subcategoryMap.entries()) {
+          subcategoryGroups.push({ name: subName, clips: subClips })
+        }
+        subcategoryGroups.sort((a, b) => {
+          if (a.name === 'General') return 1
+          if (b.name === 'General') return -1
+          return a.name.localeCompare(b.name)
+        })
+        groups.push({ name, clips: groupClips, subcategoryGroups })
       }
     }
     groups.sort((a, b) => {
@@ -144,6 +197,24 @@ export function GrimoireRail({
         next.delete(categoryName)
       } else {
         next.add(categoryName)
+      }
+      return next
+    })
+  }
+
+  const isSubcategoryOpen = (categoryName: string, subcategoryName: string) => {
+    if (isSearching) return true
+    return openSubcategories.has(`${categoryName}::${subcategoryName}`)
+  }
+
+  const toggleSubcategory = (categoryName: string, subcategoryName: string) => {
+    setOpenSubcategories((prev) => {
+      const key = `${categoryName}::${subcategoryName}`
+      const next = new Set(prev)
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.add(key)
       }
       return next
     })
@@ -174,24 +245,40 @@ export function GrimoireRail({
       if (activeMode === 'music' && g.intensityGroups) {
         return g.intensityGroups.every((ig) => openIntensities.has(`${g.name}::${ig.name}`))
       }
+      if (activeMode === 'sfx' && g.subcategoryGroups) {
+        return g.subcategoryGroups.every((sg) => openSubcategories.has(`${g.name}::${sg.name}`))
+      }
       return true
     })
 
   const toggleExpandAll = () => {
     if (allExpanded) {
       setOpenCategories(new Set())
+      setOpenSubcategories(new Set())
       setOpenIntensities(new Set())
     } else {
       setOpenCategories(new Set(categoryGroups.map((g) => g.name)))
-      const allIntKeys: string[] = []
-      for (const g of categoryGroups) {
-        if (g.intensityGroups) {
-          for (const ig of g.intensityGroups) {
-            allIntKeys.push(`${g.name}::${ig.name}`)
+      if (activeMode === 'music') {
+        const allIntKeys: string[] = []
+        for (const g of categoryGroups) {
+          if (g.intensityGroups) {
+            for (const ig of g.intensityGroups) {
+              allIntKeys.push(`${g.name}::${ig.name}`)
+            }
           }
         }
+        setOpenIntensities(new Set(allIntKeys))
+      } else {
+        const allSubKeys: string[] = []
+        for (const g of categoryGroups) {
+          if (g.subcategoryGroups) {
+            for (const sg of g.subcategoryGroups) {
+              allSubKeys.push(`${g.name}::${sg.name}`)
+            }
+          }
+        }
+        setOpenSubcategories(new Set(allSubKeys))
       }
-      setOpenIntensities(new Set(allIntKeys))
     }
   }
 
@@ -211,6 +298,13 @@ export function GrimoireRail({
     setIsPlaying(false)
     activeIdRef.current = null
     isPlayingRef.current = false
+
+    for (const handle of fxPlaybacksRef.current.values()) {
+      handle.stop()
+      handle.dispose()
+    }
+    fxPlaybacksRef.current.clear()
+    setFxPlayingIds(new Set())
   }
 
   const playClipAtIndex = async (index: number, list: Clip[]) => {
@@ -279,8 +373,10 @@ export function GrimoireRail({
     }
   }
 
+  const isAnyPlaying = isPlaying || fxPlayingIds.size > 0
+
   const togglePlayVisible = () => {
-    if (isPlaying) {
+    if (isAnyPlaying) {
       stopPlayback()
     } else {
       if (filtered.length === 0) return
@@ -288,7 +384,68 @@ export function GrimoireRail({
     }
   }
 
-  const togglePlayClip = (clipId: string) => {
+  const togglePlayClip = async (clipId: string) => {
+    const clip = clips.find((c) => c.id === clipId) || filtered.find((c) => c.id === clipId)
+    if (!clip) return
+
+    const isSfx = clipMode(clip) === 'sfx'
+
+    if (isSfx) {
+      if (fxPlayingIds.has(clipId)) {
+        const handle = fxPlaybacksRef.current.get(clipId)
+        if (handle) {
+          handle.stop()
+          handle.dispose()
+          fxPlaybacksRef.current.delete(clipId)
+        }
+        setFxPlayingIds((prev) => {
+          const next = new Set(prev)
+          next.delete(clipId)
+          return next
+        })
+        return
+      }
+
+      setFxPlayingIds((prev) => new Set(prev).add(clipId))
+
+      if (!getWav) return
+
+      try {
+        const wavBuffer = await getWav(clipId)
+        if (!wavBuffer) {
+          setFxPlayingIds((prev) => {
+            const next = new Set(prev)
+            next.delete(clipId)
+            return next
+          })
+          return
+        }
+
+        const handle = await createPlayback(wavBuffer, () => {
+          const h = fxPlaybacksRef.current.get(clipId)
+          if (h) {
+            h.dispose()
+            fxPlaybacksRef.current.delete(clipId)
+          }
+          setFxPlayingIds((prev) => {
+            const next = new Set(prev)
+            next.delete(clipId)
+            return next
+          })
+        })
+
+        fxPlaybacksRef.current.set(clipId, handle)
+        await handle.play(0, clip.duration, false)
+      } catch {
+        setFxPlayingIds((prev) => {
+          const next = new Set(prev)
+          next.delete(clipId)
+          return next
+        })
+      }
+      return
+    }
+
     if (isPlaying && playingId === clipId) {
       stopPlayback()
     } else {
@@ -305,6 +462,17 @@ export function GrimoireRail({
   }
 
   const handleDelete = (id: string) => {
+    const fxHandle = fxPlaybacksRef.current.get(id)
+    if (fxHandle) {
+      fxHandle.stop()
+      fxHandle.dispose()
+      fxPlaybacksRef.current.delete(id)
+      setFxPlayingIds((prev) => {
+        const next = new Set(prev)
+        next.delete(id)
+        return next
+      })
+    }
     if (playingId === id) {
       stopPlayback()
     }
@@ -318,6 +486,10 @@ export function GrimoireRail({
       playbackRef.current = null
       activeIdRef.current = null
       isPlayingRef.current = false
+      for (const handle of fxPlaybacksRef.current.values()) {
+        handle.dispose()
+      }
+      fxPlaybacksRef.current.clear()
     }
   }, [])
 
@@ -330,8 +502,12 @@ export function GrimoireRail({
           : []
     const topInstruments = allInstruments.slice(0, 3)
     const bpm = extractBpm(clip.prompt)
-    const isClipPlaying = playingId === clip.id && isPlaying
+    const isClipPlaying =
+      clipMode(clip) === 'sfx'
+        ? fxPlayingIds.has(clip.id) || (playingId === clip.id && isPlaying)
+        : playingId === clip.id && isPlaying
     const isSelected = selectedId === clip.id
+    const isChecked = selectedIds.has(clip.id)
     return (
       <li
         key={clip.id}
@@ -343,11 +519,25 @@ export function GrimoireRail({
               : 'border-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] bg-leather-2/40 hover:border-gold/40 hover:bg-leather-2/70'
         }`}
       >
+        <Hint label={isChecked ? 'Remove this clip from the pack selection.' : 'Add this clip to the pack selection.'}>
+          <Checkbox
+            checked={isChecked}
+            aria-label={`Select ${promptName(clip.prompt, clip)}`}
+            onCheckedChange={(value) => {
+              setSelectedIds((prev) => {
+                const next = new Set(prev)
+                if (value === true) next.add(clip.id)
+                else next.delete(clip.id)
+                return next
+              })
+            }}
+          />
+        </Hint>
         <Hint
           label={
             isClipPlaying
-              ? `Pause ${promptName(clip.prompt)}.`
-              : `Play ${promptName(clip.prompt)}.`
+              ? `Pause ${promptName(clip.prompt, clip)}.`
+              : `Play ${promptName(clip.prompt, clip)}.`
           }
         >
           <Button
@@ -374,7 +564,7 @@ export function GrimoireRail({
             className="w-full min-w-0 text-left focus-visible:outline-none"
           >
             <p className="truncate text-xs font-medium text-cream group-hover:text-gold sm:text-sm">
-              {promptName(clip.prompt)}
+              {promptName(clip.prompt, clip)}
             </p>
             <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] leading-tight">
               {topInstruments.length ? (
@@ -470,7 +660,7 @@ export function GrimoireRail({
             </Hint>
             <Hint
               label={
-                isPlaying
+                isAnyPlaying
                   ? `Pause playing visible ${activeMode === 'music' ? 'ambiences' : 'sounds'}.`
                   : `Play visible ${activeMode === 'music' ? 'ambiences' : 'sounds'} in sequence.`
               }
@@ -480,15 +670,46 @@ export function GrimoireRail({
                 variant="outline"
                 disabled={filtered.length === 0 || loading}
                 onClick={togglePlayVisible}
-                aria-label={isPlaying ? 'Pause visible sounds' : 'Play visible sounds'}
-                aria-pressed={isPlaying}
+                aria-label={isAnyPlaying ? 'Pause visible sounds' : 'Play visible sounds'}
+                aria-pressed={isAnyPlaying}
                 className="shrink-0 gap-2"
               >
-                {isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-                <span>{isPlaying ? 'Pause' : 'Play'}</span>
+                {isAnyPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+                <span>{isAnyPlaying ? 'Pause' : 'Play'}</span>
               </Button>
             </Hint>
           </div>
+          {filtered.length > 0 ? (
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <Hint label="Select every clip currently visible in this tab and search.">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    const ids = filtered.map((clip) => clip.id)
+                    const allOn = ids.length > 0 && ids.every((id) => selectedIds.has(id))
+                    setSelectedIds(allOn ? new Set() : new Set(ids))
+                  }}
+                  aria-label="Select visible clips"
+                >
+                  {filtered.every((clip) => selectedIds.has(clip.id)) ? 'Clear selection' : 'Select visible'}
+                </Button>
+              </Hint>
+              <Hint label="Export selected clips with a naming template, as files or a ZIP sound pack.">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={selectedIds.size === 0}
+                  onClick={() => setPackOpen(true)}
+                  aria-label="Export pack"
+                >
+                  Export pack{selectedIds.size ? ` (${selectedIds.size})` : ''}
+                </Button>
+              </Hint>
+            </div>
+          ) : null}
         </div>
         {error ? (
           <Hint className="mx-auto w-full max-w-4xl px-6" label="The library store failed. You can still generate; reload the app if clips stay missing.">
@@ -507,21 +728,44 @@ export function GrimoireRail({
         ) : null}
         <div className="mx-auto w-full max-w-4xl px-6 pb-8">
           {modeClips.length === 0 && !loading ? (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <Hint className="sm:col-span-2 lg:col-span-3" label="No clips match yet. Starters fill the prompt and open Generate.">
-                <p className="text-sm text-muted">The library is empty. Try a starter prompt.</p>
-              </Hint>
-              {starters.map((prompt) => (
-                <Hint key={prompt} className="w-full" label="Put this starter into Generate. You still click Generate to create the sound.">
-                  <button
+            <div className="space-y-4">
+              {(activeMode === 'sfx' ? musicCount > 0 : sfxCount > 0) && (
+                <div className="flex flex-wrap items-center justify-between gap-3 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2/80 p-3.5">
+                  <p className="text-sm text-cream">
+                    No {activeMode === 'sfx' ? 'sounds' : 'ambiences'} in this tab, but you have{' '}
+                    <span className="font-semibold text-gold">
+                      {activeMode === 'sfx' ? musicCount : sfxCount}
+                    </span>{' '}
+                    {activeMode === 'sfx' ? (musicCount === 1 ? 'ambience' : 'ambiences') : (sfxCount === 1 ? 'sound' : 'sounds')} in{' '}
+                    {activeMode === 'sfx' ? 'Ambiences' : 'Sounds'}.
+                  </p>
+                  <Button
                     type="button"
-                    className="h-full w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_30%,transparent)] p-3 text-left text-sm text-cream hover:bg-leather-2"
-                    onClick={() => onStarter(prompt)}
+                    variant="outline"
+                    size="sm"
+                    className="shrink-0"
+                    onClick={() => handleModeChange(activeMode === 'sfx' ? 'music' : 'sfx')}
                   >
-                    {prompt}
-                  </button>
+                    View {activeMode === 'sfx' ? 'Ambiences' : 'Sounds'}
+                  </Button>
+                </div>
+              )}
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <Hint className="sm:col-span-2 lg:col-span-3" label="No clips match yet. Starters fill the prompt and open Generate.">
+                  <p className="text-sm text-muted">The library is empty. Try a starter prompt.</p>
                 </Hint>
-              ))}
+                {starters.map((prompt) => (
+                  <Hint key={prompt} className="w-full" label="Put this starter into Generate. You still click Generate to create the sound.">
+                    <button
+                      type="button"
+                      className="h-full w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_30%,transparent)] p-3 text-left text-sm text-cream hover:bg-leather-2"
+                      onClick={() => onStarter(prompt)}
+                    >
+                      {prompt}
+                    </button>
+                  </Hint>
+                ))}
+              </div>
             </div>
           ) : filtered.length === 0 && !loading ? (
             <p className="py-6 text-sm text-muted">No clips match that search.</p>
@@ -629,6 +873,50 @@ export function GrimoireRail({
                           )
                         })}
                       </CollapsibleContent>
+                    ) : group.subcategoryGroups ? (
+                      <CollapsibleContent className="border-t border-[color-mix(in_srgb,var(--color-gold)_15%,transparent)] p-2 sm:p-2.5 space-y-2">
+                        {group.subcategoryGroups.map((subGroup) => {
+                          const isSubOpen = isSubcategoryOpen(group.name, subGroup.name)
+                          return (
+                            <Collapsible
+                              key={subGroup.name}
+                              open={isSubOpen}
+                              onOpenChange={() => toggleSubcategory(group.name, subGroup.name)}
+                              className="overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_18%,transparent)] bg-leather/50"
+                            >
+                              <Hint label={`Click to ${isSubOpen ? 'collapse' : 'expand'} ${subGroup.name}.`}>
+                                <CollapsibleTrigger asChild>
+                                  <button
+                                    type="button"
+                                    aria-expanded={isSubOpen}
+                                    className="flex w-full items-center justify-between px-3 py-2 text-left transition-colors hover:bg-leather-2/60 focus-visible:ring-1 focus-visible:ring-gold focus-visible:outline-none"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <ChevronRight
+                                        className={cn(
+                                          'h-3.5 w-3.5 text-gold/80 transition-transform duration-200',
+                                          isSubOpen && 'rotate-90',
+                                        )}
+                                      />
+                                      <span className="font-display text-xs tracking-wider text-cream/90">
+                                        {subGroup.name}
+                                      </span>
+                                    </div>
+                                    <span className="font-mono text-[11px] text-muted">
+                                      {subGroup.clips.length} {subGroup.clips.length === 1 ? 'sound' : 'sounds'}
+                                    </span>
+                                  </button>
+                                </CollapsibleTrigger>
+                              </Hint>
+                              <CollapsibleContent className="border-t border-[color-mix(in_srgb,var(--color-gold)_12%,transparent)] p-2 sm:p-2.5">
+                                <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                                  {subGroup.clips.map((clip) => renderClipCard(clip))}
+                                </ul>
+                              </CollapsibleContent>
+                            </Collapsible>
+                          )
+                        })}
+                      </CollapsibleContent>
                     ) : (
                       <CollapsibleContent className="border-t border-[color-mix(in_srgb,var(--color-gold)_15%,transparent)] p-2 sm:p-2.5">
                         <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -643,6 +931,76 @@ export function GrimoireRail({
           )}
         </div>
       </ScrollArea>
+      <Dialog open={packOpen} onOpenChange={setPackOpen}>
+        <DialogContent aria-describedby="pack-export-desc">
+          <DialogTitle>Export pack</DialogTitle>
+          <DialogDescription id="pack-export-desc">
+            Rename selected clips with a template and save them as files or a ZIP with an optional manifest.
+          </DialogDescription>
+          <div className="mt-4 space-y-3">
+            <div>
+              <Label htmlFor="pack-template">Naming template</Label>
+              <Input
+                id="pack-template"
+                className="mt-1 font-mono"
+                value={packTemplate}
+                onChange={(e) => setPackTemplate(e.target.value)}
+                aria-label="Naming template"
+              />
+              <p className="mt-1 text-xs text-muted">
+                Tokens: {'{type}'} {'{category}'} {'{name}'} {'{index}'} — e.g. SFX_Combat_Sword_01.wav
+              </p>
+            </div>
+            <div>
+              <Label htmlFor="pack-format">Format</Label>
+              <select
+                id="pack-format"
+                className="mt-1 h-9 w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-leather-2 px-2 font-mono text-xs text-cream"
+                value={packFormat}
+                onChange={(e) => setPackFormat(e.target.value as AudioFormat)}
+                aria-label="Pack format"
+              >
+                <option value="wav">WAV</option>
+                <option value="flac">FLAC</option>
+                <option value="ogg">OGG Vorbis</option>
+                <option value="mp3">MP3 320</option>
+              </select>
+            </div>
+            <label className="flex items-center gap-2 text-sm text-cream">
+              <Checkbox checked={packZip} onCheckedChange={(value) => setPackZip(value === true)} aria-label="Zip archive" />
+              Zip archive
+            </label>
+            <label className="flex items-center gap-2 text-sm text-cream">
+              <Checkbox
+                checked={packManifest}
+                onCheckedChange={(value) => setPackManifest(value === true)}
+                aria-label="Include manifest"
+              />
+              Include manifest.json
+            </label>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button type="button" variant="ghost" onClick={() => setPackOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  onExportPack?.({
+                    ids: [...selectedIds],
+                    template: packTemplate,
+                    format: packFormat,
+                    zip: packZip,
+                    includeManifest: packManifest,
+                  })
+                  setPackOpen(false)
+                }}
+              >
+                Export
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   )
 }

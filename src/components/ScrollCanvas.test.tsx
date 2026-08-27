@@ -55,6 +55,23 @@ describe('ScrollCanvas', () => {
     expect(screen.getByRole('status')).toHaveTextContent(/~0:20 remaining/)
   })
 
+  it('preserves continuous elapsed time when startedAt is provided across tab changes', () => {
+    const startedAt = Date.now() - 15_000
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          weaving
+          rite={2}
+          phase="weaving"
+          startedAt={startedAt}
+          elapsedMs={15_000}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('status')).toHaveTextContent(/0:15(\.0)? elapsed/i)
+  })
+
   it('hides the loading bar when the waveform is idle', () => {
     render(
       <TooltipProvider>
@@ -94,5 +111,107 @@ describe('ScrollCanvas', () => {
     slider.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
 
     expect(onSeek).toHaveBeenCalledTimes(3)
+  })
+
+  it('renders during weaving with completedSubcategoryCount passed', () => {
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          weaving
+          rite={2}
+          phase="weaving"
+          completedSubcategoryCount={2}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+    expect(screen.getByRole('status')).toHaveTextContent(/step 2 of 8/i)
+  })
+
+  it('renders empty label when model is not loaded and no wav is present', () => {
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          modelLoaded={false}
+          emptyLabel="Describe a sound, then click Generate."
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText('Describe a sound, then click Generate.')).toBeInTheDocument()
+  })
+
+  it('hides empty label and presents resting canvas when model is loaded without wav', () => {
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          modelLoaded={true}
+          emptyLabel="Describe a sound, then click Generate."
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByText('Describe a sound, then click Generate.')).not.toBeInTheDocument()
+  })
+
+  it('triggers goblin interaction on click when resting without wav', () => {
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          modelLoaded={true}
+          duration={10}
+        />
+      </TooltipProvider>,
+    )
+    const slider = screen.getByRole('slider', { name: /waveform/i })
+
+    // Simulate clicking goblin in slot 0
+    slider.dispatchEvent(
+      new MouseEvent('pointerdown', { bubbles: true, clientX: 192, clientY: 200 }),
+    )
+    slider.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+  })
+
+  it('seeks waveform when model is loaded and wav is present', () => {
+    const onSeek = vi.fn()
+    const mockWav = generateMockSfxWav(1.0, 1)
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          wav={mockWav}
+          modelLoaded={true}
+          duration={10}
+          onSeek={onSeek}
+        />
+      </TooltipProvider>,
+    )
+    const slider = screen.getByRole('slider', { name: /waveform/i })
+
+    slider.dispatchEvent(
+      new MouseEvent('pointerdown', { bubbles: true, clientX: 500, clientY: 100 }),
+    )
+    slider.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }))
+
+    expect(onSeek).toHaveBeenCalled()
+  })
+
+  it('hides goblin crew and displays waveform when individual wav is loaded', () => {
+    const mockWav = generateMockSfxWav(1.0, 1)
+    render(
+      <TooltipProvider>
+        <ScrollCanvas
+          {...base}
+          wav={mockWav}
+          modelLoaded={true}
+          duration={10}
+          emptyLabel="Describe a sound, then click Generate."
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByText('Describe a sound, then click Generate.')).not.toBeInTheDocument()
+    expect(screen.getByRole('slider', { name: /waveform/i })).toBeInTheDocument()
   })
 })

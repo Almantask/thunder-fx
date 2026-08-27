@@ -39,3 +39,10 @@ Feature: Library
     Then only ambience clips and categories are shown
     When the user switches browsing mode to Sounds
     Then only sound effect clips and categories are shown
+
+  Scenario: Selected clips can be exported as a named zip pack
+    Given the library has saved clips
+    When the user selects clips and Export pack
+    Then a naming template is offered
+    And a zip sound pack can be saved
+

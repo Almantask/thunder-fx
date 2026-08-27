@@ -3,16 +3,59 @@ import type { WeavePhase, WeaveProgress } from '@/lib/types'
 import { formatClock } from '@/lib/utils'
 
 export function weaveBarPercent(
-  progress: Pick<WeaveProgress, 'step' | 'total' | 'phase' | 'ratio'>,
+  progress: Pick<WeaveProgress, 'step' | 'total' | 'phase' | 'ratio'> & {
+    elapsedMs?: number
+    historicalEstimateMs?: number
+    remainingMs?: number
+    queueTailEstimateMs?: number
+  },
 ): number | null {
   if (typeof progress.ratio === 'number' && Number.isFinite(progress.ratio) && progress.ratio > 0) {
     return Math.min(100, Math.max(0, progress.ratio * 100))
   }
-  if ((progress.phase ?? 'loading') === 'loading' && progress.step <= 0) {
+  if (progress.phase === 'writing') {
+    return 96
+  }
+  if (
+    (progress.phase ?? 'loading') === 'loading' &&
+    progress.step <= 0 &&
+    progress.elapsedMs == null &&
+    progress.historicalEstimateMs == null
+  ) {
     return null
   }
+
+  const stepRatio =
+    progress.step > 0 && (progress.total || 8) > 0 ? progress.step / (progress.total || 8) : 0
+
+  if (progress.elapsedMs != null && progress.elapsedMs >= 0) {
+    const elapsedMs = progress.elapsedMs
+    const remaining =
+      progress.remainingMs ??
+      estimateRemainingMs({
+        elapsedMs,
+        historicalTotalMs: progress.historicalEstimateMs,
+        progress: weaveProgressRatio(progress),
+        queueTailMs: progress.queueTailEstimateMs,
+      })
+
+    if (remaining != null && elapsedMs + remaining > 0) {
+      const timePercent = (elapsedMs / (elapsedMs + remaining)) * 100
+      const stepPercent = stepRatio * 100
+      const combined = Math.max(stepPercent, timePercent)
+      return Math.min(95, Math.max(1, combined))
+    }
+
+    if (elapsedMs > 0) {
+      const timePercent = (1 - Math.exp(-elapsedMs / 14000)) * 88
+      const stepPercent = stepRatio * 100
+      const combined = Math.max(stepPercent, timePercent)
+      return Math.min(95, Math.max(1, combined))
+    }
+  }
+
   const total = progress.total || 8
-  if (progress.step <= 0) return null
+  if (progress.step <= 0) return (progress.phase ?? 'loading') === 'loading' ? null : 0
   return Math.min(100, Math.max(0, (progress.step / total) * 100))
 }
 

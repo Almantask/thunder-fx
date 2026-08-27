@@ -2,6 +2,18 @@
 
 All notable Thunder FX changes are listed here.
 
+## 0.4.0 — 2026-08-27
+
+### Added
+
+- **Pro export:** 48 kHz and 24-bit WAV, mono downmix, FLAC, and MP3 320 kbps (desktop) beside OGG.
+- **Auto-trim silence** snaps In/Out to onset and decay with a short safety pad.
+- **Seamless loop** equal-power crossfade (0.5–3s) with a loop preview before export.
+- **Library packs:** multi-select clips, naming templates, ZIP archive, and optional `manifest.json`.
+- **Generate 4 takes** runs four random seeds and a keep/discard grid.
+- **VRAM badge** in the titlebar (used / total, GPU name, temperature when available). Warns above 85%.
+- **Precision:** Settings FP32 (default) or FP16/BF16 low-VRAM. Unload then Load model to apply. Long FP16 runs use chunked decode.
+
 ## 0.3.0 — 2026-08-23
 
 ### Added
@@ -17,6 +29,8 @@ All notable Thunder FX changes are listed here.
 - Duration can go to 380 seconds, the Stable Audio 3 Medium maximum (6m 20s).
 - Ambience catalog cues use varying lengths (about 40–380s) instead of a fixed 20s/30s, including takes at the Medium maximum.
 - Generate no longer loads Medium. After an app restart, click **Load model** once, then Generate only runs the clip.
+- When the model is loading, **Load model** changes to a **Cancel** button so putting Medium into VRAM can be cancelled at any time.
+- After the model is loaded, an **Unload model** button allows freeing GPU memory/VRAM at any time.
 - Phrase chips that appended text to the prompt are gone. **Browse prompts** and **Generate queue** are large primary buttons.
 - Hover hints wait longer, do not chain instantly between nearby controls, and no longer steal clicks from buttons they overlap.
 - Library cards show a short prompt name. The full prompt appears in Generate after you open the clip.

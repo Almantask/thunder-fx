@@ -88,6 +88,9 @@ class WorkerTests(unittest.TestCase):
         self.assertTrue(msg["mock"])
         self.assertTrue(msg["ready"])
         self.assertTrue(msg["loaded"])
+        self.assertEqual(msg.get("gpuName"), "mock")
+        self.assertGreater(msg.get("vramTotalGb") or 0, 0)
+        self.assertEqual(msg.get("precision"), "fp32")
 
     def test_generate_writes_wav(self) -> None:
         self.client.send(
@@ -114,6 +117,13 @@ class WorkerTests(unittest.TestCase):
         self.assertTrue(Path(done["path"]).is_file())
         self.assertGreater(Path(done["path"]).stat().st_size, 44)
         self.assertEqual(done["seed"], 7)
+        self.assertTrue(Path(done["path"]).name.startswith("sword-clang-"))
+        from worker import read_wav_info
+
+        info = read_wav_info(Path(done["path"]))
+        self.assertEqual(info.get("INAM"), "sword clang")
+        self.assertEqual(info.get("ISFT"), "Thunder FX")
+        self.assertEqual(info.get("IGNR"), "Sound Effects")
 
     def test_generate_music_mock_differs_from_sfx(self) -> None:
         def run(msg_id: str, mode: str, prompt: str) -> Path:
@@ -177,6 +187,36 @@ class WorkerTests(unittest.TestCase):
         self.assertIn("lute", info.get("ICMT", ""))
         self.assertEqual(info.get("ISFT"), "Thunder FX")
 
+    def test_generate_embeds_expanded_instruments(self) -> None:
+        self.client.send(
+            {
+                "id": "g-exp",
+                "cmd": "generate",
+                "prompt": "TrackType: Music, wordless choir, celesta glints, waterphone drone",
+                "seconds": 0.3,
+                "seed": 8,
+                "cfg": 1,
+                "negative": "",
+                "mode": "music",
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "g-exp":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        self.assertEqual(done.get("instruments"), ["choir", "celesta", "waterphone", "drone"])
+        from worker import read_wav_info
+
+        info = read_wav_info(Path(done["path"]))
+        self.assertEqual(info.get("IKEY"), "choir;celesta;waterphone;drone")
+        self.assertIn("Instruments: choir, celesta, waterphone, drone", info.get("ICMT", ""))
+
     def test_generate_progress_includes_weaving_phase(self) -> None:
         self.client.send(
             {
@@ -204,6 +244,36 @@ class WorkerTests(unittest.TestCase):
         self.assertIn("weaving", phases)
         self.assertNotIn("loading", phases)
 
+    def test_generate_honors_steps_in_progress_and_done(self) -> None:
+        self.client.send(
+            {
+                "id": "g-steps",
+                "cmd": "generate",
+                "prompt": "sparkle chime",
+                "seconds": 0.2,
+                "seed": 4,
+                "cfg": 3.5,
+                "steps": 12,
+                "negative": "",
+            }
+        )
+        totals = []
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "g-steps":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "progress":
+                totals.append(msg.get("total"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        self.assertIn(12, totals)
+        self.assertEqual(done.get("steps"), 12)
+
+
     def test_generate_honors_library_dir_in_message(self) -> None:
         other = Path(self._tmp.name) / "custom-library"
         self.client.send(
@@ -230,7 +300,42 @@ class WorkerTests(unittest.TestCase):
                 break
         wav = Path(done["path"])
         self.assertTrue(wav.is_file())
-        self.assertEqual(wav.parent.resolve(), other.resolve())
+        self.assertTrue(str(wav.resolve()).startswith(str(other.resolve())))
+        self.assertEqual(wav.parent.parent.parent.parent.resolve(), other.resolve())
+
+    def test_generate_organizes_files_in_category_folders(self) -> None:
+        self.client.send(
+            {
+                "id": "g-folders",
+                "cmd": "generate",
+                "prompt": "heavy broadsword slash",
+                "seconds": 0.3,
+                "seed": 5,
+                "cfg": 1,
+                "negative": "",
+                "mode": "sfx",
+                "category": "Combat",
+                "subcategory": "Sword",
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "g-folders":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        wav = Path(done["path"])
+        self.assertTrue(wav.is_file())
+        self.assertEqual(wav.parent.name, "Sword")
+        self.assertEqual(wav.parent.parent.name, "Combat")
+        self.assertEqual(wav.parent.parent.parent.name, "sfx")
+        self.assertEqual(done.get("category"), "Combat")
+        self.assertEqual(done.get("subcategory"), "Sword")
+        self.assertEqual(done.get("mode"), "sfx")
 
     def test_cancel_interrupts_generate(self) -> None:
         self.client.send(
@@ -269,6 +374,25 @@ class WorkerTests(unittest.TestCase):
         self.client.send({"id": "s2", "cmd": "status"})
         status = self.client.read()
         self.assertTrue(status["loaded"])
+
+    def test_unload_and_warmup_in_mock(self) -> None:
+        self.client.send({"id": "u", "cmd": "unload"})
+        msg = self.client.read()
+        self.assertEqual(msg["event"], "done")
+        self.client.send({"id": "s_unloaded", "cmd": "status"})
+        status = self.client.read()
+        self.assertFalse(status["loaded"])
+        # Trying to generate while unloaded gives error
+        self.client.send({"id": "g_fail", "cmd": "generate", "prompt": "clang", "seconds": 0.4})
+        gen_msg = self.client.read()
+        self.assertEqual(gen_msg["event"], "error")
+        self.assertIn("not loaded", gen_msg["message"].lower())
+        # Reloading puts model back in loaded state
+        self.client.send({"id": "w2", "cmd": "warmup"})
+        self.client.read()
+        self.client.send({"id": "s_reloaded", "cmd": "status"})
+        status_reloaded = self.client.read()
+        self.assertTrue(status_reloaded["loaded"])
 
     def test_encode_ogg(self) -> None:
         try:
@@ -312,6 +436,66 @@ class WorkerTests(unittest.TestCase):
                 self.assertTrue(Path(msg["path"]).is_file())
                 self.assertGreater(Path(msg["path"]).stat().st_size, 0)
                 break
+
+    def test_encode_flac_48k(self) -> None:
+        try:
+            import soundfile  # noqa: F401
+        except ImportError:
+            self.skipTest("soundfile is not installed")
+        self.client.send(
+            {
+                "id": "g2",
+                "cmd": "generate",
+                "prompt": "flac source",
+                "seconds": 0.3,
+                "seed": 4,
+                "cfg": 1,
+                "negative": "",
+            }
+        )
+        while True:
+            msg = self.client.read()
+            if msg.get("id") == "g2" and msg.get("event") == "done":
+                wav_path = msg["path"]
+                break
+            if msg.get("id") == "g2" and msg.get("event") == "error":
+                self.fail(msg.get("message"))
+        flac_path = str(self.library / "clip.flac")
+        self.client.send(
+            {
+                "id": "f",
+                "cmd": "encode_audio",
+                "wav_path": wav_path,
+                "dest_path": flac_path,
+                "format": "flac",
+                "sample_rate": 48000,
+                "bit_depth": 24,
+                "mono": True,
+            }
+        )
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "f":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                self.assertTrue(Path(msg["path"]).is_file())
+                self.assertGreater(Path(msg["path"]).stat().st_size, 0)
+                import soundfile as sf
+
+                data, sr = sf.read(msg["path"])
+                self.assertEqual(sr, 48000)
+                self.assertEqual(getattr(data, "ndim", 1), 1)
+                break
+
+    def test_warmup_records_fp16_precision(self) -> None:
+        self.client.send({"id": "w16", "cmd": "warmup", "precision": "fp16"})
+        msg = self.client.read()
+        self.assertEqual(msg["event"], "done")
+        self.client.send({"id": "s16", "cmd": "status"})
+        status = self.client.read()
+        self.assertEqual(status.get("precision"), "fp16")
 
 
 class SaveGeneratedWavTests(unittest.TestCase):
@@ -391,6 +575,16 @@ class ErrorLogTests(unittest.TestCase):
         self.assertIn('"cmd": "generate"', text)
 
 
+class ClampStepsTests(unittest.TestCase):
+    def test_clamps_to_bounds(self) -> None:
+        from worker import clamp_steps
+
+        self.assertEqual(clamp_steps(20), 20)
+        self.assertEqual(clamp_steps(2), 4)
+        self.assertEqual(clamp_steps(150), 100)
+        self.assertEqual(clamp_steps(float("nan")), 20)
+
+
 class ClampSecondsTests(unittest.TestCase):
     def test_clamps_to_stable_audio_3_medium_max(self) -> None:
         from worker import clamp_seconds
@@ -403,3 +597,4 @@ class ClampSecondsTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+

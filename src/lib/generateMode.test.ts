@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest'
 import {
   GENERATE_MODES,
   applyGenerateMode,
+  applyModeCfg,
   applyModeDuration,
   applyModeNegative,
   ensureTrackType,
   inferGenerateMode,
 } from '@/lib/generateMode'
+
 
 describe('inferGenerateMode', () => {
   it('detects music from TrackType', () => {
@@ -71,3 +73,15 @@ describe('applyModeDuration', () => {
     expect(applyModeDuration(12, 'sfx', 'music')).toBe(12)
   })
 })
+
+describe('applyModeCfg', () => {
+  it('swaps default CFG between modes', () => {
+    expect(applyModeCfg(4.0, 'sfx', 'music')).toBe(3.0)
+    expect(applyModeCfg(3.0, 'music', 'sfx')).toBe(4.0)
+  })
+
+  it('leaves custom CFG alone', () => {
+    expect(applyModeCfg(5.5, 'sfx', 'music')).toBe(5.5)
+  })
+})
+

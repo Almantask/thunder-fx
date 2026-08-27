@@ -136,9 +136,34 @@ body {
   }
 }
 
+@keyframes magic-shimmer-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.progress-bar-fx {
+  background: linear-gradient(90deg, #8b5a1e 0%, #e4c36a 50%, #fff0a8 75%, #e4c36a 100%);
+  background-size: 200% 100%;
+  box-shadow: 0 0 10px rgba(228, 195, 106, 0.45);
+}
+
+.progress-bar-music {
+  background: linear-gradient(90deg, #4c1d95 0%, #a855f7 40%, #38bdf8 70%, #c084fc 100%);
+  background-size: 200% 100%;
+  box-shadow: 0 0 10px rgba(168, 85, 247, 0.45);
+}
+
+.magic-shimmer {
+  animation: magic-shimmer-sweep 2.2s linear infinite;
+}
+
 .progress-indeterminate {
   width: 35%;
-  animation: weave-indeterminate 1.35s ease-in-out infinite;
+  animation: weave-indeterminate 1.35s ease-in-out infinite, magic-shimmer-sweep 1.8s linear infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -146,5 +171,8 @@ body {
     animation: none;
     width: 100%;
     opacity: 0.55;
+  }
+  .magic-shimmer {
+    animation: none;
   }
 }

@@ -13,6 +13,44 @@ describe('weaveBarPercent', () => {
   it('maps weaving rites to a percent', () => {
     expect(weaveBarPercent({ step: 4, total: 8, phase: 'weaving' })).toBe(50)
   })
+
+  it('calculates consistent percent from elapsed and estimated remaining time', () => {
+    // Explicit 20s elapsed and 20s remaining -> 50%
+    expect(
+      weaveBarPercent({
+        step: 1,
+        total: 8,
+        phase: 'weaving',
+        elapsedMs: 20_000,
+        remainingMs: 20_000,
+      }),
+    ).toBe(50)
+
+    // Explicit 30s elapsed and 10s remaining -> 75%
+    expect(
+      weaveBarPercent({
+        step: 2,
+        total: 8,
+        phase: 'weaving',
+        elapsedMs: 30_000,
+        remainingMs: 10_000,
+      }),
+    ).toBe(75)
+
+    // Automatic estimate from historical estimate
+    const percent = weaveBarPercent({
+      step: 4,
+      total: 8,
+      phase: 'weaving',
+      elapsedMs: 20_000,
+      historicalEstimateMs: 40_000,
+    })
+    expect(percent).toBe(50)
+  })
+
+  it('returns high percent on writing phase', () => {
+    expect(weaveBarPercent({ step: 8, total: 8, phase: 'writing' })).toBe(96)
+  })
 })
 
 describe('weaveProgressRatio', () => {

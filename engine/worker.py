@@ -34,12 +34,26 @@ from pathlib import Path
 SAMPLE_RATE = 44100
 CHANNELS = 2
 TOTAL_RITES = 8
+DEFAULT_STEPS = 20
+MIN_STEPS = 4
+MAX_STEPS = 100
 MIN_SECONDS = 0.5
 # Stable Audio 3 Medium max length (6m 20s).
 MAX_SECONDS = 380.0
 
+
+def clamp_steps(steps: int) -> int:
+    try:
+        val = int(steps)
+    except (ValueError, TypeError):
+        return DEFAULT_STEPS
+    return max(MIN_STEPS, min(MAX_STEPS, val))
+
+
 _cancel = threading.Event()
 _model = None
+_model_precision = "fp32"
+_mock_unloaded = False
 _model_lock = threading.Lock()
 _gen_lock = threading.Lock()
 _stdout_lock = threading.Lock()
@@ -74,18 +88,54 @@ def _configure_hf_cache() -> None:
         os.environ["HF_HUB_CACHE"] = str(local)
 
 
-def _try_load_model():
+def _normalize_precision(value) -> str:
+    text = str(value or "fp32").strip().lower()
+    if text in {"fp16", "bf16", "half", "low"}:
+        return "fp16"
+    return "fp32"
+
+
+def _unload_model_locked() -> None:
     global _model
+    if _model is None:
+        return
+    del _model
+    _model = None
+    try:
+        import gc
+
+        gc.collect()
+        import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            if hasattr(torch.cuda, "ipc_collect"):
+                torch.cuda.ipc_collect()
+    except Exception:
+        pass
+
+
+def _try_load_model(precision: str = "fp32"):
+    global _model, _model_precision
     if _env_mock():
+        _model_precision = _normalize_precision(precision)
         return None
     _configure_hf_cache()
+    wanted = _normalize_precision(precision)
     with _model_lock:
-        if _model is not None:
+        if _model is not None and _model_precision == wanted:
             return _model
+        if _model is not None:
+            _unload_model_locked()
         from stable_audio_3 import StableAudioModel
 
-        # Plan: fp32. SA3 defaults to model_half=True (fp16).
-        _model = StableAudioModel.from_pretrained("medium", device="cuda", model_half=False)
+        # SA3 defaults to model_half=True (fp16). FP32 is the quality default.
+        _model = StableAudioModel.from_pretrained(
+            "medium",
+            device="cuda",
+            model_half=wanted == "fp16",
+        )
+        _model_precision = wanted
         return _model
 
 
@@ -119,21 +169,95 @@ def _write_wav(path: Path, frames: list[tuple[int, int]]) -> None:
 
 
 _INSTRUMENT_TERMS = (
+    ("fingerpicked acoustic guitar", "acoustic guitar"),
     ("acoustic guitar", "acoustic guitar"),
     ("classical guitar", "classical guitar"),
     ("electric guitar", "electric guitar"),
     ("plucked strings", "strings"),
+    ("string ensemble", "strings"),
+    ("string orchestra", "strings"),
+    ("string section", "strings"),
+    ("string harmonics", "strings"),
+    ("string swells", "strings"),
+    ("string runs", "strings"),
+    ("string pads", "strings"),
+    ("string pad", "strings"),
+    ("low strings", "strings"),
+    ("high strings", "strings"),
+    ("warm strings", "strings"),
+    ("muted strings", "strings"),
+    ("bowed strings", "strings"),
+    ("plucked runs", "strings"),
+    ("plucked notes", "strings"),
+    ("plucked patterns", "strings"),
+    ("viola da gamba", "viola da gamba"),
+    ("glass harmonica", "glass harmonica"),
+    ("glass marimba", "marimba"),
+    ("glass bells", "bells"),
+    ("glass bell", "bells"),
     ("double bass", "double bass"),
     ("french horn", "french horn"),
     ("english horn", "english horn"),
+    ("cor anglais", "english horn"),
+    ("steel drums", "steel drum"),
     ("steel drum", "steel drum"),
     ("hurdy-gurdy", "hurdy-gurdy"),
+    ("hurdy gurdy", "hurdy-gurdy"),
     ("pan flute", "pan flute"),
+    ("pan pipes", "pan flute"),
+    ("panpipes", "pan flute"),
+    ("tin whistle", "whistle"),
+    ("penny whistle", "whistle"),
+    ("low whistle", "whistle"),
     ("woodwinds", "woodwinds"),
     ("woodwind", "woodwinds"),
+    ("ambient pads", "pad"),
+    ("ambient pad", "pad"),
+    ("glow pads", "pad"),
+    ("glow pad", "pad"),
+    ("warm pads", "pad"),
+    ("warm pad", "pad"),
+    ("synth pads", "synth"),
+    ("synth pad", "synth"),
     ("synthesizer", "synth"),
+    ("church organ", "organ"),
+    ("pipe organ", "organ"),
+    ("reed organ", "organ"),
+    ("pump organ", "organ"),
+    ("finger cymbals", "zils"),
+    ("finger cymbal", "zils"),
+    ("wordless choir", "choir"),
+    ("female choir", "choir"),
+    ("male choir", "choir"),
+    ("vocal choir", "choir"),
+    ("boy choir", "choir"),
+    ("choral swells", "choir"),
+    ("full orchestra", "orchestra"),
+    ("chamber orchestra", "orchestra"),
+    ("taiko drums", "taiko"),
+    ("taiko drum", "taiko"),
+    ("taiko", "taiko"),
+    ("war drums", "war drums"),
+    ("war drum", "war drums"),
+    ("hand drums", "hand drums"),
+    ("hand drum", "hand drums"),
+    ("snare drum", "snare"),
+    ("heavy horns", "horns"),
+    ("solo cello", "cello"),
+    ("solo violin", "violin"),
+    ("solo flute", "flute"),
+    ("solo horn", "horn"),
     ("harpsichord", "harpsichord"),
     ("glockenspiel", "glockenspiel"),
+    ("celesta", "celesta"),
+    ("celeste", "celesta"),
+    ("waterphone", "waterphone"),
+    ("darbuka", "darbuka"),
+    ("dumbek", "darbuka"),
+    ("oud", "oud"),
+    ("contrabass", "contrabass"),
+    ("contra bass", "contrabass"),
+    ("gamba", "viola da gamba"),
     ("percussion", "percussion"),
     ("accordion", "accordion"),
     ("bagpipes", "bagpipes"),
@@ -147,7 +271,55 @@ _INSTRUMENT_TERMS = (
     ("ocarina", "ocarina"),
     ("bodhran", "bodhran"),
     ("timpani", "timpani"),
+    ("snare", "snare"),
+    ("cymbals", "cymbals"),
+    ("cymbal", "cymbals"),
+    ("gongs", "gong"),
+    ("gong", "gong"),
+    ("tambourine", "tambourine"),
+    ("shakers", "shaker"),
+    ("shaker", "shaker"),
+    ("castanets", "castanets"),
+    ("xylophone", "xylophone"),
+    ("marimba", "marimba"),
+    ("vibraphone", "vibraphone"),
+    ("kalimba", "kalimba"),
+    ("whistle", "whistle"),
+    ("recorder", "recorder"),
+    ("duduk", "duduk"),
+    ("shakuhachi", "shakuhachi"),
+    ("erhu", "erhu"),
+    ("koto", "koto"),
+    ("shamisen", "shamisen"),
+    ("sitar", "sitar"),
+    ("bouzouki", "bouzouki"),
+    ("nyckelharpa", "nyckelharpa"),
+    ("cittern", "cittern"),
+    ("theorbo", "theorbo"),
+    ("zils", "zils"),
+    ("zil", "zils"),
+    ("ney", "ney"),
+    ("shawm", "shawm"),
+    ("crumhorn", "crumhorn"),
+    ("sackbut", "sackbut"),
+    ("lyre", "lyre"),
+    ("zither", "zither"),
+    ("autoharp", "autoharp"),
+    ("didgeridoo", "didgeridoo"),
+    ("harmonica", "harmonica"),
+    ("theremin", "theremin"),
+    ("mellotron", "mellotron"),
+    ("orchestra", "orchestra"),
+    ("orchestral", "orchestra"),
+    ("symphonic", "orchestra"),
+    ("choir", "choir"),
+    ("choral", "choir"),
+    ("vocalise", "choir"),
     ("strings", "strings"),
+    ("string", "strings"),
+    ("plucked", "strings"),
+    ("plucks", "strings"),
+    ("strums", "guitar"),
     ("violin", "violin"),
     ("fiddle", "fiddle"),
     ("guitar", "guitar"),
@@ -157,18 +329,41 @@ _INSTRUMENT_TERMS = (
     ("flute", "flute"),
     ("brass", "brass"),
     ("drums", "drums"),
+    ("drum", "drums"),
     ("organ", "organ"),
     ("banjo", "banjo"),
     ("harp", "harp"),
     ("lute", "lute"),
     ("oboe", "oboe"),
+    ("horns", "horns"),
     ("horn", "horn"),
     ("tuba", "tuba"),
     ("bass", "bass"),
-    ("drum", "drums"),
     ("synth", "synth"),
     ("chimes", "chimes"),
     ("bells", "bells"),
+    ("bell", "bells"),
+    ("pads", "pad"),
+    ("pad", "pad"),
+    ("drone", "drone"),
+    ("drones", "drone"),
+    ("winds", "woodwinds"),
+    ("wind", "woodwinds"),
+    ("reeds", "woodwinds"),
+    ("reed", "woodwinds"),
+    ("djembe", "djembe"),
+    ("cajon", "cajon"),
+    ("congas", "congas"),
+    ("conga", "congas"),
+    ("bongos", "bongos"),
+    ("bongo", "bongos"),
+    ("tabla", "tabla"),
+    ("kantele", "kantele"),
+    ("balalaika", "balalaika"),
+    ("santoor", "santoor"),
+    ("santur", "santoor"),
+    ("psaltery", "psaltery"),
+    ("clavichord", "clavichord"),
 )
 
 
@@ -220,15 +415,28 @@ def _resolve_instruments(msg: dict, prompt: str) -> list[str]:
     return []
 
 
-def _music_info_fields(prompt: str, instruments: list[str]) -> dict[str, str]:
-    fields = {"ISFT": "Thunder FX", "IGNR": "Instrumental"}
+def _slugify_prompt(prompt: str, max_len: int = 48) -> str:
+    cleaned = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).lower()
+    cleaned = re.sub(r"[^a-z0-9]+", "-", cleaned).strip("-")
+    cleaned = cleaned[:max_len].rstrip("-")
+    return cleaned or "sound"
+
+
+def _wav_info_fields(prompt: str, instruments: list[str], mode: str = "sfx") -> dict[str, str]:
+    genre = "Instrumental" if mode == "music" else "Sound Effects"
+    fields = {"ISFT": "Thunder FX", "IGNR": genre}
     title = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).strip()
     if title:
-        fields["INAM"] = title[:80]
+        fields["INAM"] = title[:120]
+        fields["ICMT"] = prompt[:200]
     if instruments:
         fields["IKEY"] = ";".join(instruments)
         fields["ICMT"] = "Instruments: " + ", ".join(instruments)
     return fields
+
+
+def _music_info_fields(prompt: str, instruments: list[str]) -> dict[str, str]:
+    return _wav_info_fields(prompt, instruments, mode="music")
 
 
 def _info_subchunk(tag: bytes, text: str) -> bytes:
@@ -307,11 +515,39 @@ def _to_stereo_cpu(audio):
     return wav.clamp(-1.0, 1.0)
 
 
-def _save_generated_wav(path: Path, audio) -> None:
+def _master_audio_cpu(wav):
+    """Studio mastering pipeline for generated audio tensor [channels, samples]."""
+    import torch
+
+    # 1. DC offset correction on full-length audio
+    if wav.shape[-1] >= 1024:
+        wav = wav - wav.mean(dim=-1, keepdim=True)
+
+    # 2. Gentle 25 Hz highpass filter (removes subsonic diffusion decode rumble)
+    if wav.shape[-1] >= 1024:
+        try:
+            import torchaudio.functional as F
+
+            wav = F.highpass_biquad(wav, sample_rate=SAMPLE_RATE, cutoff_freq=25.0, Q=0.7071)
+        except Exception:
+            pass
+
+    # 3. Peak Normalization to -1.0 dBFS (amplitude 0.89125) if signal clips / exceeds headroom
+    peak = float(wav.abs().max().item())
+    target_peak = 0.89125  # -1.0 dBFS
+    if peak > target_peak:
+        wav = wav * (target_peak / peak)
+
+    return wav.clamp(-1.0, 1.0)
+
+
+def _save_generated_wav(path: Path, audio, master: bool = True) -> None:
     """Write 16-bit PCM stereo @ 44.1 kHz (the studio parser rejects float WAV)."""
     import torch
 
     wav = _to_stereo_cpu(audio)
+    if master:
+        wav = _master_audio_cpu(wav)
     pcm = (wav * 32767.0).round().clamp(-32768, 32767).to(torch.int16)
     interleaved = pcm.transpose(0, 1).contiguous().numpy().tobytes()
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -320,6 +556,7 @@ def _save_generated_wav(path: Path, audio) -> None:
         out.setsampwidth(2)
         out.setframerate(SAMPLE_RATE)
         out.writeframes(interleaved)
+
 
 
 def _wants_music(msg: dict) -> bool:
@@ -373,6 +610,7 @@ def _emit_progress(
     *,
     step: int,
     phase: str,
+    total: int = TOTAL_RITES,
     ratio: float | None = None,
     message: str = "",
 ) -> None:
@@ -380,7 +618,7 @@ def _emit_progress(
         "id": msg_id,
         "event": "progress",
         "step": int(step),
-        "total": TOTAL_RITES,
+        "total": int(total),
         "elapsedMs": int((time.time() - started) * 1000),
         "phase": phase,
     }
@@ -394,11 +632,18 @@ def _emit_progress(
 class _Heartbeat:
     """Keep the loading bar alive while CUDA or Hugging Face blocks."""
 
-    def __init__(self, msg_id, started: float, phase: str = "loading") -> None:
+    def __init__(
+        self,
+        msg_id,
+        started: float,
+        phase: str = "loading",
+        total: int = TOTAL_RITES,
+    ) -> None:
         self._stop = threading.Event()
         self._lock = threading.Lock()
         self._phase = phase
         self._step = 0
+        self._total = total
         self._ratio: float | None = None
         self._msg_id = msg_id
         self._started = started
@@ -415,6 +660,7 @@ class _Heartbeat:
         *,
         phase: str | None = None,
         step: int | None = None,
+        total: int | None = None,
         ratio: float | None = None,
     ) -> None:
         with self._lock:
@@ -422,6 +668,8 @@ class _Heartbeat:
                 self._phase = phase
             if step is not None:
                 self._step = step
+            if total is not None:
+                self._total = total
             if ratio is not None:
                 self._ratio = ratio
 
@@ -429,14 +677,22 @@ class _Heartbeat:
         self._stop.set()
         self._thread.join(timeout=1.0)
 
-    def _snapshot(self) -> tuple[str, int, float | None]:
+    def _snapshot(self) -> tuple[str, int, int, float | None]:
         with self._lock:
-            return self._phase, self._step, self._ratio
+            return self._phase, self._step, self._total, self._ratio
 
     def _run(self) -> None:
         while not self._stop.wait(0.25):
-            phase, step, ratio = self._snapshot()
-            _emit_progress(self._msg_id, self._started, step=step, phase=phase, ratio=ratio)
+            phase, step, total, ratio = self._snapshot()
+            _emit_progress(
+                self._msg_id,
+                self._started,
+                step=step,
+                total=total,
+                phase=phase,
+                ratio=ratio,
+            )
+
 
 
 @contextmanager
@@ -574,6 +830,60 @@ def _library_dir(override: str | None = None) -> Path:
     return path
 
 
+def _vram_stats() -> dict:
+    mock = _env_mock()
+    if mock:
+        return {
+            "vramUsedGb": 0.0 if _mock_unloaded else 0.4,
+            "vramTotalGb": 8.0,
+            "vramAllocatedGb": 0.0 if _mock_unloaded else 0.3,
+            "vramReservedGb": 0.0 if _mock_unloaded else 0.4,
+            "gpuName": "mock",
+            "precision": _model_precision,
+        }
+    out: dict = {"precision": _model_precision}
+    try:
+        import torch
+
+        if not torch.cuda.is_available():
+            return out
+        idx = 0
+        total = float(torch.cuda.get_device_properties(idx).total_memory)
+        used = float(torch.cuda.memory_reserved(idx))
+        try:
+            free, total_info = torch.cuda.mem_get_info(idx)
+            total = float(total_info)
+            used = float(total_info - free)
+        except Exception:
+            pass
+        gib = 1024 ** 3
+        out["vramUsedGb"] = round(used / gib, 2)
+        out["vramTotalGb"] = round(total / gib, 2)
+        out["vramAllocatedGb"] = round(float(torch.cuda.memory_allocated(idx)) / gib, 2)
+        out["vramReservedGb"] = round(float(torch.cuda.memory_reserved(idx)) / gib, 2)
+        out["gpuName"] = torch.cuda.get_device_name(idx)
+        try:
+            temp_fn = getattr(torch.cuda, "temperature", None)
+            if callable(temp_fn):
+                out["gpuTempC"] = int(temp_fn(idx))
+        except Exception:
+            pass
+        if "gpuTempC" not in out:
+            try:
+                import pynvml
+
+                pynvml.nvmlInit()
+                handle = pynvml.nvmlDeviceGetHandleByIndex(idx)
+                out["gpuTempC"] = int(
+                    pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMPERATURE_GPU)
+                )
+            except Exception:
+                pass
+    except Exception:
+        pass
+    return out
+
+
 def cmd_status(msg_id: str) -> None:
     mock = _env_mock()
     device = "mock"
@@ -590,17 +900,17 @@ def cmd_status(msg_id: str) -> None:
             ready = False
             device = "unknown"
             message = str(exc)
-    _emit(
-        {
-            "id": msg_id,
-            "event": "status",
-            "ready": ready,
-            "mock": mock,
-            "loaded": True if mock else _model is not None,
-            "device": device,
-            "message": message,
-        }
-    )
+    payload = {
+        "id": msg_id,
+        "event": "status",
+        "ready": ready,
+        "mock": mock,
+        "loaded": (not _mock_unloaded) if mock else _model is not None,
+        "device": device,
+        "message": message,
+    }
+    payload.update(_vram_stats())
+    _emit(payload)
 
 
 def cmd_probe(msg_id: str, msg: dict | None = None) -> None:
@@ -681,6 +991,12 @@ def cmd_generate(msg: dict) -> None:
     threading.Thread(target=run, name="thunder-fx-generate", daemon=True).start()
 
 
+def _sanitize_folder_name(name: str | None, fallback: str = "General") -> str:
+    cleaned = re.sub(r'[<>:"/\\|?*\x00-\x1f]', "", str(name or "")).strip()
+    cleaned = cleaned.strip(". ")
+    return cleaned if cleaned else fallback
+
+
 def _generate_body(msg: dict) -> None:
     _apply_hf_token(msg)
     msg_id = msg["id"]
@@ -688,15 +1004,34 @@ def _generate_body(msg: dict) -> None:
     seconds = clamp_seconds(_python_float(msg.get("seconds", 8), 8.0))
     seed = int(_python_float(msg.get("seed", -1), -1.0))
     cfg = _python_float(msg.get("cfg", 1.0), 1.0)
+    steps = clamp_steps(int(_python_float(msg.get("steps", DEFAULT_STEPS), float(DEFAULT_STEPS))))
     negative = str(msg.get("negative") or "") or None
     _cancel.clear()
     if seed <= 0:
         seed = random.randint(1, 2_147_483_646)
-    out = _library_dir(str(msg.get("library_dir") or msg.get("libraryDir") or "")) / f"{uuid.uuid4()}.wav"
+    music = _wants_music(msg)
+    mode_str = "music" if music else "sfx"
+    cat_str = _sanitize_folder_name(msg.get("category"), fallback="Custom")
+    subcat_default = "Level I" if music else "General"
+    subcat_str = _sanitize_folder_name(
+        msg.get("subcategory") or msg.get("intensity"),
+        fallback=subcat_default,
+    )
+    lib_dir = _library_dir(str(msg.get("library_dir") or msg.get("libraryDir") or ""))
+    out_dir = lib_dir / mode_str / cat_str / subcat_str
+    out_dir.mkdir(parents=True, exist_ok=True)
+    base_slug = _slugify_prompt(prompt)
+    dur_str = f"{round(seconds, 1):g}s"
+    unique_suffix = uuid.uuid4().hex[:8]
+    filename = f"{base_slug}-{dur_str}-{unique_suffix}.wav"
+    out = out_dir / filename
     started = time.time()
     mock = _env_mock()
     if mock:
-        for step in range(1, TOTAL_RITES + 1):
+        if _mock_unloaded:
+            _emit_error(msg_id, "The model is not loaded. Click Load model first.")
+            return
+        for step in range(1, steps + 1):
             if _cancel.is_set():
                 _emit_error(msg_id, "Generation cancelled", log=False)
                 return
@@ -704,15 +1039,14 @@ def _generate_body(msg: dict) -> None:
                 msg_id,
                 started,
                 step=step,
+                total=steps,
                 phase="weaving",
-                ratio=step / TOTAL_RITES,
+                ratio=step / steps,
             )
             time.sleep(_mock_step_s())
-        music = _wants_music(msg)
         _write_wav(out, _mock_pcm(seconds, seed, music=music))
         instruments = _resolve_instruments(msg, prompt)
-        if music:
-            embed_wav_info(out, _music_info_fields(prompt, instruments))
+        embed_wav_info(out, _wav_info_fields(prompt, instruments, mode_str))
         _emit(
             {
                 "id": msg_id,
@@ -720,7 +1054,11 @@ def _generate_body(msg: dict) -> None:
                 "path": str(out),
                 "seed": seed,
                 "duration": seconds,
+                "steps": steps,
                 "prompt": prompt,
+                "mode": mode_str,
+                "category": cat_str,
+                "subcategory": subcat_str,
                 "instruments": instruments,
             }
         )
@@ -730,26 +1068,28 @@ def _generate_body(msg: dict) -> None:
         _emit_error(msg_id, "The model is not loaded. Click Load model first.")
         return
     model = _model
-    heartbeat = _Heartbeat(msg_id, started, "weaving").start()
+    heartbeat = _Heartbeat(msg_id, started, "weaving", total=steps).start()
     try:
-        _emit_progress(msg_id, started, step=0, phase="weaving")
-        chunked = False
+        _emit_progress(msg_id, started, step=0, total=steps, phase="weaving")
+        chunked = _model_precision == "fp16"
         gen_context = {
             "cmd": "generate",
             "prompt": prompt,
             "seconds": seconds,
             "seed": seed,
             "cfg": cfg,
+            "steps": steps,
+            "precision": _model_precision,
         }
         try:
             audio = model.generate(
                 prompt=prompt,
                 duration=seconds,
-                steps=8,
+                steps=steps,
                 seed=seed,
                 cfg_scale=cfg,
                 negative_prompt=negative,
-                chunked_decode=False,
+                chunked_decode=chunked,
             )
         except Exception as exc:  # noqa: BLE001
             if "out of memory" in str(exc).lower() or "oom" in str(exc).lower():
@@ -758,7 +1098,7 @@ def _generate_body(msg: dict) -> None:
                 audio = model.generate(
                     prompt=prompt,
                     duration=seconds,
-                    steps=8,
+                    steps=steps,
                     seed=seed,
                     cfg_scale=cfg,
                     negative_prompt=negative,
@@ -767,16 +1107,20 @@ def _generate_body(msg: dict) -> None:
             else:
                 _emit_error(msg_id, str(exc), exc, context=gen_context)
                 return
-        heartbeat.update(phase="writing", step=TOTAL_RITES, ratio=0.95)
+        if _cancel.is_set():
+            _emit_error(msg_id, "Generation cancelled", log=False)
+            return
+        heartbeat.update(phase="writing", step=steps, total=steps, ratio=0.95)
         _emit_progress(
             msg_id,
             started,
-            step=TOTAL_RITES,
+            step=steps,
+            total=steps,
             phase="writing",
             ratio=0.95,
         )
         try:
-            _save_generated_wav(out, audio)
+            _save_generated_wav(out, audio, master=True)
         except Exception as exc:  # noqa: BLE001
             _emit_error(
                 msg_id,
@@ -786,8 +1130,7 @@ def _generate_body(msg: dict) -> None:
             )
             return
         instruments = _resolve_instruments(msg, prompt)
-        if _wants_music(msg):
-            embed_wav_info(out, _music_info_fields(prompt, instruments))
+        embed_wav_info(out, _wav_info_fields(prompt, instruments, mode_str))
         _emit(
             {
                 "id": msg_id,
@@ -795,7 +1138,11 @@ def _generate_body(msg: dict) -> None:
                 "path": str(out),
                 "seed": seed,
                 "duration": seconds,
+                "steps": steps,
                 "prompt": prompt,
+                "mode": mode_str,
+                "category": cat_str,
+                "subcategory": subcat_str,
                 "chunkedDecode": chunked,
                 "instruments": instruments,
             }
@@ -805,18 +1152,137 @@ def _generate_body(msg: dict) -> None:
 
 
 def cmd_encode_ogg(msg: dict) -> None:
-    msg_id = msg["id"]
-    wav_path = Path(msg["wav_path"])
-    ogg_path = Path(msg["ogg_path"])
+    msg = dict(msg)
+    msg["format"] = "ogg"
+    if not msg.get("dest_path"):
+        msg["dest_path"] = msg.get("ogg_path")
+    cmd_encode_audio(msg)
+
+
+def _resample_audio(data, sr: int, target_sr: int):
+    if target_sr <= 0 or sr == target_sr:
+        return data, sr
+    try:
+        import soxr
+
+        return soxr.resample(data, sr, target_sr), target_sr
+    except Exception:
+        pass
+    try:
+        import numpy as np
+    except Exception as exc:  # noqa: BLE001
+        raise RuntimeError(f"Resample needs numpy or soxr: {exc}") from exc
+    n = int(data.shape[0])
+    new_n = max(1, int(round(n * target_sr / sr)))
+    x_old = np.linspace(0.0, 1.0, n, endpoint=False)
+    x_new = np.linspace(0.0, 1.0, new_n, endpoint=False)
+    if data.ndim == 1:
+        return np.interp(x_new, x_old, data).astype(data.dtype, copy=False), target_sr
+    chans = [
+        np.interp(x_new, x_old, data[:, c] if data.shape[1] <= 8 else data[c])
+        for c in range(data.shape[1] if data.shape[1] <= 8 else data.shape[0])
+    ]
+    if data.shape[1] <= 8:
+        return np.stack(chans, axis=1).astype(data.dtype, copy=False), target_sr
+    return np.stack(chans, axis=0).astype(data.dtype, copy=False), target_sr
+
+
+def _downmix_mono(data):
+    if getattr(data, "ndim", 1) == 1:
+        return data
+    try:
+        import numpy as np
+
+        if data.shape[1] <= 8:
+            return data.mean(axis=1)
+        return data.mean(axis=0)
+    except Exception:
+        return data
+
+
+def _write_mp3(data, sr: int, dest: Path) -> None:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        import torch
+        import torchaudio
+
+        tensor = torch.as_tensor(data)
+        if tensor.ndim == 1:
+            tensor = tensor.unsqueeze(0)
+        else:
+            tensor = tensor.T.contiguous() if tensor.shape[1] <= 8 else tensor.contiguous()
+        torchaudio.save(str(dest), tensor.float(), sr, format="mp3")
+        return
+    except Exception:
+        pass
+    import shutil
+    import subprocess
+    import tempfile
+
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        raise RuntimeError("MP3 export needs ffmpeg on PATH (320 kbps CBR).")
+    tmp_path = ""
     try:
         import soundfile as sf
 
-        data, sr = sf.read(str(wav_path))
-        ogg_path.parent.mkdir(parents=True, exist_ok=True)
-        sf.write(str(ogg_path), data, sr, format="OGG", subtype="VORBIS")
-        _emit({"id": msg_id, "event": "done", "path": str(ogg_path)})
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+            tmp_path = tmp.name
+        sf.write(tmp_path, data, sr, format="WAV", subtype="PCM_16")
+        subprocess.run(
+            [ffmpeg, "-y", "-i", tmp_path, "-codec:a", "libmp3lame", "-b:a", "320k", str(dest)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    finally:
+        if tmp_path:
+            Path(tmp_path).unlink(missing_ok=True)
+
+
+def cmd_encode_audio(msg: dict) -> None:
+    msg_id = msg["id"]
+    wav_path = Path(msg["wav_path"])
+    dest_path = Path(str(msg.get("dest_path") or msg.get("ogg_path") or ""))
+    fmt = str(msg.get("format") or "ogg").strip().lower()
+    if fmt in {"vorbis"}:
+        fmt = "ogg"
+    try:
+        sample_rate = int(msg.get("sample_rate") or msg.get("sampleRate") or 0)
+    except (TypeError, ValueError):
+        sample_rate = 0
+    try:
+        bit_depth = int(msg.get("bit_depth") or msg.get("bitDepth") or 16)
+    except (TypeError, ValueError):
+        bit_depth = 16
+    mono = str(msg.get("mono") or "").strip().lower() in {"1", "true", "yes"}
+    if not dest_path:
+        _emit_error(msg_id, "encode_audio missing dest_path")
+        return
+    try:
+        import soundfile as sf
+
+        data, sr = sf.read(str(wav_path), always_2d=False)
+        if mono:
+            data = _downmix_mono(data)
+        if sample_rate > 0 and sample_rate != sr:
+            data, sr = _resample_audio(data, int(sr), sample_rate)
+        dest_path.parent.mkdir(parents=True, exist_ok=True)
+        if fmt == "ogg":
+            sf.write(str(dest_path), data, sr, format="OGG", subtype="VORBIS")
+        elif fmt == "flac":
+            subtype = "PCM_24" if bit_depth >= 24 else "PCM_16"
+            sf.write(str(dest_path), data, sr, format="FLAC", subtype=subtype)
+        elif fmt == "wav":
+            subtype = "PCM_24" if bit_depth >= 24 else "PCM_16"
+            sf.write(str(dest_path), data, sr, format="WAV", subtype=subtype)
+        elif fmt == "mp3":
+            _write_mp3(data, int(sr), dest_path)
+        else:
+            raise RuntimeError(f"Unsupported export format: {fmt}")
+        _emit({"id": msg_id, "event": "done", "path": str(dest_path), "format": fmt})
     except Exception as exc:  # noqa: BLE001
-        _emit_error(msg_id, str(exc), exc, context={"cmd": "encode_ogg"})
+        _emit_error(msg_id, str(exc), exc, context={"cmd": "encode_audio", "format": fmt})
 
 
 def cmd_warmup(msg: dict) -> None:
@@ -836,13 +1302,17 @@ def cmd_warmup(msg: dict) -> None:
 
 
 def _warmup_body(msg: dict) -> None:
+    global _mock_unloaded, _model_precision
     _apply_hf_token(msg)
     msg_id = msg.get("id")
     _cancel.clear()
     if _env_mock():
+        _mock_unloaded = False
+        _model_precision = _normalize_precision(msg.get("precision"))
         _emit({"id": msg_id, "event": "done", "message": "Mock engine — no model download needed."})
         return
-    if _model is not None:
+    wanted = _normalize_precision(msg.get("precision"))
+    if _model is not None and _model_precision == wanted:
         _emit({"id": msg_id, "event": "done", "message": "Medium already loaded."})
         return
     started = time.time()
@@ -850,7 +1320,7 @@ def _warmup_body(msg: dict) -> None:
     try:
         _emit_progress(msg_id, started, step=0, phase="loading", message="Loading model")
         with _hub_progress(heartbeat):
-            _try_load_model()
+            _try_load_model(wanted)
         if _cancel.is_set():
             _emit_error(msg_id, "Model load cancelled", log=False)
             return
@@ -869,6 +1339,17 @@ def _warmup_body(msg: dict) -> None:
         _emit_error(msg_id, str(exc), exc, context={"cmd": "warmup"})
     finally:
         heartbeat.stop()
+
+
+def cmd_unload(msg_id: str) -> None:
+    global _model, _mock_unloaded
+    if _env_mock():
+        _mock_unloaded = True
+        _emit({"id": msg_id, "event": "done", "message": "Mock model unloaded."})
+        return
+    with _model_lock:
+        _unload_model_locked()
+    _emit({"id": msg_id, "event": "done", "message": "Model unloaded."})
 
 
 def main() -> None:
@@ -897,8 +1378,12 @@ def main() -> None:
                 _emit({"id": msg_id, "event": "status", "message": "cancel requested"})
             elif cmd == "encode_ogg":
                 cmd_encode_ogg(msg)
+            elif cmd == "encode_audio":
+                cmd_encode_audio(msg)
             elif cmd == "warmup":
                 cmd_warmup(msg)
+            elif cmd == "unload":
+                cmd_unload(msg_id)
             else:
                 _emit_error(msg_id, f"unknown cmd {cmd}")
         except Exception as exc:  # noqa: BLE001

@@ -28,7 +28,7 @@ Feature: Generate a prompt queue
     Given the studio is open
     And Steel sword draw is in the generate queue
     When the user Generates the queue
-    Then a waveform is shown
+    Then a waveform is not shown
     And the library lists the sword draw clip
 
   Scenario: Use loads a catalog prompt into Generate

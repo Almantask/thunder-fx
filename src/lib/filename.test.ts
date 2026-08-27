@@ -53,4 +53,47 @@ describe('promptName', () => {
     expect(promptName('TrackType: SFX')).toBe('Untitled sound')
     expect(promptName('TrackType: Music, instrumental')).toBe('Instrumental')
   })
+
+  it('converts raw UUID prompts into proper titles using subcategory or category', () => {
+    expect(
+      promptName('67de8afe-9708-4034-8f23-8c4391694f47', {
+        category: 'Combat',
+        subcategory: 'Sword',
+      }),
+    ).toBe('Sword Sound')
+
+    expect(
+      promptName('67de8afe-9708-4034-8f23-8c4391694f47', {
+        category: 'Foley',
+        subcategory: 'General',
+      }),
+    ).toBe('Foley Sound')
+
+    expect(
+      promptName('67de8afe-9708-4034-8f23-8c4391694f47', {
+        category: 'Custom',
+        mode: 'sfx',
+      }),
+    ).toBe('Sound Effect')
+
+    expect(
+      promptName('67de8afe-9708-4034-8f23-8c4391694f47', {
+        category: 'music-and-fx-generated-library',
+        subcategory: 'General',
+        mode: 'sfx',
+      }),
+    ).toBe('Sound Effect')
+
+    expect(
+      promptName('67de8afe-9708-4034-8f23-8c4391694f47', {
+        category: 'Custom',
+        mode: 'music',
+      }),
+    ).toBe('Ambient Track')
+  })
+
+  it('converts file slugs to clean title case', () => {
+    expect(promptName('steel-shortsword-clash-8s-a1b2c3d4')).toBe('Steel Shortsword Clash')
+    expect(promptName('laser_blast_burst-0.4s')).toBe('Laser Blast Burst')
+  })
 })

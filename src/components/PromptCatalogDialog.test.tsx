@@ -148,7 +148,145 @@ TrackType: Music, instrumental, forest ambient, looping-friendly
     expect(screen.getByRole('radio', { name: 'Ambience' })).toHaveAttribute('aria-checked', 'false')
     expect(screen.getByRole('checkbox', { name: /steel sword draw/i })).toBeInTheDocument()
     await user.click(screen.getByRole('radio', { name: 'Ambience' }))
+    const level1Btn = screen.getByRole('button', { name: /level i/i })
+    expect(level1Btn).toHaveAttribute('aria-expanded', 'false')
+    await user.click(level1Btn)
     expect(screen.getByRole('checkbox', { name: /forest ambient/i })).toBeInTheDocument()
     expect(screen.queryByRole('checkbox', { name: /steel sword draw/i })).not.toBeInTheDocument()
   })
+
+  it('opens collapsed 3 intensity levels when selecting an Ambience category', async () => {
+    const user = userEvent.setup()
+    const ambienceCatalog = catalogFromFiles({
+      '/prompts/ambience/forest.md': `# Forest
+
+### Forest ambient (I)
+- Duration: 30s
+- Negative: speech, singing
+
+TrackType: Music, instrumental, forest ambient, looping-friendly
+
+### Forest mystery (II)
+- Duration: 45s
+- Negative: speech, singing
+
+TrackType: Music, instrumental, forest mystery theme, cinematic
+
+### Forest storm (III)
+- Duration: 60s
+- Negative: speech, singing
+
+TrackType: Music, instrumental, epic forest tempest orchestra
+`,
+    })
+    renderDialog({ catalog: ambienceCatalog })
+    expect(screen.getByRole('radio', { name: 'Ambience' })).toHaveAttribute('aria-checked', 'true')
+
+    const level1Btn = screen.getByRole('button', { name: /level i — quiet looping bed/i })
+    const level2Btn = screen.getByRole('button', { name: /level ii — mood in motion/i })
+    const level3Btn = screen.getByRole('button', { name: /level iii — full intensity/i })
+
+    // All 3 intensity levels are collapsed by default
+    expect(level1Btn).toHaveAttribute('aria-expanded', 'false')
+    expect(level2Btn).toHaveAttribute('aria-expanded', 'false')
+    expect(level3Btn).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('checkbox', { name: /forest ambient/i })).not.toBeInTheDocument()
+
+    // Expand Level I -> shows Level I prompt only
+    await user.click(level1Btn)
+    expect(level1Btn).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('checkbox', { name: /forest ambient/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /forest mystery/i })).not.toBeInTheDocument()
+
+    // Expand Level II -> shows Level II prompt
+    await user.click(level2Btn)
+    expect(level2Btn).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('checkbox', { name: /forest mystery/i })).toBeInTheDocument()
+
+    // Expand Level III -> shows Level III prompt
+    await user.click(level3Btn)
+    expect(level3Btn).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('checkbox', { name: /forest storm/i })).toBeInTheDocument()
+  })
+
+  it('displays subcategories and allows filtering by subcategory', async () => {
+    const user = userEvent.setup()
+    renderDialog()
+    expect(screen.getByRole('radio', { name: /all/i })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('radio', { name: /sword/i })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: /unarmed & martial/i })).toBeInTheDocument()
+
+    // Filter by Sword
+    await user.click(screen.getByRole('radio', { name: /sword/i }))
+    expect(screen.getByRole('checkbox', { name: /steel sword draw/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /fist punch/i })).not.toBeInTheDocument()
+
+    // Filter by Unarmed & Martial
+    await user.click(screen.getByRole('radio', { name: /unarmed & martial/i }))
+    expect(screen.getByRole('checkbox', { name: /fist punch/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /steel sword draw/i })).not.toBeInTheDocument()
+  })
+
+  it('allows collapsing and expanding subcategory accordions in the prompt list', async () => {
+    const user = userEvent.setup()
+    renderDialog()
+    const swordAccordion = screen.getByRole('button', { name: /^sword/i })
+    expect(swordAccordion).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('checkbox', { name: /steel sword draw/i })).toBeInTheDocument()
+
+    // Collapse Sword
+    await user.click(swordAccordion)
+    expect(swordAccordion).toHaveAttribute('aria-expanded', 'false')
+    expect(screen.queryByRole('checkbox', { name: /steel sword draw/i })).not.toBeInTheDocument()
+
+    // Re-expand Sword
+    await user.click(swordAccordion)
+    expect(swordAccordion).toHaveAttribute('aria-expanded', 'true')
+    expect(screen.getByRole('checkbox', { name: /steel sword draw/i })).toBeInTheDocument()
+  })
+
+  it('searches across all FX categories ignoring the selected category', async () => {
+    const user = userEvent.setup()
+    renderDialog()
+    // Select UI category
+    await user.click(screen.getByRole('option', { name: /^ui/i }))
+    expect(screen.getByRole('checkbox', { name: /soft button click/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /steel sword draw/i })).not.toBeInTheDocument()
+
+    // Type a query that belongs to Combat category ('sword')
+    await user.type(screen.getByLabelText(/search prompts/i), 'sword')
+    // Should find steel sword draw from Combat even though UI was selected!
+    expect(screen.getByRole('checkbox', { name: /steel sword draw/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /soft button click/i })).not.toBeInTheDocument()
+  })
+
+  it('searches across all Ambience categories ignoring the selected category', async () => {
+    const user = userEvent.setup()
+    const mixed = catalogFromFiles({
+      '/prompts/ambience/forest.md': `# Forest
+### Forest ambient (I)
+- Duration: 30s
+- Negative: speech, singing
+TrackType: Music, instrumental, forest ambient
+`,
+      '/prompts/ambience/tavern.md': `# Tavern
+### Tavern lute (I)
+- Duration: 30s
+- Negative: speech, singing
+TrackType: Music, instrumental, tavern lute
+`,
+    })
+    renderDialog({ catalog: mixed })
+    await user.click(screen.getByRole('radio', { name: 'Ambience' }))
+    // Select Tavern category
+    await user.click(screen.getByRole('option', { name: /tavern/i }))
+    // Search for 'forest'
+    await user.type(screen.getByLabelText(/search prompts/i), 'forest')
+    // Should find forest ambient even though Tavern was selected!
+    expect(screen.getByRole('checkbox', { name: /forest ambient/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /tavern lute/i })).not.toBeInTheDocument()
+  })
 })
+
+
+

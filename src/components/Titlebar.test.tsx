@@ -69,4 +69,24 @@ describe('Titlebar', () => {
     )
     expect(screen.getByText('generating')).toBeInTheDocument()
   })
+
+  it('shows a VRAM badge and warns when memory is high', () => {
+    render(
+      <TooltipProvider>
+        <Titlebar
+          engineLabel="cuda"
+          weaving={false}
+          tab="generate"
+          onTabChange={vi.fn()}
+          vramUsedGb={7.2}
+          vramTotalGb={8}
+          gpuName="RTX 3070"
+          gpuTempC={71}
+        />
+      </TooltipProvider>,
+    )
+    const badge = screen.getByLabelText(/vram: 7.2 \/ 8.0 gb/i)
+    expect(badge).toHaveTextContent('7.2 / 8.0 GB')
+    expect(badge.className).toMatch(/amber/)
+  })
 })

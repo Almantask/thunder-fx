@@ -2,11 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Altar } from '@/components/Altar'
 import { CommandPalette } from '@/components/CommandPalette'
-import { GrimoireRail } from '@/components/GrimoireRail'
+import { GrimoireRail, type PackExportRequest } from '@/components/GrimoireRail'
 import { IncantationConsole } from '@/components/IncantationConsole'
 import { PromptCatalogDialog } from '@/components/PromptCatalogDialog'
 import { ScrollCanvas } from '@/components/ScrollCanvas'
 import { SettingsPanel } from '@/components/SettingsPanel'
+import { TakesGrid, type TakeCandidate } from '@/components/TakesGrid'
 import { Titlebar } from '@/components/Titlebar'
 import { Hint } from '@/components/Hint'
 import {
@@ -19,13 +20,31 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { cancelGenerate, engineStatus, exportClipFile, generate, loadModel, reportError } from '@/lib/engine'
-import { clipFilename } from '@/lib/filename'
-import { createIdbLibrary, createMemoryLibrary } from '@/lib/library'
+import {
+  cancelGenerate,
+  engineStatus,
+  exportClipFile,
+  exportSoundPack,
+  generate,
+  loadModel,
+  reportError,
+  unloadModel,
+  bytesToBase64,
+  base64ToBytes,
+  writeEncodedFile,
+} from '@/lib/engine'
+import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
+import { formatNeedsDesktop, prepareExportWav } from '@/lib/audioExport'
+import { clipFilename, isUuidOrSymbol, promptName } from '@/lib/filename'
+import { buildPackManifest, formatPackFilename } from '@/lib/packNaming'
+import { DEFAULT_CROSSFADE_SEC, makeSeamlessLoop } from '@/lib/seamlessLoop'
+import { detectSilenceBounds } from '@/lib/silenceTrim'
+import { createAppLibrary } from '@/lib/library'
 import { mockStatus } from '@/lib/mockEngine'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
 import { canCast } from '@/lib/prompt'
 import {
+  getCompletedSubcategoryCount,
   loadPromptCatalog,
   mergeQueue,
   removeFromQueue,
@@ -34,13 +53,14 @@ import {
 import {
   GENERATE_MODES,
   applyGenerateMode,
+  applyModeCfg,
   applyModeDuration,
   applyModeNegative,
   clipMode,
   ensureTrackType,
   inferGenerateMode,
 } from '@/lib/generateMode'
-import { loadSettings, saveSettings } from '@/lib/setup'
+import { loadQueue, loadSettings, saveQueue, saveSettings } from '@/lib/setup'
 import {
   estimateGenerateMs,
   estimateLoadMs,
@@ -52,12 +72,10 @@ import {
   type TimingLog,
 } from '@/lib/timing'
 import type { Clip, EngineStatus, GenerateMode, KeepSettings, KeepTab, WeavePhase } from '@/lib/types'
-import { TOTAL_RITES } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
-import { trimWav, wavDurationSeconds } from '@/lib/wav'
 
-const library =
-  typeof indexedDB === 'undefined' ? createMemoryLibrary() : createIdbLibrary()
+import { extractInstruments, musicWavInfo } from '@/lib/instruments'
+import { downloadArrayBuffer, tagMusicWav, trimWav, wavDurationSeconds } from '@/lib/wav'
 
 type PendingDelete = string | null
 
@@ -73,7 +91,8 @@ export function Studio() {
     }
     return settings.defaultDuration
   })
-  const [cfg, setCfg] = useState(1)
+  const [cfg, setCfg] = useState(() => GENERATE_MODES[mode].defaultCfg)
+  const [steps, setSteps] = useState(() => settings.qualitySteps ?? 20)
   const [negative, setNegative] = useState('')
   const [seed, setSeed] = useState('-1')
   const [ritesOpen, setRitesOpen] = useState(false)
@@ -84,24 +103,34 @@ export function Studio() {
   const [weaving, setWeaving] = useState(false)
   const [loadingModel, setLoadingModel] = useState(false)
   const [rite, setRite] = useState(0)
+  const [totalRites, setTotalRites] = useState(() => settings.qualitySteps ?? 20)
   const [elapsedMs, setElapsedMs] = useState(0)
   const [weavePhase, setWeavePhase] = useState<WeavePhase>('weaving')
+
   const [weaveRatio, setWeaveRatio] = useState<number>()
   const [error, setError] = useState<string>()
   const [trimStart, setTrimStart] = useState(0)
   const [trimEnd, setTrimEnd] = useState(8)
   const [playing, setPlaying] = useState(false)
   const [looping, setLooping] = useState(false)
+  const [sampleRate, setSampleRate] = useState<SampleRateOption>(44100)
+  const [bitDepth, setBitDepth] = useState<BitDepthOption>(16)
+  const [mono, setMono] = useState(false)
+  const [seamlessLoop, setSeamlessLoop] = useState(false)
+  const [crossfadeSec, setCrossfadeSec] = useState(DEFAULT_CROSSFADE_SEC)
+  const [takes, setTakes] = useState<TakeCandidate[]>([])
+  const [takesOpen, setTakesOpen] = useState(false)
   const [playhead, setPlayhead] = useState(0)
   const [tab, setTab] = useState<KeepTab>('generate')
   const [commandOpen, setCommandOpen] = useState(false)
   const [pendingDelete, setPendingDelete] = useState<PendingDelete>(null)
   const [confirmDispel, setConfirmDispel] = useState(false)
   const [catalogOpen, setCatalogOpen] = useState(false)
-  const [queue, setQueue] = useState<CatalogEffect[]>([])
+  const [queue, setQueue] = useState<CatalogEffect[]>(loadQueue)
   const [timing, setTiming] = useState(loadTimingLog)
   const [queueRunning, setQueueRunning] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
+  const loadAbortRef = useRef<AbortController | null>(null)
   const weaveStartedRef = useRef(0)
   const playbackRef = useRef<PlaybackHandle | null>(null)
   const playRaf = useRef<number>(0)
@@ -109,9 +138,27 @@ export function Studio() {
   const stopQueueRef = useRef(false)
   const timingRef = useRef(timing)
   const engineMockRef = useRef(false)
+  const clipsRef = useRef(clips)
+  clipsRef.current = clips
+
+  const library = useMemo(
+    () => createAppLibrary(() => settings.libraryDir, () => clipsRef.current),
+    [settings.libraryDir],
+  )
+
   const catalog = useMemo(() => loadPromptCatalog(), [])
+  const completedSubcategoryCount = useMemo(
+    () => getCompletedSubcategoryCount(clips, catalog),
+    [clips, catalog],
+  )
   queueRef.current = queue
   timingRef.current = timing
+
+  function updateQueue(next: CatalogEffect[]) {
+    queueRef.current = next
+    setQueue(next)
+    saveQueue(next)
+  }
 
   const [engine, setEngine] = useState<EngineStatus>(() =>
     isTauri()
@@ -134,7 +181,19 @@ export function Studio() {
   }
 
   async function refreshLibrary() {
-    setClips(await library.list())
+    let loadedClips: Clip[] = []
+    try {
+      loadedClips = await library.list()
+    } catch {
+      loadedClips = []
+    }
+    const normalized = loadedClips.map((c) => {
+      if (isUuidOrSymbol(c.prompt)) {
+        return { ...c, prompt: promptName(c.prompt, c) }
+      }
+      return c
+    })
+    setClips(normalized)
   }
 
   async function refreshEngine() {
@@ -152,7 +211,21 @@ export function Studio() {
   }, [])
 
   useEffect(() => {
+    if (tab === 'library') {
+      void refreshLibrary()
+    }
+  }, [tab])
+
+  useEffect(() => {
     void refreshEngine()
+  }, [])
+
+  useEffect(() => {
+    if (!isTauri()) return
+    const id = window.setInterval(() => {
+      void refreshEngine()
+    }, 4000)
+    return () => window.clearInterval(id)
   }, [])
 
   useEffect(() => {
@@ -189,9 +262,14 @@ export function Studio() {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null
       const typing = target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT')
-      if (e.key === 'Escape' && weaving) {
-        e.preventDefault()
-        requestDispel()
+      if (e.key === 'Escape') {
+        if (weaving) {
+          e.preventDefault()
+          requestDispel()
+        } else if (loadingModel) {
+          e.preventDefault()
+          cancelLoadWeights()
+        }
       }
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
@@ -216,6 +294,21 @@ export function Studio() {
     return () => window.removeEventListener('keydown', onKey)
   })
 
+  function cancelQueue() {
+    stopQueueRef.current = true
+    abortRef.current?.abort()
+    void cancelGenerate()
+    setQueueRunning(false)
+    setWeaving(false)
+    toast('Queue stopped. Remaining prompts preserved.')
+  }
+
+  function cancelLoadWeights() {
+    loadAbortRef.current?.abort()
+    void cancelGenerate()
+    setLoadingModel(false)
+  }
+
   function requestDispel() {
     stopQueueRef.current = true
     if (Date.now() - weaveStartedRef.current > 10_000) {
@@ -224,6 +317,7 @@ export function Studio() {
     }
     abortRef.current?.abort()
     void cancelGenerate()
+    setQueueRunning(false)
   }
 
   function applyCatalogEffect(effect: CatalogEffect) {
@@ -235,9 +329,18 @@ export function Studio() {
     setNegative(effect.negative)
   }
 
+  async function getClipWav(id: string): Promise<ArrayBuffer | undefined> {
+    return await library.getWav(id)
+  }
+
   async function loadClip(id: string) {
-    const buf = await library.getWav(id)
-    if (!buf) return
+    const buf = await getClipWav(id)
+    if (!buf) {
+      toast.error('Could not load audio file.', {
+        description: 'The audio file was not found in storage.',
+      })
+      return
+    }
     setSelectedId(id)
     setWav(buf)
     const d = wavDurationSeconds(buf)
@@ -246,7 +349,8 @@ export function Studio() {
     setPlayhead(0)
     const clip = clips.find((c) => c.id === id)
     if (clip) {
-      setPrompt(clip.prompt)
+      const properPrompt = isUuidOrSymbol(clip.prompt) ? promptName(clip.prompt, clip) : clip.prompt
+      setPrompt(properPrompt)
       const next = clipMode(clip)
       if (next !== mode) {
         setNegative((n) => applyModeNegative(n, mode, next))
@@ -262,9 +366,11 @@ export function Studio() {
     setPrompt((p) => applyGenerateMode(p, next))
     setNegative((n) => applyModeNegative(n, mode, next))
     setDuration((d) => applyModeDuration(d, mode, next))
+    setCfg((c) => applyModeCfg(c, mode, next))
     setMode(next)
     setSettings((s) => ({ ...s, generateMode: next }))
   }
+
 
   async function loadWeights() {
     if (loadingModel || weaving || engine.loaded) return
@@ -275,12 +381,18 @@ export function Studio() {
     setWeavePhase('loading')
     setWeaveRatio(undefined)
     const started = Date.now()
+    weaveStartedRef.current = started
+    const controller = new AbortController()
+    loadAbortRef.current = controller
     try {
-      await loadModel((ratio) => {
-        setElapsedMs(Date.now() - started)
-        setWeaveRatio(ratio)
-        setWeavePhase('loading')
-      })
+      await loadModel(
+        (ratio) => {
+          setElapsedMs(Date.now() - started)
+          setWeaveRatio(ratio)
+          setWeavePhase('loading')
+        },
+        { signal: controller.signal, precision: settings.precision },
+      )
       if (!engineMockRef.current) {
         rememberTiming(recordLoad(timingRef.current, Date.now() - started))
       }
@@ -288,11 +400,32 @@ export function Studio() {
       setEngine((current) => ({ ...current, loaded: true }))
       toast.success('Model ready.', { description: 'Generate will only create a clip.' })
     } catch (err) {
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        toast('Model load cancelled.')
+        return
+      }
       const message = reportError(err, 'Model load failed')
       setError(message)
       toast.error('Model load failed.', { description: `${message} Saved to the error log.` })
     } finally {
       setLoadingModel(false)
+      loadAbortRef.current = null
+    }
+  }
+
+  async function unloadWeights() {
+    if (loadingModel || weaving || !engine.loaded) return
+    try {
+      await unloadModel()
+      await refreshEngine()
+      setEngine((current) => ({ ...current, loaded: false }))
+      toast.success('Model unloaded.', {
+        description: 'GPU memory freed. Click Load model before generating.',
+      })
+    } catch (err) {
+      const message = reportError(err, 'Model unload failed')
+      setError(message)
+      toast.error('Model unload failed.', { description: `${message} Saved to the error log.` })
     }
   }
 
@@ -302,22 +435,32 @@ export function Studio() {
       seconds: number
       negative: string
       mode: GenerateMode
+      steps?: number
       category?: string
+      subcategory?: string
       intensity?: string
     },
-    options: { manageBusy?: boolean } = {},
+    options: {
+      manageBusy?: boolean
+      setActiveClip?: boolean
+      seed?: number
+      onResult?: (clip: Clip, wav: ArrayBuffer) => void
+    } = {},
   ): Promise<'ok' | 'abort' | 'error'> {
     const manageBusy = options.manageBusy ?? true
+    const setActiveClip = options.setActiveClip ?? true
+    const currentSteps = request.steps ?? steps
     setError(undefined)
     if (manageBusy) setWeaving(true)
     setRite(0)
+    setTotalRites(currentSteps)
     setElapsedMs(0)
     setWeavePhase('weaving')
     setWeaveRatio(undefined)
     weaveStartedRef.current = Date.now()
     const controller = new AbortController()
     abortRef.current = controller
-    const parsedSeed = Number(seed)
+    const parsedSeed = options.seed ?? Number(seed)
     try {
       const result = await generate(
         {
@@ -325,30 +468,47 @@ export function Studio() {
           seconds: request.seconds,
           seed: Number.isFinite(parsedSeed) ? parsedSeed : -1,
           cfg,
+          steps: currentSteps,
           negative: request.negative,
           libraryDir: settings.libraryDir,
           mode: request.mode,
           category: request.category,
+          subcategory: request.subcategory,
           intensity: request.intensity,
         },
         {
           signal: controller.signal,
-          stepDelayMs: 180,
+          stepDelayMs: 60,
           onProgress: (p) => {
             setRite(p.step)
+            if (p.total) setTotalRites(p.total)
             setElapsedMs(p.elapsedMs)
             if (p.phase) setWeavePhase(p.phase)
             setWeaveRatio(p.ratio)
           },
         },
       )
-      await library.save(result.clip, result.wav)
+      let finalClip = result.clip
+      let finalWav = result.wav
+      if (finalClip.mode === 'music' && !finalClip.instruments?.length) {
+        const detected = extractInstruments(finalClip.prompt)
+        if (detected.length) {
+          finalClip = { ...finalClip, instruments: detected.slice(0, 3) }
+          finalWav = tagMusicWav(finalWav, musicWavInfo(finalClip.prompt, finalClip.instruments))
+        }
+      }
+      if (!isTauri()) {
+        await library.save(finalClip, finalWav)
+      }
+      options.onResult?.(finalClip, finalWav)
       await refreshLibrary()
-      setSelectedId(result.clip.id)
-      setWav(result.wav)
-      setTrimStart(0)
-      setTrimEnd(result.clip.duration)
-      setPlayhead(0)
+      if (setActiveClip) {
+        setSelectedId(finalClip.id)
+        setWav(finalWav)
+        setTrimStart(0)
+        setTrimEnd(finalClip.duration)
+        setPlayhead(0)
+      }
       if (!engineMockRef.current) {
         rememberTiming(
           recordGenerate(timingRef.current, request.seconds, Date.now() - weaveStartedRef.current),
@@ -372,20 +532,69 @@ export function Studio() {
 
   async function cast() {
     if (!canCast(prompt) || weaving || loadingModel || !engine.loaded) return
+    setWav(undefined)
+    setSelectedId(undefined)
     const requestPrompt = ensureTrackType(prompt, mode)
     const requestNegative = negative.trim() || GENERATE_MODES[mode].defaultNegative
     setPrompt(requestPrompt)
     if (!negative.trim() && requestNegative) setNegative(requestNegative)
-    await generateOne({
-      prompt: requestPrompt,
-      seconds: duration,
-      negative: requestNegative,
-      mode,
-    })
+    await generateOne(
+      {
+        prompt: requestPrompt,
+        seconds: duration,
+        negative: requestNegative,
+        mode,
+        steps,
+      },
+      { setActiveClip: true },
+    )
+  }
+
+  async function castTakes() {
+    if (!canCast(prompt) || weaving || loadingModel || !engine.loaded) return
+    const requestPrompt = ensureTrackType(prompt, mode)
+    const requestNegative = negative.trim() || GENERATE_MODES[mode].defaultNegative
+    setPrompt(requestPrompt)
+    if (!negative.trim() && requestNegative) setNegative(requestNegative)
+    setTakes([])
+    setTakesOpen(false)
+    setWeaving(true)
+    const collected: TakeCandidate[] = []
+    try {
+      for (let i = 0; i < 4; i += 1) {
+        const seedValue = 1 + Math.floor(Math.random() * 2_147_483_646)
+        const outcome = await generateOne(
+          {
+            prompt: requestPrompt,
+            seconds: duration,
+            negative: requestNegative,
+            mode,
+            steps,
+          },
+          {
+            manageBusy: false,
+            setActiveClip: false,
+            seed: seedValue,
+            onResult: (clip, buf) => {
+              collected.push({ clip, wav: buf })
+            },
+          },
+        )
+        if (outcome !== 'ok') break
+      }
+      if (collected.length) {
+        setTakes(collected)
+        setTakesOpen(true)
+      }
+    } finally {
+      setWeaving(false)
+    }
   }
 
   async function castQueue() {
     if (weaving || loadingModel || !engine.loaded || queueRef.current.length === 0) return
+    setWav(undefined)
+    setSelectedId(undefined)
     stopQueueRef.current = false
     setQueueRunning(true)
     setWeaving(true)
@@ -402,15 +611,16 @@ export function Studio() {
             seconds: item.duration,
             negative: item.negative.trim() || GENERATE_MODES[nextMode].defaultNegative,
             mode: nextMode,
+            steps,
             category: item.category,
+            subcategory: item.subcategory,
             intensity: item.intensity,
           },
-          { manageBusy: false },
+          { manageBusy: false, setActiveClip: false },
         )
         if (outcome !== 'ok') break
         const remaining = queueRef.current.filter((effect) => effect.id !== item.id)
-        queueRef.current = remaining
-        setQueue(remaining)
+        updateQueue(remaining)
         saved += 1
       }
       if (saved > 0 && queueRef.current.length === 0) {
@@ -421,6 +631,7 @@ export function Studio() {
       setWeaving(false)
     }
   }
+
 
   function togglePlay() {
     if (!wav) return
@@ -447,45 +658,168 @@ export function Studio() {
     playRaf.current = requestAnimationFrame(tick)
   }
 
-  async function exportWav() {
-    if (!wav) return
+  function prepareExportBuffer(): ArrayBuffer | undefined {
+    if (!wav) return undefined
     const clip = clips.find((c) => c.id === selectedId)
-    const name = clipFilename(clip?.prompt ?? prompt, trimEnd - trimStart, 'wav')
+    const activePrompt = clip?.prompt ?? prompt
+    const isMusic = clip ? clipMode(clip) === 'music' : activePrompt.toLowerCase().includes('tracktype: music')
+    let exportBuf = trimWav(wav, trimStart, trimEnd)
+    if (seamlessLoop) {
+      exportBuf = makeSeamlessLoop(exportBuf, crossfadeSec)
+    }
+    if (isMusic) {
+      const detected = clip?.instruments?.length ? clip.instruments : extractInstruments(activePrompt)
+      exportBuf = tagMusicWav(exportBuf, musicWavInfo(activePrompt, detected))
+    }
+    return exportBuf
+  }
+
+  async function exportFormat(format: AudioFormat) {
+    const exportBuf = prepareExportBuffer()
+    if (!exportBuf) return
+    if (formatNeedsDesktop(format) && !isTauri()) {
+      toast(`${format.toUpperCase()} export needs the desktop app.`, {
+        description: 'In the browser, export WAV. Compressed formats are available in the Windows app.',
+      })
+      return
+    }
+    const clip = clips.find((c) => c.id === selectedId)
+    const name = clipFilename(clip?.prompt ?? prompt, trimEnd - trimStart, format)
     try {
       const path = await exportClipFile({
-        buffer: trimWav(wav, trimStart, trimEnd),
+        buffer: exportBuf,
         filename: name,
-        format: 'wav',
+        format,
+        sampleRate,
+        bitDepth,
+        mono,
         defaultDir: settings.defaultExportDir,
       })
-      toast.success('WAV saved.', { description: path ?? name })
+      toast.success(`${format.toUpperCase()} saved.`, { description: path ?? name })
     } catch (err) {
       const message = reportError(err, 'Export failed')
       toast.error('Export failed.', { description: `${message} Saved to the error log.` })
     }
   }
 
+  async function exportWav() {
+    await exportFormat('wav')
+  }
+
   async function exportOgg() {
+    await exportFormat('ogg')
+  }
+
+  function autoTrimSilence() {
     if (!wav) return
-    if (!isTauri()) {
-      toast('OGG export needs the desktop app.', {
-        description: 'In the browser, export WAV. OGG is available in the Windows app.',
-      })
+    const bounds = detectSilenceBounds(wav)
+    setTrimStart(bounds.startSec)
+    setTrimEnd(Math.min(clipDuration, Math.max(bounds.endSec, bounds.startSec + 0.05)))
+  }
+
+  async function previewSeamlessLoop() {
+    if (!wav) return
+    playbackRef.current?.stop()
+    const looped = makeSeamlessLoop(trimWav(wav, trimStart, trimEnd), crossfadeSec)
+    const handle = await createPlayback(looped, () => setPlaying(false))
+    playbackRef.current?.dispose()
+    playbackRef.current = handle
+    const dur = wavDurationSeconds(looped)
+    setPlaying(true)
+    await handle.play(0, dur, true, 0)
+    cancelAnimationFrame(playRaf.current)
+    const tick = () => {
+      const t = playbackRef.current?.getCurrentTime() ?? 0
+      setPlayhead(trimStart + t)
+      playRaf.current = requestAnimationFrame(tick)
+    }
+    playRaf.current = requestAnimationFrame(tick)
+  }
+
+  async function exportLibraryPack(request: PackExportRequest) {
+    const selected = request.ids
+      .map((id) => clips.find((clip) => clip.id === id))
+      .filter((clip): clip is Clip => Boolean(clip))
+    if (!selected.length) return
+    if (formatNeedsDesktop(request.format) && !isTauri()) {
+      toast(`${request.format.toUpperCase()} export needs the desktop app.`)
       return
     }
-    const clip = clips.find((c) => c.id === selectedId)
-    const name = clipFilename(clip?.prompt ?? prompt, trimEnd - trimStart, 'ogg')
-    try {
-      const path = await exportClipFile({
-        buffer: trimWav(wav, trimStart, trimEnd),
-        filename: name,
-        format: 'ogg',
-        defaultDir: settings.defaultExportDir,
+    const files: { name: string; buffer: ArrayBuffer; clip: Clip }[] = []
+    for (let i = 0; i < selected.length; i += 1) {
+      const clip = selected[i]!
+      const buf = await getClipWav(clip.id)
+      if (!buf) continue
+      const name = formatPackFilename(request.template, clip, i + 1, request.format)
+      files.push({
+        name,
+        buffer: prepareExportWav(buf, {
+          format: 'wav',
+          sampleRate: 44100,
+          bitDepth: 16,
+          mono: false,
+        }),
+        clip,
       })
-      toast.success('OGG saved.', { description: path ?? name })
+    }
+    if (!files.length) {
+      toast.error('Could not read the selected clips.')
+      return
+    }
+    if (request.format !== 'wav' && isTauri()) {
+      const { invoke } = await import('@tauri-apps/api/core')
+      const temp = await invoke<string>('temp_dir')
+      const sep = temp.includes('/') && !temp.includes('\\') ? '/' : '\\'
+      const encoded: typeof files = []
+      for (const file of files) {
+        const dest = `${temp.replace(/[\\/]+$/, '')}${sep}${file.name}`
+        await writeEncodedFile({ buffer: file.buffer, path: dest, format: request.format })
+        const b64 = await invoke<string>('read_file_b64', { path: dest })
+        encoded.push({ ...file, buffer: base64ToBytes(b64) })
+      }
+      files.length = 0
+      files.push(...encoded)
+    }
+    const manifest = request.includeManifest
+      ? buildPackManifest(files.map((file) => ({ filename: file.name, clip: file.clip })))
+      : undefined
+    try {
+      if (request.zip) {
+        const path = await exportSoundPack({
+          files: files.map((file) => ({ name: file.name, buffer: file.buffer })),
+          zipName: 'thunder-fx-pack.zip',
+          manifest,
+          defaultDir: settings.defaultExportDir,
+        })
+        toast.success('Sound pack saved.', { description: path ?? 'thunder-fx-pack.zip' })
+        return
+      }
+      if (!isTauri()) {
+        for (const file of files) {
+          downloadArrayBuffer(file.buffer, file.name)
+        }
+        toast.success(`Saved ${files.length} files.`)
+        return
+      }
+      const { invoke } = await import('@tauri-apps/api/core')
+      const { open } = await import('@tauri-apps/plugin-dialog')
+      const folder = await open({ directory: true, defaultPath: settings.defaultExportDir || undefined })
+      if (typeof folder !== 'string') return
+      const sep = folder.includes('/') && !folder.includes('\\') ? '/' : '\\'
+      for (const file of files) {
+        const dest = `${folder.replace(/[\\/]+$/, '')}${sep}${file.name}`
+        await invoke('write_file_b64', { path: dest, data: bytesToBase64(file.buffer) })
+      }
+      if (manifest) {
+        await invoke('write_file_b64', {
+          path: `${folder.replace(/[\\/]+$/, '')}${sep}manifest.json`,
+          data: bytesToBase64(new TextEncoder().encode(manifest).buffer),
+        })
+      }
+      toast.success(`Saved ${files.length} files.`)
     } catch (err) {
-      const message = reportError(err, 'OGG export failed')
-      toast.error('Export failed.', { description: `${message} Saved to the error log.` })
+      const message = reportError(err, 'Pack export failed')
+      toast.error('Pack export failed.', { description: `${message} Saved to the error log.` })
     }
   }
 
@@ -511,6 +845,10 @@ export function Studio() {
         weavePhase={weavePhase}
         tab={tab}
         onTabChange={setTab}
+        vramUsedGb={engine.vramUsedGb}
+        vramTotalGb={engine.vramTotalGb}
+        gpuName={engine.gpuName}
+        gpuTempC={engine.gpuTempC}
       />
       {error ? (
         <Hint className="w-full" label="This step failed. Open Settings for the traceback. The prompt is unchanged.">
@@ -543,21 +881,26 @@ export function Studio() {
           }}
           onDelete={setPendingDelete}
           onModeChange={selectMode}
-          getWav={(id) => library.getWav(id)}
+          onExportPack={(request) => void exportLibraryPack(request)}
+          getWav={getClipWav}
         />
       ) : null}
       {tab === 'generate' ? (
-        <>
-          <div className="flex min-h-0 flex-1">
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex min-h-[140px] flex-[1.4]">
             <ScrollCanvas
               wav={wav}
               weaving={weaving}
               loadingModel={loadingModel}
+              modelLoaded={engine.loaded}
               rite={rite}
-              totalRites={TOTAL_RITES}
+              totalRites={totalRites}
               elapsedMs={elapsedMs}
+              startedAt={weaveStartedRef.current}
               phase={weavePhase}
               ratio={weaveRatio}
+              mode={mode}
+              completedSubcategoryCount={completedSubcategoryCount}
               historicalEstimateMs={
                 loadingModel
                   ? estimateLoadMs(timing)
@@ -595,6 +938,11 @@ export function Studio() {
               trimStart={trimStart}
               trimEnd={trimEnd}
               duration={clipDuration}
+              sampleRate={sampleRate}
+              bitDepth={bitDepth}
+              mono={mono}
+              seamlessLoop={seamlessLoop}
+              crossfadeSec={crossfadeSec}
               onPlay={togglePlay}
               onStop={() => {
                 playbackRef.current?.stop()
@@ -604,15 +952,24 @@ export function Studio() {
               onLoop={setLooping}
               onTrimStart={(v) => setTrimStart(Math.max(0, Math.min(v, trimEnd - 0.05)))}
               onTrimEnd={(v) => setTrimEnd(Math.min(clipDuration, Math.max(v, trimStart + 0.05)))}
+              onAutoTrim={autoTrimSilence}
+              onSampleRate={setSampleRate}
+              onBitDepth={setBitDepth}
+              onMono={setMono}
+              onSeamlessLoop={setSeamlessLoop}
+              onCrossfadeSec={setCrossfadeSec}
+              onPreviewLoop={() => void previewSeamlessLoop()}
               onExportWav={() => void exportWav()}
-              onExportOgg={() => void exportOgg()}
+              onExportFormat={(format) => void exportFormat(format)}
             />
           </div>
           <IncantationConsole
+            className="flex-1 min-h-[170px]"
             mode={mode}
             prompt={prompt}
             duration={duration}
             cfg={cfg}
+            steps={steps}
             negative={negative}
             seed={seed}
             ritesOpen={ritesOpen}
@@ -622,33 +979,33 @@ export function Studio() {
             engineReady={engine.ready}
             engineMessage={engine.message}
             queue={queue}
+            queueRunning={queueRunning}
             onMode={selectMode}
             onPrompt={setPrompt}
             onDuration={setDuration}
             onCfg={setCfg}
+            onSteps={setSteps}
             onNegative={setNegative}
             onSeed={setSeed}
             onRitesOpen={setRitesOpen}
             onCast={() => void cast()}
+            onCastTakes={() => void castTakes()}
             onDispel={requestDispel}
             onLoadModel={() => void loadWeights()}
+            onCancelLoadModel={cancelLoadWeights}
+            onUnloadModel={() => void unloadWeights()}
             onOpenCatalog={() => setCatalogOpen(true)}
             onGenerateQueue={() => void castQueue()}
-            onClearQueue={() => {
-              queueRef.current = []
-              setQueue([])
-            }}
-            onRemoveQueued={(id) => {
-              const remaining = removeFromQueue(queueRef.current, id)
-              queueRef.current = remaining
-              setQueue(remaining)
-            }}
+
+            onCancelQueue={cancelQueue}
+            onClearQueue={() => updateQueue([])}
+            onRemoveQueued={(id) => updateQueue(removeFromQueue(queueRef.current, id))}
             loadEstimateMs={estimateLoadMs(timing)}
             castEstimateMs={estimateGenerateMs(timing, duration)}
             queueEstimateMs={estimateQueueMs(timing, queue)}
             clipEstimateMs={(seconds) => estimateGenerateMs(timing, seconds)}
           />
-        </>
+        </div>
       ) : null}
       {tab === 'settings' ? <SettingsPanel settings={settings} onChange={setSettings} /> : null}
       <PromptCatalogDialog
@@ -657,12 +1014,36 @@ export function Studio() {
         onOpenChange={setCatalogOpen}
         onEnqueue={(effects) => {
           const next = mergeQueue(queueRef.current, effects)
-          queueRef.current = next
-          setQueue(next)
+          updateQueue(next)
         }}
         onUse={(effect) => {
           applyCatalogEffect(effect)
           setCatalogOpen(false)
+        }}
+      />
+      <TakesGrid
+        open={takesOpen}
+        takes={takes}
+        onOpenChange={setTakesOpen}
+        onKeep={(ids) => {
+          const kept = takes.filter((take) => ids.includes(take.clip.id))
+          const last = kept.at(-1)
+          if (last) {
+            setSelectedId(last.clip.id)
+            setWav(last.wav)
+            setTrimStart(0)
+            setTrimEnd(last.clip.duration)
+            setPlayhead(0)
+          }
+        }}
+        onDiscard={(ids) => {
+          void (async () => {
+            for (const id of ids) {
+              await library.delete(id)
+            }
+            setTakes((prev) => prev.filter((take) => !ids.includes(take.clip.id)))
+            await refreshLibrary()
+          })()
         }}
       />
       <CommandPalette
@@ -689,6 +1070,10 @@ export function Studio() {
         onLoadModel={() => {
           setTab('generate')
           void loadWeights()
+        }}
+        onUnloadModel={() => {
+          setTab('generate')
+          void unloadWeights()
         }}
         onPromptCatalog={() => {
           setTab('generate')
@@ -744,6 +1129,7 @@ export function Studio() {
                   abortRef.current?.abort()
                   void cancelGenerate()
                   setConfirmDispel(false)
+                  setQueueRunning(false)
                 }}
               >
                 Cancel

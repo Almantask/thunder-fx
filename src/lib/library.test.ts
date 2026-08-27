@@ -37,19 +37,64 @@ describe('memory library', () => {
   })
 })
 
+describe('app and disk library', () => {
+  it('creates a disk library that delegates to scanDiskLibrary and handles save as no-op', async () => {
+    const { createDiskLibrary } = await import('@/lib/library')
+    const diskLib = createDiskLibrary(() => 'E:\\sfx')
+    expect(diskLib).toBeDefined()
+    expect(typeof diskLib.list).toBe('function')
+    expect(typeof diskLib.getWav).toBe('function')
+    expect(typeof diskLib.delete).toBe('function')
+    expect(typeof diskLib.save).toBe('function')
+    // save is a safe no-op on desktop
+    await expect(
+      diskLib.save(
+        {
+          id: 'test',
+          prompt: 'test',
+          duration: 1,
+          seed: 1,
+          createdAt: '',
+          cfg: 1,
+          negative: '',
+        },
+        new ArrayBuffer(0),
+      ),
+    ).resolves.toBeUndefined()
+  })
+
+  it('selects memory/idb library when not running in Tauri', async () => {
+    const { createAppLibrary } = await import('@/lib/library')
+    const appLib = createAppLibrary(() => 'E:\\sfx')
+    expect(appLib).toBeDefined()
+  })
+})
+
 describe('mockGenerate', () => {
-  it('reports eight steps then returns a clip', async () => {
+  it('reports default twenty steps then returns a clip', async () => {
     const steps: number[] = []
     const result = await mockGenerate(
       { prompt: 'tavern door', seconds: 1, seed: 4, cfg: 1, negative: '' },
       { onProgress: (p) => steps.push(p.step), stepDelayMs: 0 },
     )
-    expect(steps).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+    expect(steps).toEqual(Array.from({ length: 20 }, (_, i) => i + 1))
     expect(result.clip.prompt).toBe('tavern door')
     expect(result.clip.seed).toBe(4)
+    expect(result.clip.steps).toBe(20)
     expect(result.clip.mode).toBe('sfx')
     expect(result.wav.byteLength).toBeGreaterThan(44)
   })
+
+  it('supports explicit step count in mockGenerate', async () => {
+    const steps: number[] = []
+    const result = await mockGenerate(
+      { prompt: 'tavern door', seconds: 1, seed: 4, cfg: 1, steps: 8, negative: '' },
+      { onProgress: (p) => steps.push(p.step), stepDelayMs: 0 },
+    )
+    expect(steps).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
+    expect(result.clip.steps).toBe(8)
+  })
+
 
   it('tags music clips and uses the instrumental mock', async () => {
     const sfx = await mockGenerate(

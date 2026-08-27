@@ -6,6 +6,7 @@ import {
   probeEngine,
   engineStatus,
   loadModel,
+  unloadModel,
   reportError,
   readErrorLog,
 } from '@/lib/engine'
@@ -28,6 +29,8 @@ describe('engine bridge', () => {
     const status = await engineStatus()
     expect(status.mock).toBe(true)
     expect(status.loaded).toBe(true)
+    expect(status.vramTotalGb).toBe(8)
+    expect(status.gpuName).toBe('mock')
     const steps: number[] = []
     const phases: string[] = []
     const result = await generate(
@@ -40,16 +43,30 @@ describe('engine bridge', () => {
         stepDelayMs: 0,
       },
     )
-    expect(steps).toEqual([1, 2, 3, 4, 5, 6, 7, 8])
-    expect(phases).toEqual(Array(8).fill('weaving'))
+    expect(steps).toEqual(Array.from({ length: 20 }, (_, i) => i + 1))
+    expect(phases).toEqual(Array(20).fill('weaving'))
     expect(result.clip.prompt).toBe('iron gate')
+    expect(result.clip.steps).toBe(20)
     expect(result.wav.byteLength).toBeGreaterThan(44)
+
   })
 
   it('loadModel finishes without generating a clip', async () => {
     const ratios: number[] = []
     await loadModel((ratio) => ratios.push(ratio))
     expect(ratios.at(-1)).toBe(1)
+  })
+
+  it('unloadModel finishes without error outside Tauri', async () => {
+    await expect(unloadModel()).resolves.toBeUndefined()
+  })
+
+  it('loadModel can be cancelled via AbortSignal', async () => {
+    const controller = new AbortController()
+    controller.abort()
+    await expect(loadModel(undefined, { signal: controller.signal })).rejects.toThrow(
+      'Model load cancelled',
+    )
   })
 
   it('reportError returns the message and ignores abort', () => {

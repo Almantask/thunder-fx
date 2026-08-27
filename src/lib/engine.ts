@@ -1,4 +1,3 @@
-import { downloadArrayBuffer } from '@/lib/library'
 import {
   mockDownloadProgress,
   mockGenerate,
@@ -7,18 +6,33 @@ import {
   type GenerateHandlers,
 } from '@/lib/mockEngine'
 import type {
+  CategorySummary,
   Clip,
   EngineStatus,
+  GenerateMode,
   GenerateRequest,
   GenerateResult,
+  PrecisionMode,
   SetupProbe,
   WeaveProgress,
 } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
-import { tagMusicWav, wavDurationSeconds } from '@/lib/wav'
-import { extractInstruments, musicWavInfo } from '@/lib/instruments'
+import type {
+  AudioFormat,
+  BitDepthOption,
+  SampleRateOption,
+} from '@/lib/audioExport'
+import { formatMime, formatNeedsDesktop, prepareExportWav } from '@/lib/audioExport'
+import { buildZipStore } from '@/lib/zipStore'
+import { downloadArrayBuffer, tagWav, wavDurationSeconds } from '@/lib/wav'
+import { clipWavInfo, extractInstruments } from '@/lib/instruments'
 import { clampGenerateSeconds } from '@/lib/duration'
 import { loadSettings } from '@/lib/setup'
+import {
+  inferClipCategory,
+  inferClipIntensity,
+  inferClipSubcategory,
+} from '@/lib/promptCatalog'
 
 function hfToken(): string {
   return loadSettings().hfToken.trim()
@@ -38,20 +52,27 @@ type EngineMsg = {
   ok?: boolean
   flavor?: string
   technical?: string
+  vramUsedGb?: number
+  vramTotalGb?: number
+  vramAllocatedGb?: number
+  vramReservedGb?: number
+  gpuName?: string
+  gpuTempC?: number
+  precision?: PrecisionMode
 }
 
 function throwIfEngineError(msg: EngineMsg): void {
   if (msg.event !== 'error') return
   const message = msg.message ?? 'Engine error'
   if (/dispelled|cancelled/i.test(message)) {
-    throw new DOMException('Generation cancelled', 'AbortError')
+    throw new DOMException(message || 'Cancelled', 'AbortError')
   }
   throw new Error(message)
 }
 
 export function reportError(err: unknown, fallback: string): string {
   if (err instanceof DOMException && err.name === 'AbortError') {
-    return err.message || 'Generation cancelled'
+    return err.message || 'Cancelled'
   }
   const message = err instanceof Error ? err.message : fallback
   const detail = err instanceof Error ? err.stack : undefined
@@ -111,6 +132,52 @@ export async function pickDirectory(defaultPath?: string): Promise<string | null
     defaultPath: defaultPath?.trim() || undefined,
   })
   return typeof selected === 'string' ? selected : null
+}
+
+export async function scanDiskLibrary(dir?: string): Promise<Clip[]> {
+  if (!isTauri()) return []
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<Clip[]>('scan_library_dir', { dir: dir?.trim() || null })
+  } catch {
+    return []
+  }
+}
+
+export async function scanDiskCategories(
+  dir?: string,
+  mode?: GenerateMode,
+): Promise<CategorySummary[]> {
+  if (!isTauri()) return []
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<CategorySummary[]>('scan_library_categories', {
+      dir: dir?.trim() || null,
+      mode: mode || null,
+    })
+  } catch {
+    return []
+  }
+}
+
+export async function scanDiskCategoryTracks(folderPath: string): Promise<Clip[]> {
+  if (!isTauri()) return []
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<Clip[]>('scan_folder_tracks', { folderPath })
+  } catch {
+    return []
+  }
+}
+
+export async function deleteDiskFile(path: string): Promise<void> {
+  if (!isTauri()) return
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    await invoke('delete_file', { path })
+  } catch {
+    /* ignore error */
+  }
 }
 
 export async function readErrorLog(): Promise<string> {
@@ -177,6 +244,13 @@ export async function engineStatus(): Promise<EngineStatus> {
     loaded: Boolean(result.loaded) || Boolean(result.mock),
     device: result.device ?? 'unknown',
     message: result.message ?? '',
+    vramUsedGb: typeof result.vramUsedGb === 'number' ? result.vramUsedGb : undefined,
+    vramTotalGb: typeof result.vramTotalGb === 'number' ? result.vramTotalGb : undefined,
+    vramAllocatedGb: typeof result.vramAllocatedGb === 'number' ? result.vramAllocatedGb : undefined,
+    vramReservedGb: typeof result.vramReservedGb === 'number' ? result.vramReservedGb : undefined,
+    gpuName: result.gpuName,
+    gpuTempC: typeof result.gpuTempC === 'number' ? result.gpuTempC : undefined,
+    precision: result.precision === 'fp16' ? 'fp16' : result.precision === 'fp32' ? 'fp32' : undefined,
   }
 }
 
@@ -210,38 +284,64 @@ export async function generate(
       ? request.instruments
       : extractInstruments(request.prompt)
     const topInstruments = detectedInstruments.slice(0, 3)
+
+    const dummyClip: Clip = {
+      id: '',
+      prompt: request.prompt,
+      duration: request.seconds,
+      seed: request.seed,
+      createdAt: '',
+      cfg: request.cfg,
+      negative: request.negative,
+      mode,
+    }
+    const resolvedCategory = request.category?.trim() || inferClipCategory(dummyClip)
+    const resolvedSubcategory =
+      request.subcategory?.trim() ||
+      (mode === 'sfx' ? inferClipSubcategory(dummyClip) : undefined)
+    const resolvedIntensity =
+      request.intensity?.trim() ||
+      (mode === 'music' ? inferClipIntensity(dummyClip) : undefined)
+
     const result = await invoke<EngineMsg>('engine_generate', {
       prompt: request.prompt,
       seconds: request.seconds,
       seed: request.seed,
       cfg: request.cfg,
+      steps: request.steps ?? 20,
       negative: request.negative,
       hfToken: hfToken(),
       libraryDir: request.libraryDir?.trim() || loadSettings().libraryDir.trim() || null,
       mode,
+      category: resolvedCategory,
+      subcategory: resolvedSubcategory || resolvedIntensity,
+      intensity: resolvedIntensity,
       instruments: topInstruments,
     })
     throwIfEngineError(result)
     if (!result.path) throw new Error('Engine did not return a WAV path')
     const b64 = await invoke<string>('read_file_b64', { path: result.path })
     let wav = base64ToBytes(b64)
-    if (mode === 'music') {
-      wav = tagMusicWav(wav, musicWavInfo(request.prompt, topInstruments))
-      await invoke('write_file_b64', { path: result.path, data: bytesToBase64(wav) })
-    }
+    const wavInfo = clipWavInfo(request.prompt, mode, topInstruments)
+    wav = tagWav(wav, wavInfo)
+    await invoke('write_file_b64', { path: result.path, data: bytesToBase64(wav) })
     const clip: Clip = {
       id: clipIdFromPath(result.path),
+      path: result.path,
       prompt: request.prompt.trim(),
       duration: wavDurationSeconds(wav),
       seed: result.seed ?? request.seed,
       createdAt: new Date().toISOString(),
       cfg: request.cfg,
+      steps: request.steps ?? 20,
       negative: request.negative,
       mode,
       instruments: topInstruments.length ? topInstruments : undefined,
-      category: request.category,
-      intensity: request.intensity,
+      category: resolvedCategory,
+      subcategory: resolvedSubcategory,
+      intensity: resolvedIntensity,
     }
+
     return { clip, wav }
   } finally {
     handlers.signal?.removeEventListener('abort', onAbort)
@@ -249,15 +349,21 @@ export async function generate(
   }
 }
 
-export async function loadModel(onProgress?: (ratio: number) => void): Promise<void> {
-  await scribeWeights(onProgress ?? (() => {}))
+export async function loadModel(
+  onProgress?: (ratio: number) => void,
+  options?: { signal?: AbortSignal; precision?: PrecisionMode },
+): Promise<void> {
+  await scribeWeights(onProgress ?? (() => {}), options)
 }
 
-export async function scribeWeights(onProgress: (ratio: number) => void): Promise<void> {
-  if (!isTauri()) return mockDownloadProgress(onProgress, 40)
+export async function scribeWeights(
+  onProgress: (ratio: number) => void,
+  options?: { signal?: AbortSignal; precision?: PrecisionMode },
+): Promise<void> {
+  if (!isTauri()) return mockDownloadProgress(onProgress, 40, options?.signal)
   const status = await engineStatus()
   if (status.mock) {
-    await mockDownloadProgress(onProgress, 40)
+    await mockDownloadProgress(onProgress, 40, options?.signal)
     return
   }
   const { invoke } = await import('@tauri-apps/api/core')
@@ -272,51 +378,89 @@ export async function scribeWeights(onProgress: (ratio: number) => void): Promis
     const total = ev.payload.total || 1
     onProgress(Math.min(1, ev.payload.step / total))
   })
+  const onAbort = () => {
+    void cancelGenerate()
+  }
+  options?.signal?.addEventListener('abort', onAbort)
+  if (options?.signal?.aborted) {
+    onAbort()
+  }
   try {
-    const result = await invoke<EngineMsg>('engine_warmup', { hfToken: hfToken() })
+    const result = await invoke<EngineMsg>('engine_warmup', {
+      hfToken: hfToken(),
+      precision: options?.precision ?? loadSettings().precision ?? 'fp32',
+    })
     throwIfEngineError(result)
     onProgress(1)
   } finally {
+    options?.signal?.removeEventListener('abort', onAbort)
     unlisten()
   }
+}
+
+export async function unloadModel(): Promise<void> {
+  if (!isTauri()) return
+  const status = await engineStatus()
+  if (status.mock) return
+  const { invoke } = await import('@tauri-apps/api/core')
+  const result = await invoke<EngineMsg>('engine_unload')
+  throwIfEngineError(result)
 }
 
 export async function exportClipFile(options: {
   buffer: ArrayBuffer
   filename: string
-  format: 'wav' | 'ogg'
+  format: AudioFormat
+  sampleRate?: SampleRateOption
+  bitDepth?: BitDepthOption
+  mono?: boolean
   defaultDir?: string
 }): Promise<string | null> {
+  const prepared = prepareExportWav(options.buffer, {
+    format: options.format,
+    sampleRate: options.sampleRate ?? 44100,
+    bitDepth: options.bitDepth ?? 16,
+    mono: Boolean(options.mono),
+  })
   if (!isTauri()) {
-    if (options.format === 'ogg') {
-      throw new Error('OGG export needs the desktop app.')
+    if (formatNeedsDesktop(options.format)) {
+      throw new Error(`${options.format.toUpperCase()} export needs the desktop app.`)
     }
-    downloadArrayBuffer(options.buffer, options.filename, 'audio/wav')
+    downloadArrayBuffer(prepared, options.filename, formatMime(options.format))
     return null
   }
   const { invoke } = await import('@tauri-apps/api/core')
   const { save } = await import('@tauri-apps/plugin-dialog')
   const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
   const defaultPath = joinPath(options.defaultDir ?? '', options.filename)
+  const filterName =
+    options.format === 'ogg'
+      ? 'OGG Vorbis'
+      : options.format === 'flac'
+        ? 'FLAC'
+        : options.format === 'mp3'
+          ? 'MP3'
+          : 'WAV'
   const path = await save({
     defaultPath,
-    filters:
-      options.format === 'ogg'
-        ? [{ name: 'OGG Vorbis', extensions: ['ogg'] }]
-        : [{ name: 'WAV', extensions: ['wav'] }],
+    filters: [{ name: filterName, extensions: [options.format] }],
   })
   if (!path) return null
-  if (options.format === 'ogg') {
+  if (options.format === 'wav') {
+    await invoke('write_file_b64', { path, data: bytesToBase64(prepared) })
+  } else {
     const temp = await invoke<string>('temp_dir')
     const wavPath = joinPath(temp, 'thunder-fx-export.wav')
-    await invoke('write_file_b64', { path: wavPath, data: bytesToBase64(options.buffer) })
-    const encoded = await invoke<EngineMsg>('engine_encode_ogg', {
+    await invoke('write_file_b64', { path: wavPath, data: bytesToBase64(prepared) })
+    const encoded = await invoke<EngineMsg>('engine_encode_audio', {
       wavPath,
-      oggPath: path,
+      destPath: path,
+      format: options.format,
+      sampleRate: options.sampleRate ?? 44100,
+      bitDepth: options.bitDepth ?? 16,
+      mono: Boolean(options.mono),
     })
     throwIfEngineError(encoded)
-  } else {
-    await invoke('write_file_b64', { path, data: bytesToBase64(options.buffer) })
   }
   try {
     await revealItemInDir(path)
@@ -324,4 +468,89 @@ export async function exportClipFile(options: {
     /* reveal is best-effort */
   }
   return path
+}
+
+export async function exportSoundPack(options: {
+  files: { name: string; buffer: ArrayBuffer }[]
+  zipName: string
+  manifest?: string
+  defaultDir?: string
+}): Promise<string | null> {
+  if (!isTauri()) {
+    const zip = buildZipStore([
+      ...options.files.map((file) => ({ name: file.name, data: new Uint8Array(file.buffer) })),
+      ...(options.manifest
+        ? [{ name: 'manifest.json', data: new TextEncoder().encode(options.manifest) }]
+        : []),
+    ])
+    downloadArrayBuffer(zip, options.zipName, 'application/zip')
+    return null
+  }
+  const { invoke } = await import('@tauri-apps/api/core')
+  const { save } = await import('@tauri-apps/plugin-dialog')
+  const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
+  const defaultPath = joinPath(options.defaultDir ?? '', options.zipName)
+  const path = await save({
+    defaultPath,
+    filters: [{ name: 'ZIP archive', extensions: ['zip'] }],
+  })
+  if (!path) return null
+  const temp = await invoke<string>('temp_dir')
+  const entries: { src: string; dest: string }[] = []
+  for (const [index, file] of options.files.entries()) {
+    const src = joinPath(temp, `thunder-fx-pack-${index}-${file.name.replace(/[\\/]/g, '_')}`)
+    await invoke('write_file_b64', { path: src, data: bytesToBase64(file.buffer) })
+    entries.push({ src, dest: file.name })
+  }
+  await invoke('zip_files', {
+    entries,
+    dest: path,
+    manifest: options.manifest ?? null,
+  })
+  try {
+    await revealItemInDir(path)
+  } catch {
+    /* reveal is best-effort */
+  }
+  return path
+}
+
+export async function writeEncodedFile(options: {
+  buffer: ArrayBuffer
+  path: string
+  format: AudioFormat
+  sampleRate?: SampleRateOption
+  bitDepth?: BitDepthOption
+  mono?: boolean
+}): Promise<void> {
+  const prepared = prepareExportWav(options.buffer, {
+    format: options.format,
+    sampleRate: options.sampleRate ?? 44100,
+    bitDepth: options.bitDepth ?? 16,
+    mono: Boolean(options.mono),
+  })
+  if (!isTauri()) {
+    if (formatNeedsDesktop(options.format)) {
+      throw new Error(`${options.format.toUpperCase()} export needs the desktop app.`)
+    }
+    downloadArrayBuffer(prepared, options.path.split(/[/\\]/).pop() ?? 'export.wav', formatMime(options.format))
+    return
+  }
+  const { invoke } = await import('@tauri-apps/api/core')
+  if (options.format === 'wav') {
+    await invoke('write_file_b64', { path: options.path, data: bytesToBase64(prepared) })
+    return
+  }
+  const temp = await invoke<string>('temp_dir')
+  const wavPath = joinPath(temp, `thunder-fx-encode-${crypto.randomUUID()}.wav`)
+  await invoke('write_file_b64', { path: wavPath, data: bytesToBase64(prepared) })
+  const encoded = await invoke<EngineMsg>('engine_encode_audio', {
+    wavPath,
+    destPath: options.path,
+    format: options.format,
+    sampleRate: options.sampleRate ?? 44100,
+    bitDepth: options.bitDepth ?? 16,
+    mono: Boolean(options.mono),
+  })
+  throwIfEngineError(encoded)
 }

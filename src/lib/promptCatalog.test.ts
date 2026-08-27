@@ -2,8 +2,11 @@ import { describe, expect, it } from 'vitest'
 import {
   catalogFromFiles,
   formatIntensityLabel,
+  getCompletedSubcategories,
+  getCompletedSubcategoryCount,
   inferClipCategory,
   inferClipIntensity,
+  inferClipSubcategory,
   loadPromptCatalog,
   mergeQueue,
   parsePromptMarkdown,
@@ -309,6 +312,177 @@ describe('inferClipIntensity', () => {
     }
     expect(inferClipIntensity(quietClip)).toBe('Level I — Quiet looping bed')
     expect(inferClipIntensity(epicClip)).toBe('Level III — Full intensity')
+  })
+})
+
+describe('inferClipSubcategory', () => {
+  it('returns explicit clip.subcategory when present', () => {
+    const clip = {
+      id: '1',
+      prompt: 'custom blast sound',
+      duration: 2,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+      subcategory: 'Custom Blast',
+    }
+    expect(inferClipSubcategory(clip)).toBe('Custom Blast')
+  })
+
+  it('infers Sword for steel shortsword prompt in Combat', () => {
+    const clip = {
+      id: '2',
+      prompt: 'TrackType: SFX, steel shortsword leaving a leather scabbard, close mic, dry studio, fast decay',
+      duration: 1.5,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    expect(inferClipSubcategory(clip)).toBe('Sword')
+  })
+
+  it('infers Bow & Arrow for crossbow and arrow prompts in Combat', () => {
+    const clip = {
+      id: '3',
+      prompt: 'TrackType: SFX, heavy crossbow string thump and bolt launch, close mic, dry studio, fast decay',
+      duration: 1.5,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    expect(inferClipSubcategory(clip)).toBe('Bow & Arrow')
+  })
+
+  it('infers Firearms for shotgun and pistol prompts in Combat', () => {
+    const clip = {
+      id: '4',
+      prompt: 'TrackType: SFX, 12-gauge shotgun blast, close mic, wooden barn interior, short boom, fast decay',
+      duration: 2,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    expect(inferClipSubcategory(clip)).toBe('Firearms')
+  })
+
+  it('infers Shield & Armor for shield block prompt in Combat', () => {
+    const clip = {
+      id: '5',
+      prompt: 'TrackType: SFX, heavy wooden shield catching a blow, oak and iron, close mic, dry studio, fast decay',
+      duration: 1,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    expect(inferClipSubcategory(clip)).toBe('Shield & Armor')
+  })
+
+  it('infers Wood and Metal & Gates for door prompts', () => {
+    const woodDoor = {
+      id: '6',
+      prompt: 'TrackType: SFX, oak interior door opening, brass handle, close mic, timber room, short decay',
+      duration: 2,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    const ironDoor = {
+      id: '7',
+      prompt: 'TrackType: SFX, heavy iron dungeon door swinging, stone hall, medium decay',
+      duration: 3,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    expect(inferClipSubcategory(woodDoor)).toBe('Wood')
+    expect(inferClipSubcategory(ironDoor)).toBe('Metal & Gates')
+  })
+
+  it('infers Fire and Ice & Frost for magic prompts', () => {
+    const fireball = {
+      id: '8',
+      prompt: 'TrackType: SFX, fireball ignition close-mic, fast decay, dry stone hall',
+      duration: 2,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    const iceCrack = {
+      id: '9',
+      prompt: 'TrackType: SFX, thick ice forming and cracking on stone, close mic, cold dry hall, short decay',
+      duration: 2,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+    }
+    expect(inferClipSubcategory(fireball)).toBe('Fire')
+    expect(inferClipSubcategory(iceCrack)).toBe('Ice & Frost')
+  })
+})
+
+describe('getCompletedSubcategories and getCompletedSubcategoryCount', () => {
+  it('returns empty array and 0 count when clips list is empty', () => {
+    expect(getCompletedSubcategories([])).toEqual([])
+    expect(getCompletedSubcategoryCount([])).toBe(0)
+  })
+
+  it('returns 0 when a subcategory is only partially complete', () => {
+    const mockCat = parsePromptMarkdown(
+      'prompts/fx/test.md',
+      `# Test\n\n### Sword 1\n- Duration: 1s\n- Negative: none\n\nTrackType: SFX, sword swing one\n\n### Sword 2\n- Duration: 1s\n- Negative: none\n\nTrackType: SFX, sword swing two`,
+    )
+    const partialClips = [
+      {
+        id: '1',
+        prompt: 'TrackType: SFX, sword swing one',
+        duration: 1,
+        seed: 1,
+        createdAt: new Date().toISOString(),
+        cfg: 1,
+        negative: '',
+      },
+    ]
+    expect(getCompletedSubcategories(partialClips, [mockCat])).toEqual([])
+    expect(getCompletedSubcategoryCount(partialClips, [mockCat])).toBe(0)
+  })
+
+  it('detects a fully completed subcategory', () => {
+    const mockCat = parsePromptMarkdown(
+      'prompts/fx/test.md',
+      `# Test\n\n### Sword 1\n- Duration: 1s\n- Negative: none\n\nTrackType: SFX, sword swing one\n\n### Sword 2\n- Duration: 1s\n- Negative: none\n\nTrackType: SFX, sword swing two`,
+    )
+    const completeClips = [
+      {
+        id: '1',
+        prompt: 'TrackType: SFX, sword swing one',
+        duration: 1,
+        seed: 1,
+        createdAt: new Date().toISOString(),
+        cfg: 1,
+        negative: '',
+      },
+      {
+        id: '2',
+        prompt: 'TrackType: SFX, sword swing two',
+        duration: 1,
+        seed: 2,
+        createdAt: new Date().toISOString(),
+        cfg: 1,
+        negative: '',
+      },
+    ]
+    const completed = getCompletedSubcategories(completeClips, [mockCat])
+    expect(completed.length).toBe(1)
+    expect(getCompletedSubcategoryCount(completeClips, [mockCat])).toBe(1)
   })
 })
 

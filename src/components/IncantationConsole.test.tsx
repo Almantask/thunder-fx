@@ -23,6 +23,8 @@ const props = {
   onCast: vi.fn(),
   onDispel: vi.fn(),
   onLoadModel: vi.fn(),
+  onCancelLoadModel: vi.fn(),
+  onUnloadModel: vi.fn(),
   onOpenCatalog: vi.fn(),
   onGenerateQueue: vi.fn(),
   onClearQueue: vi.fn(),
@@ -50,6 +52,19 @@ describe('IncantationConsole', () => {
       </TooltipProvider>,
     )
     expect(screen.getByRole('button', { name: /generate sound/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /generate 4 takes/i })).toBeDisabled()
+  })
+
+  it('calls onCastTakes from Generate 4 takes', async () => {
+    const user = userEvent.setup()
+    const onCastTakes = vi.fn()
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="tavern door" onCastTakes={onCastTakes} />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('button', { name: /generate 4 takes/i }))
+    expect(onCastTakes).toHaveBeenCalled()
   })
 
   it('allows Generate when the prompt is long enough', () => {
@@ -59,6 +74,7 @@ describe('IncantationConsole', () => {
       </TooltipProvider>,
     )
     expect(screen.getByRole('button', { name: /generate sound/i })).toBeEnabled()
+    expect(screen.getByRole('button', { name: /generate 4 takes/i })).toBeEnabled()
   })
 
   it('offers Sound effects and Instrumental modes', () => {
@@ -110,14 +126,19 @@ describe('IncantationConsole', () => {
     expect(onMode).toHaveBeenCalledWith('sfx')
   })
 
-  it('shows Model ready beside Generate when the model is loaded', () => {
+  it('shows Unload model beside Generate when the model is loaded', async () => {
+    const user = userEvent.setup()
+    const onUnloadModel = vi.fn()
     render(
       <TooltipProvider>
-        <IncantationConsole {...props} prompt="tavern door" />
+        <IncantationConsole {...props} prompt="tavern door" onUnloadModel={onUnloadModel} />
       </TooltipProvider>,
     )
-    expect(screen.getByRole('button', { name: /model ready/i })).toBeDisabled()
+    const unloadBtn = screen.getByRole('button', { name: /unload model/i })
+    expect(unloadBtn).toBeEnabled()
     expect(screen.getByRole('button', { name: /generate sound/i })).toBeEnabled()
+    await user.click(unloadBtn)
+    expect(onUnloadModel).toHaveBeenCalled()
   })
 
   it('does not allow Generate until the model is loaded', () => {
@@ -219,14 +240,24 @@ describe('IncantationConsole', () => {
     expect(onGenerateQueue).toHaveBeenCalled()
   })
 
-  it('shows Loading model while weights go into VRAM', () => {
+  it('shows Cancel button while weights go into VRAM and calls onCancelLoadModel', async () => {
+    const user = userEvent.setup()
+    const onCancelLoadModel = vi.fn()
     render(
       <TooltipProvider>
-        <IncantationConsole {...props} loadingModel prompt="tavern door" />
+        <IncantationConsole
+          {...props}
+          loadingModel
+          prompt="tavern door"
+          onCancelLoadModel={onCancelLoadModel}
+        />
       </TooltipProvider>,
     )
-    expect(screen.getByRole('button', { name: /loading model/i })).toBeDisabled()
+    const cancelBtn = screen.getByRole('button', { name: /cancel model load/i })
+    expect(cancelBtn).toBeEnabled()
     expect(screen.getByRole('button', { name: /generate sound/i })).toBeDisabled()
+    await user.click(cancelBtn)
+    expect(onCancelLoadModel).toHaveBeenCalled()
   })
 
   it('lets Duration use the Medium model limit', () => {
@@ -268,4 +299,44 @@ describe('IncantationConsole', () => {
     expect(screen.getByText('~0:40')).toBeInTheDocument()
     expect(screen.getAllByText(/~0:08/).length).toBeGreaterThanOrEqual(2)
   })
+
+  it('keeps duration slider anchored above action buttons at the bottom of the console', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="tavern door" />
+      </TooltipProvider>,
+    )
+    const slider = screen.getByRole('slider')
+    const actionColumn = slider.closest('.flex.w-56')
+    expect(actionColumn).toHaveClass('justify-end')
+  })
+
+  it('maintains minimum height on the prompt and controls row to prevent queue overlap', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="tavern door" queue={queued} />
+      </TooltipProvider>,
+    )
+    const promptInput = screen.getByLabelText(/^prompt$/i)
+    const row = promptInput.closest('.flex.items-stretch')
+    expect(row).toHaveClass('min-h-[144px]')
+  })
+
+  it('scales queue and prompt together using flexible containers', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="tavern door" queue={queued} />
+      </TooltipProvider>,
+    )
+    const queueList = screen.getByRole('list', { name: /generate queue/i })
+    const queueContainer = queueList.closest('.flex-col')
+    expect(queueContainer).toHaveClass('flex-1')
+    expect(queueList).toHaveClass('flex-1')
+
+    const promptInput = screen.getByLabelText(/^prompt$/i)
+    const promptWell = promptInput.closest('.parchment-well')
+    expect(promptWell).toHaveClass('flex-1')
+  })
 })
+
+

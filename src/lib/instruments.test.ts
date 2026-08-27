@@ -21,6 +21,15 @@ describe('extractInstruments', () => {
       'duduk',
       'whistle',
     ])
+    expect(
+      extractInstruments('TrackType: Music, wordless choir, celesta glints, and deep waterphone'),
+    ).toEqual(['choir', 'celesta', 'waterphone'])
+    expect(
+      extractInstruments('TrackType: Music, slow oud melody, darbuka rhythm, and viola da gamba'),
+    ).toEqual(['oud', 'darbuka', 'viola da gamba'])
+    expect(
+      extractInstruments('TrackType: Music, glass harmonica swells, contrabass drone, ambient pads'),
+    ).toEqual(['glass harmonica', 'contrabass', 'drone', 'pad'])
   })
 
   it('prefers the longer name when one term contains another', () => {

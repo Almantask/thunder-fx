@@ -4,7 +4,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import type { KeepTab, WeavePhase } from '@/lib/types'
-import { isTauri } from '@/lib/utils'
+import { formatVramLabel, formatVramShort, vramPressure } from '@/lib/vram'
+import { cn, isTauri } from '@/lib/utils'
 
 type TitlebarProps = {
   engineLabel: string
@@ -13,6 +14,10 @@ type TitlebarProps = {
   weavePhase?: WeavePhase
   tab: KeepTab
   onTabChange: (tab: KeepTab) => void
+  vramUsedGb?: number
+  vramTotalGb?: number
+  gpuName?: string
+  gpuTempC?: number
 }
 
 export function Titlebar({
@@ -22,6 +27,10 @@ export function Titlebar({
   weavePhase,
   tab,
   onTabChange,
+  vramUsedGb,
+  vramTotalGb,
+  gpuName,
+  gpuTempC,
 }: TitlebarProps) {
   const native = isTauri()
 
@@ -69,6 +78,33 @@ export function Titlebar({
         </Tabs>
       </div>
       <div className="titlebar-no-drag flex items-center gap-2">
+        {typeof vramUsedGb === 'number' && typeof vramTotalGb === 'number' && vramTotalGb > 0 ? (
+          <Hint
+            side="bottom"
+            label={
+              [
+                formatVramLabel(vramUsedGb, vramTotalGb),
+                gpuName ? `GPU: ${gpuName}` : null,
+                typeof gpuTempC === 'number' ? `${gpuTempC}°C` : null,
+                vramPressure(vramUsedGb, vramTotalGb) !== 'ok'
+                  ? 'VRAM is high. A long generate may run out of memory.'
+                  : 'Live GPU memory. Long clips use more VRAM.',
+              ]
+                .filter(Boolean)
+                .join(' · ')
+            }
+          >
+            <Badge
+              aria-label={formatVramLabel(vramUsedGb, vramTotalGb)}
+              className={cn(
+                vramPressure(vramUsedGb, vramTotalGb) === 'critical' && 'border-danger text-danger',
+                vramPressure(vramUsedGb, vramTotalGb) === 'warn' && 'border-amber text-amber',
+              )}
+            >
+              {formatVramShort(vramUsedGb, vramTotalGb)}
+            </Badge>
+          </Hint>
+        ) : null}
         <Hint
           side="bottom"
           label={

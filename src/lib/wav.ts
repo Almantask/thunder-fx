@@ -164,28 +164,41 @@ export function parseWav(buffer: ArrayBuffer): WavAudio {
   return { sampleRate, channels, bitsPerSample, pcm: new Int16Array(pcm), info }
 }
 
+function writePcm24(bytes: Uint8Array, offset: number, pcm: Int16Array): void {
+  for (let i = 0; i < pcm.length; i += 1) {
+    const v = (pcm[i] ?? 0) << 8
+    const o = offset + i * 3
+    bytes[o] = v & 0xff
+    bytes[o + 1] = (v >> 8) & 0xff
+    bytes[o + 2] = (v >> 16) & 0xff
+  }
+}
+
 export function writeWav(audio: WavAudio): ArrayBuffer {
-  const dataSize = audio.pcm.byteLength
+  const bits = audio.bitsPerSample === 24 ? 24 : 16
+  const bytesPerSample = bits / 8
+  const dataSize = (audio.pcm.length * bytesPerSample)
+  const dataPad = dataSize % 2
   const list = audio.info ? encodeListInfo(audio.info) : undefined
   const listSize = list?.byteLength ?? 0
-  const buffer = new ArrayBuffer(44 + dataSize + listSize)
+  const buffer = new ArrayBuffer(44 + dataSize + dataPad + listSize)
   const view = new DataView(buffer)
   const bytes = new Uint8Array(buffer)
   const writeStr = (offset: number, s: string) => {
     for (let i = 0; i < s.length; i += 1) view.setUint8(offset + i, s.charCodeAt(i))
   }
   writeStr(0, 'RIFF')
-  view.setUint32(4, 36 + dataSize + listSize, true)
+  view.setUint32(4, 36 + dataSize + dataPad + listSize, true)
   writeStr(8, 'WAVE')
   writeStr(12, 'fmt ')
   view.setUint32(16, 16, true)
   view.setUint16(20, 1, true)
   view.setUint16(22, audio.channels, true)
   view.setUint32(24, audio.sampleRate, true)
-  const byteRate = (audio.sampleRate * audio.channels * audio.bitsPerSample) / 8
+  const byteRate = (audio.sampleRate * audio.channels * bits) / 8
   view.setUint32(28, byteRate, true)
-  view.setUint16(32, (audio.channels * audio.bitsPerSample) / 8, true)
-  view.setUint16(34, audio.bitsPerSample, true)
+  view.setUint16(32, audio.channels * bytesPerSample, true)
+  view.setUint16(34, bits, true)
   let dataHeader = 36
   if (list) {
     bytes.set(list, 36)
@@ -193,14 +206,20 @@ export function writeWav(audio: WavAudio): ArrayBuffer {
   }
   writeStr(dataHeader, 'data')
   view.setUint32(dataHeader + 4, dataSize, true)
-  new Int16Array(buffer, dataHeader + 8).set(audio.pcm)
+  if (bits === 24) {
+    writePcm24(bytes, dataHeader + 8, audio.pcm)
+  } else {
+    new Int16Array(buffer, dataHeader + 8, audio.pcm.length).set(audio.pcm)
+  }
   return buffer
 }
 
-export function tagMusicWav(buffer: ArrayBuffer, info: WavInfo): ArrayBuffer {
+export function tagWav(buffer: ArrayBuffer, info: WavInfo): ArrayBuffer {
   const wav = parseWav(buffer)
   return writeWav({ ...wav, info })
 }
+
+export const tagMusicWav = tagWav
 
 export function wavDurationSeconds(buffer: ArrayBuffer): number {
   const wav = parseWav(buffer)
@@ -291,4 +310,18 @@ export function waveformPeaks(buffer: ArrayBuffer, buckets: number): Float32Arra
     peaks[i] = max
   }
   return peaks
+}
+
+export function downloadArrayBuffer(
+  buffer: ArrayBuffer,
+  filename: string,
+  mime = 'audio/wav',
+): void {
+  const blob = new Blob([buffer], { type: mime })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
 }

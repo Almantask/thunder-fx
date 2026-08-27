@@ -1,7 +1,13 @@
 import { useMemo, useState } from 'react'
+import { ChevronRight } from 'lucide-react'
 import { Hint } from '@/components/Hint'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   Dialog,
   DialogContent,
@@ -11,8 +17,18 @@ import {
 import { Input } from '@/components/ui/input'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import type { CatalogEffect, PromptCategory, PromptLibrary } from '@/lib/promptCatalog'
-import { PROMPT_LIBRARIES } from '@/lib/promptCatalog'
+import {
+  PROMPT_LIBRARIES,
+  inferEffectIntensity,
+  inferSubcategoryFromCategoryAndPrompt,
+} from '@/lib/promptCatalog'
 import { cn } from '@/lib/utils'
+
+const INTENSITY_ORDER = [
+  'Level I — Quiet looping bed',
+  'Level II — Mood in motion',
+  'Level III — Full intensity',
+]
 
 type PromptCatalogDialogProps = {
   open: boolean
@@ -35,21 +51,172 @@ export function PromptCatalogDialog({
   const [categoryId, setCategoryId] = useState(
     () => catalog.find((c) => c.library === (catalog.some((x) => x.library === 'fx') ? 'fx' : catalog[0]?.library))?.id ?? catalog[0]?.id ?? '',
   )
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
+  const [collapsedSubcategories, setCollapsedSubcategories] = useState<Set<string>>(new Set())
+  const [openIntensities, setOpenIntensities] = useState<Set<string>>(new Set())
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [previewId, setPreviewId] = useState<string | null>(null)
 
   const libraryCategories = catalog.filter((c) => c.library === library)
   const category = libraryCategories.find((c) => c.id === categoryId) ?? libraryCategories[0]
+
+  const isSearching = query.trim().length > 0
+
+  const subcategories = useMemo(() => {
+    if (library !== 'fx') return []
+    const effects = isSearching
+      ? libraryCategories.flatMap((c) => c.effects)
+      : category?.effects ?? []
+    const counts = new Map<string, number>()
+    for (const effect of effects) {
+      const sub =
+        effect.subcategory ||
+        inferSubcategoryFromCategoryAndPrompt(effect.category || category?.name || '', effect.prompt)
+      counts.set(sub, (counts.get(sub) ?? 0) + 1)
+    }
+    const list: { name: string; count: number }[] = []
+    for (const [name, count] of counts.entries()) {
+      list.push({ name, count })
+    }
+    list.sort((a, b) => {
+      if (a.name === 'General') return 1
+      if (b.name === 'General') return -1
+      return a.name.localeCompare(b.name)
+    })
+    return list
+  }, [category, library, isSearching, libraryCategories])
+
   const visible = useMemo(() => {
-    const effects = category?.effects ?? []
+    const rawEffects = isSearching
+      ? libraryCategories.flatMap((c) => c.effects)
+      : category?.effects ?? []
+    let effects = rawEffects
+    if (selectedSubcategory && !isSearching) {
+      effects = effects.filter((e) => {
+        const sub =
+          e.subcategory ||
+          inferSubcategoryFromCategoryAndPrompt(e.category || category?.name || '', e.prompt)
+        return sub === selectedSubcategory
+      })
+    }
     const q = query.trim().toLowerCase()
     if (!q) return effects
-    return effects.filter(
-      (effect) =>
-        effect.title.toLowerCase().includes(q) || effect.prompt.toLowerCase().includes(q),
-    )
-  }, [category, query])
+    return effects.filter((effect) => {
+      if (effect.title.toLowerCase().includes(q)) return true
+      if (effect.prompt.toLowerCase().includes(q)) return true
+      if (effect.category && effect.category.toLowerCase().includes(q)) return true
+      const sub =
+        effect.subcategory ||
+        inferSubcategoryFromCategoryAndPrompt(effect.category || category?.name || '', effect.prompt)
+      if (sub.toLowerCase().includes(q)) return true
+      return false
+    })
+  }, [category, query, selectedSubcategory, isSearching, libraryCategories])
+
+  const groupedVisible = useMemo(() => {
+    if (isSearching) {
+      const map = new Map<string, CatalogEffect[]>()
+      for (const effect of visible) {
+        const catName = effect.category || 'General'
+        const list = map.get(catName) ?? []
+        list.push(effect)
+        map.set(catName, list)
+      }
+      const groups: { name: string; effects: CatalogEffect[] }[] = []
+      for (const [name, catEffects] of map.entries()) {
+        groups.push({ name, effects: catEffects })
+      }
+      groups.sort((a, b) => a.name.localeCompare(b.name))
+      return groups
+    }
+
+    if (library === 'fx') {
+      if (selectedSubcategory) {
+        return [{ name: '', effects: visible }]
+      }
+      const map = new Map<string, CatalogEffect[]>()
+      for (const effect of visible) {
+        const sub =
+          effect.subcategory ||
+          inferSubcategoryFromCategoryAndPrompt(category?.name ?? '', effect.prompt)
+        const list = map.get(sub) ?? []
+        list.push(effect)
+        map.set(sub, list)
+      }
+      const groups: { name: string; effects: CatalogEffect[] }[] = []
+      for (const [name, subEffects] of map.entries()) {
+        groups.push({ name, effects: subEffects })
+      }
+      groups.sort((a, b) => {
+        if (a.name === 'General') return 1
+        if (b.name === 'General') return -1
+        return a.name.localeCompare(b.name)
+      })
+      return groups
+    }
+
+    if (library === 'ambience') {
+      const map = new Map<string, CatalogEffect[]>()
+      for (const effect of visible) {
+        const intensity = inferEffectIntensity(effect)
+        const list = map.get(intensity) ?? []
+        list.push(effect)
+        map.set(intensity, list)
+      }
+      const groups: { name: string; effects: CatalogEffect[] }[] = []
+      for (const [name, intensityEffects] of map.entries()) {
+        groups.push({ name, effects: intensityEffects })
+      }
+      groups.sort((a, b) => {
+        const idxA = INTENSITY_ORDER.indexOf(a.name)
+        const idxB = INTENSITY_ORDER.indexOf(b.name)
+        if (idxA !== -1 && idxB !== -1) return idxA - idxB
+        if (idxA !== -1) return -1
+        if (idxB !== -1) return 1
+        return a.name.localeCompare(b.name)
+      })
+      return groups
+    }
+
+    return [{ name: '', effects: visible }]
+  }, [visible, library, selectedSubcategory, category, isSearching])
+
+  const isSubcategoryOpen = (subName: string) => {
+    if (query.trim().length > 0 || selectedSubcategory) return true
+    return !collapsedSubcategories.has(`${category?.id}::${subName}`)
+  }
+
+  const toggleSubcategory = (subName: string) => {
+    setCollapsedSubcategories((prev) => {
+      const key = `${category?.id}::${subName}`
+      const next = new Set(prev)
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.add(key)
+      }
+      return next
+    })
+  }
+
+  const isIntensityOpen = (intensityName: string) => {
+    if (query.trim().length > 0) return true
+    return openIntensities.has(`${category?.id}::${intensityName}`)
+  }
+
+  const toggleIntensity = (intensityName: string) => {
+    setOpenIntensities((prev) => {
+      const key = `${category?.id}::${intensityName}`
+      const next = new Set(prev)
+      if (next.has(key)) {
+        next.delete(key)
+      } else {
+        next.add(key)
+      }
+      return next
+    })
+  }
 
   function toggle(id: string, checked: boolean) {
     setSelected((current) => {
@@ -62,7 +229,11 @@ export function PromptCatalogDialog({
 
   function selectCategory(id: string) {
     setCategoryId(id)
+    setSelectedSubcategory(null)
+    setCollapsedSubcategories(new Set())
+    setOpenIntensities(new Set())
     setSelected(new Set())
+    setQuery('')
     setPreviewId(null)
   }
 
@@ -70,6 +241,9 @@ export function PromptCatalogDialog({
     if (next === library) return
     setLibrary(next)
     setCategoryId(catalog.find((c) => c.library === next)?.id ?? '')
+    setSelectedSubcategory(null)
+    setCollapsedSubcategories(new Set())
+    setOpenIntensities(new Set())
     setSelected(new Set())
     setQuery('')
     setPreviewId(null)
@@ -88,11 +262,85 @@ export function PromptCatalogDialog({
     setSelected(new Set())
   }
 
+  const renderEffectItem = (effect: CatalogEffect) => {
+    const checked = selected.has(effect.id)
+    const previewing = previewId === effect.id
+    return (
+      <li
+        key={effect.id}
+        className="rounded-book px-1 py-1 hover:bg-leather-2"
+      >
+        <div className="flex items-center gap-2">
+          <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-sm text-cream">
+            <Checkbox
+              className="shrink-0"
+              checked={checked}
+              onCheckedChange={(value) => toggle(effect.id, value === true)}
+              aria-label={effect.title}
+            />
+            <span className="min-w-0 flex-1 truncate">{effect.title}</span>
+            {isSearching && effect.category ? (
+              <span className="shrink-0 rounded bg-leather-2 px-1.5 py-0.5 text-[10px] text-muted">
+                {effect.category}
+              </span>
+            ) : null}
+            {effect.subcategory && !selectedSubcategory ? (
+              <span className="shrink-0 rounded bg-leather-2 px-1.5 py-0.5 text-[10px] text-gold/80">
+                {effect.subcategory}
+              </span>
+            ) : null}
+            <span className="shrink-0 font-mono text-[11px] text-muted">
+              {effect.duration}s
+            </span>
+          </label>
+          <div className="flex shrink-0 items-center gap-1">
+            <Hint label="Show the full prompt text. Does not fill Generate.">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                aria-label={`Preview ${effect.title}`}
+                aria-expanded={previewing}
+                onClick={() => setPreviewId(previewing ? null : effect.id)}
+              >
+                Preview
+              </Button>
+            </Hint>
+            <Hint label="Put this prompt, duration, and negative into Generate. You still click Generate.">
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                aria-label={`Use ${effect.title}`}
+                onClick={() => onUse(effect)}
+              >
+                Use
+              </Button>
+            </Hint>
+          </div>
+        </div>
+        {previewing ? (
+          <div className="mt-1 space-y-1 px-7 pb-1">
+            <p className="text-xs leading-relaxed text-muted whitespace-pre-wrap break-words">
+              {effect.prompt}
+            </p>
+            {effect.negative ? (
+              <p className="text-[11px] text-muted break-words">Negative: {effect.negative}</p>
+            ) : null}
+          </div>
+        ) : null}
+      </li>
+    )
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[min(80vh,40rem)] max-w-3xl flex-col gap-3">
-        <DialogTitle>Browse prompts</DialogTitle>
-        <Hint label="Shipped starting prompts from the prompts folder. Add several to the queue, or use one in Generate now.">
+      <DialogContent className="flex h-[min(85vh,44rem)] w-[calc(100vw-2rem)] max-w-3xl flex-col gap-3 overflow-hidden">
+        <DialogTitle className="shrink-0">Browse prompts</DialogTitle>
+        <Hint
+          className="shrink-0"
+          label="Shipped starting prompts from the prompts folder. Add several to the queue, or use one in Generate now."
+        >
           <DialogDescription>
             Load shipped sound-effect or ambience prompts, then generate them as a queue.
           </DialogDescription>
@@ -100,47 +348,51 @@ export function PromptCatalogDialog({
         <div
           role="radiogroup"
           aria-label="Ambience or FX"
-          className="inline-flex h-8 w-fit items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
+          className="inline-flex h-8 w-fit shrink-0 items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
         >
           {PROMPT_LIBRARIES.map((lib) => {
-              const selectedLib = lib.id === library
-              return (
-                <Hint
-                  key={lib.id}
-                  asChild
-                  label={
-                    lib.id === 'fx'
-                      ? 'Game one-shots with TrackType: SFX.'
-                      : 'Instrumental D&D beds with TrackType: Music.'
-                  }
+            const selectedLib = lib.id === library
+            return (
+              <Hint
+                key={lib.id}
+                asChild
+                side="bottom"
+                label={
+                  lib.id === 'fx'
+                    ? 'Game one-shots with TrackType: SFX.'
+                    : 'Instrumental D&D beds with TrackType: Music.'
+                }
+              >
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={selectedLib}
+                  className={cn(
+                    'inline-flex h-7 items-center justify-center rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
+                    selectedLib &&
+                      'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] text-cream',
+                  )}
+                  onClick={() => selectLibrary(lib.id)}
                 >
-                  <button
-                    type="button"
-                    role="radio"
-                    aria-checked={selectedLib}
-                    className={cn(
-                      'inline-flex h-7 items-center justify-center rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
-                      selectedLib &&
-                        'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] text-cream',
-                    )}
-                    onClick={() => selectLibrary(lib.id)}
-                  >
-                    {lib.label}
-                  </button>
-                </Hint>
-              )
-            })}
+                  {lib.label}
+                </button>
+              </Hint>
+            )
+          })}
         </div>
-        <Hint className="w-full" label="Filter the open category by title or prompt text.">
+        <Hint
+          className="w-full shrink-0"
+          label="Search all prompts in the selected library by title, prompt text, category, or subcategory."
+        >
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search prompts…"
+            placeholder="Search all prompts…"
             aria-label="Search prompts"
           />
         </Hint>
-        <div className="grid min-h-0 flex-1 gap-3 md:grid-cols-[11rem_1fr]">
-          <ScrollArea className="h-64 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] md:h-full">
+        <div className="grid min-h-0 flex-1 gap-3 overflow-hidden md:grid-cols-[11rem_minmax(0,1fr)]">
+          <ScrollArea className="h-44 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] md:h-full">
             <div role="listbox" aria-label="Prompt categories" className="p-1">
               {libraryCategories.map((item) => {
                 const active = item.id === category?.id
@@ -160,83 +412,215 @@ export function PromptCatalogDialog({
                       )}
                       onClick={() => selectCategory(item.id)}
                     >
-                      <span>{item.name}</span>
-                      <span className="font-mono text-[11px]">{item.effects.length}</span>
+                      <span className="truncate">{item.name}</span>
+                      <span className="ml-1 shrink-0 font-mono text-[11px]">{item.effects.length}</span>
                     </button>
                   </Hint>
                 )
               })}
             </div>
           </ScrollArea>
-          <ScrollArea className="h-64 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] md:h-full">
-            <ul className="space-y-1 p-2" aria-label={category ? `${category.name} prompts` : 'Prompts'}>
-              {visible.map((effect) => {
-                const checked = selected.has(effect.id)
-                const previewing = previewId === effect.id
-                return (
-                  <li
-                    key={effect.id}
-                    className="rounded-book px-1 py-1 hover:bg-leather-2"
-                  >
-                    <div className="flex items-center gap-2">
-                      <label className="flex min-w-0 flex-1 items-center gap-2 text-sm text-cream">
-                        <Checkbox
-                          checked={checked}
-                          onCheckedChange={(value) => toggle(effect.id, value === true)}
-                          aria-label={effect.title}
-                        />
-                        <span className="min-w-0 flex-1 truncate">{effect.title}</span>
-                        <span className="shrink-0 font-mono text-[11px] text-muted">
-                          {effect.duration}s
-                        </span>
-                      </label>
-                      <Hint label="Show the full prompt text. Does not fill Generate.">
-                        <Button
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden">
+            {!isSearching && library === 'fx' && subcategories.length > 1 ? (
+              <div
+                role="radiogroup"
+                aria-label="Filter by subcategory"
+                className="flex shrink-0 flex-wrap items-center gap-1 px-0.5"
+              >
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={selectedSubcategory === null}
+                  className={cn(
+                    'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[11px] transition-colors',
+                    selectedSubcategory === null
+                      ? 'border-gold bg-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] font-medium text-cream'
+                      : 'border-[color-mix(in_srgb,var(--color-gold)_25%,transparent)] text-muted hover:border-gold/50 hover:text-cream',
+                  )}
+                  onClick={() => setSelectedSubcategory(null)}
+                >
+                  <span>All</span>
+                  <span className="font-mono text-[10px] opacity-75">
+                    ({category?.effects.length ?? 0})
+                  </span>
+                </button>
+                {subcategories.map((sub) => {
+                  const isSel = selectedSubcategory === sub.name
+                  return (
+                    <button
+                      key={sub.name}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSel}
+                      className={cn(
+                        'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[11px] transition-colors',
+                        isSel
+                          ? 'border-gold bg-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] font-medium text-cream'
+                          : 'border-[color-mix(in_srgb,var(--color-gold)_25%,transparent)] text-muted hover:border-gold/50 hover:text-cream',
+                      )}
+                      onClick={() => setSelectedSubcategory(isSel ? null : sub.name)}
+                    >
+                      <span>{sub.name}</span>
+                      <span className="font-mono text-[10px] opacity-75">({sub.count})</span>
+                    </button>
+                  )
+                })}
+              </div>
+            ) : null}
+            <ScrollArea className="h-full min-h-0 flex-1 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)]">
+              {isSearching ? (
+                <div
+                  className="space-y-2 p-2"
+                  aria-label="Search results"
+                >
+                  {groupedVisible.map((group) => (
+                    <Collapsible
+                      key={group.name}
+                      open
+                      className="overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_18%,transparent)] bg-leather-2/30"
+                    >
+                      <CollapsibleTrigger asChild>
+                        <button
                           type="button"
-                          size="sm"
-                          variant="ghost"
-                          aria-label={`Preview ${effect.title}`}
-                          aria-expanded={previewing}
-                          onClick={() => setPreviewId(previewing ? null : effect.id)}
+                          aria-expanded="true"
+                          className="flex w-full items-center justify-between px-3 py-1.5 text-left transition-colors hover:bg-leather-2/60 focus-visible:ring-1 focus-visible:ring-gold focus-visible:outline-none"
                         >
-                          Preview
-                        </Button>
-                      </Hint>
-                      <Hint label="Put this prompt, duration, and negative into Generate. You still click Generate.">
-                        <Button
-                          type="button"
-                          size="sm"
-                          variant="ghost"
-                          aria-label={`Use ${effect.title}`}
-                          onClick={() => onUse(effect)}
-                        >
-                          Use
-                        </Button>
-                      </Hint>
-                    </div>
-                    {previewing ? (
-                      <div className="mt-1 space-y-1 px-7 pb-1">
-                        <p className="text-xs leading-relaxed text-muted whitespace-pre-wrap">
-                          {effect.prompt}
-                        </p>
-                        {effect.negative ? (
-                          <p className="text-[11px] text-muted">Negative: {effect.negative}</p>
-                        ) : null}
-                      </div>
-                    ) : null}
-                  </li>
-                )
-              })}
-              {visible.length === 0 ? (
-                <li className="px-2 py-6 text-sm text-muted">No prompts match that search.</li>
-              ) : null}
-            </ul>
-          </ScrollArea>
+                          <div className="flex items-center gap-2">
+                            <ChevronRight className="h-3.5 w-3.5 rotate-90 text-gold/80" />
+                            <span className="font-display text-xs tracking-wide text-cream">
+                              {group.name}
+                            </span>
+                          </div>
+                          <span className="font-mono text-[11px] text-muted">
+                            {group.effects.length} {group.effects.length === 1 ? 'prompt' : 'prompts'}
+                          </span>
+                        </button>
+                      </CollapsibleTrigger>
+                      <CollapsibleContent className="border-t border-[color-mix(in_srgb,var(--color-gold)_12%,transparent)] p-1.5">
+                        <ul className="space-y-1">
+                          {group.effects.map((effect) => renderEffectItem(effect))}
+                        </ul>
+                      </CollapsibleContent>
+                    </Collapsible>
+                  ))}
+                  {visible.length === 0 ? (
+                    <div className="px-2 py-6 text-sm text-muted">No prompts match that search.</div>
+                  ) : null}
+                </div>
+              ) : library === 'ambience' ? (
+                <div
+                  className="space-y-2 p-2"
+                  aria-label={category ? `${category.name} prompts` : 'Prompts'}
+                >
+                  {groupedVisible.map((group) => {
+                    const isExpanded = isIntensityOpen(group.name)
+                    return (
+                      <Collapsible
+                        key={group.name}
+                        open={isExpanded}
+                        onOpenChange={() => toggleIntensity(group.name)}
+                        className="overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_18%,transparent)] bg-leather-2/30"
+                      >
+                        <CollapsibleTrigger asChild>
+                          <button
+                            type="button"
+                            aria-expanded={isExpanded}
+                            className="flex w-full items-center justify-between px-3 py-1.5 text-left transition-colors hover:bg-leather-2/60 focus-visible:ring-1 focus-visible:ring-gold focus-visible:outline-none"
+                          >
+                            <div className="flex items-center gap-2">
+                              <ChevronRight
+                                className={cn(
+                                  'h-3.5 w-3.5 text-gold/80 transition-transform duration-200',
+                                  isExpanded && 'rotate-90',
+                                )}
+                              />
+                              <span className="font-display text-xs tracking-wide text-cream">
+                                {group.name}
+                              </span>
+                            </div>
+                            <span className="font-mono text-[11px] text-muted">
+                              {group.effects.length} {group.effects.length === 1 ? 'prompt' : 'prompts'}
+                            </span>
+                          </button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="border-t border-[color-mix(in_srgb,var(--color-gold)_12%,transparent)] p-1.5">
+                          <ul className="space-y-1">
+                            {group.effects.map((effect) => renderEffectItem(effect))}
+                          </ul>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )
+                  })}
+                  {visible.length === 0 ? (
+                    <div className="px-2 py-6 text-sm text-muted">No prompts match that search.</div>
+                  ) : null}
+                </div>
+              ) : library === 'fx' && !selectedSubcategory && groupedVisible.length > 1 ? (
+                <div
+                  className="space-y-2 p-2"
+                  aria-label={category ? `${category.name} prompts` : 'Prompts'}
+                >
+                  {groupedVisible.map((group) => {
+                    const isExpanded = isSubcategoryOpen(group.name)
+                    return (
+                      <Collapsible
+                        key={group.name}
+                        open={isExpanded}
+                        onOpenChange={() => toggleSubcategory(group.name)}
+                        className="overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_18%,transparent)] bg-leather-2/30"
+                      >
+                        <CollapsibleTrigger asChild>
+                          <button
+                            type="button"
+                            aria-expanded={isExpanded}
+                            className="flex w-full items-center justify-between px-3 py-1.5 text-left transition-colors hover:bg-leather-2/60 focus-visible:ring-1 focus-visible:ring-gold focus-visible:outline-none"
+                          >
+                            <div className="flex items-center gap-2">
+                              <ChevronRight
+                                className={cn(
+                                  'h-3.5 w-3.5 text-gold/80 transition-transform duration-200',
+                                  isExpanded && 'rotate-90',
+                                )}
+                              />
+                              <span className="font-display text-xs tracking-wide text-cream">
+                                {group.name}
+                              </span>
+                            </div>
+                            <span className="font-mono text-[11px] text-muted">
+                              {group.effects.length} {group.effects.length === 1 ? 'prompt' : 'prompts'}
+                            </span>
+                          </button>
+                        </CollapsibleTrigger>
+                        <CollapsibleContent className="border-t border-[color-mix(in_srgb,var(--color-gold)_12%,transparent)] p-1.5">
+                          <ul className="space-y-1">
+                            {group.effects.map((effect) => renderEffectItem(effect))}
+                          </ul>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    )
+                  })}
+                  {visible.length === 0 ? (
+                    <div className="px-2 py-6 text-sm text-muted">No prompts match that search.</div>
+                  ) : null}
+                </div>
+              ) : (
+                <ul
+                  className="space-y-1 p-2"
+                  aria-label={category ? `${category.name} prompts` : 'Prompts'}
+                >
+                  {visible.map((effect) => renderEffectItem(effect))}
+                  {visible.length === 0 ? (
+                    <li className="px-2 py-6 text-sm text-muted">No prompts match that search.</li>
+                  ) : null}
+                </ul>
+              )}
+            </ScrollArea>
+          </div>
         </div>
-        <div className="flex flex-wrap justify-end gap-2">
-          <Hint label="Add every visible prompt in this category to the generate queue.">
+        <div className="flex shrink-0 flex-wrap justify-end gap-2 pt-1">
+          <Hint label={isSearching ? 'Add every visible prompt from the search results to the generate queue.' : 'Add every visible prompt in this category to the generate queue.'}>
             <Button type="button" variant="outline" onClick={addCategory} disabled={visible.length === 0}>
-              Add category
+              {isSearching ? 'Add visible' : 'Add category'}
             </Button>
           </Hint>
           <Hint label="Add the checked prompts to the generate queue. Duplicates are skipped.">
@@ -253,3 +637,4 @@ export function PromptCatalogDialog({
     </Dialog>
   )
 }
+

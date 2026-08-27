@@ -47,4 +47,13 @@ describe('SettingsPanel', () => {
     renderPanel()
     expect(screen.getByLabelText(/default duration/i)).toHaveAttribute('max', '380')
   })
+
+  it('lets you pick a low-VRAM precision profile', async () => {
+    const user = userEvent.setup()
+    renderPanel()
+    const low = screen.getByRole('radio', { name: /fp16 \/ bf16/i })
+    expect(screen.getByRole('radio', { name: /fp32/i })).toHaveAttribute('aria-checked', 'true')
+    await user.click(low)
+    expect(low).toHaveAttribute('aria-checked', 'true')
+  })
 })

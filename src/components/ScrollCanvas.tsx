@@ -1,7 +1,16 @@
 import { useEffect, useRef } from 'react'
 import { Hint } from '@/components/Hint'
 import { Progress } from '@/components/ui/progress'
-import type { WeavePhase } from '@/lib/types'
+import {
+  drawGoblinBand,
+  getGoblinHitTarget,
+  getGoblinInteractionPhrase,
+  playGoblinInteractionSound,
+  type GoblinInteraction,
+  type GoblinTransition,
+  type GoblinVisualState,
+} from '@/lib/goblinBand'
+import type { GenerateMode, WeavePhase } from '@/lib/types'
 import { formatClock } from '@/lib/utils'
 import { waveformPeaks } from '@/lib/wav'
 import { weaveBarPercent, weaveBusyStatus } from '@/lib/weaveProgress'
@@ -10,6 +19,7 @@ type ScrollCanvasProps = {
   wav?: ArrayBuffer
   weaving: boolean
   loadingModel?: boolean
+  modelLoaded?: boolean
   rite: number
   totalRites: number
   elapsedMs: number
@@ -21,42 +31,23 @@ type ScrollCanvasProps = {
   ratio?: number
   historicalEstimateMs?: number
   queueTailEstimateMs?: number
+  mode?: GenerateMode
+  startedAt?: number
+  completedSubcategoryCount?: number
   onTrim: (start: number, end: number) => void
   onSeek: (seconds: number) => void
   emptyLabel?: string
-}
-
-function drawSigil(
-  ctx: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  elapsedMs: number,
-  rite: number,
-  totalRites: number,
-) {
-  const mid = height / 2
-  ctx.strokeStyle = '#c4a35a'
-  ctx.lineWidth = 2
-  const radius = 42 + Math.sin(elapsedMs / 400) * 4
-  ctx.beginPath()
-  ctx.arc(width / 2, mid, radius, 0, Math.PI * 2)
-  ctx.stroke()
-  for (let i = 0; i < totalRites; i += 1) {
-    const a = (Math.PI * 2 * i) / totalRites - Math.PI / 2
-    ctx.beginPath()
-    ctx.arc(width / 2 + Math.cos(a) * 70, mid + Math.sin(a) * 70, 5, 0, Math.PI * 2)
-    ctx.fillStyle = i < rite ? '#e4c36a' : '#3a2e24'
-    ctx.fill()
-  }
 }
 
 export function ScrollCanvas({
   wav,
   weaving,
   loadingModel = false,
+  modelLoaded = false,
   rite,
   totalRites,
   elapsedMs,
+  startedAt,
   duration,
   trimStart,
   trimEnd,
@@ -65,6 +56,8 @@ export function ScrollCanvas({
   ratio,
   historicalEstimateMs,
   queueTailEstimateMs,
+  mode = 'sfx',
+  completedSubcategoryCount = 0,
   onTrim,
   onSeek,
   emptyLabel = 'Describe a sound, then click Generate.',
@@ -78,6 +71,64 @@ export function ScrollCanvas({
   const ratioRef = useRef(ratio)
   const etaRef = useRef(historicalEstimateMs)
   const tailRef = useRef(queueTailEstimateMs)
+  const modeRef = useRef(mode)
+  const startedAtRef = useRef(startedAt)
+  const completedCountRef = useRef(completedSubcategoryCount)
+
+  const targetVisualState: GoblinVisualState = loadingModel
+    ? 'loading'
+    : weaving
+      ? 'playing'
+      : modelLoaded && !wav
+        ? 'resting'
+        : 'hidden'
+
+  const visualStateRef = useRef<GoblinVisualState>(targetVisualState)
+  const prevTargetRef = useRef<GoblinVisualState>(targetVisualState)
+  const transitionRef = useRef<{
+    from: GoblinVisualState
+    to: GoblinVisualState
+    startTime: number
+    duration: number
+  } | null>(null)
+
+  const interactionsRef = useRef<Map<number, GoblinInteraction>>(new Map())
+
+  useEffect(() => {
+    const prev = prevTargetRef.current
+    if (prev !== targetVisualState) {
+      prevTargetRef.current = targetVisualState
+      if (targetVisualState === 'hidden') {
+        visualStateRef.current = 'hidden'
+        transitionRef.current = null
+      } else if (prev !== 'hidden') {
+        const fromState = visualStateRef.current
+        let durationMs = 1200
+        if (fromState === 'loading' && targetVisualState === 'resting') {
+          durationMs = 1500
+        } else if (fromState === 'resting' && targetVisualState === 'playing') {
+          durationMs = 1000
+        } else if (fromState === 'playing' && targetVisualState === 'resting') {
+          durationMs = 1500
+        } else if (fromState === 'hidden' && targetVisualState === 'loading') {
+          durationMs = 600
+        } else if (fromState === 'hidden' && targetVisualState === 'playing') {
+          durationMs = 600
+        } else if (fromState === 'hidden' && targetVisualState === 'resting') {
+          durationMs = 600
+        }
+
+        transitionRef.current = {
+          from: fromState,
+          to: targetVisualState,
+          startTime: Date.now(),
+          duration: durationMs,
+        }
+      } else {
+        visualStateRef.current = targetVisualState
+      }
+    }
+  }, [targetVisualState])
 
   useEffect(() => {
     riteRef.current = rite
@@ -85,82 +136,167 @@ export function ScrollCanvas({
     ratioRef.current = ratio
     etaRef.current = historicalEstimateMs
     tailRef.current = queueTailEstimateMs
-  }, [rite, phase, loadingModel, ratio, historicalEstimateMs, queueTailEstimateMs])
+    modeRef.current = mode
+    startedAtRef.current = startedAt
+    completedCountRef.current = completedSubcategoryCount
+  }, [
+    rite,
+    phase,
+    loadingModel,
+    ratio,
+    historicalEstimateMs,
+    queueTailEstimateMs,
+    mode,
+    startedAt,
+    completedSubcategoryCount,
+  ])
+
+  const barIndicatorRef = useRef<HTMLDivElement>(null)
 
   const barValue = weaveBarPercent({
     step: rite,
     total: totalRites,
     phase,
     ratio,
+    elapsedMs,
+    historicalEstimateMs,
+    queueTailEstimateMs,
   })
 
   useEffect(() => {
     peaksRef.current = wav ? waveformPeaks(wav, 240) : new Float32Array(0)
   }, [wav])
 
-  useEffect(() => {
-    if (busy) return
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-    const { width, height } = canvas
-    ctx.clearRect(0, 0, width, height)
-    ctx.fillStyle = '#16110d'
-    ctx.fillRect(0, 0, width, height)
-    const peaks = peaksRef.current
-    const mid = height / 2
-    if (!peaks.length) return
-    const bar = width / peaks.length
-    ctx.fillStyle = '#c4a35a'
-    for (let i = 0; i < peaks.length; i += 1) {
-      const h = Math.max(2, peaks[i] * (height * 0.78))
-      ctx.globalAlpha = 0.85
-      ctx.fillRect(i * bar, mid - h / 2, Math.max(1, bar - 1), h)
-    }
-    ctx.globalAlpha = 1
-    const x0 = (trimStart / duration) * width
-    const x1 = (trimEnd / duration) * width
-    ctx.fillStyle = 'rgba(228, 195, 106, 0.16)'
-    ctx.fillRect(x0, 0, x1 - x0, height)
-    ctx.fillStyle = '#e4c36a'
-    ctx.fillRect(x0 - 1, 0, 3, height)
-    ctx.fillRect(x1 - 1, 0, 3, height)
-    const px = (playhead / duration) * width
-    ctx.fillStyle = '#f3e6c8'
-    ctx.fillRect(px, 0, 2, height)
-  }, [wav, busy, duration, trimStart, trimEnd, playhead])
+  const shouldAnimate = busy || targetVisualState !== 'hidden' || transitionRef.current !== null
 
   useEffect(() => {
-    if (!busy) return
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext('2d')
-    if (!canvas || !ctx) return
-    const started = performance.now()
-    let raf = 0
-    const tick = (now: number) => {
-      const localElapsed = now - started
+    if (!shouldAnimate && visualStateRef.current === 'hidden' && !transitionRef.current) {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const ctx = canvas.getContext('2d')
+      if (!ctx) return
       const { width, height } = canvas
       ctx.clearRect(0, 0, width, height)
       ctx.fillStyle = '#16110d'
       ctx.fillRect(0, 0, width, height)
-      drawSigil(ctx, width, height, localElapsed, riteRef.current, totalRites)
-      if (statusRef.current) {
-        statusRef.current.textContent = weaveBusyStatus({
-          phase: phaseRef.current,
-          rite: riteRef.current,
+      const peaks = peaksRef.current
+      const mid = height / 2
+      if (!peaks.length) return
+      const bar = width / peaks.length
+      ctx.fillStyle = '#c4a35a'
+      for (let i = 0; i < peaks.length; i += 1) {
+        const h = Math.max(2, peaks[i] * (height * 0.78))
+        ctx.globalAlpha = 0.85
+        ctx.fillRect(i * bar, mid - h / 2, Math.max(1, bar - 1), h)
+      }
+      ctx.globalAlpha = 1
+      const x0 = (trimStart / duration) * width
+      const x1 = (trimEnd / duration) * width
+      ctx.fillStyle = 'rgba(228, 195, 106, 0.16)'
+      ctx.fillRect(x0, 0, x1 - x0, height)
+      ctx.fillStyle = '#e4c36a'
+      ctx.fillRect(x0 - 1, 0, 3, height)
+      ctx.fillRect(x1 - 1, 0, 3, height)
+      const px = (playhead / duration) * width
+      ctx.fillStyle = '#f3e6c8'
+      ctx.fillRect(px, 0, 2, height)
+      return
+    }
+
+    const canvas = canvasRef.current
+    const ctx = canvas?.getContext('2d')
+    if (!canvas || !ctx) return
+    const localStart =
+      startedAtRef.current && startedAtRef.current > 0
+        ? startedAtRef.current
+        : Date.now() - (elapsedMs || 0)
+    let raf = 0
+    const tick = () => {
+      const localElapsed = Math.max(0, Date.now() - localStart)
+      const { width, height } = canvas
+      ctx.clearRect(0, 0, width, height)
+
+      // Handle active transitions
+      let transitionData: GoblinTransition | undefined
+      if (transitionRef.current) {
+        const elapsedTrans = Date.now() - transitionRef.current.startTime
+        const p = Math.min(1, elapsedTrans / transitionRef.current.duration)
+        transitionData = {
+          from: transitionRef.current.from,
+          to: transitionRef.current.to,
+          progress: p,
+        }
+        if (p >= 1) {
+          visualStateRef.current = transitionRef.current.to
+          transitionRef.current = null
+        }
+      }
+
+      // Clean up expired interactions
+      const now = Date.now()
+      for (const [slot, inter] of interactionsRef.current.entries()) {
+        if (now - inter.startTime >= inter.duration) {
+          interactionsRef.current.delete(slot)
+        }
+      }
+
+      drawGoblinBand({
+        ctx,
+        width,
+        height,
+        elapsedMs: localElapsed,
+        rite: riteRef.current,
+        totalRites,
+        phase: phaseRef.current,
+        mode: modeRef.current,
+        completedCount: completedCountRef.current,
+        visualState: visualStateRef.current,
+        transition: transitionData,
+        interactions: Object.fromEntries(interactionsRef.current.entries()),
+      })
+
+      if (busy) {
+        const pct = weaveBarPercent({
+          step: riteRef.current,
           total: totalRites,
-          elapsedMs: localElapsed,
+          phase: phaseRef.current,
           ratio: ratioRef.current,
+          elapsedMs: localElapsed,
           historicalEstimateMs: etaRef.current,
           queueTailEstimateMs: tailRef.current,
         })
+        if (barIndicatorRef.current && pct != null) {
+          barIndicatorRef.current.style.transform = `translateX(-${100 - pct}%)`
+        }
+        if (statusRef.current) {
+          statusRef.current.textContent = weaveBusyStatus({
+            phase: phaseRef.current,
+            rite: riteRef.current,
+            total: totalRites,
+            elapsedMs: localElapsed,
+            ratio: ratioRef.current,
+            historicalEstimateMs: etaRef.current,
+            queueTailEstimateMs: tailRef.current,
+          })
+        }
       }
+
       raf = requestAnimationFrame(tick)
     }
+
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [busy, totalRites])
+  }, [
+    shouldAnimate,
+    busy,
+    totalRites,
+    elapsedMs,
+    duration,
+    trimStart,
+    trimEnd,
+    playhead,
+    wav,
+  ])
 
   const dragging = useRef<'start' | 'end' | 'seek' | null>(null)
 
@@ -251,7 +387,9 @@ export function ScrollCanvas({
           <Progress
             className="w-full"
             value={barValue ?? 0}
+            indicatorRef={barIndicatorRef}
             indeterminate={barValue == null}
+            mode={mode}
             aria-label={loadingModel ? 'Model load progress' : 'Generation progress'}
           />
         </Hint>
@@ -277,6 +415,41 @@ export function ScrollCanvas({
           aria-valuenow={playhead}
           className="relative min-h-0 w-full flex-1 overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)]"
           onPointerDown={(e) => {
+            const canvas = canvasRef.current
+            if (canvas && visualStateRef.current !== 'hidden') {
+              const rect = canvas.getBoundingClientRect()
+              const w = rect.width || canvas.clientWidth || canvas.width || 960
+              const h = rect.height || canvas.clientHeight || canvas.height || 280
+              const left = rect.left || 0
+              const top = rect.top || 0
+              const canvasX = Math.max(0, Math.min(canvas.width, ((e.clientX - left) / w) * canvas.width))
+              const canvasY = Math.max(0, Math.min(canvas.height, ((e.clientY - top) / h) * canvas.height))
+              const hit = getGoblinHitTarget(
+                canvasX,
+                canvasY,
+                canvas.width,
+                canvas.height,
+                visualStateRef.current,
+                completedSubcategoryCount,
+              )
+              if (hit) {
+                const phrase = getGoblinInteractionPhrase(
+                  hit.slotIndex,
+                  visualStateRef.current,
+                  hit.member,
+                  hit.instrument,
+                  hit.role,
+                )
+                interactionsRef.current.set(hit.slotIndex, {
+                  startTime: Date.now(),
+                  duration: 1600,
+                  text: phrase,
+                })
+                playGoblinInteractionSound(hit.slotIndex, visualStateRef.current)
+                return
+              }
+            }
+
             if (!wav || busy) return
             const mode = pickMode(e.clientX)
             dragging.current = mode
@@ -288,7 +461,32 @@ export function ScrollCanvas({
             applyPointer(e.clientX, mode)
           }}
           onPointerMove={(e) => {
-            if (!dragging.current) return
+            if (!dragging.current) {
+              const canvas = canvasRef.current
+              if (canvas && visualStateRef.current !== 'hidden') {
+                const rect = canvas.getBoundingClientRect()
+                const w = rect.width || canvas.clientWidth || canvas.width || 960
+                const h = rect.height || canvas.clientHeight || canvas.height || 280
+                const left = rect.left || 0
+                const top = rect.top || 0
+                const canvasX = Math.max(0, Math.min(canvas.width, ((e.clientX - left) / w) * canvas.width))
+                const canvasY = Math.max(0, Math.min(canvas.height, ((e.clientY - top) / h) * canvas.height))
+                const hit = getGoblinHitTarget(
+                  canvasX,
+                  canvasY,
+                  canvas.width,
+                  canvas.height,
+                  visualStateRef.current,
+                  completedSubcategoryCount,
+                )
+                if (hit) {
+                  e.currentTarget.style.cursor = 'pointer'
+                  return
+                }
+              }
+              e.currentTarget.style.cursor = wav && !busy ? 'col-resize' : 'default'
+              return
+            }
             applyPointer(e.clientX, dragging.current)
           }}
           onPointerUp={releaseCapture}
@@ -298,7 +496,7 @@ export function ScrollCanvas({
           }}
         >
           <canvas ref={canvasRef} width={960} height={280} className="size-full" />
-          {!wav && !busy ? (
+          {!wav && !busy && !modelLoaded ? (
             <p className="pointer-events-none absolute inset-0 flex items-center justify-center px-8 text-center text-muted">
               {emptyLabel}
             </p>

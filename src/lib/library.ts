@@ -1,4 +1,6 @@
 import type { Clip } from '@/lib/types'
+import { isTauri } from '@/lib/utils'
+import { base64ToBytes, deleteDiskFile, libraryPath, scanDiskLibrary } from '@/lib/engine'
 
 const DB_NAME = 'thunder-fx'
 const DB_VERSION = 1
@@ -25,6 +27,74 @@ export type LibraryStore = {
   getWav(id: string): Promise<ArrayBuffer | undefined>
   save(clip: Clip, wav: ArrayBuffer): Promise<void>
   delete(id: string): Promise<void>
+  clear(): Promise<void>
+}
+
+export function createDiskLibrary(
+  getLibraryDir: () => string,
+  getClips?: () => Clip[],
+): LibraryStore {
+  return {
+    async list() {
+      return await scanDiskLibrary(getLibraryDir())
+    },
+    async getWav(id: string) {
+      if (!isTauri()) return undefined
+      try {
+        const clips = getClips?.() ?? []
+        const clip = clips.find((c) => c.id === id)
+        let filePath = clip?.path
+        if (!filePath) {
+          const dir = getLibraryDir().trim() || (await libraryPath())
+          const sep = dir && dir.includes('/') && !dir.includes('\\') ? '/' : '\\'
+          filePath = dir ? `${dir.replace(/[\\/]+$/, '')}${sep}${id}.wav` : ''
+        }
+        if (!filePath) return undefined
+        const { invoke } = await import('@tauri-apps/api/core')
+        const b64 = await invoke<string>('read_file_b64', { path: filePath })
+        return b64 ? base64ToBytes(b64) : undefined
+      } catch {
+        return undefined
+      }
+    },
+    async save() {
+      // In desktop/Tauri mode, worker.py writes directly to disk. IDB is not touched.
+    },
+    async delete(id: string) {
+      if (!isTauri()) return
+      try {
+        const clips = getClips?.() ?? []
+        const clip = clips.find((c) => c.id === id)
+        let filePath = clip?.path
+        if (!filePath) {
+          const dir = getLibraryDir().trim() || (await libraryPath())
+          const sep = dir && dir.includes('/') && !dir.includes('\\') ? '/' : '\\'
+          filePath = dir ? `${dir.replace(/[\\/]+$/, '')}${sep}${id}.wav` : ''
+        }
+        if (filePath) {
+          await deleteDiskFile(filePath)
+        }
+      } catch {
+        /* ignore delete error */
+      }
+    },
+    async clear() {
+      // In desktop/Tauri mode, disk is the sole source of truth.
+    },
+  }
+}
+
+export function createAppLibrary(
+  getLibraryDir: () => string,
+  getClips?: () => Clip[],
+): LibraryStore {
+  if (isTauri()) {
+    return createDiskLibrary(getLibraryDir, getClips)
+  }
+  if (typeof indexedDB !== 'undefined') {
+    return createIdbLibrary()
+  }
+  return createMemoryLibrary()
 }
 
 export function createMemoryLibrary(seed: { clip: Clip; wav: ArrayBuffer }[] = []): LibraryStore {
@@ -45,6 +115,10 @@ export function createMemoryLibrary(seed: { clip: Clip; wav: ArrayBuffer }[] = [
     async delete(id) {
       clips.delete(id)
       wavs.delete(id)
+    },
+    async clear() {
+      clips.clear()
+      wavs.clear()
     },
   }
 }
@@ -90,6 +164,16 @@ export function createIdbLibrary(): LibraryStore {
         const tx = db.transaction(['clips', 'wavs'], 'readwrite')
         tx.objectStore('clips').delete(id)
         tx.objectStore('wavs').delete(id)
+        tx.oncomplete = () => resolve()
+        tx.onerror = () => reject(tx.error)
+      })
+    },
+    async clear() {
+      const db = await openDb()
+      await new Promise<void>((resolve, reject) => {
+        const tx = db.transaction(['clips', 'wavs'], 'readwrite')
+        tx.objectStore('clips').clear()
+        tx.objectStore('wavs').clear()
         tx.oncomplete = () => resolve()
         tx.onerror = () => reject(tx.error)
       })

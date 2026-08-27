@@ -1,5 +1,5 @@
-import { generateMockMusicWav, generateMockSfxWav, tagMusicWav, wavDurationSeconds } from '@/lib/wav'
-import { extractInstruments, musicWavInfo } from '@/lib/instruments'
+import { generateMockMusicWav, generateMockSfxWav, tagWav, wavDurationSeconds } from '@/lib/wav'
+import { clipWavInfo, extractInstruments } from '@/lib/instruments'
 import type {
   Clip,
   EngineStatus,
@@ -8,6 +8,11 @@ import type {
   SetupProbe,
   WeaveProgress,
 } from '@/lib/types'
+import {
+  inferClipCategory,
+  inferClipIntensity,
+  inferClipSubcategory,
+} from '@/lib/promptCatalog'
 import { TOTAL_RITES } from '@/lib/types'
 
 export type GenerateHandlers = {
@@ -41,6 +46,12 @@ export function mockStatus(): EngineStatus {
     loaded: true,
     device: 'mock',
     message: 'Mock engine (install CUDA Medium for production quality).',
+    vramUsedGb: 0.4,
+    vramTotalGb: 8,
+    vramAllocatedGb: 0.3,
+    vramReservedGb: 0.4,
+    gpuName: 'mock',
+    precision: 'fp32',
   }
 }
 
@@ -50,16 +61,17 @@ export async function mockGenerate(
 ): Promise<GenerateResult> {
   const started = Date.now()
   const seed = pickSeed(request.seed)
-  for (let step = 1; step <= TOTAL_RITES; step += 1) {
+  const total = request.steps ?? TOTAL_RITES
+  for (let step = 1; step <= total; step += 1) {
     if (handlers.signal?.aborted) {
       throw new DOMException('Generation cancelled', 'AbortError')
     }
     handlers.onProgress?.({
       step,
-      total: TOTAL_RITES,
+      total,
       elapsedMs: Date.now() - started,
       phase: 'weaving',
-      ratio: step / TOTAL_RITES,
+      ratio: step / total,
     })
     const delay = handlers.stepDelayMs ?? 0
     if (delay > 0) {
@@ -75,9 +87,27 @@ export async function mockGenerate(
     mode === 'music'
       ? generateMockMusicWav(request.seconds, seed)
       : generateMockSfxWav(request.seconds, seed)
-  if (mode === 'music') {
-    wav = tagMusicWav(wav, musicWavInfo(request.prompt, topInstruments))
+  const wavInfo = clipWavInfo(request.prompt, mode, topInstruments)
+  wav = tagWav(wav, wavInfo)
+  const clipStub: Clip = {
+    id: '',
+    prompt: request.prompt.trim(),
+    duration: wavDurationSeconds(wav),
+    seed,
+    createdAt: new Date().toISOString(),
+    cfg: request.cfg,
+    steps: total,
+    negative: request.negative,
+    mode,
   }
+  const resolvedCategory = request.category?.trim() || inferClipCategory(clipStub)
+  const resolvedSubcategory =
+    request.subcategory?.trim() ||
+    (mode === 'sfx' ? inferClipSubcategory(clipStub) : undefined)
+  const resolvedIntensity =
+    request.intensity?.trim() ||
+    (mode === 'music' ? inferClipIntensity(clipStub) : undefined)
+
   const clip: Clip = {
     id: randomId(),
     prompt: request.prompt.trim(),
@@ -85,29 +115,45 @@ export async function mockGenerate(
     seed,
     createdAt: new Date().toISOString(),
     cfg: request.cfg,
+    steps: total,
     negative: request.negative,
     mode,
     instruments: topInstruments.length ? topInstruments : undefined,
-    category: request.category,
-    intensity: request.intensity,
+    category: resolvedCategory,
+    subcategory: resolvedSubcategory,
+    intensity: resolvedIntensity,
   }
   return { clip, wav }
 }
 
+
 export function mockDownloadProgress(
   onProgress: (ratio: number) => void,
   tickMs = 0,
+  signal?: AbortSignal,
 ): Promise<void> {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     let ratio = 0
+    let timer: ReturnType<typeof setTimeout> | null = null
+    const onAbort = () => {
+      if (timer) clearTimeout(timer)
+      reject(new DOMException('Model load cancelled', 'AbortError'))
+    }
+    if (signal?.aborted) {
+      onAbort()
+      return
+    }
+    signal?.addEventListener('abort', onAbort)
     const bump = () => {
+      if (signal?.aborted) return
       ratio = Math.min(1, ratio + 0.2)
       onProgress(ratio)
       if (ratio >= 1) {
+        signal?.removeEventListener('abort', onAbort)
         resolve()
         return
       }
-      if (tickMs > 0) setTimeout(bump, tickMs)
+      if (tickMs > 0) timer = setTimeout(bump, tickMs)
       else bump()
     }
     bump()

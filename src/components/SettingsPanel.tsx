@@ -13,7 +13,7 @@ import {
 } from '@/lib/engine'
 import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from '@/lib/duration'
 import { DEFAULT_LIBRARY_PLACEHOLDER, type KeepSettings } from '@/lib/types'
-import { isTauri } from '@/lib/utils'
+import { cn, isTauri } from '@/lib/utils'
 
 type SettingsPanelProps = {
   settings: KeepSettings
@@ -145,7 +145,77 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
                 />
               </div>
             </Hint>
+            <Hint
+              className="w-full flex-col"
+              label="Default diffusion sampling steps for new clips. 8 = Draft, 20 = Balanced (Recommended), 32 = High Fidelity."
+            >
+              <div className="w-full">
+                <Label htmlFor="default-quality-steps">Default quality steps</Label>
+                <Input
+                  id="default-quality-steps"
+                  className="mt-1"
+                  type="number"
+                  min={4}
+                  max={50}
+                  step={1}
+                  value={settings.qualitySteps ?? 20}
+                  onChange={(e) =>
+                    onChange({
+                      ...settings,
+                      qualitySteps: Math.max(4, Math.min(50, Number(e.target.value) || 20)),
+                    })
+                  }
+                />
+              </div>
+            </Hint>
           </div>
+
+          <div className="space-y-3">
+            <Hint label="FP32 is full quality. FP16 cuts the model footprint roughly in half for 4–6 GB GPUs. Unload and Load model after changing this.">
+              <h3 className="font-display text-sm tracking-[0.16em] text-muted">PRECISION</h3>
+            </Hint>
+            <div
+              role="radiogroup"
+              aria-label="Precision mode"
+              className="inline-flex h-8 items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
+            >
+              <Hint label="Full float32 weights. Best quality. Default.">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={settings.precision !== 'fp16'}
+                  className={cn(
+                    'inline-flex h-7 items-center justify-center rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
+                    settings.precision !== 'fp16' &&
+                      'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] font-medium text-cream',
+                  )}
+                  onClick={() => onChange({ ...settings, precision: 'fp32' })}
+                >
+                  FP32
+                </button>
+              </Hint>
+              <Hint label="Half precision (fp16/bf16). About 2.8 GB of weights. Unload, then Load model to apply.">
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={settings.precision === 'fp16'}
+                  className={cn(
+                    'inline-flex h-7 items-center justify-center rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
+                    settings.precision === 'fp16' &&
+                      'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] font-medium text-cream',
+                  )}
+                  onClick={() => onChange({ ...settings, precision: 'fp16' })}
+                >
+                  FP16 / BF16
+                </button>
+              </Hint>
+            </div>
+            <p className="text-xs text-muted">
+              Low VRAM mode also uses chunked decode on long clips. Unload the model, then Load model to apply a
+              precision change.
+            </p>
+          </div>
+
 
           <div>
             <Hint label="Where generation failures are appended, including Python tracebacks.">

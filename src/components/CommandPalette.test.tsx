@@ -96,4 +96,16 @@ describe('CommandPalette', () => {
     await user.click(screen.getByRole('option', { name: /browse prompts/i }))
     expect(onPromptCatalog).toHaveBeenCalled()
   })
+
+  it('offers Unload model', async () => {
+    const user = userEvent.setup()
+    const onUnloadModel = vi.fn()
+    render(
+      <TooltipProvider>
+        <CommandPalette {...props} onUnloadModel={onUnloadModel} />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('option', { name: /unload model/i }))
+    expect(onUnloadModel).toHaveBeenCalled()
+  })
 })

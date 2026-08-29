@@ -113,4 +113,26 @@ describe('mockGenerate', () => {
     expect(parseWav(music.wav).info?.comment).toContain('Instruments: lute')
     expect([...new Uint8Array(music.wav)]).not.toEqual([...new Uint8Array(sfx.wav)])
   })
+
+  it('bakes a seamless wrap into looped music at the requested length', async () => {
+    const { loopWrapJump } = await import('@/lib/seamlessLoop')
+    const raw = await mockGenerate(
+      { prompt: 'lute', seconds: 4, seed: 4, cfg: 1, negative: '', mode: 'music' },
+      { stepDelayMs: 0 },
+    )
+    const looped = await mockGenerate(
+      {
+        prompt: 'lute',
+        seconds: 4,
+        seed: 4,
+        cfg: 1,
+        negative: '',
+        mode: 'music',
+        seamlessLoop: true,
+      },
+      { stepDelayMs: 0 },
+    )
+    expect(looped.clip.duration).toBeCloseTo(4, 1)
+    expect(loopWrapJump(looped.wav)).toBeLessThan(loopWrapJump(raw.wav))
+  })
 })

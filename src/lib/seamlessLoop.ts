@@ -9,6 +9,22 @@ export function clampCrossfadeSec(seconds: number): number {
   return Math.min(MAX_CROSSFADE_SEC, Math.max(MIN_CROSSFADE_SEC, seconds))
 }
 
+/** Extra seconds to generate so a looped clip still matches the requested length. */
+export function loopOverlapSeconds(duration: number): number {
+  if (!Number.isFinite(duration) || duration <= 0) return DEFAULT_CROSSFADE_SEC
+  return clampCrossfadeSec(duration * 0.05)
+}
+
+/** Absolute PCM jump between the last and first left-channel sample. */
+export function loopWrapJump(buffer: ArrayBuffer): number {
+  const wav = parseWav(buffer)
+  const total = Math.floor(wav.pcm.length / wav.channels)
+  if (total < 2) return 0
+  const first = wav.pcm[0] ?? 0
+  const last = wav.pcm[(total - 1) * wav.channels] ?? 0
+  return Math.abs(first - last)
+}
+
 function nearestZeroCrossing(
   pcm: Int16Array,
   channels: number,

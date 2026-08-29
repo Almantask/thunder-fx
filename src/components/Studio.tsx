@@ -51,15 +51,16 @@ import {
   type CatalogEffect,
 } from '@/lib/promptCatalog'
 import {
+  FIXED_CFG,
   GENERATE_MODES,
   applyGenerateMode,
-  applyModeCfg,
   applyModeDuration,
   applyModeNegative,
   applyModeSteps,
   clipMode,
   ensureTrackType,
   inferGenerateMode,
+  promptLooksLoopable,
 } from '@/lib/generateMode'
 import { loadQueue, loadSettings, saveQueue, saveSettings } from '@/lib/setup'
 import {
@@ -92,7 +93,6 @@ export function Studio() {
     }
     return settings.defaultDuration
   })
-  const [cfg, setCfg] = useState(() => GENERATE_MODES[mode].defaultCfg)
   const [steps, setSteps] = useState(() => settings.qualitySteps ?? 20)
   const [negative, setNegative] = useState('')
   const [seed, setSeed] = useState('-1')
@@ -118,6 +118,9 @@ export function Studio() {
   const [bitDepth, setBitDepth] = useState<BitDepthOption>(16)
   const [mono, setMono] = useState(false)
   const [seamlessLoop, setSeamlessLoop] = useState(false)
+  const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(
+    () => settings.generateMode === 'music',
+  )
   const [crossfadeSec, setCrossfadeSec] = useState(DEFAULT_CROSSFADE_SEC)
   const [takes, setTakes] = useState<TakeCandidate[]>([])
   const [takesOpen, setTakesOpen] = useState(false)
@@ -328,6 +331,7 @@ export function Studio() {
     setPrompt(effect.prompt)
     setDuration(effect.duration)
     setNegative(effect.negative)
+    setGenerateSeamlessLoop(next === 'music')
   }
 
   async function getClipWav(id: string): Promise<ArrayBuffer | undefined> {
@@ -356,10 +360,12 @@ export function Studio() {
       if (next !== mode) {
         setNegative((n) => applyModeNegative(n, mode, next))
         setDuration((d) => applyModeDuration(d, mode, next))
-        setCfg((c) => applyModeCfg(c, mode, next))
         setSteps((s) => applyModeSteps(s, mode, next))
         if (next === 'sfx') {
           setSeamlessLoop(false)
+          setGenerateSeamlessLoop(false)
+        } else {
+          setGenerateSeamlessLoop(true)
         }
         setMode(next)
         setSettings((s) => ({ ...s, generateMode: next }))
@@ -372,10 +378,12 @@ export function Studio() {
     setPrompt((p) => applyGenerateMode(p, next))
     setNegative((n) => applyModeNegative(n, mode, next))
     setDuration((d) => applyModeDuration(d, mode, next))
-    setCfg((c) => applyModeCfg(c, mode, next))
     setSteps((s) => applyModeSteps(s, mode, next))
     if (next === 'sfx') {
       setSeamlessLoop(false)
+      setGenerateSeamlessLoop(false)
+    } else {
+      setGenerateSeamlessLoop(true)
     }
     setMode(next)
     setSettings((s) => ({ ...s, generateMode: next }))
@@ -449,6 +457,7 @@ export function Studio() {
       category?: string
       subcategory?: string
       intensity?: string
+      seamlessLoop?: boolean
     },
     options: {
       manageBusy?: boolean
@@ -477,7 +486,7 @@ export function Studio() {
           prompt: request.prompt,
           seconds: request.seconds,
           seed: Number.isFinite(parsedSeed) ? parsedSeed : -1,
-          cfg,
+          cfg: FIXED_CFG,
           steps: currentSteps,
           negative: request.negative,
           libraryDir: settings.libraryDir,
@@ -485,6 +494,7 @@ export function Studio() {
           category: request.category,
           subcategory: request.subcategory,
           intensity: request.intensity,
+          seamlessLoop: Boolean(request.seamlessLoop),
         },
         {
           signal: controller.signal,
@@ -526,6 +536,7 @@ export function Studio() {
         setTrimStart(0)
         setTrimEnd(finalClip.duration)
         setPlayhead(0)
+        setLooping(Boolean(request.seamlessLoop && request.mode === 'music'))
       }
       if (!engineMockRef.current) {
         rememberTiming(
@@ -568,6 +579,7 @@ export function Studio() {
         negative: requestNegative,
         mode,
         steps,
+        seamlessLoop: mode === 'music' && generateSeamlessLoop,
       },
       { setActiveClip: true },
     )
@@ -593,6 +605,7 @@ export function Studio() {
             negative: requestNegative,
             mode,
             steps,
+            seamlessLoop: mode === 'music' && generateSeamlessLoop,
           },
           {
             manageBusy: false,
@@ -628,6 +641,9 @@ export function Studio() {
         if (!item) break
         const nextMode = inferGenerateMode(item.prompt)
         applyCatalogEffect(item)
+        const loop =
+          nextMode === 'music' &&
+          (generateSeamlessLoop || promptLooksLoopable(item.prompt))
         const outcome = await generateOne(
           {
             prompt: ensureTrackType(item.prompt, nextMode),
@@ -638,6 +654,7 @@ export function Studio() {
             category: item.category,
             subcategory: item.subcategory,
             intensity: item.intensity,
+            seamlessLoop: loop,
           },
           { manageBusy: false, setActiveClip: false },
         )
@@ -899,6 +916,7 @@ export function Studio() {
             if (next !== mode) {
               setNegative((n) => applyModeNegative(n, mode, next))
               setDuration((d) => applyModeDuration(d, mode, next))
+              setGenerateSeamlessLoop(next === 'music')
               setMode(next)
               setSettings((s) => ({ ...s, generateMode: next }))
             }
@@ -1003,7 +1021,6 @@ export function Studio() {
             mode={mode}
             prompt={prompt}
             duration={duration}
-            cfg={cfg}
             steps={steps}
             negative={negative}
             seed={seed}
@@ -1018,7 +1035,6 @@ export function Studio() {
             onMode={selectMode}
             onPrompt={setPrompt}
             onDuration={setDuration}
-            onCfg={setCfg}
             onSteps={setSteps}
             onNegative={setNegative}
             onSeed={setSeed}
@@ -1052,6 +1068,8 @@ export function Studio() {
                 isMock: engine.mock,
               })
             }
+            generateSeamlessLoop={generateSeamlessLoop}
+            onGenerateSeamlessLoop={setGenerateSeamlessLoop}
           />
         </div>
       ) : null}

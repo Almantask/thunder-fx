@@ -125,6 +125,44 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(info.get("ISFT"), "Thunder FX")
         self.assertEqual(info.get("IGNR"), "Sound Effects")
 
+    def test_generate_seamless_loop_keeps_duration(self) -> None:
+        self.client.send(
+            {
+                "id": "g-loop",
+                "cmd": "generate",
+                "prompt": "TrackType: Music, lute bed",
+                "seconds": 2,
+                "seed": 7,
+                "cfg": 1,
+                "negative": "",
+                "mode": "music",
+                "seamless_loop": True,
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read(timeout_s=15.0)
+            if msg.get("id") != "g-loop":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        self.assertTrue(done.get("seamlessLoop") or done.get("seamless_loop"))
+        path = Path(done["path"])
+        self.assertTrue(path.is_file())
+        with wave.open(str(path), "rb") as wav:
+            n = wav.getnframes()
+            sr = wav.getframerate()
+            ch = wav.getnchannels()
+            frames = wav.readframes(n)
+        self.assertAlmostEqual(n / sr, 2.0, delta=0.08)
+        samples = memoryview(frames).cast("h")
+        first = samples[0]
+        last = samples[(n - 1) * ch]
+        self.assertLess(abs(int(first) - int(last)), 12000)
+
     def test_generate_music_mock_differs_from_sfx(self) -> None:
         def run(msg_id: str, mode: str, prompt: str) -> Path:
             self.client.send(
@@ -629,6 +667,48 @@ class ClampSecondsTests(unittest.TestCase):
         self.assertEqual(clamp_seconds(381), 380)
         self.assertEqual(clamp_seconds(0.1), 0.5)
         self.assertEqual(clamp_seconds(float("nan")), 8.0)
+
+
+class ClampCfgTests(unittest.TestCase):
+    def test_locks_medium_at_cfg_1(self) -> None:
+        from worker import clamp_cfg
+
+        self.assertEqual(clamp_cfg(1.0), 1.0)
+        self.assertEqual(clamp_cfg(1.4), 1.0)
+        self.assertEqual(clamp_cfg(7.0), 1.0)
+        self.assertEqual(clamp_cfg(0.0), 1.0)
+        self.assertEqual(clamp_cfg(float("nan")), 1.0)
+
+
+class SeamlessLoopTests(unittest.TestCase):
+    def test_overlap_scales_with_duration(self) -> None:
+        from worker import loop_overlap_seconds
+
+        self.assertEqual(loop_overlap_seconds(20), 1.0)
+        self.assertEqual(loop_overlap_seconds(90), 3.0)
+        self.assertEqual(loop_overlap_seconds(8), 0.5)
+
+    def test_prompt_asks_for_matching_ends(self) -> None:
+        from worker import LOOP_PROMPT_CUE, ensure_loop_prompt
+
+        once = ensure_loop_prompt("TrackType: Music, lute theme")
+        self.assertIn("starts and ends the same", once)
+        self.assertTrue(once.endswith(LOOP_PROMPT_CUE) or LOOP_PROMPT_CUE in once)
+        self.assertEqual(ensure_loop_prompt(once), once)
+
+    def test_wrap_is_smoother_than_raw_music(self) -> None:
+        from worker import _make_seamless_loop_frames
+
+        fade = 0.5
+        n = int(4.5 * 44100)
+        raw = [(int(i / (n - 1) * 30000), 0) for i in range(n)]
+        looped = _make_seamless_loop_frames(raw, fade)
+
+        def jump(frames: list[tuple[int, int]]) -> int:
+            return abs(frames[0][0] - frames[-1][0])
+
+        self.assertLess(jump(looped), jump(raw) / 4)
+        self.assertAlmostEqual(len(looped) / 44100, 4.0, delta=0.05)
 
 
 if __name__ == "__main__":

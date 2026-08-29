@@ -85,3 +85,12 @@ Feature: Generate a sound
     And Generates
     Then remaining time is shown
 
+  Scenario: Instrumental seamless loop ends the same way it starts
+    Given the studio is open
+    When the user chooses Instrumental mode
+    Then Generate seamless loop is on
+    When the user writes a lute theme prompt
+    And Generates
+    Then a waveform is shown
+    And preview looping is on
+

@@ -37,6 +37,7 @@ TOTAL_RITES = 8
 DEFAULT_STEPS = 20
 MIN_STEPS = 4
 MAX_STEPS = 100
+DEFAULT_CFG = 1.0
 MIN_SECONDS = 0.5
 # Stable Audio 3 Medium max length (6m 20s).
 MAX_SECONDS = 380.0
@@ -170,6 +171,99 @@ def clamp_seconds(seconds: float) -> float:
     if not math.isfinite(seconds):
         return 8.0
     return max(MIN_SECONDS, min(MAX_SECONDS, seconds))
+
+
+def clamp_cfg(_cfg: float) -> float:
+    # SA3 Medium is post-trained at CFG 1. Extra guidance over-steers.
+    return DEFAULT_CFG
+
+
+LOOP_PROMPT_CUE = (
+    "seamless looping, starts and ends the same, no fade in, no fade out, "
+    "steady texture with no ending"
+)
+LOOP_NEGATIVE_CUE = (
+    "fade in, fade out, abrupt ending, silence at the start, silence at the end"
+)
+
+
+def loop_overlap_seconds(seconds: float) -> float:
+    if not math.isfinite(seconds) or seconds <= 0:
+        return 1.0
+    return max(0.5, min(3.0, seconds * 0.05))
+
+
+def ensure_loop_prompt(prompt: str) -> str:
+    if re.search(r"starts and ends the same", prompt, re.I):
+        return prompt
+    cleaned = prompt.strip().rstrip(",")
+    if not cleaned:
+        return LOOP_PROMPT_CUE
+    return f"{cleaned}, {LOOP_PROMPT_CUE}"
+
+
+def ensure_loop_negative(negative: str) -> str:
+    if re.search(r"fade in", negative, re.I) and re.search(r"fade out", negative, re.I):
+        return negative
+    cleaned = negative.strip().rstrip(",")
+    if not cleaned:
+        return LOOP_NEGATIVE_CUE
+    return f"{cleaned}, {LOOP_NEGATIVE_CUE}"
+
+
+def _flag_true(value) -> bool:
+    if isinstance(value, bool):
+        return value
+    return str(value or "").strip().lower() in {"1", "true", "yes"}
+
+
+def _wants_seamless_loop(msg: dict, music: bool) -> bool:
+    if not music:
+        return False
+    return _flag_true(msg.get("seamless_loop") if "seamless_loop" in msg else msg.get("seamlessLoop"))
+
+
+def _make_seamless_loop_frames(
+    frames: list[tuple[int, int]],
+    fade_sec: float,
+    sample_rate: int = SAMPLE_RATE,
+) -> list[tuple[int, int]]:
+    total = len(frames)
+    fade_wanted = int(round(max(0.5, min(3.0, fade_sec)) * sample_rate))
+    fade = max(2, min(fade_wanted, total // 3))
+    if total < fade * 2 + 1:
+        return frames
+    out: list[tuple[int, int]] = []
+    for i in range(fade):
+        t = 1.0 if fade == 1 else i / (fade - 1)
+        head_gain = math.sin((t * math.pi) / 2)
+        tail_gain = math.cos((t * math.pi) / 2)
+        head_l, head_r = frames[i]
+        tail_l, tail_r = frames[total - fade + i]
+        out.append(
+            (
+                int(round(tail_l * tail_gain + head_l * head_gain)),
+                int(round(tail_r * tail_gain + head_r * head_gain)),
+            )
+        )
+    out.extend(frames[fade : total - fade])
+    return out
+
+
+def _make_seamless_loop_tensor(wav, fade_sec: float, sample_rate: int = SAMPLE_RATE):
+    import torch
+
+    total = int(wav.shape[-1])
+    fade_wanted = int(round(max(0.5, min(3.0, fade_sec)) * sample_rate))
+    fade = max(2, min(fade_wanted, total // 3))
+    if total < fade * 2 + 1:
+        return wav
+    t = torch.linspace(0, 1, fade, dtype=wav.dtype, device=wav.device)
+    head_gain = torch.sin((t * math.pi) / 2).unsqueeze(0)
+    tail_gain = torch.cos((t * math.pi) / 2).unsqueeze(0)
+    mixed = wav[:, -fade:] * tail_gain + wav[:, :fade] * head_gain
+    body = wav[:, fade: total - fade]
+    return torch.cat([mixed, body], dim=-1)
 
 
 def _write_wav(path: Path, frames: list[tuple[int, int]]) -> None:
@@ -590,13 +684,17 @@ def _master_audio_cpu(wav):
     return wav.clamp(-1.0, 1.0)
 
 
-def _save_generated_wav(path: Path, audio, master: bool = True) -> None:
+def _save_generated_wav(
+    path: Path, audio, master: bool = True, loop: bool = False, fade_sec: float = 1.0
+) -> None:
     """Write 16-bit PCM stereo @ 44.1 kHz (the studio parser rejects float WAV)."""
     import torch
 
     wav = _to_stereo_cpu(audio)
     if master:
         wav = _master_audio_cpu(wav)
+    if loop:
+        wav = _make_seamless_loop_tensor(wav, fade_sec)
     pcm = (wav * 32767.0).round().clamp(-32768, 32767).to(torch.int16)
     interleaved = pcm.transpose(0, 1).contiguous().numpy().tobytes()
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -1063,13 +1161,18 @@ def _generate_body(msg: dict) -> None:
     prompt = str(msg.get("prompt", "")).strip()
     seconds = clamp_seconds(_python_float(msg.get("seconds", 8), 8.0))
     seed = int(_python_float(msg.get("seed", -1), -1.0))
-    cfg = _python_float(msg.get("cfg", 1.0), 1.0)
+    cfg = clamp_cfg(_python_float(msg.get("cfg", 1.0), 1.0))
     steps = clamp_steps(int(_python_float(msg.get("steps", DEFAULT_STEPS), float(DEFAULT_STEPS))))
     negative = str(msg.get("negative") or "") or None
     _cancel.clear()
     if seed <= 0:
         seed = random.randint(1, 2_147_483_646)
     music = _wants_music(msg)
+    loop = _wants_seamless_loop(msg, music)
+    fade = loop_overlap_seconds(seconds) if loop else 0.0
+    gen_seconds = clamp_seconds(seconds + fade) if loop else seconds
+    model_prompt = ensure_loop_prompt(prompt) if loop else prompt
+    model_negative = ensure_loop_negative(negative or "") if loop else negative
     mode_str = "music" if music else "sfx"
     cat_str = _sanitize_folder_name(msg.get("category"), fallback="Custom")
     subcat_default = "Level I" if music else "General"
@@ -1104,7 +1207,11 @@ def _generate_body(msg: dict) -> None:
                 ratio=step / steps,
             )
             time.sleep(_mock_step_s())
-        _write_wav(out, _mock_pcm(seconds, seed, music=music))
+        frames = _mock_pcm(gen_seconds, seed, music=music)
+        if loop:
+            frames = _make_seamless_loop_frames(frames, fade)
+        _write_wav(out, frames)
+        actual_duration = len(frames) / SAMPLE_RATE
         instruments = _resolve_instruments(msg, prompt)
         intensity_val = str(msg.get("intensity") or (subcat_str if mode_str == "music" else "")).strip()
         embed_wav_info(
@@ -1123,13 +1230,14 @@ def _generate_body(msg: dict) -> None:
                 "event": "done",
                 "path": str(out),
                 "seed": seed,
-                "duration": seconds,
+                "duration": actual_duration,
                 "steps": steps,
                 "prompt": prompt,
                 "mode": mode_str,
                 "category": cat_str,
                 "subcategory": subcat_str,
                 "instruments": instruments,
+                "seamlessLoop": loop,
             }
         )
         return
@@ -1144,21 +1252,22 @@ def _generate_body(msg: dict) -> None:
         chunked = _model_precision == "fp16"
         gen_context = {
             "cmd": "generate",
-            "prompt": prompt,
-            "seconds": seconds,
+            "prompt": model_prompt,
+            "seconds": gen_seconds,
             "seed": seed,
             "cfg": cfg,
             "steps": steps,
             "precision": _model_precision,
+            "seamlessLoop": loop,
         }
         try:
             audio = model.generate(
-                prompt=prompt,
-                duration=seconds,
+                prompt=model_prompt,
+                duration=gen_seconds,
                 steps=steps,
                 seed=seed,
                 cfg_scale=cfg,
-                negative_prompt=negative,
+                negative_prompt=model_negative,
                 chunked_decode=chunked,
             )
         except Exception as exc:  # noqa: BLE001
@@ -1166,12 +1275,12 @@ def _generate_body(msg: dict) -> None:
                 _log_error("CUDA OOM; retrying with chunked decode", exc, context=gen_context)
                 chunked = True
                 audio = model.generate(
-                    prompt=prompt,
-                    duration=seconds,
+                    prompt=model_prompt,
+                    duration=gen_seconds,
                     steps=steps,
                     seed=seed,
                     cfg_scale=cfg,
-                    negative_prompt=negative,
+                    negative_prompt=model_negative,
                     chunked_decode=True,
                 )
             else:
@@ -1190,7 +1299,7 @@ def _generate_body(msg: dict) -> None:
             ratio=0.95,
         )
         try:
-            _save_generated_wav(out, audio, master=True)
+            _save_generated_wav(out, audio, master=True, loop=loop, fade_sec=fade)
         except Exception as exc:  # noqa: BLE001
             _emit_error(
                 msg_id,
@@ -1225,6 +1334,7 @@ def _generate_body(msg: dict) -> None:
                 "subcategory": subcat_str,
                 "chunkedDecode": chunked,
                 "instruments": instruments,
+                "seamlessLoop": loop,
             }
         )
     finally:

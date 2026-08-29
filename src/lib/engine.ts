@@ -27,6 +27,7 @@ import { buildZipStore } from '@/lib/zipStore'
 import { downloadArrayBuffer, tagWav, wavDurationSeconds } from '@/lib/wav'
 import { clipWavInfo, extractInstruments } from '@/lib/instruments'
 import { clampGenerateSeconds } from '@/lib/duration'
+import { FIXED_CFG } from '@/lib/generateMode'
 import { loadSettings } from '@/lib/setup'
 import {
   inferClipCategory,
@@ -264,7 +265,7 @@ export async function generate(
   request: GenerateRequest,
   handlers: GenerateHandlers = {},
 ): Promise<GenerateResult> {
-  request = { ...request, seconds: clampGenerateSeconds(request.seconds) }
+  request = { ...request, seconds: clampGenerateSeconds(request.seconds), cfg: FIXED_CFG }
   if (!isTauri()) return mockGenerate(request, handlers)
   const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
@@ -280,6 +281,7 @@ export async function generate(
   }
   try {
     const mode = request.mode === 'music' ? 'music' : 'sfx'
+    const loop = mode === 'music' && Boolean(request.seamlessLoop)
     const detectedInstruments = request.instruments?.length
       ? request.instruments
       : extractInstruments(request.prompt)
@@ -317,6 +319,7 @@ export async function generate(
       subcategory: resolvedSubcategory || resolvedIntensity,
       intensity: resolvedIntensity,
       instruments: topInstruments,
+      seamlessLoop: loop,
     })
     throwIfEngineError(result)
     if (!result.path) throw new Error('Engine did not return a WAV path')

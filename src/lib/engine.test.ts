@@ -47,8 +47,17 @@ describe('engine bridge', () => {
     expect(phases).toEqual(Array(20).fill('weaving'))
     expect(result.clip.prompt).toBe('iron gate')
     expect(result.clip.steps).toBe(20)
+    expect(result.clip.cfg).toBe(1)
     expect(result.wav.byteLength).toBeGreaterThan(44)
 
+  })
+
+  it('locks CFG at 1 even when a request asks for more', async () => {
+    const result = await generate(
+      { prompt: 'iron gate', seconds: 1, seed: 9, cfg: 7, negative: '' },
+      { stepDelayMs: 0 },
+    )
+    expect(result.clip.cfg).toBe(1)
   })
 
   it('loadModel finishes without generating a clip', async () => {
@@ -95,5 +104,34 @@ describe('engine bridge', () => {
       { stepDelayMs: 0 },
     )
     expect(result.clip.instruments).toEqual(['cello', 'flute', 'harp'])
+  })
+
+  it('passes a looped music generate through the mock engine', async () => {
+    const { loopWrapJump } = await import('@/lib/seamlessLoop')
+    const raw = await generate(
+      {
+        prompt: 'TrackType: Music, lute',
+        seconds: 4,
+        seed: 1,
+        cfg: 1,
+        negative: '',
+        mode: 'music',
+      },
+      { stepDelayMs: 0 },
+    )
+    const looped = await generate(
+      {
+        prompt: 'TrackType: Music, lute',
+        seconds: 4,
+        seed: 1,
+        cfg: 1,
+        negative: '',
+        mode: 'music',
+        seamlessLoop: true,
+      },
+      { stepDelayMs: 0 },
+    )
+    expect(looped.clip.duration).toBeCloseTo(4, 1)
+    expect(loopWrapJump(looped.wav)).toBeLessThan(loopWrapJump(raw.wav))
   })
 })

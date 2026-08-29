@@ -80,6 +80,23 @@ describe('Studio', () => {
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
   }, 15000)
 
+  it('turns on generate seamless loop for instrumental and loops preview after generate', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+    expect(screen.queryByRole('checkbox', { name: /generate seamless loop/i })).not.toBeInTheDocument()
+    await user.click(screen.getByRole('radio', { name: /instrumental/i }))
+    expect(screen.getByRole('checkbox', { name: /generate seamless loop/i })).toBeChecked()
+    await user.type(screen.getByRole('textbox', { name: 'Prompt' }), ', lute tavern theme')
+    await user.click(screen.getByRole('button', { name: /generate music/i }))
+    expect(
+      await screen.findByRole('button', { name: /generate music/i }, { timeout: 15000 }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /loop trim preview/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  }, 15000)
+
   it('shows a generate time estimate from past clips', () => {
     localStorage.setItem(
       TIMING_STORAGE_KEY,

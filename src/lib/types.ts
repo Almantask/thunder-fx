@@ -72,6 +72,7 @@ export type GenerateRequest = {
   category?: string
   subcategory?: string
   intensity?: string
+  seamlessLoop?: boolean
 }
 
 export type GenerateResult = {

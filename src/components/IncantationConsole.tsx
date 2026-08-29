@@ -6,6 +6,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
@@ -22,7 +23,6 @@ type IncantationConsoleProps = {
   mode: GenerateMode
   prompt: string
   duration: number
-  cfg: number
   steps?: number
   negative: string
   seed: string
@@ -31,7 +31,6 @@ type IncantationConsoleProps = {
   onMode: (mode: GenerateMode) => void
   onPrompt: (value: string) => void
   onDuration: (value: number) => void
-  onCfg: (value: number) => void
   onSteps?: (value: number) => void
   onNegative: (value: string) => void
   onSeed: (value: string) => void
@@ -57,6 +56,8 @@ type IncantationConsoleProps = {
   castEstimateMs?: number
   queueEstimateMs?: number
   clipEstimateMs?: (seconds: number) => number | undefined
+  generateSeamlessLoop?: boolean
+  onGenerateSeamlessLoop?: (value: boolean) => void
 }
 
 export function IncantationConsole({
@@ -64,7 +65,6 @@ export function IncantationConsole({
   mode,
   prompt,
   duration,
-  cfg,
   steps = 20,
   negative,
   seed,
@@ -73,7 +73,6 @@ export function IncantationConsole({
   onMode,
   onPrompt,
   onDuration,
-  onCfg,
   onSteps,
   onNegative,
   onSeed,
@@ -100,6 +99,8 @@ export function IncantationConsole({
   castEstimateMs,
   queueEstimateMs,
   clipEstimateMs,
+  generateSeamlessLoop = false,
+  onGenerateSeamlessLoop,
 }: IncantationConsoleProps) {
   const spec = GENERATE_MODES[mode]
   const ready = canCast(prompt)
@@ -299,6 +300,22 @@ export function IncantationConsole({
               />
             </div>
           </Hint>
+          {mode === 'music' ? (
+            <Hint
+              className="w-full"
+              label="Generate extra overlap and blend the tail into the head so the clip starts and ends the same. Playback loops after generate."
+            >
+              <label className="flex w-full items-center gap-2 text-sm text-cream">
+                <Checkbox
+                  checked={generateSeamlessLoop}
+                  disabled={busy}
+                  onCheckedChange={(value) => onGenerateSeamlessLoop?.(value === true)}
+                  aria-label="Generate seamless loop"
+                />
+                Seamless loop
+              </label>
+            </Hint>
+          ) : null}
           <div className="flex flex-col gap-2">
             {loadingModel ? (
               <Hint label="Cancel putting Medium into VRAM.">
@@ -401,14 +418,14 @@ export function IncantationConsole({
         </div>
       </div>
       <Collapsible open={ritesOpen} onOpenChange={onRitesOpen} className="mt-2 shrink-0">
-        <Hint label="Advanced options: Quality steps, CFG, negative prompt, and seed.">
+        <Hint label="Advanced options: Quality steps, negative prompt, and seed.">
           <CollapsibleTrigger asChild>
             <Button type="button" variant="ghost" size="sm">
               Advanced <ChevronDown className="size-4" />
             </Button>
           </CollapsibleTrigger>
         </Hint>
-        <CollapsibleContent className="mt-2 grid gap-3 md:grid-cols-4">
+        <CollapsibleContent className="mt-2 grid gap-3 md:grid-cols-3">
           <Hint
             className="w-full flex-col"
             label="Diffusion sampling steps. 8 = Draft, 20 = Balanced (Recommended), 32 = High Fidelity."
@@ -429,24 +446,6 @@ export function IncantationConsole({
                 value={[steps]}
                 onValueChange={(v) => onSteps?.(v[0] ?? steps)}
                 aria-label="Quality steps"
-              />
-            </div>
-          </Hint>
-          <Hint
-            className="w-full flex-col"
-            label="Classifier-free guidance. 1 follows the model prior more; 7 sticks harder to the prompt."
-          >
-            <div className="w-full">
-              <Label htmlFor="cfg">CFG {cfg.toFixed(1)}</Label>
-              <Slider
-                id="cfg"
-                className="mt-3"
-                min={1}
-                max={7}
-                step={0.1}
-                value={[cfg]}
-                onValueChange={(v) => onCfg(v[0] ?? cfg)}
-                aria-label="Classifier-free guidance"
               />
             </div>
           </Hint>

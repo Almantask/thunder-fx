@@ -1,13 +1,18 @@
 import { describe, expect, it } from 'vitest'
 import {
+  FIXED_CFG,
   GENERATE_MODES,
+  LOOP_NEGATIVE_CUE,
+  LOOP_PROMPT_CUE,
   applyGenerateMode,
-  applyModeCfg,
   applyModeDuration,
   applyModeNegative,
   applyModeSteps,
+  ensureLoopNegative,
+  ensureLoopPrompt,
   ensureTrackType,
   inferGenerateMode,
+  promptLooksLoopable,
 } from '@/lib/generateMode'
 
 describe('inferGenerateMode', () => {
@@ -74,14 +79,9 @@ describe('applyModeDuration', () => {
   })
 })
 
-describe('applyModeCfg', () => {
-  it('swaps default CFG between modes', () => {
-    expect(applyModeCfg(4.5, 'sfx', 'music')).toBe(3.2)
-    expect(applyModeCfg(3.2, 'music', 'sfx')).toBe(4.5)
-  })
-
-  it('leaves custom CFG alone', () => {
-    expect(applyModeCfg(5.5, 'sfx', 'music')).toBe(5.5)
+describe('FIXED_CFG', () => {
+  it('locks Medium at CFG 1', () => {
+    expect(FIXED_CFG).toBe(1)
   })
 })
 
@@ -93,5 +93,38 @@ describe('applyModeSteps', () => {
 
   it('leaves custom steps alone', () => {
     expect(applyModeSteps(32, 'sfx', 'music')).toBe(32)
+  })
+})
+
+describe('promptLooksLoopable', () => {
+  it('detects looping beds and ignores one-shots', () => {
+    expect(promptLooksLoopable('TrackType: Music, looping tavern lute bed')).toBe(true)
+    expect(promptLooksLoopable('steady texture with no ending, looping-friendly')).toBe(true)
+    expect(promptLooksLoopable('TrackType: Music, heroic brass fanfare')).toBe(false)
+  })
+})
+
+describe('ensureLoopPrompt', () => {
+  it('asks the model to start and end the same way', () => {
+    expect(ensureLoopPrompt('TrackType: Music, lute theme')).toBe(
+      `TrackType: Music, lute theme, ${LOOP_PROMPT_CUE}`,
+    )
+  })
+
+  it('does not duplicate an existing loop cue', () => {
+    const once = ensureLoopPrompt('TrackType: Music, drone, looping-friendly')
+    expect(once).toContain(LOOP_PROMPT_CUE)
+    expect(ensureLoopPrompt(once)).toBe(once)
+  })
+})
+
+describe('ensureLoopNegative', () => {
+  it('avoids fade-in and fade-out on looped beds', () => {
+    expect(ensureLoopNegative(GENERATE_MODES.music.defaultNegative)).toContain(LOOP_NEGATIVE_CUE)
+  })
+
+  it('does not duplicate fade cues', () => {
+    const once = ensureLoopNegative('vocals')
+    expect(ensureLoopNegative(once)).toBe(once)
   })
 })

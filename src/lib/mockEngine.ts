@@ -1,4 +1,5 @@
 import { clampGenerateSeconds } from '@/lib/duration'
+import { loopOverlapSeconds, makeSeamlessLoop } from '@/lib/seamlessLoop'
 import { generateMockMusicWav, generateMockSfxWav, tagWav, wavDurationSeconds } from '@/lib/wav'
 import { clipWavInfo, extractInstruments } from '@/lib/instruments'
 import type {
@@ -104,10 +105,16 @@ export async function mockGenerate(
     request.intensity?.trim() ||
     (mode === 'music' ? inferClipIntensity(clipStub) : undefined)
 
+  const loop = mode === 'music' && Boolean(request.seamlessLoop)
+  const fade = loop ? loopOverlapSeconds(request.seconds) : 0
+  const genSeconds = clampGenerateSeconds(request.seconds + fade)
   let wav =
     mode === 'music'
-      ? generateMockMusicWav(request.seconds, seed)
+      ? generateMockMusicWav(genSeconds, seed)
       : generateMockSfxWav(request.seconds, seed)
+  if (loop) {
+    wav = makeSeamlessLoop(wav, fade)
+  }
   const wavInfo = clipWavInfo(
     request.prompt,
     mode,

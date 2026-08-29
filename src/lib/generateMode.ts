@@ -1,5 +1,8 @@
 import type { GenerateMode } from '@/lib/types'
 
+/** SA3 Medium is post-trained at CFG 1. The UI does not expose a slider. */
+export const FIXED_CFG = 1
+
 export type GenerateModeSpec = {
   id: GenerateMode
   label: string
@@ -8,7 +11,6 @@ export type GenerateModeSpec = {
   generateAria: string
   emptyWaveform: string
   defaultDuration: number
-  defaultCfg: number
   defaultSteps: number
   defaultNegative: string
   negativeHint: string
@@ -25,7 +27,6 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
     generateAria: 'Generate sound',
     emptyWaveform: 'Describe a sound, then click Generate.',
     defaultDuration: 5,
-    defaultCfg: 4.5,
     defaultSteps: 20,
     defaultNegative:
       'speech, music, vocals, singing, melody, instrumental, background music, humming, voiceover, distortion, clipping, muffled, low quality',
@@ -56,7 +57,6 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
     generateAria: 'Generate music',
     emptyWaveform: 'Describe instrumental music or ambience, then click Generate.',
     defaultDuration: 20,
-    defaultCfg: 3.2,
     defaultSteps: 25,
     defaultNegative:
       'vocals, singing, speech, voice, lyrics, spoken words, choir, talking, narration, pop drums, trap beats, harsh distortion, clipping, muffled, low quality',
@@ -131,17 +131,6 @@ export function applyModeDuration(
   return duration
 }
 
-export function applyModeCfg(
-  cfg: number,
-  from: GenerateMode,
-  to: GenerateMode,
-): number {
-  if (cfg === GENERATE_MODES[from].defaultCfg) {
-    return GENERATE_MODES[to].defaultCfg
-  }
-  return cfg
-}
-
 export function applyModeSteps(
   steps: number,
   from: GenerateMode,
@@ -155,4 +144,28 @@ export function applyModeSteps(
 
 export function clipMode(clip: { mode?: GenerateMode; prompt: string }): GenerateMode {
   return isGenerateMode(clip.mode) ? clip.mode : inferGenerateMode(clip.prompt)
+}
+
+export const LOOP_PROMPT_CUE =
+  'seamless looping, starts and ends the same, no fade in, no fade out, steady texture with no ending'
+
+export const LOOP_NEGATIVE_CUE =
+  'fade in, fade out, abrupt ending, silence at the start, silence at the end'
+
+export function promptLooksLoopable(prompt: string): boolean {
+  return /\bloop(?:ing|able)?\b|seamless\s+loop|no ending|looping-friendly/i.test(prompt)
+}
+
+export function ensureLoopPrompt(prompt: string): string {
+  if (/starts and ends the same/i.test(prompt)) return prompt
+  const trimmed = prompt.trim().replace(/,+$/, '')
+  if (!trimmed) return LOOP_PROMPT_CUE
+  return `${trimmed}, ${LOOP_PROMPT_CUE}`
+}
+
+export function ensureLoopNegative(negative: string): string {
+  if (/fade in/i.test(negative) && /fade out/i.test(negative)) return negative
+  const trimmed = negative.trim().replace(/,+$/, '')
+  if (!trimmed) return LOOP_NEGATIVE_CUE
+  return `${trimmed}, ${LOOP_NEGATIVE_CUE}`
 }

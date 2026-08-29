@@ -8,7 +8,6 @@ import type { CatalogEffect } from '@/lib/promptCatalog'
 const props = {
   mode: 'sfx' as const,
   duration: 8,
-  cfg: 1,
   negative: '',
   seed: '-1',
   ritesOpen: false,
@@ -16,7 +15,6 @@ const props = {
   onMode: vi.fn(),
   onPrompt: vi.fn(),
   onDuration: vi.fn(),
-  onCfg: vi.fn(),
   onNegative: vi.fn(),
   onSeed: vi.fn(),
   onRitesOpen: vi.fn(),
@@ -105,6 +103,35 @@ describe('IncantationConsole', () => {
     expect(screen.queryByRole('button', { name: 'TrackType: SFX' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'large stone hall' })).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: 'fast decay' })).not.toBeInTheDocument()
+  })
+
+  it('offers a seamless loop toggle in instrumental mode', async () => {
+    const user = userEvent.setup()
+    const onGenerateSeamlessLoop = vi.fn()
+    render(
+      <TooltipProvider>
+        <IncantationConsole
+          {...props}
+          mode="music"
+          prompt="lute"
+          generateSeamlessLoop
+          onGenerateSeamlessLoop={onGenerateSeamlessLoop}
+        />
+      </TooltipProvider>,
+    )
+    const toggle = screen.getByRole('checkbox', { name: /generate seamless loop/i })
+    expect(toggle).toBeChecked()
+    await user.click(toggle)
+    expect(onGenerateSeamlessLoop).toHaveBeenCalledWith(false)
+  })
+
+  it('hides the generate seamless loop toggle for sound effects', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} mode="sfx" prompt="tavern door" generateSeamlessLoop />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByRole('checkbox', { name: /generate seamless loop/i })).not.toBeInTheDocument()
   })
 
   it('switches generate label in instrumental mode', async () => {
@@ -267,6 +294,17 @@ describe('IncantationConsole', () => {
       </TooltipProvider>,
     )
     expect(screen.getByRole('slider')).toHaveAttribute('aria-valuemax', '380')
+  })
+
+  it('does not offer a CFG slider', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="tavern door" ritesOpen />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByText(/^CFG/)).not.toBeInTheDocument()
+    const sliders = screen.getAllByRole('slider')
+    expect(sliders.some((el) => el.getAttribute('aria-valuemax') === '2')).toBe(false)
   })
 
   it('shows a load-time estimate before Medium is in VRAM', () => {

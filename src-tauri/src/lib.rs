@@ -457,6 +457,7 @@ async fn engine_generate(
     category: Option<String>,
     subcategory: Option<String>,
     intensity: Option<String>,
+    seamless_loop: Option<bool>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
     let payload = serde_json::json!({
@@ -474,7 +475,8 @@ async fn engine_generate(
         "steps": steps.unwrap_or(20),
         "category": category,
         "subcategory": subcategory,
-        "intensity": intensity
+        "intensity": intensity,
+        "seamless_loop": seamless_loop.unwrap_or(false)
     });
     run_blocking(move || send_and_receive(&proc, payload, 600)).await
 }

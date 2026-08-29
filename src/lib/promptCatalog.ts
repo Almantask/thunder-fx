@@ -3,12 +3,15 @@ import { clipMode } from '@/lib/generateMode'
 import { extractInstruments, parseInstrumentKeywords } from '@/lib/instruments'
 import type { Clip } from '@/lib/types'
 
-export type PromptLibrary = 'fx' | 'ambience'
+export type PromptLibrary = 'fx' | 'ambience' | 'music'
 
 export const PROMPT_LIBRARIES: { id: PromptLibrary; label: string }[] = [
   { id: 'fx', label: 'FX' },
   { id: 'ambience', label: 'Ambience' },
+  { id: 'music', label: 'Instrumental' },
 ]
+
+const LIBRARY_ORDER: PromptLibrary[] = ['fx', 'ambience', 'music']
 
 export type CatalogEffect = {
   id: string
@@ -56,7 +59,8 @@ function pathParts(path: string): string[] {
 export function libraryFromPath(path: string): PromptLibrary {
   const parts = pathParts(path)
   const parent = parts[parts.length - 2]?.toLowerCase()
-  if (parent === 'ambience') return 'ambience'
+  if (parent === 'environment') return 'ambience'
+  if (parent === 'ambience' || parent === 'music') return 'music'
   return 'fx'
 }
 
@@ -116,9 +120,9 @@ export function parsePromptMarkdown(path: string, markdown: string): PromptCateg
     const intensityMatch = title.match(/\((I{1,3}|IV|V)\)/i)
     const intensity = intensityMatch ? intensityMatch[1].toUpperCase() : undefined
     const effectSubcategory =
-      library === 'fx' ? inferSubcategoryFromCategoryAndPrompt(name, prompt) : undefined
+      library !== 'music' ? inferSubcategoryFromCategoryAndPrompt(name, prompt) : undefined
     const effectInstruments =
-      library !== 'fx'
+      library === 'music'
         ? Array.from(new Set([...parseInstruments(body), ...extractInstruments(prompt)]))
         : undefined
     effects.push({
@@ -148,7 +152,8 @@ export function catalogFromFiles(files: Record<string, string>): PromptCategory[
     categories.push(category)
   }
   categories.sort((a, b) => {
-    if (a.library !== b.library) return a.library === 'fx' ? -1 : 1
+    const order = LIBRARY_ORDER.indexOf(a.library) - LIBRARY_ORDER.indexOf(b.library)
+    if (order !== 0) return order
     return a.name.localeCompare(b.name)
   })
   return categories
@@ -250,7 +255,8 @@ export function inferClipCategory(clip: Clip, catalog?: PromptCategory[]): strin
   }
   const catList = catalog ?? loadPromptCatalog()
   const mode = clipMode(clip)
-  const targetLibrary: PromptLibrary = mode === 'music' ? 'ambience' : 'fx'
+  const targetLibrary: PromptLibrary =
+    mode === 'music' ? 'music' : mode === 'ambience' ? 'ambience' : 'fx'
   const normPrompt = clip.prompt
     .toLowerCase()
     .replace(/^tracktype:\s*\w+\s*,?\s*/i, '')
@@ -856,7 +862,7 @@ export function getCompletedSubcategories(clips: Clip[], catalog?: PromptCategor
     const subcategoryMap = new Map<string, CatalogEffect[]>()
     for (const effect of cat.effects) {
       let subKey = ''
-      if (cat.library === 'ambience') {
+      if (cat.library === 'music') {
         subKey = effect.intensity || inferEffectIntensity(effect) || 'I'
       } else {
         subKey =

@@ -59,7 +59,9 @@ import {
   applyModeSteps,
   clipMode,
   ensureTrackType,
-  inferGenerateMode,
+  modeFromCatalog,
+  modeSupportsSeamlessLoop,
+  resolveGenerateMode,
   promptLooksLoopable,
 } from '@/lib/generateMode'
 import { loadQueue, loadSettings, saveQueue, saveSettings } from '@/lib/setup'
@@ -83,13 +85,12 @@ type PendingDelete = string | null
 
 export function Studio() {
   const [settings, setSettings] = useState<KeepSettings>(loadSettings)
-  const [mode, setMode] = useState<GenerateMode>(() =>
-    settings.generateMode === 'music' ? 'music' : 'sfx',
-  )
+  const [mode, setMode] = useState<GenerateMode>(() => resolveGenerateMode(settings.generateMode))
   const [prompt, setPrompt] = useState('')
   const [duration, setDuration] = useState(() => {
-    if (mode === 'music' && settings.defaultDuration === GENERATE_MODES.sfx.defaultDuration) {
-      return GENERATE_MODES.music.defaultDuration
+    const initial = resolveGenerateMode(settings.generateMode)
+    if (initial !== 'sfx' && settings.defaultDuration === GENERATE_MODES.sfx.defaultDuration) {
+      return GENERATE_MODES[initial].defaultDuration
     }
     return settings.defaultDuration
   })
@@ -118,8 +119,8 @@ export function Studio() {
   const [bitDepth, setBitDepth] = useState<BitDepthOption>(16)
   const [mono, setMono] = useState(false)
   const [seamlessLoop, setSeamlessLoop] = useState(false)
-  const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(
-    () => settings.generateMode === 'music',
+  const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(() =>
+    modeSupportsSeamlessLoop(resolveGenerateMode(settings.generateMode)),
   )
   const [crossfadeSec, setCrossfadeSec] = useState(DEFAULT_CROSSFADE_SEC)
   const [takes, setTakes] = useState<TakeCandidate[]>([])
@@ -325,13 +326,13 @@ export function Studio() {
   }
 
   function applyCatalogEffect(effect: CatalogEffect) {
-    const next = inferGenerateMode(effect.prompt)
+    const next = modeFromCatalog(effect)
     setMode(next)
     setSettings((s) => ({ ...s, generateMode: next }))
     setPrompt(effect.prompt)
     setDuration(effect.duration)
     setNegative(effect.negative)
-    setGenerateSeamlessLoop(next === 'music')
+    setGenerateSeamlessLoop(modeSupportsSeamlessLoop(next))
   }
 
   async function getClipWav(id: string): Promise<ArrayBuffer | undefined> {
@@ -536,7 +537,7 @@ export function Studio() {
         setTrimStart(0)
         setTrimEnd(finalClip.duration)
         setPlayhead(0)
-        setLooping(Boolean(request.seamlessLoop && request.mode === 'music'))
+        setLooping(Boolean(request.seamlessLoop && modeSupportsSeamlessLoop(request.mode ?? 'sfx')))
       }
       if (!engineMockRef.current) {
         rememberTiming(
@@ -579,7 +580,7 @@ export function Studio() {
         negative: requestNegative,
         mode,
         steps,
-        seamlessLoop: mode === 'music' && generateSeamlessLoop,
+        seamlessLoop: modeSupportsSeamlessLoop(mode) && generateSeamlessLoop,
       },
       { setActiveClip: true },
     )
@@ -605,7 +606,7 @@ export function Studio() {
             negative: requestNegative,
             mode,
             steps,
-            seamlessLoop: mode === 'music' && generateSeamlessLoop,
+            seamlessLoop: modeSupportsSeamlessLoop(mode) && generateSeamlessLoop,
           },
           {
             manageBusy: false,
@@ -639,10 +640,10 @@ export function Studio() {
       while (queueRef.current.length > 0 && !stopQueueRef.current) {
         const item = queueRef.current[0]
         if (!item) break
-        const nextMode = inferGenerateMode(item.prompt)
+        const nextMode = modeFromCatalog(item)
         applyCatalogEffect(item)
         const loop =
-          nextMode === 'music' &&
+          modeSupportsSeamlessLoop(nextMode) &&
           (generateSeamlessLoop || promptLooksLoopable(item.prompt))
         const outcome = await generateOne(
           {
@@ -703,8 +704,11 @@ export function Studio() {
     const clip = clips.find((c) => c.id === selectedId)
     const activePrompt = clip?.prompt ?? prompt
     const isMusic = clip ? clipMode(clip) === 'music' : mode === 'music' || activePrompt.toLowerCase().includes('tracktype: music')
+    const canLoop = clip
+      ? modeSupportsSeamlessLoop(clipMode(clip))
+      : modeSupportsSeamlessLoop(mode)
     let exportBuf = trimWav(wav, trimStart, trimEnd)
-    if (seamlessLoop && isMusic) {
+    if (seamlessLoop && canLoop) {
       exportBuf = makeSeamlessLoop(exportBuf, crossfadeSec)
     }
     if (isMusic) {
@@ -911,12 +915,12 @@ export function Studio() {
             void loadClip(id)
             setTab('generate')
           }}
-          onStarter={(starter) => {
-            const next = inferGenerateMode(starter)
+          onStarter={(starter, starterMode) => {
+            const next = starterMode ?? modeFromCatalog({ prompt: starter })
             if (next !== mode) {
               setNegative((n) => applyModeNegative(n, mode, next))
               setDuration((d) => applyModeDuration(d, mode, next))
-              setGenerateSeamlessLoop(next === 'music')
+              setGenerateSeamlessLoop(modeSupportsSeamlessLoop(next))
               setMode(next)
               setSettings((s) => ({ ...s, generateMode: next }))
             }
@@ -1132,6 +1136,10 @@ export function Studio() {
         onInstrumental={() => {
           setTab('generate')
           selectMode('music')
+        }}
+        onAmbience={() => {
+          setTab('generate')
+          selectMode('ambience')
         }}
         onLoadModel={() => {
           setTab('generate')

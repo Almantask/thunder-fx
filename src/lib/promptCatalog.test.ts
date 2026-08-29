@@ -7,6 +7,7 @@ import {
   inferClipCategory,
   inferClipIntensity,
   inferClipSubcategory,
+  libraryFromPath,
   loadPromptCatalog,
   mergeQueue,
   parsePromptMarkdown,
@@ -51,6 +52,15 @@ close mic, dry studio, fast decay
 TrackType: SFX, steel shortsword leaving a leather scabbard, vintage ribbon mic, analog tape
 `
 
+describe('libraryFromPath', () => {
+  it('maps environment to ambience and the legacy ambience pack to music', () => {
+    expect(libraryFromPath('prompts/environment/weather.md')).toBe('ambience')
+    expect(libraryFromPath('prompts/ambience/forest.md')).toBe('music')
+    expect(libraryFromPath('prompts/music/tavern.md')).toBe('music')
+    expect(libraryFromPath('prompts/fx/combat.md')).toBe('fx')
+  })
+})
+
 describe('parsePromptMarkdown', () => {
   it('reads titled effects with duration, negative, and TrackType', () => {
     const parsed = parsePromptMarkdown('combat.md', combatMd)
@@ -90,7 +100,7 @@ TrackType: Music, looping tavern lute bed, no vocals
     expect(parsed.effects[0]?.duration).toBe(1.5)
   })
 
-  it('extracts instruments for non-fx prompts and leaves fx prompt instruments undefined', () => {
+  it('extracts instruments for music prompts and leaves fx and environment instruments undefined', () => {
     const musicMd = `# Forest
 
 ### Forest ambient (I)
@@ -99,13 +109,28 @@ TrackType: Music, looping tavern lute bed, no vocals
 
 TrackType: Music, peaceful forest glade with Celtic harp, soft cello drone, and tin whistle
 `
-    const parsedAmbience = parsePromptMarkdown('ambience/forest.md', musicMd)
-    expect(parsedAmbience.library).toBe('ambience')
-    expect(parsedAmbience.effects[0]?.instruments).toEqual(['harp', 'cello', 'drone', 'whistle'])
+    const parsedMusic = parsePromptMarkdown('ambience/forest.md', musicMd)
+    expect(parsedMusic.library).toBe('music')
+    expect(parsedMusic.effects[0]?.instruments).toEqual(['harp', 'cello', 'drone', 'whistle'])
 
     const parsedFx = parsePromptMarkdown('fx/combat.md', combatMd)
     expect(parsedFx.library).toBe('fx')
     expect(parsedFx.effects[0]?.instruments).toBeUndefined()
+
+    const parsedBeds = parsePromptMarkdown(
+      'environment/weather.md',
+      `# Weather
+
+### Light rain
+- Duration: 30s
+- Negative: music
+
+TrackType: SFX, light rain on cobblestone, outdoor, steady bed
+`,
+    )
+    expect(parsedBeds.library).toBe('ambience')
+    expect(parsedBeds.id).toBe('ambience:weather')
+    expect(parsedBeds.effects[0]?.instruments).toBeUndefined()
   })
 })
 
@@ -139,8 +164,8 @@ TrackType: SFX, short UI button click, hard plastic, close mic, dry studio, fast
 TrackType: Music, instrumental, orchestral skirmish tension, looping-friendly
 `,
     })
-    expect(catalog.map((c) => c.id)).toEqual(['fx:combat', 'ambience:combat'])
-    expect(catalog.map((c) => c.library)).toEqual(['fx', 'ambience'])
+    expect(catalog.map((c) => c.id)).toEqual(['fx:combat', 'music:combat'])
+    expect(catalog.map((c) => c.library)).toEqual(['fx', 'music'])
   })
 })
 
@@ -164,26 +189,33 @@ describe('loadPromptCatalog', () => {
     expect(combat?.name).toBe('Combat')
     expect(combat?.library).toBe('fx')
     expect(combat?.effects.some((e) => e.title === 'Steel sword draw')).toBe(true)
-    const forest = catalog.find((c) => c.id === 'ambience:forest')
-    expect(forest?.library).toBe('ambience')
+    const forest = catalog.find((c) => c.id === 'music:forest')
+    expect(forest?.library).toBe('music')
     expect(forest?.effects.some((e) => e.prompt.toLowerCase().startsWith('tracktype: music'))).toBe(true)
-    const ambienceDurations = catalog
-      .filter((c) => c.library === 'ambience')
+    const musicDurations = catalog
+      .filter((c) => c.library === 'music')
       .flatMap((c) => c.effects.map((e) => e.duration))
-    expect(new Set(ambienceDurations).size).toBeGreaterThan(8)
-    expect(Math.min(...ambienceDurations)).toBeGreaterThanOrEqual(40)
-    expect(Math.max(...ambienceDurations)).toBe(380)
-    expect(ambienceDurations.every((seconds) => seconds <= 380)).toBe(true)
+    expect(new Set(musicDurations).size).toBeGreaterThan(8)
+    expect(Math.min(...musicDurations)).toBeGreaterThanOrEqual(40)
+    expect(Math.max(...musicDurations)).toBe(380)
+    expect(musicDurations.every((seconds) => seconds <= 380)).toBe(true)
     expect(catalog.every((c) => !c.id.endsWith(':readme'))).toBe(true)
     const total = catalog.reduce((n, c) => n + c.effects.length, 0)
     expect(total).toBeGreaterThan(2000)
     expect(catalog.every((c) => c.effects.every((e) => e.prompt.toLowerCase().includes('tracktype:')))).toBe(
       true,
     )
-    const ambienceEffects = catalog.filter((c) => c.library === 'ambience').flatMap((c) => c.effects)
-    expect(ambienceEffects.some((e) => e.instruments && e.instruments.length > 0)).toBe(true)
+    const musicEffects = catalog.filter((c) => c.library === 'music').flatMap((c) => c.effects)
+    expect(musicEffects.some((e) => e.instruments && e.instruments.length > 0)).toBe(true)
     const fxEffects = catalog.filter((c) => c.library === 'fx').flatMap((c) => c.effects)
     expect(fxEffects.every((e) => e.instruments === undefined)).toBe(true)
+    const weather = catalog.find((c) => c.id === 'ambience:weather')
+    expect(weather?.library).toBe('ambience')
+    expect(weather?.effects.some((e) => /steady bed/i.test(e.prompt))).toBe(true)
+    const ambienceEffects = catalog.filter((c) => c.library === 'ambience').flatMap((c) => c.effects)
+    expect(ambienceEffects.length).toBeGreaterThan(20)
+    expect(ambienceEffects.every((e) => e.instruments === undefined)).toBe(true)
+    expect(ambienceEffects.every((e) => e.prompt.toLowerCase().startsWith('tracktype: sfx'))).toBe(true)
   })
 })
 
@@ -253,6 +285,20 @@ describe('inferClipCategory', () => {
       mode: 'music' as const,
     }
     expect(inferClipCategory(clip)).toBe('Forest')
+  })
+
+  it('infers Weather for an ambience rain bed', () => {
+    const clip = {
+      id: '6',
+      prompt: 'TrackType: SFX, heavy rain on cobblestone and tile roofs, outdoor alley, steady bed',
+      duration: 30,
+      seed: 1,
+      createdAt: new Date().toISOString(),
+      cfg: 1,
+      negative: '',
+      mode: 'ambience' as const,
+    }
+    expect(inferClipCategory(clip)).toBe('Weather')
   })
 
   it('falls back to Custom for unmatched custom prompt', () => {

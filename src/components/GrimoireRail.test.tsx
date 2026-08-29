@@ -50,6 +50,29 @@ describe('GrimoireRail', () => {
     expect(chosen).toMatch(/TrackType: Music/i)
   })
 
+  it('shows ambience starters in ambience mode', async () => {
+    const user = userEvent.setup()
+    let chosen = ''
+    render(
+      <TooltipProvider>
+        <GrimoireRail
+          clips={[]}
+          query=""
+          mode="ambience"
+          onQuery={() => undefined}
+          onSelect={() => undefined}
+          onStarter={(p) => {
+            chosen = p
+          }}
+          onDelete={() => undefined}
+        />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('button', { name: /forest birdsong/i }))
+    expect(chosen).toMatch(/TrackType: SFX/i)
+    expect(chosen).toMatch(/steady bed/i)
+  })
+
   it('lists instruments on a music clip', async () => {
     const user = userEvent.setup()
     render(
@@ -385,7 +408,7 @@ describe('GrimoireRail', () => {
     expect(doorsCategoryBtn).toHaveAttribute('aria-expanded', 'false')
   })
 
-  it('switches between Sounds and Ambiences browsing modes', async () => {
+  it('switches between Sounds, Ambience, and Instrumental browsing modes', async () => {
     const user = userEvent.setup()
     let modeState = 'sfx'
     render(
@@ -412,6 +435,16 @@ describe('GrimoireRail', () => {
               negative: '',
               mode: 'music',
             },
+            {
+              id: '3',
+              prompt: 'TrackType: SFX, heavy rain, steady bed',
+              duration: 30,
+              seed: 3,
+              createdAt: new Date().toISOString(),
+              cfg: 1,
+              negative: '',
+              mode: 'ambience',
+            },
           ]}
           mode="sfx"
           query=""
@@ -426,16 +459,23 @@ describe('GrimoireRail', () => {
       </TooltipProvider>,
     )
     const soundsRadio = screen.getByRole('radio', { name: /sounds/i })
-    const ambiencesRadio = screen.getByRole('radio', { name: /ambiences/i })
+    const ambienceRadio = screen.getByRole('radio', { name: /^ambience/i })
+    const instrumentalRadio = screen.getByRole('radio', { name: /instrumental/i })
     expect(soundsRadio).toHaveAttribute('aria-checked', 'true')
-    expect(ambiencesRadio).toHaveAttribute('aria-checked', 'false')
+    expect(ambienceRadio).toHaveAttribute('aria-checked', 'false')
+    expect(instrumentalRadio).toHaveAttribute('aria-checked', 'false')
     expect(screen.getByRole('button', { name: /doors/i })).toBeInTheDocument()
 
-    // Switch to Ambiences mode
-    await user.click(ambiencesRadio)
+    await user.click(instrumentalRadio)
     expect(modeState).toBe('music')
-    expect(ambiencesRadio).toHaveAttribute('aria-checked', 'true')
+    expect(instrumentalRadio).toHaveAttribute('aria-checked', 'true')
     expect(screen.getByRole('button', { name: /forest/i })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /doors/i })).not.toBeInTheDocument()
+
+    await user.click(ambienceRadio)
+    expect(modeState).toBe('ambience')
+    expect(ambienceRadio).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('button', { name: /rain/i })).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /doors/i })).not.toBeInTheDocument()
   })
 

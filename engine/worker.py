@@ -217,8 +217,8 @@ def _flag_true(value) -> bool:
     return str(value or "").strip().lower() in {"1", "true", "yes"}
 
 
-def _wants_seamless_loop(msg: dict, music: bool) -> bool:
-    if not music:
+def _wants_seamless_loop(msg: dict, loopable: bool) -> bool:
+    if not loopable:
         return False
     return _flag_true(msg.get("seamless_loop") if "seamless_loop" in msg else msg.get("seamlessLoop"))
 
@@ -537,7 +537,12 @@ def _wav_info_fields(
     category: str = "",
     intensity: str = "",
 ) -> dict[str, str]:
-    genre = "Instrumental" if mode == "music" else "Sound Effects"
+    if mode == "music":
+        genre = "Instrumental"
+    elif mode == "ambience":
+        genre = "Ambience"
+    else:
+        genre = "Sound Effects"
     fields = {"ISFT": "Thunder FX", "IGNR": genre}
     title = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).strip()
     if title:
@@ -712,6 +717,17 @@ def _wants_music(msg: dict) -> bool:
         return True
     prompt = str(msg.get("prompt") or "")
     return bool(re.search(r"tracktype:\s*music\b", prompt, re.I))
+
+
+def _mode_str(msg: dict) -> str:
+    mode = str(msg.get("mode") or "").strip().lower()
+    if mode in {"music", "instrumental"}:
+        return "music"
+    if mode in {"ambience", "ambient", "environment"}:
+        return "ambience"
+    if _wants_music(msg):
+        return "music"
+    return "sfx"
 
 
 def _mock_pcm(seconds: float, seed: int, *, music: bool = False) -> list[tuple[int, int]]:
@@ -1168,12 +1184,12 @@ def _generate_body(msg: dict) -> None:
     if seed <= 0:
         seed = random.randint(1, 2_147_483_646)
     music = _wants_music(msg)
-    loop = _wants_seamless_loop(msg, music)
+    mode_str = _mode_str(msg)
+    loop = _wants_seamless_loop(msg, music or mode_str == "ambience")
     fade = loop_overlap_seconds(seconds) if loop else 0.0
     gen_seconds = clamp_seconds(seconds + fade) if loop else seconds
     model_prompt = ensure_loop_prompt(prompt) if loop else prompt
     model_negative = ensure_loop_negative(negative or "") if loop else negative
-    mode_str = "music" if music else "sfx"
     cat_str = _sanitize_folder_name(msg.get("category"), fallback="Custom")
     subcat_default = "Level I" if music else "General"
     subcat_str = _sanitize_folder_name(

@@ -19,6 +19,7 @@ type CommandPaletteProps = {
   onOpenGenerate: () => void
   onOpenSettings: () => void
   onInstrumental?: () => void
+  onAmbience?: () => void
   onLoadModel?: () => void
   onUnloadModel?: () => void
   onPromptCatalog?: () => void
@@ -37,6 +38,7 @@ export function CommandPalette({
   onOpenGenerate,
   onOpenSettings,
   onInstrumental,
+  onAmbience,
   onLoadModel,
   onUnloadModel,
   onPromptCatalog,
@@ -51,7 +53,7 @@ export function CommandPalette({
           title="Type to filter commands. Esc closes. Enter runs the selected command."
         />
         <CommandList>
-          <CommandEmpty title="No command matches that text. Try Library, Generate, Settings, Load model, Unload model, Instrumental, Browse prompts, or Generate sound.">
+          <CommandEmpty title="No command matches that text. Try Library, Generate, Settings, Load model, Unload model, Ambience, Instrumental, Browse prompts, or Generate sound.">
             No matching command.
           </CommandEmpty>
           <CommandItem
@@ -123,6 +125,17 @@ export function CommandPalette({
               }}
             >
               Generate queue
+            </CommandItem>
+          ) : null}
+          {onAmbience ? (
+            <CommandItem
+              title="Switch Generate to looping background beds: TrackType SFX, no music."
+              onSelect={() => {
+                onAmbience()
+                onOpenChange(false)
+              }}
+            >
+              Ambience mode
             </CommandItem>
           ) : null}
           {onInstrumental ? (

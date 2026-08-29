@@ -1,4 +1,4 @@
-export type GenerateMode = 'sfx' | 'music'
+export type GenerateMode = 'sfx' | 'ambience' | 'music'
 
 export type Clip = {
   id: string

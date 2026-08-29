@@ -127,7 +127,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             </Hint>
             <Hint
               className="w-full flex-col"
-              label="Duration pre-filled in the prompt for new sound-effect generations. 0.5–380 seconds (Stable Audio 3 Medium max). Instrumental mode starts at 20s unless you already changed the slider."
+              label="Duration pre-filled for new sound-effect generations. 0.5–380 seconds (Stable Audio 3 Medium max). Ambience starts at 30s and Instrumental at 20s unless you already changed the slider."
             >
               <div className="w-full">
                 <Label htmlFor="default-duration">Default duration (seconds)</Label>

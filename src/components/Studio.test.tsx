@@ -97,6 +97,31 @@ describe('Studio', () => {
     )
   }, 15000)
 
+  it('switches to ambience mode with loop on and a music-avoiding negative', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+    await user.click(screen.getByRole('radio', { name: /^ambience$/i }))
+    expect(screen.getByRole('radio', { name: /^ambience$/i })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    )
+    expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveValue('TrackType: SFX')
+    expect(screen.getByRole('checkbox', { name: /generate seamless loop/i })).toBeChecked()
+    await user.click(screen.getByRole('button', { name: /advanced/i }))
+    expect(screen.getByLabelText(/negative prompt/i)).toHaveValue(
+      GENERATE_MODES.ambience.defaultNegative,
+    )
+    await user.type(screen.getByRole('textbox', { name: 'Prompt' }), ', heavy rain, steady bed')
+    await user.click(screen.getByRole('button', { name: /generate ambience/i }))
+    expect(
+      await screen.findByRole('button', { name: /generate ambience/i }, { timeout: 15000 }),
+    ).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /loop trim preview/i })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    )
+  }, 15000)
+
   it('shows a generate time estimate from past clips', () => {
     localStorage.setItem(
       TIMING_STORAGE_KEY,

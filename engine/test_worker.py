@@ -13,7 +13,11 @@ import unittest
 import wave
 from pathlib import Path
 
-WORKER = Path(__file__).resolve().parent / "worker.py"
+ENGINE_DIR = Path(__file__).resolve().parent
+if str(ENGINE_DIR) not in sys.path:
+    sys.path.insert(0, str(ENGINE_DIR))
+
+WORKER = ENGINE_DIR / "worker.py"
 
 
 class WorkerClient:
@@ -193,6 +197,41 @@ class WorkerTests(unittest.TestCase):
             frames = wav.readframes(wav.getnframes())
         tail = memoryview(frames).cast("h")[-882:]
         self.assertGreater(max(abs(s) for s in tail), 2000)
+
+    def test_generate_ambience_writes_ambience_folder(self) -> None:
+        self.client.send(
+            {
+                "id": "ga",
+                "cmd": "generate",
+                "prompt": "TrackType: SFX, heavy rain on cobblestone, steady bed",
+                "seconds": 0.4,
+                "seed": 7,
+                "cfg": 1,
+                "negative": "",
+                "mode": "ambience",
+                "seamless_loop": True,
+                "category": "Weather",
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "ga":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        path = Path(done["path"])
+        self.assertEqual(done.get("mode"), "ambience")
+        self.assertEqual(done.get("instruments"), [])
+        self.assertTrue(any(part.lower() == "ambience" for part in path.parts))
+        from worker import read_wav_info
+
+        info = read_wav_info(path)
+        self.assertEqual(info.get("IGNR"), "Ambience")
+        self.assertNotIn("IKEY", info)
 
     def test_generate_music_embeds_instrument_info(self) -> None:
         self.client.send(

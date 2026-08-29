@@ -1,6 +1,6 @@
-# Ambience prompts (Stable Audio 3)
+# Instrumental prompts (Stable Audio 3)
 
-Instrumental D&D beds adapted from the Sunder Suno style library for **Stable Audio 3 Medium** in Thunder FX. Open **Browse prompts → Ambience**, or paste a cue into Generate on Instrumental.
+Instrumental D&D beds adapted from the Sunder Suno style library for **Stable Audio 3 Medium** in Thunder FX. Open **Browse prompts → Instrumental**, or paste a cue into Generate on Instrumental.
 
 Each file is one category. Most categories have three intensity levels (I–III), thirty cues each (90 cues per file). A few theme/recap files are a single set of thirty cues (6,960 cues total across 84 categories).
 
@@ -58,5 +58,5 @@ Drop `vocals` / `choir` when the cue asks for wordless choir. Drop `drums` / `pe
 ## Workflow
 
 1. Switch Generate to **Instrumental**.
-2. **Browse prompts → Ambience**, pick a category, **Use** or add to the queue.
+2. **Browse prompts → Instrumental**, pick a category, **Use** or add to the queue.
 3. Listen, then change one axis: lead instrument, tempo, or room (glade → cavern, hall → camp).

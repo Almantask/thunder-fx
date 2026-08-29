@@ -106,6 +106,36 @@ describe('engine bridge', () => {
     expect(result.clip.instruments).toEqual(['cello', 'flute', 'harp'])
   })
 
+  it('passes a looped ambience generate through the mock engine', async () => {
+    const raw = await generate(
+      {
+        prompt: 'TrackType: SFX, heavy rain, steady bed',
+        seconds: 4,
+        seed: 1,
+        cfg: 1,
+        negative: '',
+        mode: 'ambience',
+      },
+      { stepDelayMs: 0 },
+    )
+    const looped = await generate(
+      {
+        prompt: 'TrackType: SFX, heavy rain, steady bed',
+        seconds: 4,
+        seed: 1,
+        cfg: 1,
+        negative: '',
+        mode: 'ambience',
+        seamlessLoop: true,
+      },
+      { stepDelayMs: 0 },
+    )
+    expect(looped.clip.mode).toBe('ambience')
+    expect(looped.clip.instruments).toBeUndefined()
+    expect(looped.clip.duration).toBeCloseTo(4, 1)
+    expect(new Uint8Array(looped.wav).slice(44, 200)).not.toEqual(new Uint8Array(raw.wav).slice(44, 200))
+  })
+
   it('passes a looped music generate through the mock engine', async () => {
     const { loopWrapJump } = await import('@/lib/seamlessLoop')
     const raw = await generate(

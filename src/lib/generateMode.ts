@@ -49,13 +49,43 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
       'TrackType: SFX, pouch of gold coins dropped on oak table, bright silver clatter, isolated one-shot',
     ],
   },
+  ambience: {
+    id: 'ambience',
+    label: 'Ambience',
+    prefix: 'TrackType: SFX',
+    placeholder: 'Describe a background bed — rain on stone, market crowd, forge, cavern drips',
+    generateAria: 'Generate ambience',
+    emptyWaveform: 'Describe a background bed, then click Generate.',
+    defaultDuration: 30,
+    defaultSteps: 20,
+    defaultNegative:
+      'music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality',
+    negativeHint:
+      'Sounds to avoid, such as music or melody. Add speech, voices for quiet nature beds.',
+    chips: [
+      'TrackType: SFX',
+      'steady bed',
+      'field recording',
+      'looping-friendly',
+      'distant layers',
+      'no music',
+    ],
+    starters: [
+      'TrackType: SFX, temperate forest birdsong, distant woodpecker, leaves in light wind, outdoor, steady bed, looping-friendly',
+      'TrackType: SFX, busy open-air market crowd, stall chatter and footsteps on stone, no music, outdoor square, steady bed',
+      'TrackType: SFX, blacksmith forge bed, hammer on anvil, bellows, crackling coals, indoor smithy, looping-friendly',
+      'TrackType: SFX, limestone cavern ceiling drips into a pool, large cave reverb, occasional drop, steady bed',
+      'TrackType: SFX, heavy rain on cobblestone and tile roofs, outdoor alley, steady bed, looping-friendly',
+      'TrackType: SFX, wooden harbor at night, water lapping, rope creak, distant gulls, outdoor, steady bed',
+    ],
+  },
   music: {
     id: 'music',
     label: 'Instrumental',
     prefix: 'TrackType: Music',
-    placeholder: 'Describe instrumental music or ambient soundscape — lute theme, dungeon drone, orchestral bed',
+    placeholder: 'Describe instrumental music — lute theme, dungeon drone, orchestral bed',
     generateAria: 'Generate music',
-    emptyWaveform: 'Describe instrumental music or ambience, then click Generate.',
+    emptyWaveform: 'Describe instrumental music, then click Generate.',
     defaultDuration: 20,
     defaultSteps: 25,
     defaultNegative:
@@ -73,9 +103,9 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
     ],
     starters: [
       'TrackType: Music, instrumental tavern lute theme, warm and looping-friendly, rich acoustic timbre, no vocals',
-      'TrackType: Music, atmospheric dungeon drone with bowed strings and dark reverb pad, loopable ambience, no vocals',
+      'TrackType: Music, atmospheric dungeon drone with bowed strings and dark reverb pad, looping-friendly, no vocals',
       'TrackType: Music, heroic orchestral brass fanfare, short melodic motif, timpani, no vocals',
-      'TrackType: Music, sparse piano and cello melody, melancholy forest ambience, slow tempo, no vocals',
+      'TrackType: Music, sparse piano and cello melody, melancholy forest bed, slow tempo, no vocals',
       'TrackType: Music, quiet campfire acoustic guitar, fingerpicked folk melody, warm reverb, no vocals',
       'TrackType: Music, enchanted ethereal synth and flute bed, shimmering soundscape, seamless loop, no vocals',
     ],
@@ -86,11 +116,26 @@ const TRACK_TYPE = /^tracktype:\s*\w+/i
 const TRACK_TYPE_ONLY = /^tracktype:\s*\w+\s*$/i
 
 export function isGenerateMode(value: unknown): value is GenerateMode {
-  return value === 'sfx' || value === 'music'
+  return value === 'sfx' || value === 'ambience' || value === 'music'
+}
+
+export function resolveGenerateMode(value: unknown): GenerateMode {
+  return isGenerateMode(value) ? value : 'sfx'
 }
 
 export function inferGenerateMode(prompt: string): GenerateMode {
   return /tracktype:\s*music\b/i.test(prompt) ? 'music' : 'sfx'
+}
+
+export function modeSupportsSeamlessLoop(mode: GenerateMode): boolean {
+  return mode === 'music' || mode === 'ambience'
+}
+
+export function modeFromCatalog(effect: { library?: string; prompt: string }): GenerateMode {
+  if (effect.library === 'music') return 'music'
+  if (effect.library === 'ambience') return 'ambience'
+  if (effect.library === 'fx') return 'sfx'
+  return inferGenerateMode(effect.prompt)
 }
 
 export function applyGenerateMode(prompt: string, mode: GenerateMode): string {

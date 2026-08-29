@@ -1,3 +1,5 @@
+import type { GenerateMode } from '@/lib/types'
+
 export type WavInfo = {
   title?: string
   comment?: string
@@ -293,7 +295,7 @@ export function musicWavInfo(
 
 export function clipWavInfo(
   prompt: string,
-  mode: 'music' | 'sfx' = 'sfx',
+  mode: GenerateMode = 'sfx',
   instruments = extractInstruments(prompt),
   category?: string,
   intensity?: string,
@@ -308,6 +310,17 @@ export function clipWavInfo(
       category: category?.trim() || undefined,
       intensity: intensity?.trim() || undefined,
       comment: buildMusicComment(instruments, category, intensity),
+    }
+  }
+  if (mode === 'ambience') {
+    return {
+      instruments: [],
+      software: 'Thunder FX',
+      genre: 'Ambience',
+      title: title || 'Ambience',
+      category: category?.trim() || undefined,
+      intensity: undefined,
+      comment: prompt.trim() || undefined,
     }
   }
   return {

@@ -10,6 +10,11 @@ Feature: Library
     And Instrumental mode is selected
     Then three instrumental starter prompts are shown
 
+  Scenario: Empty library in ambience mode offers background-bed starters
+    Given the library has no clips
+    And Ambience mode is selected
+    Then three ambience starter prompts are shown
+
   Scenario: Library cards show a prompt name
     Given the library has a tavern door clip
     Then the library lists Tavern door
@@ -33,10 +38,12 @@ Feature: Library
     When the user expands a category
     Then the clips within that category are revealed
 
-  Scenario: Switching between browsing sounds and browsing ambiences
-    Given the library has sound effects and ambience clips
-    When the user switches browsing mode to Ambiences
+  Scenario: Switching between browsing sounds, ambience, and instrumental
+    Given the library has sound effects, ambience, and music clips
+    When the user switches browsing mode to Ambience
     Then only ambience clips and categories are shown
+    When the user switches browsing mode to Instrumental
+    Then only music clips and categories are shown
     When the user switches browsing mode to Sounds
     Then only sound effect clips and categories are shown
 

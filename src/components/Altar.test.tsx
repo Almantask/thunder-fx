@@ -72,6 +72,16 @@ describe('Altar', () => {
     expect(screen.queryByRole('button', { name: /preview seamless loop/i })).not.toBeInTheDocument()
   })
 
+  it('shows a seamless loop crossfade when the toggle is on in ambience mode', () => {
+    render(
+      <TooltipProvider>
+        <Altar {...props} mode="ambience" seamlessLoop />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('checkbox', { name: /seamless loop/i })).toBeChecked()
+    expect(screen.getByLabelText(/crossfade seconds/i)).toBeInTheDocument()
+  })
+
   it('shows a seamless loop crossfade when the toggle is on in music mode', async () => {
     const user = userEvent.setup()
     const onPreviewLoop = vi.fn()

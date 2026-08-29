@@ -20,13 +20,17 @@ function sanitizePart(value: string): string {
 }
 
 function typeToken(clip: PackClip): string {
-  return clip.mode === 'music' ? 'MUS' : 'SFX'
+  if (clip.mode === 'music') return 'MUS'
+  if (clip.mode === 'ambience') return 'AMB'
+  return 'SFX'
 }
 
 function categoryToken(clip: PackClip): string {
   const cat = clip.category?.trim()
   if (!cat || cat.toLowerCase() === 'custom' || cat.toLowerCase() === 'general') {
-    return clip.mode === 'music' ? 'Ambience' : 'General'
+    if (clip.mode === 'music') return 'Instrumental'
+    if (clip.mode === 'ambience') return 'Ambience'
+    return 'General'
   }
   return cat
 }

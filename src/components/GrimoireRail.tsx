@@ -44,7 +44,7 @@ type GrimoireRailProps = {
   loading?: boolean
   onQuery: (value: string) => void
   onSelect: (id: string) => void
-  onStarter: (prompt: string) => void
+  onStarter: (prompt: string, mode?: GenerateMode) => void
   onDelete: (id: string) => void
   onModeChange?: (mode: GenerateMode) => void
   onExportPack?: (request: PackExportRequest) => void
@@ -66,6 +66,28 @@ type CategoryGroup = {
   clips: Clip[]
   intensityGroups?: IntensityGroup[]
   subcategoryGroups?: SubcategoryGroup[]
+}
+
+const LIBRARY_TABS: { id: GenerateMode; label: string; hint: string; search: string }[] = [
+  { id: 'sfx', label: 'Sounds', hint: 'Browse sound effect clips.', search: 'Search sounds…' },
+  {
+    id: 'ambience',
+    label: 'Ambience',
+    hint: 'Browse looping background beds.',
+    search: 'Search ambience…',
+  },
+  {
+    id: 'music',
+    label: 'Instrumental',
+    hint: 'Browse instrumental music clips.',
+    search: 'Search instrumental…',
+  },
+]
+
+function clipNoun(mode: GenerateMode, count: number): string {
+  if (mode === 'music') return count === 1 ? 'instrumental' : 'instrumentals'
+  if (mode === 'ambience') return count === 1 ? 'ambience' : 'ambiences'
+  return count === 1 ? 'sound' : 'sounds'
 }
 
 export function GrimoireRail({
@@ -110,7 +132,10 @@ export function GrimoireRail({
   }
 
   const sfxCount = useMemo(() => clips.filter((c) => clipMode(c) === 'sfx').length, [clips])
+  const ambienceCount = useMemo(() => clips.filter((c) => clipMode(c) === 'ambience').length, [clips])
   const musicCount = useMemo(() => clips.filter((c) => clipMode(c) === 'music').length, [clips])
+  const tabCount = (id: GenerateMode) =>
+    id === 'sfx' ? sfxCount : id === 'ambience' ? ambienceCount : musicCount
 
   const modeClips = useMemo(
     () => clips.filter((c) => clipMode(c) === activeMode),
@@ -245,7 +270,7 @@ export function GrimoireRail({
       if (activeMode === 'music' && g.intensityGroups) {
         return g.intensityGroups.every((ig) => openIntensities.has(`${g.name}::${ig.name}`))
       }
-      if (activeMode === 'sfx' && g.subcategoryGroups) {
+      if (activeMode !== 'music' && g.subcategoryGroups) {
         return g.subcategoryGroups.every((sg) => openSubcategories.has(`${g.name}::${sg.name}`))
       }
       return true
@@ -614,38 +639,27 @@ export function GrimoireRail({
               aria-label="Library browsing mode"
               className="inline-flex h-8 items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
             >
-              <Hint label="Browse sound effect clips.">
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={activeMode === 'sfx'}
-                  className={cn(
-                    'inline-flex h-7 items-center justify-center gap-1.5 rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
-                    activeMode === 'sfx' &&
-                      'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] font-medium text-cream',
-                  )}
-                  onClick={() => handleModeChange('sfx')}
-                >
-                  <span>Sounds</span>
-                  <span className="font-mono text-[10px] opacity-75">({sfxCount})</span>
-                </button>
-              </Hint>
-              <Hint label="Browse ambient music clips.">
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={activeMode === 'music'}
-                  className={cn(
-                    'inline-flex h-7 items-center justify-center gap-1.5 rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
-                    activeMode === 'music' &&
-                      'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] font-medium text-cream',
-                  )}
-                  onClick={() => handleModeChange('music')}
-                >
-                  <span>Ambiences</span>
-                  <span className="font-mono text-[10px] opacity-75">({musicCount})</span>
-                </button>
-              </Hint>
+              {LIBRARY_TABS.map((tab) => {
+                const selected = activeMode === tab.id
+                return (
+                  <Hint key={tab.id} label={tab.hint}>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      className={cn(
+                        'inline-flex h-7 items-center justify-center gap-1.5 rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
+                        selected &&
+                          'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] font-medium text-cream',
+                      )}
+                      onClick={() => handleModeChange(tab.id)}
+                    >
+                      <span>{tab.label}</span>
+                      <span className="font-mono text-[10px] opacity-75">({tabCount(tab.id)})</span>
+                    </button>
+                  </Hint>
+                )
+              })}
             </div>
           </div>
           <div className="mt-3 flex items-center gap-3">
@@ -654,15 +668,15 @@ export function GrimoireRail({
                 className="w-full"
                 value={query}
                 onChange={(e) => onQuery(e.target.value)}
-                placeholder={activeMode === 'music' ? 'Search ambiences…' : 'Search sounds…'}
+                placeholder={LIBRARY_TABS.find((tab) => tab.id === activeMode)?.search}
                 aria-label="Search library"
               />
             </Hint>
             <Hint
               label={
                 isAnyPlaying
-                  ? `Pause playing visible ${activeMode === 'music' ? 'ambiences' : 'sounds'}.`
-                  : `Play visible ${activeMode === 'music' ? 'ambiences' : 'sounds'} in sequence.`
+                  ? `Pause playing visible ${clipNoun(activeMode, 2)}.`
+                  : `Play visible ${clipNoun(activeMode, 2)} in sequence.`
               }
             >
               <Button
@@ -729,27 +743,27 @@ export function GrimoireRail({
         <div className="mx-auto w-full max-w-4xl px-6 pb-8">
           {modeClips.length === 0 && !loading ? (
             <div className="space-y-4">
-              {(activeMode === 'sfx' ? musicCount > 0 : sfxCount > 0) && (
-                <div className="flex flex-wrap items-center justify-between gap-3 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2/80 p-3.5">
+              {LIBRARY_TABS.filter((tab) => tab.id !== activeMode && tabCount(tab.id) > 0).map((tab) => (
+                <div
+                  key={tab.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2/80 p-3.5"
+                >
                   <p className="text-sm text-cream">
-                    No {activeMode === 'sfx' ? 'sounds' : 'ambiences'} in this tab, but you have{' '}
-                    <span className="font-semibold text-gold">
-                      {activeMode === 'sfx' ? musicCount : sfxCount}
-                    </span>{' '}
-                    {activeMode === 'sfx' ? (musicCount === 1 ? 'ambience' : 'ambiences') : (sfxCount === 1 ? 'sound' : 'sounds')} in{' '}
-                    {activeMode === 'sfx' ? 'Ambiences' : 'Sounds'}.
+                    No {clipNoun(activeMode, 2)} in this tab, but you have{' '}
+                    <span className="font-semibold text-gold">{tabCount(tab.id)}</span>{' '}
+                    {clipNoun(tab.id, tabCount(tab.id))} in {tab.label}.
                   </p>
                   <Button
                     type="button"
                     variant="outline"
                     size="sm"
                     className="shrink-0"
-                    onClick={() => handleModeChange(activeMode === 'sfx' ? 'music' : 'sfx')}
+                    onClick={() => handleModeChange(tab.id)}
                   >
-                    View {activeMode === 'sfx' ? 'Ambiences' : 'Sounds'}
+                    View {tab.label}
                   </Button>
                 </div>
-              )}
+              ))}
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <Hint className="sm:col-span-2 lg:col-span-3" label="No clips match yet. Starters fill the prompt and open Generate.">
                   <p className="text-sm text-muted">The library is empty. Try a starter prompt.</p>
@@ -759,7 +773,7 @@ export function GrimoireRail({
                     <button
                       type="button"
                       className="h-full w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_30%,transparent)] p-3 text-left text-sm text-cream hover:bg-leather-2"
-                      onClick={() => onStarter(prompt)}
+                      onClick={() => onStarter(prompt, activeMode)}
                     >
                       {prompt}
                     </button>
@@ -824,7 +838,7 @@ export function GrimoireRail({
                             </span>
                           </div>
                           <span className="font-mono text-xs text-muted">
-                            {group.clips.length} {group.clips.length === 1 ? (activeMode === 'music' ? 'ambience' : 'sound') : (activeMode === 'music' ? 'ambiences' : 'sounds')}
+                            {group.clips.length} {clipNoun(activeMode, group.clips.length)}
                           </span>
                         </button>
                       </CollapsibleTrigger>
@@ -859,7 +873,7 @@ export function GrimoireRail({
                                       </span>
                                     </div>
                                     <span className="font-mono text-[11px] text-muted">
-                                      {intGroup.clips.length} {intGroup.clips.length === 1 ? 'ambience' : 'ambiences'}
+                                      {clipNoun('music', intGroup.clips.length)}
                                     </span>
                                   </button>
                                 </CollapsibleTrigger>

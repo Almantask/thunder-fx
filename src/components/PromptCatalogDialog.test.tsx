@@ -123,7 +123,7 @@ describe('PromptCatalogDialog', () => {
     expect(onUse).not.toHaveBeenCalled()
   })
 
-  it('filters the catalog between FX and Ambience', async () => {
+  it('filters the catalog between FX and Instrumental', async () => {
     const user = userEvent.setup()
     const mixed = catalogFromFiles({
       '/prompts/fx/combat.md': `# Combat
@@ -145,9 +145,9 @@ TrackType: Music, instrumental, forest ambient, looping-friendly
     })
     renderDialog({ catalog: mixed })
     expect(screen.getByRole('radio', { name: 'FX' })).toHaveAttribute('aria-checked', 'true')
-    expect(screen.getByRole('radio', { name: 'Ambience' })).toHaveAttribute('aria-checked', 'false')
+    expect(screen.getByRole('radio', { name: 'Instrumental' })).toHaveAttribute('aria-checked', 'false')
     expect(screen.getByRole('checkbox', { name: /steel sword draw/i })).toBeInTheDocument()
-    await user.click(screen.getByRole('radio', { name: 'Ambience' }))
+    await user.click(screen.getByRole('radio', { name: 'Instrumental' }))
     const level1Btn = screen.getByRole('button', { name: /level i/i })
     expect(level1Btn).toHaveAttribute('aria-expanded', 'false')
     await user.click(level1Btn)
@@ -155,7 +155,33 @@ TrackType: Music, instrumental, forest ambient, looping-friendly
     expect(screen.queryByRole('checkbox', { name: /steel sword draw/i })).not.toBeInTheDocument()
   })
 
-  it('opens collapsed 3 intensity levels when selecting an Ambience category', async () => {
+  it('filters the catalog to Ambience environment beds', async () => {
+    const user = userEvent.setup()
+    const mixed = catalogFromFiles({
+      '/prompts/fx/combat.md': `# Combat
+
+### Steel sword draw
+- Duration: 1.5s
+- Negative: music, speech, singing
+
+TrackType: SFX, steel shortsword leaving a leather scabbard, close mic, dry studio, fast decay
+`,
+      '/prompts/environment/weather.md': `# Weather
+
+### Heavy rain on stone
+- Duration: 30s
+- Negative: music, melody
+
+TrackType: SFX, heavy rain on cobblestone, outdoor alley, steady bed
+`,
+    })
+    renderDialog({ catalog: mixed })
+    await user.click(screen.getByRole('radio', { name: 'Ambience' }))
+    expect(screen.getByRole('checkbox', { name: /heavy rain on stone/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /steel sword draw/i })).not.toBeInTheDocument()
+  })
+
+  it('opens collapsed 3 intensity levels when selecting an Instrumental category', async () => {
     const user = userEvent.setup()
     const ambienceCatalog = catalogFromFiles({
       '/prompts/ambience/forest.md': `# Forest
@@ -180,7 +206,7 @@ TrackType: Music, instrumental, epic forest tempest orchestra
 `,
     })
     renderDialog({ catalog: ambienceCatalog })
-    expect(screen.getByRole('radio', { name: 'Ambience' })).toHaveAttribute('aria-checked', 'true')
+    expect(screen.getByRole('radio', { name: 'Instrumental' })).toHaveAttribute('aria-checked', 'true')
 
     const level1Btn = screen.getByRole('button', { name: /level i — quiet looping bed/i })
     const level2Btn = screen.getByRole('button', { name: /level ii — mood in motion/i })
@@ -260,7 +286,7 @@ TrackType: Music, instrumental, epic forest tempest orchestra
     expect(screen.queryByRole('checkbox', { name: /soft button click/i })).not.toBeInTheDocument()
   })
 
-  it('searches across all Ambience categories ignoring the selected category', async () => {
+  it('searches across all Instrumental categories ignoring the selected category', async () => {
     const user = userEvent.setup()
     const mixed = catalogFromFiles({
       '/prompts/ambience/forest.md': `# Forest
@@ -277,7 +303,7 @@ TrackType: Music, instrumental, tavern lute
 `,
     })
     renderDialog({ catalog: mixed })
-    await user.click(screen.getByRole('radio', { name: 'Ambience' }))
+    await user.click(screen.getByRole('radio', { name: 'Instrumental' }))
     // Select Tavern category
     await user.click(screen.getByRole('option', { name: /tavern/i }))
     // Search for 'forest'

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { extractBpm, extractInstruments, musicWavInfo } from '@/lib/instruments'
+import { clipWavInfo, extractBpm, extractInstruments, musicWavInfo } from '@/lib/instruments'
 
 describe('extractInstruments', () => {
   it('finds named instruments in a music prompt', () => {
@@ -59,6 +59,18 @@ describe('extractBpm', () => {
   it('returns undefined when no BPM is present', () => {
     expect(extractBpm('TrackType: SFX, steel sword draw')).toBeUndefined()
     expect(extractBpm('TrackType: Music, lute tavern theme')).toBeUndefined()
+  })
+})
+
+describe('clipWavInfo', () => {
+  it('tags ambience beds without instruments', () => {
+    const info = clipWavInfo(
+      'TrackType: SFX, heavy rain on cobblestone, steady bed',
+      'ambience',
+    )
+    expect(info.genre).toBe('Ambience')
+    expect(info.instruments).toEqual([])
+    expect(info.title).toMatch(/heavy rain/i)
   })
 })
 

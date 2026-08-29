@@ -90,7 +90,10 @@ export function promptName(prompt: string, clip?: ClipLike): string {
       return `${clip.category.trim()} Sound`
     }
     if (clip?.mode === 'music') {
-      return 'Ambient Track'
+      return 'Instrumental'
+    }
+    if (clip?.mode === 'ambience') {
+      return 'Ambience'
     }
     return 'Sound Effect'
   }
@@ -124,7 +127,7 @@ export function promptName(prompt: string, clip?: ClipLike): string {
     if (clip?.category && !isGenericCategory(clip.category)) {
       return `${clip.category.trim()} Sound`
     }
-    return clip?.mode === 'music' ? 'Ambient Track' : 'Sound Effect'
+    return clip?.mode === 'music' ? 'Instrumental' : clip?.mode === 'ambience' ? 'Ambience' : 'Sound Effect'
   }
 
   return target.charAt(0).toUpperCase() + target.slice(1)

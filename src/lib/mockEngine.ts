@@ -1,6 +1,7 @@
 import { clampGenerateSeconds } from '@/lib/duration'
 import { loopOverlapSeconds, makeSeamlessLoop } from '@/lib/seamlessLoop'
 import { generateMockMusicWav, generateMockSfxWav, tagWav, wavDurationSeconds } from '@/lib/wav'
+import { modeSupportsSeamlessLoop, resolveGenerateMode } from '@/lib/generateMode'
 import { clipWavInfo, extractInstruments } from '@/lib/instruments'
 import type {
   Clip,
@@ -80,10 +81,13 @@ export async function mockGenerate(
       await new Promise((resolve) => setTimeout(resolve, delay))
     }
   }
-  const mode = request.mode === 'music' ? 'music' : 'sfx'
-  const detectedInstruments = request.instruments?.length
-    ? request.instruments
-    : extractInstruments(request.prompt)
+  const mode = resolveGenerateMode(request.mode)
+  const detectedInstruments =
+    mode === 'music'
+      ? request.instruments?.length
+        ? request.instruments
+        : extractInstruments(request.prompt)
+      : []
   const topInstruments = detectedInstruments.slice(0, 3)
 
   const clipStub: Clip = {
@@ -100,18 +104,18 @@ export async function mockGenerate(
   const resolvedCategory = request.category?.trim() || inferClipCategory(clipStub)
   const resolvedSubcategory =
     request.subcategory?.trim() ||
-    (mode === 'sfx' ? inferClipSubcategory(clipStub) : undefined)
+    (mode !== 'music' ? inferClipSubcategory(clipStub) : undefined)
   const resolvedIntensity =
     request.intensity?.trim() ||
     (mode === 'music' ? inferClipIntensity(clipStub) : undefined)
 
-  const loop = mode === 'music' && Boolean(request.seamlessLoop)
+  const loop = modeSupportsSeamlessLoop(mode) && Boolean(request.seamlessLoop)
   const fade = loop ? loopOverlapSeconds(request.seconds) : 0
   const genSeconds = clampGenerateSeconds(request.seconds + fade)
   let wav =
     mode === 'music'
       ? generateMockMusicWav(genSeconds, seed)
-      : generateMockSfxWav(request.seconds, seed)
+      : generateMockSfxWav(genSeconds, seed)
   if (loop) {
     wav = makeSeamlessLoop(wav, fade)
   }

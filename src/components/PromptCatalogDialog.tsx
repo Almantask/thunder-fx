@@ -66,7 +66,7 @@ export function PromptCatalogDialog({
   const isSearching = query.trim().length > 0
 
   const availableInstruments = useMemo(() => {
-    if (library === 'fx') return []
+    if (library !== 'music') return []
     const effects = isSearching
       ? libraryCategories.flatMap((c) => c.effects)
       : category?.effects ?? []
@@ -88,7 +88,7 @@ export function PromptCatalogDialog({
   }, [category, library, isSearching, libraryCategories])
 
   const subcategories = useMemo(() => {
-    if (library !== 'fx') return []
+    if (library === 'music') return []
     const effects = isSearching
       ? libraryCategories.flatMap((c) => c.effects)
       : category?.effects ?? []
@@ -124,7 +124,7 @@ export function PromptCatalogDialog({
         return sub === selectedSubcategory
       })
     }
-    if (library !== 'fx' && selectedInstruments.size > 0) {
+    if (library === 'music' && selectedInstruments.size > 0) {
       effects = effects.filter((e) => {
         if (!e.instruments || e.instruments.length === 0) return false
         if (instrumentMatchMode === 'all') {
@@ -179,7 +179,7 @@ export function PromptCatalogDialog({
       return groups
     }
 
-    if (library === 'fx') {
+    if (library !== 'music') {
       if (selectedSubcategory) {
         return [{ name: '', effects: visible }]
       }
@@ -204,7 +204,7 @@ export function PromptCatalogDialog({
       return groups
     }
 
-    if (library === 'ambience') {
+    if (library === 'music') {
       const map = new Map<string, CatalogEffect[]>()
       for (const effect of visible) {
         const intensity = inferEffectIntensity(effect)
@@ -434,12 +434,12 @@ export function PromptCatalogDialog({
           label="Shipped starting prompts from the prompts folder. Add several to the queue, or use one in Generate now."
         >
           <DialogDescription>
-            Load shipped sound-effect or ambience prompts, then generate them as a queue.
+            Load shipped sound-effect, ambience, or instrumental prompts, then generate them as a queue.
           </DialogDescription>
         </Hint>
         <div
           role="radiogroup"
-          aria-label="Ambience or FX"
+          aria-label="Prompt library"
           className="inline-flex h-8 w-fit shrink-0 items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
         >
           {PROMPT_LIBRARIES.map((lib) => {
@@ -452,7 +452,9 @@ export function PromptCatalogDialog({
                 label={
                   lib.id === 'fx'
                     ? 'Game one-shots with TrackType: SFX.'
-                    : 'Instrumental D&D beds with TrackType: Music.'
+                    : lib.id === 'ambience'
+                      ? 'Looping background beds with TrackType: SFX. Avoids music.'
+                      : 'Instrumental D&D beds with TrackType: Music.'
                 }
               >
                 <button
@@ -513,7 +515,7 @@ export function PromptCatalogDialog({
             </div>
           </ScrollArea>
           <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 overflow-hidden">
-            {!isSearching && library === 'fx' && subcategories.length > 1 ? (
+            {!isSearching && library !== 'music' && subcategories.length > 1 ? (
               <div
                 role="radiogroup"
                 aria-label="Filter by subcategory"
@@ -559,7 +561,7 @@ export function PromptCatalogDialog({
                 })}
               </div>
             ) : null}
-            {library !== 'fx' && availableInstruments.length > 0 ? (
+            {library === 'music' && availableInstruments.length > 0 ? (
               <div
                 role="group"
                 aria-label="Filter by instruments"
@@ -676,7 +678,7 @@ export function PromptCatalogDialog({
                     <div className="px-2 py-6 text-sm text-muted">No prompts match that search.</div>
                   ) : null}
                 </div>
-              ) : library === 'ambience' ? (
+              ) : library === 'music' ? (
                 <div
                   className="space-y-2 p-2"
                   aria-label={category ? `${category.name} prompts` : 'Prompts'}
@@ -724,7 +726,7 @@ export function PromptCatalogDialog({
                     <div className="px-2 py-6 text-sm text-muted">No prompts match that search.</div>
                   ) : null}
                 </div>
-              ) : library === 'fx' && !selectedSubcategory && groupedVisible.length > 1 ? (
+              ) : !selectedSubcategory && groupedVisible.length > 1 ? (
                 <div
                   className="space-y-2 p-2"
                   aria-label={category ? `${category.name} prompts` : 'Prompts'}

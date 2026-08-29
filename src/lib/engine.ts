@@ -27,7 +27,7 @@ import { buildZipStore } from '@/lib/zipStore'
 import { downloadArrayBuffer, tagWav, wavDurationSeconds } from '@/lib/wav'
 import { clipWavInfo, extractInstruments } from '@/lib/instruments'
 import { clampGenerateSeconds } from '@/lib/duration'
-import { FIXED_CFG } from '@/lib/generateMode'
+import { FIXED_CFG, modeSupportsSeamlessLoop, resolveGenerateMode } from '@/lib/generateMode'
 import { loadSettings } from '@/lib/setup'
 import {
   inferClipCategory,
@@ -280,11 +280,14 @@ export async function generate(
     onAbort()
   }
   try {
-    const mode = request.mode === 'music' ? 'music' : 'sfx'
-    const loop = mode === 'music' && Boolean(request.seamlessLoop)
-    const detectedInstruments = request.instruments?.length
-      ? request.instruments
-      : extractInstruments(request.prompt)
+    const mode = resolveGenerateMode(request.mode)
+    const loop = modeSupportsSeamlessLoop(mode) && Boolean(request.seamlessLoop)
+    const detectedInstruments =
+      mode === 'music'
+        ? request.instruments?.length
+          ? request.instruments
+          : extractInstruments(request.prompt)
+        : []
     const topInstruments = detectedInstruments.slice(0, 3)
 
     const dummyClip: Clip = {
@@ -300,7 +303,7 @@ export async function generate(
     const resolvedCategory = request.category?.trim() || inferClipCategory(dummyClip)
     const resolvedSubcategory =
       request.subcategory?.trim() ||
-      (mode === 'sfx' ? inferClipSubcategory(dummyClip) : undefined)
+      (mode !== 'music' ? inferClipSubcategory(dummyClip) : undefined)
     const resolvedIntensity =
       request.intensity?.trim() ||
       (mode === 'music' ? inferClipIntensity(dummyClip) : undefined)

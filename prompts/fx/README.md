@@ -2,7 +2,7 @@
 
 Copy a prompt into **Generate**, set the **Duration** slider to the suggested length, and paste the **Negative** line into Advanced if you want it. In the app, **Browse prompts → FX** loads this folder. These are starting points for Stable Audio 3 Medium in Thunder FX — generate, listen, then tweak.
 
-The studio default duration is 8 seconds. Most one-shots want much less: UI clicks around 0.5–1s, weapon hits 1–3s. Longer clips waste VRAM and often pad the tail with extra noise. Loop-style beds in [environment.md](environment.md) use 8–15s. Instrumental D&D beds live in [../ambience](../ambience/README.md).
+The studio default duration is 8 seconds. Most one-shots want much less: UI clicks around 0.5–1s, weapon hits 1–3s. Longer clips waste VRAM and often pad the tail with extra noise. Loop-style beds in [environment.md](environment.md) use 8–15s. Long looping backgrounds live in [../environment](../environment/README.md). Instrumental D&D beds live in [../ambience](../ambience/README.md).
 
 ## Formula
 

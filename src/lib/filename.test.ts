@@ -89,7 +89,14 @@ describe('promptName', () => {
         category: 'Custom',
         mode: 'music',
       }),
-    ).toBe('Ambient Track')
+    ).toBe('Instrumental')
+
+    expect(
+      promptName('67de8afe-9708-4034-8f23-8c4391694f47', {
+        category: 'Custom',
+        mode: 'ambience',
+      }),
+    ).toBe('Ambience')
   })
 
   it('converts file slugs to clean title case', () => {

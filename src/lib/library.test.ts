@@ -135,4 +135,35 @@ describe('mockGenerate', () => {
     expect(looped.clip.duration).toBeCloseTo(4, 1)
     expect(loopWrapJump(looped.wav)).toBeLessThan(loopWrapJump(raw.wav))
   })
+
+  it('tags ambience clips without instruments and can loop them', async () => {
+    const raw = await mockGenerate(
+      {
+        prompt: 'TrackType: SFX, heavy rain, steady bed',
+        seconds: 4,
+        seed: 4,
+        cfg: 1,
+        negative: '',
+        mode: 'ambience',
+      },
+      { stepDelayMs: 0 },
+    )
+    const looped = await mockGenerate(
+      {
+        prompt: 'TrackType: SFX, heavy rain, steady bed',
+        seconds: 4,
+        seed: 4,
+        cfg: 1,
+        negative: '',
+        mode: 'ambience',
+        seamlessLoop: true,
+      },
+      { stepDelayMs: 0 },
+    )
+    expect(raw.clip.mode).toBe('ambience')
+    expect(raw.clip.instruments).toBeUndefined()
+    expect(parseWav(raw.wav).info?.genre).toBe('Ambience')
+    expect(looped.clip.duration).toBeCloseTo(4, 1)
+    expect(new Uint8Array(looped.wav).slice(44, 200)).not.toEqual(new Uint8Array(raw.wav).slice(44, 200))
+  })
 })

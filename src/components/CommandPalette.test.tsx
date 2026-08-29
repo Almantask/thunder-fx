@@ -73,6 +73,18 @@ describe('CommandPalette', () => {
     expect(onLoadModel).toHaveBeenCalled()
   })
 
+  it('offers Ambience mode', async () => {
+    const user = userEvent.setup()
+    const onAmbience = vi.fn()
+    render(
+      <TooltipProvider>
+        <CommandPalette {...props} onAmbience={onAmbience} />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('option', { name: /ambience mode/i }))
+    expect(onAmbience).toHaveBeenCalled()
+  })
+
   it('offers Instrumental mode', async () => {
     const user = userEvent.setup()
     const onInstrumental = vi.fn()

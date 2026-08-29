@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from '@/lib/duration'
-import { GENERATE_MODES } from '@/lib/generateMode'
+import { GENERATE_MODES, modeSupportsSeamlessLoop } from '@/lib/generateMode'
 import { canCast } from '@/lib/prompt'
 import type { CatalogEffect } from '@/lib/promptCatalog'
 import { formatEstimateMs } from '@/lib/timing'
@@ -139,7 +139,9 @@ export function IncantationConsole({
                 label={
                   id === 'sfx'
                     ? 'Short sound effects. Prompts use TrackType: SFX.'
-                    : 'Instrumental music. Prompts use TrackType: Music and avoid vocals.'
+                    : id === 'ambience'
+                      ? 'Looping background beds. Prompts use TrackType: SFX and avoid music.'
+                      : 'Instrumental music. Prompts use TrackType: Music and avoid vocals.'
                 }
               >
                 <button
@@ -161,7 +163,7 @@ export function IncantationConsole({
             )
           })}
         </div>
-        <Hint label="Open the shipped sound-effect and ambience prompt packs. Check items and add them to a generate queue.">
+        <Hint label="Open the shipped sound-effect, ambience, and instrumental prompt packs. Check items and add them to a generate queue.">
           <Button type="button" size="lg" onClick={() => onOpenCatalog?.()}>
             <BookOpen />
             Browse prompts
@@ -283,7 +285,7 @@ export function IncantationConsole({
             label={
               castEta
                 ? `How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. About ${castEta} at this duration, from past clips on this machine.`
-                : 'How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. Instrumental often uses 20s.'
+                : 'How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. Ambience often uses 30s; Instrumental often uses 20s.'
             }
           >
             <div className="w-full">
@@ -300,7 +302,7 @@ export function IncantationConsole({
               />
             </div>
           </Hint>
-          {mode === 'music' ? (
+          {modeSupportsSeamlessLoop(mode) ? (
             <Hint
               className="w-full"
               label="Generate extra overlap and blend the tail into the head so the clip starts and ends the same. Playback loops after generate."

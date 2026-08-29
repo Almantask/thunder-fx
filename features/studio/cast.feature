@@ -30,6 +30,14 @@ Feature: Generate a sound
     And Browse prompts is shown
     And Generate queue is shown
 
+  Scenario: Ambience mode prepares a looping background bed
+    Given the studio is open
+    When the user chooses Ambience mode
+    Then Ambience mode is selected
+    And the prompt uses a sound-effects track type
+    And music is listed in the negative prompt
+    And Generate seamless loop is on
+
   Scenario: Instrumental mode prepares a music prompt
     Given the studio is open
     When the user chooses Instrumental mode

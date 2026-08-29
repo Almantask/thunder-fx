@@ -25,10 +25,13 @@ describe('packNaming', () => {
     )
   })
 
-  it('uses MUS for instrumental clips', () => {
+  it('uses MUS for instrumental clips and AMB for ambience', () => {
     expect(
       formatPackFilename('{type}_{category}_{name}_{index}', { ...sword, mode: 'music', category: 'Tavern' }, 1, 'flac'),
     ).toMatch(/^MUS_Tavern_/)
+    expect(
+      formatPackFilename('{type}_{category}_{name}_{index}', { ...sword, mode: 'ambience', category: 'Weather' }, 1, 'wav'),
+    ).toMatch(/^AMB_Weather_/)
   })
 
   it('writes a manifest index for the zip', () => {

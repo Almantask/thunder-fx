@@ -865,6 +865,8 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
                                         }
                                     } else if sub_id == b"IGNR" && trimmed.eq_ignore_ascii_case("Instrumental") {
                                         mode = "music".to_string();
+                                    } else if sub_id == b"IGNR" && trimmed.eq_ignore_ascii_case("Ambience") {
+                                        mode = "ambience".to_string();
                                     }
                                 }
                             }
@@ -979,8 +981,10 @@ fn infer_metadata_from_path(
     let first_lower = components[0].to_ascii_lowercase();
     let (has_mode_prefix, detected_mode) = if first_lower == "sfx" || first_lower == "fx" {
         (true, Some("sfx".to_string()))
-    } else if first_lower == "music" || first_lower == "ambience" {
+    } else if first_lower == "music" {
         (true, Some("music".to_string()))
+    } else if first_lower == "ambience" {
+        (true, Some("ambience".to_string()))
     } else {
         (false, None)
     };
@@ -1042,7 +1046,9 @@ fn clip_json_from_path(root: &Path, path: &Path) -> Option<serde_json::Value> {
         }
         if prompt.is_empty() || is_uuid_or_hex_stem(&prompt) {
             prompt = if final_mode == "music" {
-                "Ambient Track".to_string()
+                "Instrumental".to_string()
+            } else if final_mode == "ambience" {
+                "Ambience".to_string()
             } else {
                 "Sound Effect".to_string()
             };
@@ -1084,18 +1090,16 @@ async fn scan_library_categories(
         let mut categories = Vec::new();
 
         let mode_dirs = match &filter_mode {
-            Some(m) if m == "music" || m == "ambience" => vec![
-                ("music", root.join("music")),
-                ("music", root.join("ambience")),
-            ],
+            Some(m) if m == "music" => vec![("music", root.join("music"))],
+            Some(m) if m == "ambience" => vec![("ambience", root.join("ambience"))],
             Some(m) if m == "sfx" || m == "fx" => {
                 vec![("sfx", root.join("sfx")), ("sfx", root.join("fx"))]
             }
             _ => vec![
                 ("sfx", root.join("sfx")),
-                ("music", root.join("music")),
                 ("sfx", root.join("fx")),
-                ("music", root.join("ambience")),
+                ("ambience", root.join("ambience")),
+                ("music", root.join("music")),
             ],
         };
 
@@ -1528,6 +1532,16 @@ mod tests {
         assert_eq!(mode.as_deref(), Some("sfx"));
         assert_eq!(cat.as_deref(), Some("Combat"));
         assert_eq!(sub.as_deref(), Some("Swords"));
+
+        let file_in_ambience = root
+            .join("ambience")
+            .join("Weather")
+            .join("Rain")
+            .join("rain-1.wav");
+        let (mode, cat, sub, _) = infer_metadata_from_path(root, &file_in_ambience);
+        assert_eq!(mode.as_deref(), Some("ambience"));
+        assert_eq!(cat.as_deref(), Some("Weather"));
+        assert_eq!(sub.as_deref(), Some("Rain"));
     }
 }
 

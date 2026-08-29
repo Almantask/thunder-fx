@@ -6,7 +6,7 @@
 
 ## Layout
 
-Library tab. Search. Play/pause button plays visible sounds in sequence. Newest first in a card grid. Cards show a short **prompt name**, not the full prompt, with individual play/pause controls. Opening a clip loads Generate, where the full prompt is visible. Empty: three starter cards for the current generate mode (sound effects or instrumental). Choosing a page opens Generate and matches that mode.
+Library tab. Search. Play/pause button plays visible sounds in sequence. Newest first in a card grid. Cards show a short **prompt name**, not the full prompt, with individual play/pause controls. Opening a clip loads Generate, where the full prompt is visible. Empty: three starter cards for the current generate mode (sound effects, ambience, or instrumental). Browse radios: **Sounds · Ambience · Instrumental**. Choosing a page opens Generate and matches that mode.
 
 Checkboxes select clips for **Export pack**: a naming template (`{type}_{category}_{name}_{index}`), format, optional ZIP, and `manifest.json`.
 

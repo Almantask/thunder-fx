@@ -1,0 +1,549 @@
+# Morning
+
+Looping morning beds. Full birdsong and a waking village carry the scene. Add `speech, voices` to Negative for empty countryside.
+
+## I — quietest looping bed
+
+### Forest Edge Quiet Morning Dew (I)
+- Duration: 90s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, soft birdsong over dew-covered grass in cool still morning air, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Early Market Setup (I)
+- Duration: 100s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint clatter of a market stall being set up, distant birdsong, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Calm Garden Morning (I)
+- Duration: 110s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, quiet garden birdsong with a faint breeze through dewy leaves, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Sleepy Village Street (I)
+- Duration: 120s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint footsteps and quiet murmur as a village street slowly wakes, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Still Farmland Morning (I)
+- Duration: 130s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint farmland ambience with sparse birdsong in cool air, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Riverside Morning Calm (I)
+- Duration: 140s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, gentle river flow with light birdsong in still morning air, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Quiet Morning Dew (I)
+- Duration: 150s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, soft birdsong over dew-covered grass in cool still morning air, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Early Market Setup (I)
+- Duration: 160s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint clatter of a market stall being set up, distant birdsong, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Calm Garden Morning (I)
+- Duration: 170s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, quiet garden birdsong with a faint breeze through dewy leaves, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Sleepy Village Street (I)
+- Duration: 180s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint footsteps and quiet murmur as a village street slowly wakes, woodland clearing, outdoor, steady bed, looping-friendly
+
+### Forest Edge Still Farmland Morning (I)
+- Duration: 190s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint farmland ambience with sparse birdsong in cool air, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Riverside Morning Calm (I)
+- Duration: 200s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, gentle river flow with light birdsong in still morning air, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Quiet Morning Dew (I)
+- Duration: 210s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, soft birdsong over dew-covered grass in cool still morning air, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Early Market Setup (I)
+- Duration: 220s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint clatter of a market stall being set up, distant birdsong, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Calm Garden Morning (I)
+- Duration: 230s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, quiet garden birdsong with a faint breeze through dewy leaves, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Sleepy Village Street (I)
+- Duration: 240s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, faint footsteps and quiet murmur as a village street slowly wakes, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Still Farmland Morning (I)
+- Duration: 250s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint farmland ambience with sparse birdsong in cool air, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Riverside Morning Calm (I)
+- Duration: 260s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, gentle river flow with light birdsong in still morning air, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Quiet Morning Dew (I)
+- Duration: 270s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, soft birdsong over dew-covered grass in cool still morning air, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Early Market Setup (I)
+- Duration: 280s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint clatter of a market stall being set up, distant birdsong, woodland clearing, outdoor, steady bed, looping-friendly
+
+### Forest Edge Calm Garden Morning (I)
+- Duration: 290s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, quiet garden birdsong with a faint breeze through dewy leaves, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Sleepy Village Street (I)
+- Duration: 300s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint footsteps and quiet murmur as a village street slowly wakes, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Still Farmland Morning (I)
+- Duration: 310s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint farmland ambience with sparse birdsong in cool air, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Riverside Morning Calm (I)
+- Duration: 320s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, gentle river flow with light birdsong in still morning air, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Quiet Morning Dew (I)
+- Duration: 330s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, soft birdsong over dew-covered grass in cool still morning air, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Early Market Setup (I)
+- Duration: 340s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, faint clatter of a market stall being set up, distant birdsong, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Calm Garden Morning (I)
+- Duration: 350s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, quiet garden birdsong with a faint breeze through dewy leaves, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Sleepy Village Street (I)
+- Duration: 360s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, faint footsteps and quiet murmur as a village street slowly wakes, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Still Farmland Morning (I)
+- Duration: 370s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, faint farmland ambience with sparse birdsong in cool air, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Riverside Morning Calm (I)
+- Duration: 380s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, gentle river flow with light birdsong in still morning air, woodland clearing, outdoor, steady bed, looping-friendly
+
+## II — the scene in full motion
+
+### Forest Edge Full Birdsong Morning (II)
+- Duration: 45s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, full steady birdsong over a dewy meadow in bright morning light, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Market Coming Alive (II)
+- Duration: 55s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady market square activity with indistinct murmur and birdsong, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Village Fully Awake (II)
+- Duration: 65s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady village street ambience with footsteps and distant murmur, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Orchard Morning Bed (II)
+- Duration: 74s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady birdsong and bee hum drifting through morning orchard branches, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Farmland Morning Bustle (II)
+- Duration: 84s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady farmland ambience with animal calls and birdsong, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Woodland Morning Chorus (II)
+- Duration: 94s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, steady woodland birdsong with a light breeze through dewy leaves, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Full Birdsong Morning (II)
+- Duration: 104s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, full steady birdsong over a dewy meadow in bright morning light, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Market Coming Alive (II)
+- Duration: 114s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady market square activity with indistinct murmur and birdsong, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Village Fully Awake (II)
+- Duration: 124s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, steady village street ambience with footsteps and distant murmur, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Orchard Morning Bed (II)
+- Duration: 133s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady birdsong and bee hum drifting through morning orchard branches, woodland clearing, outdoor, steady bed, looping-friendly
+
+### Forest Edge Farmland Morning Bustle (II)
+- Duration: 143s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady farmland ambience with animal calls and birdsong, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Woodland Morning Chorus (II)
+- Duration: 153s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady woodland birdsong with a light breeze through dewy leaves, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Full Birdsong Morning (II)
+- Duration: 163s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, full steady birdsong over a dewy meadow in bright morning light, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Market Coming Alive (II)
+- Duration: 173s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady market square activity with indistinct murmur and birdsong, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Village Fully Awake (II)
+- Duration: 183s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady village street ambience with footsteps and distant murmur, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Orchard Morning Bed (II)
+- Duration: 192s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, steady birdsong and bee hum drifting through morning orchard branches, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Farmland Morning Bustle (II)
+- Duration: 202s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady farmland ambience with animal calls and birdsong, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Woodland Morning Chorus (II)
+- Duration: 212s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady woodland birdsong with a light breeze through dewy leaves, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Full Birdsong Morning (II)
+- Duration: 222s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, full steady birdsong over a dewy meadow in bright morning light, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Market Coming Alive (II)
+- Duration: 232s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady market square activity with indistinct murmur and birdsong, woodland clearing, outdoor, steady bed, looping-friendly
+
+### Forest Edge Village Fully Awake (II)
+- Duration: 242s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady village street ambience with footsteps and distant murmur, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Orchard Morning Bed (II)
+- Duration: 251s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady birdsong and bee hum drifting through morning orchard branches, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Farmland Morning Bustle (II)
+- Duration: 261s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady farmland ambience with animal calls and birdsong, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Woodland Morning Chorus (II)
+- Duration: 271s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady woodland birdsong with a light breeze through dewy leaves, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Full Birdsong Morning (II)
+- Duration: 281s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, full steady birdsong over a dewy meadow in bright morning light, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Market Coming Alive (II)
+- Duration: 291s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, steady market square activity with indistinct murmur and birdsong, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Village Fully Awake (II)
+- Duration: 301s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady village street ambience with footsteps and distant murmur, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Orchard Morning Bed (II)
+- Duration: 310s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady birdsong and bee hum drifting through morning orchard branches, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Farmland Morning Bustle (II)
+- Duration: 320s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, steady farmland ambience with animal calls and birdsong, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Woodland Morning Chorus (II)
+- Duration: 330s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, steady woodland birdsong with a light breeze through dewy leaves, woodland clearing, outdoor, steady bed, looping-friendly
+
+## III — morning's busiest bed
+
+### Forest Edge Market In Full Swing (III)
+- Duration: 40s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy market square with dense indistinct murmur and clatter, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Village Street Peak (III)
+- Duration: 52s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, bustling village street activity with steady footsteps and murmur, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Farmyard Morning Peak (III)
+- Duration: 63s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy farmyard morning activity with layered animal and bird sound, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Full Meadow Birdsong (III)
+- Duration: 75s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense birdsong and insect hum sweeping a bright dewy meadow, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Riverside Morning Bustle (III)
+- Duration: 87s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, active riverside morning ambience with birdsong and rushing water, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Orchard Morning Peak (III)
+- Duration: 99s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, dense bee hum and birdsong through a fully awake morning orchard, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Market In Full Swing (III)
+- Duration: 110s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy market square with dense indistinct murmur and clatter, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Village Street Peak (III)
+- Duration: 122s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, bustling village street activity with steady footsteps and murmur, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Farmyard Morning Peak (III)
+- Duration: 134s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, busy farmyard morning activity with layered animal and bird sound, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Full Meadow Birdsong (III)
+- Duration: 146s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense birdsong and insect hum sweeping a bright dewy meadow, woodland clearing, outdoor, steady bed, looping-friendly
+
+### Forest Edge Riverside Morning Bustle (III)
+- Duration: 157s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, active riverside morning ambience with birdsong and rushing water, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Orchard Morning Peak (III)
+- Duration: 169s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense bee hum and birdsong through a fully awake morning orchard, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Market In Full Swing (III)
+- Duration: 181s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy market square with dense indistinct murmur and clatter, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Village Street Peak (III)
+- Duration: 192s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, bustling village street activity with steady footsteps and murmur, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Farmyard Morning Peak (III)
+- Duration: 204s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy farmyard morning activity with layered animal and bird sound, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Full Meadow Birdsong (III)
+- Duration: 216s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, dense birdsong and insect hum sweeping a bright dewy meadow, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Riverside Morning Bustle (III)
+- Duration: 228s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, active riverside morning ambience with birdsong and rushing water, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Orchard Morning Peak (III)
+- Duration: 239s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense bee hum and birdsong through a fully awake morning orchard, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Market In Full Swing (III)
+- Duration: 251s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, busy market square with dense indistinct murmur and clatter, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Village Street Peak (III)
+- Duration: 263s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, bustling village street activity with steady footsteps and murmur, woodland clearing, outdoor, steady bed, looping-friendly
+
+### Forest Edge Farmyard Morning Peak (III)
+- Duration: 274s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy farmyard morning activity with layered animal and bird sound, forest edge, outdoor, steady bed, looping-friendly
+
+### Meadow Full Meadow Birdsong (III)
+- Duration: 286s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense birdsong and insect hum sweeping a bright dewy meadow, meadow, outdoor, steady bed, looping-friendly
+
+### Riverside Riverside Morning Bustle (III)
+- Duration: 298s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, active riverside morning ambience with birdsong and rushing water, riverside, outdoor, steady bed, looping-friendly
+
+### Farmland Orchard Morning Peak (III)
+- Duration: 310s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense bee hum and birdsong through a fully awake morning orchard, farmland, outdoor, steady bed, looping-friendly
+
+### Hillside Pasture Market In Full Swing (III)
+- Duration: 321s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy market square with dense indistinct murmur and clatter, hillside pasture, outdoor, steady bed, looping-friendly
+
+### Market Square Village Street Peak (III)
+- Duration: 333s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, bustling village street activity with steady footsteps and murmur, market square, distant indistinct market murmur, outdoor, steady bed, looping-friendly
+
+### Garden Farmyard Morning Peak (III)
+- Duration: 345s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, busy farmyard morning activity with layered animal and bird sound, garden, outdoor, steady bed, looping-friendly
+
+### Orchard Full Meadow Birdsong (III)
+- Duration: 357s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense birdsong and insect hum sweeping a bright dewy meadow, orchard, outdoor, steady bed, looping-friendly
+
+### Village Street Riverside Morning Bustle (III)
+- Duration: 368s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality
+
+TrackType: SFX, active riverside morning ambience with birdsong and rushing water, village street, steady indistinct street murmur, outdoor, steady bed, looping-friendly
+
+### Woodland Clearing Orchard Morning Peak (III)
+- Duration: 380s
+- Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, distortion, clipping, muffled, low quality, speech, voices
+
+TrackType: SFX, dense bee hum and birdsong through a fully awake morning orchard, woodland clearing, outdoor, steady bed, looping-friendly

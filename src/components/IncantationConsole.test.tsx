@@ -75,7 +75,7 @@ describe('IncantationConsole', () => {
     expect(screen.getByRole('button', { name: /generate 4 takes/i })).toBeEnabled()
   })
 
-  it('offers Sound effects and Instrumental modes', () => {
+  it('offers Sound effects, Ambience, and Instrumental modes', () => {
     render(
       <TooltipProvider>
         <IncantationConsole {...props} prompt="" />
@@ -85,6 +85,7 @@ describe('IncantationConsole', () => {
       'aria-checked',
       'true',
     )
+    expect(screen.getByRole('radio', { name: /^ambience$/i })).toHaveAttribute('aria-checked', 'false')
     expect(screen.getByRole('radio', { name: /instrumental/i })).toHaveAttribute(
       'aria-checked',
       'false',
@@ -123,6 +124,21 @@ describe('IncantationConsole', () => {
     expect(toggle).toBeChecked()
     await user.click(toggle)
     expect(onGenerateSeamlessLoop).toHaveBeenCalledWith(false)
+  })
+
+  it('offers a seamless loop toggle in ambience mode', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole
+          {...props}
+          mode="ambience"
+          prompt="rain on stone"
+          generateSeamlessLoop
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('checkbox', { name: /generate seamless loop/i })).toBeChecked()
+    expect(screen.getByRole('button', { name: /generate ambience/i })).toBeEnabled()
   })
 
   it('hides the generate seamless loop toggle for sound effects', () => {

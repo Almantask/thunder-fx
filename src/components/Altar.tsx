@@ -13,6 +13,7 @@ import { Label } from '@/components/ui/label'
 import { Slider } from '@/components/ui/slider'
 import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
 import { DEFAULT_CROSSFADE_SEC, MAX_CROSSFADE_SEC, MIN_CROSSFADE_SEC } from '@/lib/seamlessLoop'
+import { modeSupportsSeamlessLoop } from '@/lib/generateMode'
 import type { GenerateMode } from '@/lib/types'
 import { formatClock } from '@/lib/utils'
 
@@ -162,7 +163,7 @@ export function Altar({
           Export {formatClock(Math.max(0, trimEnd - trimStart))} of {formatClock(duration)}
         </p>
       </Hint>
-      {mode === 'music' ? (
+      {modeSupportsSeamlessLoop(mode) ? (
         <>
           <Hint
             className="w-full"

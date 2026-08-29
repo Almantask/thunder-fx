@@ -52,7 +52,7 @@ def clamp_steps(steps: int) -> int:
 
 _cancel = threading.Event()
 _model = None
-_model_precision = "fp32"
+_model_precision = "fp16"
 _mock_unloaded = False
 _model_lock = threading.Lock()
 _gen_lock = threading.Lock()
@@ -89,10 +89,12 @@ def _configure_hf_cache() -> None:
 
 
 def _normalize_precision(value) -> str:
-    text = str(value or "fp32").strip().lower()
+    text = str(value or "fp16").strip().lower()
     if text in {"fp16", "bf16", "half", "low"}:
         return "fp16"
-    return "fp32"
+    if text in {"fp32", "float32", "full", "high"}:
+        return "fp32"
+    return "fp16"
 
 
 def _unload_model_locked() -> None:
@@ -115,7 +117,7 @@ def _unload_model_locked() -> None:
         pass
 
 
-def _try_load_model(precision: str = "fp32"):
+def _try_load_model(precision: str = "fp16"):
     global _model, _model_precision
     if _env_mock():
         _model_precision = _normalize_precision(precision)
@@ -129,12 +131,24 @@ def _try_load_model(precision: str = "fp32"):
             _unload_model_locked()
         from stable_audio_3 import StableAudioModel
 
-        # SA3 defaults to model_half=True (fp16). FP32 is the quality default.
+        # SA3 defaults to model_half=True (fp16). FP16 is optimal for speed & VRAM.
         _model = StableAudioModel.from_pretrained(
             "medium",
             device="cuda",
             model_half=wanted == "fp16",
         )
+        try:
+            conds = getattr(getattr(_model, "model", None), "conditioner", None)
+            if conds is not None and hasattr(conds, "conditioners"):
+                for c in conds.conditioners.values():
+                    if hasattr(c, "model") and hasattr(c.model, "to"):
+                        c.model.to("cuda")
+                    if hasattr(c, "proj_out") and hasattr(c.proj_out, "to"):
+                        c.proj_out.to("cuda")
+                    if hasattr(c, "_device_initialized"):
+                        c._device_initialized = True
+        except Exception:
+            pass
         _model_precision = wanted
         return _model
 
@@ -422,32 +436,64 @@ def _slugify_prompt(prompt: str, max_len: int = 48) -> str:
     return cleaned or "sound"
 
 
-def _wav_info_fields(prompt: str, instruments: list[str], mode: str = "sfx") -> dict[str, str]:
+def _wav_info_fields(
+    prompt: str,
+    instruments: list[str],
+    mode: str = "sfx",
+    category: str = "",
+    intensity: str = "",
+) -> dict[str, str]:
     genre = "Instrumental" if mode == "music" else "Sound Effects"
     fields = {"ISFT": "Thunder FX", "IGNR": genre}
     title = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).strip()
     if title:
         fields["INAM"] = title[:120]
-        fields["ICMT"] = prompt[:200]
+    if category:
+        fields["ISBJ"] = category[:80]
+    if intensity:
+        fields["IART"] = intensity[:80]
+
+    comment_parts = []
+    if category and mode == "music":
+        comment_parts.append(f"Category: {category}")
+    if intensity and mode == "music":
+        comment_parts.append(f"Intensity: {intensity}")
     if instruments:
         fields["IKEY"] = ";".join(instruments)
-        fields["ICMT"] = "Instruments: " + ", ".join(instruments)
+        comment_parts.append("Instruments: " + ", ".join(instruments))
+
+    if comment_parts:
+        fields["ICMT"] = " · ".join(comment_parts)
+    elif prompt:
+        fields["ICMT"] = prompt[:200]
+
     return fields
 
 
-def _music_info_fields(prompt: str, instruments: list[str]) -> dict[str, str]:
-    return _wav_info_fields(prompt, instruments, mode="music")
+def _music_info_fields(
+    prompt: str,
+    instruments: list[str],
+    category: str = "",
+    intensity: str = "",
+) -> dict[str, str]:
+    return _wav_info_fields(
+        prompt,
+        instruments,
+        mode="music",
+        category=category,
+        intensity=intensity,
+    )
 
 
 def _info_subchunk(tag: bytes, text: str) -> bytes:
-    payload = text.encode("latin-1", "replace") + b"\x00"
+    payload = text.encode("utf-8") + b"\x00"
     pad = b"\x00" if len(payload) % 2 else b""
     return tag + struct.pack("<I", len(payload)) + payload + pad
 
 
 def _list_info_chunk(fields: dict[str, str]) -> bytes:
     body = b"INFO"
-    for key in ("INAM", "IGNR", "ISFT", "IKEY", "ICMT"):
+    for key in ("INAM", "IGNR", "ISBJ", "IART", "ISFT", "IKEY", "ICMT"):
         value = fields.get(key, "").strip()
         if value:
             body += _info_subchunk(key.encode("ascii"), value)
@@ -489,7 +535,10 @@ def read_wav_info(path: Path) -> dict[str, str]:
                 tag = body[cursor : cursor + 4].decode("ascii", "replace")
                 sub = struct.unpack_from("<I", body, cursor + 4)[0]
                 raw = body[cursor + 8 : cursor + 8 + sub]
-                fields[tag] = raw.split(b"\x00", 1)[0].decode("latin-1", "replace")
+                try:
+                    fields[tag] = raw.split(b"\x00", 1)[0].decode("utf-8")
+                except UnicodeDecodeError:
+                    fields[tag] = raw.split(b"\x00", 1)[0].decode("latin-1", "replace")
                 cursor += 8 + sub + (sub % 2)
         offset += 8 + size + (size % 2)
     return fields
@@ -600,8 +649,19 @@ def _mock_pcm(seconds: float, seed: int, *, music: bool = False) -> list[tuple[i
 
 def _emit(payload: dict) -> None:
     with _stdout_lock:
-        sys.stdout.write(json.dumps(payload) + "\n")
-        sys.stdout.flush()
+        line = json.dumps(payload) + "\n"
+        try:
+            sys.stdout.write(line)
+            sys.stdout.flush()
+        except OSError as exc:
+            try:
+                if hasattr(sys.stdout, "buffer"):
+                    sys.stdout.buffer.write(line.encode("utf-8"))
+                    sys.stdout.buffer.flush()
+            except Exception:
+                _log_error(f"Pipe write failed: {exc}", exc)
+        except Exception as exc:
+            _log_error(f"Emit failed: {exc}", exc)
 
 
 def _emit_progress(
@@ -1046,7 +1106,17 @@ def _generate_body(msg: dict) -> None:
             time.sleep(_mock_step_s())
         _write_wav(out, _mock_pcm(seconds, seed, music=music))
         instruments = _resolve_instruments(msg, prompt)
-        embed_wav_info(out, _wav_info_fields(prompt, instruments, mode_str))
+        intensity_val = str(msg.get("intensity") or (subcat_str if mode_str == "music" else "")).strip()
+        embed_wav_info(
+            out,
+            _wav_info_fields(
+                prompt,
+                instruments,
+                mode_str,
+                category=cat_str,
+                intensity=intensity_val,
+            ),
+        )
         _emit(
             {
                 "id": msg_id,
@@ -1130,7 +1200,17 @@ def _generate_body(msg: dict) -> None:
             )
             return
         instruments = _resolve_instruments(msg, prompt)
-        embed_wav_info(out, _wav_info_fields(prompt, instruments, mode_str))
+        intensity_val = str(msg.get("intensity") or (subcat_str if mode_str == "music" else "")).strip()
+        embed_wav_info(
+            out,
+            _wav_info_fields(
+                prompt,
+                instruments,
+                mode_str,
+                category=cat_str,
+                intensity=intensity_val,
+            ),
+        )
         _emit(
             {
                 "id": msg_id,

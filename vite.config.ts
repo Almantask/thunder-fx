@@ -21,6 +21,9 @@ export default defineConfig({
       ignored: ['**/src-tauri/**'],
     },
   },
+  define: {
+    __BUILD_ID__: JSON.stringify(process.env.BUILD_ID || `${Date.now()}`),
+  },
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],

@@ -1,3 +1,4 @@
+import { clampGenerateSeconds } from '@/lib/duration'
 import { generateMockMusicWav, generateMockSfxWav, tagWav, wavDurationSeconds } from '@/lib/wav'
 import { clipWavInfo, extractInstruments } from '@/lib/instruments'
 import type {
@@ -83,16 +84,11 @@ export async function mockGenerate(
     ? request.instruments
     : extractInstruments(request.prompt)
   const topInstruments = detectedInstruments.slice(0, 3)
-  let wav =
-    mode === 'music'
-      ? generateMockMusicWav(request.seconds, seed)
-      : generateMockSfxWav(request.seconds, seed)
-  const wavInfo = clipWavInfo(request.prompt, mode, topInstruments)
-  wav = tagWav(wav, wavInfo)
+
   const clipStub: Clip = {
     id: '',
     prompt: request.prompt.trim(),
-    duration: wavDurationSeconds(wav),
+    duration: clampGenerateSeconds(request.seconds),
     seed,
     createdAt: new Date().toISOString(),
     cfg: request.cfg,
@@ -107,6 +103,19 @@ export async function mockGenerate(
   const resolvedIntensity =
     request.intensity?.trim() ||
     (mode === 'music' ? inferClipIntensity(clipStub) : undefined)
+
+  let wav =
+    mode === 'music'
+      ? generateMockMusicWav(request.seconds, seed)
+      : generateMockSfxWav(request.seconds, seed)
+  const wavInfo = clipWavInfo(
+    request.prompt,
+    mode,
+    topInstruments,
+    resolvedCategory,
+    resolvedIntensity,
+  )
+  wav = tagWav(wav, wavInfo)
 
   const clip: Clip = {
     id: randomId(),

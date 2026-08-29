@@ -49,4 +49,30 @@ describe('wav', () => {
     expect(trimmed.info?.instruments).toEqual(['lute', 'cello'])
     expect(wavDurationSeconds(trimWav(tagged, 0, 0.5))).toBeCloseTo(0.5, 1)
   })
+
+  it('embeds category, intensity, and instruments in RIFF INFO chunks', () => {
+    const tagged = tagMusicWav(
+      generateMockMusicWav(1, 10),
+      musicWavInfo(
+        'TrackType: Music, misty mountains with flute and harp',
+        ['flute', 'harp'],
+        'Mountain Mist',
+        'Level II — Mood in motion',
+      ),
+    )
+    const parsed = parseWav(tagged)
+    expect(parsed.info?.instruments).toEqual(['flute', 'harp'])
+    expect(parsed.info?.category).toBe('Mountain Mist')
+    expect(parsed.info?.intensity).toBe('Level II — Mood in motion')
+    expect(parsed.info?.comment).toBe(
+      'Category: Mountain Mist · Intensity: Level II — Mood in motion · Instruments: flute, harp',
+    )
+    expect(parsed.info?.genre).toBe('Instrumental')
+    expect(parsed.info?.software).toBe('Thunder FX')
+
+    const trimmed = parseWav(trimWav(tagged, 0, 0.5))
+    expect(trimmed.info?.category).toBe('Mountain Mist')
+    expect(trimmed.info?.intensity).toBe('Level II — Mood in motion')
+    expect(trimmed.info?.instruments).toEqual(['flute', 'harp'])
+  })
 })

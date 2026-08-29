@@ -44,7 +44,7 @@ export function Titlebar({
   }
 
   return (
-    <header className="titlebar-drag flex h-11 items-center justify-between border-b border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather px-3">
+    <header className="titlebar-drag flex h-11 shrink-0 items-center justify-between border-b border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather px-3">
       <div className="flex min-w-0 items-center gap-3">
         <Hint label="Thunder FX: a local studio for sound effects and instrumental music. Generates on this machine with Stable Audio 3 Medium.">
           <span className="font-display text-sm tracking-[0.2em] text-cream">THUNDER FX</span>

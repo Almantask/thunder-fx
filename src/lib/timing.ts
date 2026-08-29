@@ -1,17 +1,31 @@
+import { getAppBuildId } from '@/lib/buildInfo'
+import {
+  getBaselineGenerateMs,
+  getBaselineLoadMs,
+} from '@/lib/perfBenchmarks'
+import type { PrecisionMode } from '@/lib/types'
+
 export const TIMING_STORAGE_KEY = 'thunder-fx.timing'
 const MAX_SAMPLES = 24
 
 export type GenerateTimingSample = {
   seconds: number
   elapsedMs: number
+  steps?: number
+  precision?: PrecisionMode
 }
 
 export type TimingLog = {
+  buildId?: string
   loads: number[]
   generates: GenerateTimingSample[]
 }
 
-export const EMPTY_TIMING: TimingLog = { loads: [], generates: [] }
+export const EMPTY_TIMING: TimingLog = {
+  buildId: getAppBuildId(),
+  loads: [],
+  generates: [],
+}
 
 export function formatEstimateClock(seconds: number): string {
   if (!Number.isFinite(seconds) || seconds <= 0) return '~0:00'
@@ -52,27 +66,40 @@ function pushCapped<T>(items: T[], next: T): T[] {
 
 export function recordLoad(log: TimingLog, elapsedMs: number): TimingLog {
   if (!Number.isFinite(elapsedMs) || elapsedMs <= 0) return log
-  return { ...log, loads: pushCapped(log.loads, Math.round(elapsedMs)) }
+  return {
+    ...log,
+    buildId: log.buildId || getAppBuildId(),
+    loads: pushCapped(log.loads, Math.round(elapsedMs)),
+  }
 }
 
 export function recordGenerate(
   log: TimingLog,
   seconds: number,
   elapsedMs: number,
+  options?: { steps?: number; precision?: PrecisionMode },
 ): TimingLog {
   if (!Number.isFinite(seconds) || seconds <= 0) return log
   if (!Number.isFinite(elapsedMs) || elapsedMs <= 0) return log
   return {
     ...log,
+    buildId: log.buildId || getAppBuildId(),
     generates: pushCapped(log.generates, {
       seconds,
       elapsedMs: Math.round(elapsedMs),
+      steps: options?.steps,
+      precision: options?.precision,
     }),
   }
 }
 
-export function estimateLoadMs(log: TimingLog): number | undefined {
-  return typicalMs(log.loads)
+export function estimateLoadMs(
+  log: TimingLog,
+  options?: { precision?: PrecisionMode; isMock?: boolean },
+): number {
+  const real = typicalMs(log.loads)
+  if (real != null) return real
+  return getBaselineLoadMs(options?.precision, options?.isMock)
 }
 
 function generateRateSamples(log: TimingLog): GenerateTimingSample[] {
@@ -86,14 +113,20 @@ function generateRateSamples(log: TimingLog): GenerateTimingSample[] {
   return filtered.length ? filtered : samples
 }
 
-export function estimateGenerateMs(log: TimingLog, seconds: number): number | undefined {
-  if (!Number.isFinite(seconds) || seconds <= 0) return undefined
+export function estimateGenerateMs(
+  log: TimingLog,
+  seconds: number,
+  options?: { steps?: number; precision?: PrecisionMode; isMock?: boolean },
+): number {
+  if (!Number.isFinite(seconds) || seconds <= 0) return 0
   const samples = generateRateSamples(log)
-  if (!samples.length) return undefined
+  if (!samples.length) {
+    return getBaselineGenerateMs(seconds, options)
+  }
   if (samples.length === 1) {
     const sample = samples[0]
-    if (!sample) return undefined
-    return sample.elapsedMs * (seconds / sample.seconds)
+    if (!sample) return getBaselineGenerateMs(seconds, options)
+    return Math.round(sample.elapsedMs * (seconds / sample.seconds))
   }
 
   const n = samples.length
@@ -111,8 +144,8 @@ export function estimateGenerateMs(log: TimingLog, seconds: number): number | un
   if (Math.abs(denom) < 1e-9) {
     const meanMs = sumY / n
     const meanSec = sumX / n
-    if (meanSec <= 0) return undefined
-    return meanMs * (seconds / meanSec)
+    if (meanSec <= 0) return getBaselineGenerateMs(seconds, options)
+    return Math.round(meanMs * (seconds / meanSec))
   }
   let slope = (n * sumXY - sumX * sumY) / denom
   let intercept = (sumY - slope * sumX) / n
@@ -121,19 +154,22 @@ export function estimateGenerateMs(log: TimingLog, seconds: number): number | un
     intercept = 0
   }
   intercept = Math.max(0, intercept)
-  return intercept + slope * seconds
+  return Math.round(intercept + slope * seconds)
 }
 
 export function estimateQueueMs(
   log: TimingLog,
-  items: { duration: number }[],
+  items: { duration: number; steps?: number }[],
+  options?: { precision?: PrecisionMode; isMock?: boolean },
 ): number | undefined {
   if (!items.length) return undefined
   let total = 0
   for (const item of items) {
-    const estimate = estimateGenerateMs(log, item.duration)
-    if (estimate == null) return undefined
-    total += estimate
+    total += estimateGenerateMs(log, item.duration, {
+      steps: item.steps,
+      precision: options?.precision,
+      isMock: options?.isMock,
+    })
   }
   return total
 }
@@ -169,6 +205,18 @@ export function estimateRemainingMs(args: {
   return remaining + tail
 }
 
+export function hasRealMachineSamples(log: TimingLog): boolean {
+  return log.loads.length > 0 || log.generates.length > 0
+}
+
+export function wipeTimingLog(): void {
+  try {
+    localStorage.removeItem(TIMING_STORAGE_KEY)
+  } catch {
+    /* ignore */
+  }
+}
+
 function parseLog(raw: string): TimingLog {
   const parsed = JSON.parse(raw) as Partial<TimingLog>
   const loads = Array.isArray(parsed.loads)
@@ -187,21 +235,36 @@ function parseLog(raw: string): TimingLog {
       })
     : []
   return {
+    buildId: typeof parsed.buildId === 'string' ? parsed.buildId : undefined,
     loads: loads.slice(-MAX_SAMPLES),
     generates: generates.slice(-MAX_SAMPLES),
   }
 }
 
-export function loadTimingLog(): TimingLog {
+export function loadTimingLog(currentBuildId: string = getAppBuildId()): TimingLog {
   try {
     const raw = localStorage.getItem(TIMING_STORAGE_KEY)
-    if (!raw) return { ...EMPTY_TIMING }
-    return parseLog(raw)
+    if (!raw) return { buildId: currentBuildId, ...EMPTY_TIMING }
+    const parsed = parseLog(raw)
+    if (parsed.buildId && parsed.buildId !== currentBuildId) {
+      wipeTimingLog()
+      const fresh: TimingLog = { buildId: currentBuildId, loads: [], generates: [] }
+      saveTimingLog(fresh)
+      return fresh
+    }
+    return {
+      ...parsed,
+      buildId: currentBuildId,
+    }
   } catch {
-    return { ...EMPTY_TIMING }
+    return { buildId: currentBuildId, ...EMPTY_TIMING }
   }
 }
 
 export function saveTimingLog(log: TimingLog): void {
-  localStorage.setItem(TIMING_STORAGE_KEY, JSON.stringify(log))
+  const toSave: TimingLog = {
+    ...log,
+    buildId: log.buildId || getAppBuildId(),
+  }
+  localStorage.setItem(TIMING_STORAGE_KEY, JSON.stringify(toSave))
 }

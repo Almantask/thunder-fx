@@ -122,7 +122,7 @@ export function IncantationConsole({
   }
 
   return (
-    <footer className={cn('flex flex-col min-h-0 border-t border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather px-4 py-3 overflow-y-auto', className)}>
+    <footer className={cn('flex flex-col min-h-0 max-h-[60vh] border-t border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather px-4 py-3 overflow-y-auto', className)}>
       <div className="mb-2 flex shrink-0 flex-wrap items-center gap-3">
         <div
           role="radiogroup"

@@ -23,13 +23,15 @@ function mulberry32(seed: number): () => number {
   }
 }
 
-function latin1Zstr(text: string): Uint8Array {
-  const chars = [...text].map((ch) => {
-    const code = ch.charCodeAt(0)
-    return code < 256 ? code : 63
-  })
-  chars.push(0)
-  return Uint8Array.from(chars)
+const textEncoder = new TextEncoder()
+const textDecoder = new TextDecoder('utf-8', { fatal: false })
+
+function utf8Zstr(text: string): Uint8Array {
+  const encoded = textEncoder.encode(text)
+  const bytes = new Uint8Array(encoded.length + 1)
+  bytes.set(encoded, 0)
+  bytes[encoded.length] = 0
+  return bytes
 }
 
 function readZstr(view: DataView, offset: number, size: number): string {
@@ -37,7 +39,7 @@ function readZstr(view: DataView, offset: number, size: number): string {
   let end = bytes.length
   const nul = bytes.indexOf(0)
   if (nul >= 0) end = nul
-  return String.fromCharCode(...bytes.subarray(0, end))
+  return textDecoder.decode(bytes.subarray(0, end))
 }
 
 function parseListInfo(view: DataView, offset: number, size: number): WavInfo | undefined {
@@ -69,7 +71,15 @@ function parseListInfo(view: DataView, offset: number, size: number): WavInfo | 
     : fields.ICMT
       ? parseInstrumentKeywords(fields.ICMT)
       : []
-  if (!fields.INAM && !fields.ICMT && !fields.ISFT && !fields.IGNR && instruments.length === 0) {
+  if (
+    !fields.INAM &&
+    !fields.ICMT &&
+    !fields.ISFT &&
+    !fields.IGNR &&
+    !fields.ISBJ &&
+    !fields.IART &&
+    instruments.length === 0
+  ) {
     return undefined
   }
   return {
@@ -77,12 +87,14 @@ function parseListInfo(view: DataView, offset: number, size: number): WavInfo | 
     comment: fields.ICMT || undefined,
     software: fields.ISFT || undefined,
     genre: fields.IGNR || undefined,
+    category: fields.ISBJ || undefined,
+    intensity: fields.IART || undefined,
     instruments,
   }
 }
 
 function infoSubchunk(id: string, text: string): Uint8Array {
-  const payload = latin1Zstr(text)
+  const payload = utf8Zstr(text)
   const pad = payload.length % 2
   const bytes = new Uint8Array(8 + payload.length + pad)
   for (let i = 0; i < 4; i += 1) bytes[i] = id.charCodeAt(i)
@@ -95,11 +107,13 @@ function encodeListInfo(info: WavInfo): Uint8Array | undefined {
   const parts: Uint8Array[] = []
   if (info.title) parts.push(infoSubchunk('INAM', info.title))
   if (info.genre) parts.push(infoSubchunk('IGNR', info.genre))
+  if (info.category) parts.push(infoSubchunk('ISBJ', info.category))
+  if (info.intensity) parts.push(infoSubchunk('IART', info.intensity))
   if (info.software) parts.push(infoSubchunk('ISFT', info.software))
   if (info.instruments.length) {
     parts.push(infoSubchunk('IKEY', info.instruments.join(';')))
-    parts.push(infoSubchunk('ICMT', info.comment ?? `Instruments: ${info.instruments.join(', ')}`))
-  } else if (info.comment) {
+  }
+  if (info.comment) {
     parts.push(infoSubchunk('ICMT', info.comment))
   }
   if (!parts.length) return undefined

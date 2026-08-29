@@ -322,7 +322,13 @@ export async function generate(
     if (!result.path) throw new Error('Engine did not return a WAV path')
     const b64 = await invoke<string>('read_file_b64', { path: result.path })
     let wav = base64ToBytes(b64)
-    const wavInfo = clipWavInfo(request.prompt, mode, topInstruments)
+    const wavInfo = clipWavInfo(
+      request.prompt,
+      mode,
+      topInstruments,
+      resolvedCategory,
+      resolvedIntensity,
+    )
     wav = tagWav(wav, wavInfo)
     await invoke('write_file_b64', { path: result.path, data: bytesToBase64(wav) })
     const clip: Clip = {

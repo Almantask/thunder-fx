@@ -9,6 +9,7 @@ export type GenerateModeSpec = {
   emptyWaveform: string
   defaultDuration: number
   defaultCfg: number
+  defaultSteps: number
   defaultNegative: string
   negativeHint: string
   chips: readonly string[]
@@ -23,57 +24,63 @@ export const GENERATE_MODES: Record<GenerateMode, GenerateModeSpec> = {
     placeholder: 'Describe the sound — a door latch, a sword draw, a fireball',
     generateAria: 'Generate sound',
     emptyWaveform: 'Describe a sound, then click Generate.',
-    defaultDuration: 8,
-    defaultCfg: 4.0,
-    defaultNegative: 'speech, music, vocals, singing, melody, distortion, clipping, muffled, background noise',
+    defaultDuration: 5,
+    defaultCfg: 4.5,
+    defaultSteps: 20,
+    defaultNegative:
+      'speech, music, vocals, singing, melody, instrumental, background music, humming, voiceover, distortion, clipping, muffled, low quality',
     negativeHint: 'Sounds to avoid, such as music, voice, or distortion.',
     chips: [
       'TrackType: SFX',
       'close mic',
-      'large stone hall',
+      'isolated one-shot',
+      'punchy transient',
       'fast decay',
-      'leather and steel',
-      'wet dungeon stone',
+      'dry recording',
+      'clean attack',
     ],
     starters: [
-      'TrackType: SFX, steel shortsword leaving a leather scabbard',
-      'TrackType: SFX, heavy tavern door on a busy night, oak and iron latch',
-      'TrackType: SFX, fireball ignition close-mic, fast decay, dry stone hall',
-      'TrackType: SFX, boots on wet dungeon stone, slow cautious steps',
-      'TrackType: SFX, dragon wing beat overhead, massive leather and wind',
-      'TrackType: SFX, coin purse dropped on oak table, silver scatter',
+      'TrackType: SFX, steel shortsword leaving a leather scabbard, crisp scrape, isolated one-shot',
+      'TrackType: SFX, heavy tavern door slam on iron hinges, wooden latch impact, isolated one-shot',
+      'TrackType: SFX, fireball explosion ignition, close mic, fast decay, dry stone hall',
+      'TrackType: SFX, heavy leather boots on wet dungeon stone, single deliberate step, isolated',
+      'TrackType: SFX, dragon wing beat overhead, massive leather and rushing wind gust, punchy transient',
+      'TrackType: SFX, pouch of gold coins dropped on oak table, bright silver clatter, isolated one-shot',
     ],
   },
   music: {
     id: 'music',
     label: 'Instrumental',
     prefix: 'TrackType: Music',
-    placeholder: 'Describe instrumental music — lute theme, brass fanfare, sparse piano',
+    placeholder: 'Describe instrumental music or ambient soundscape — lute theme, dungeon drone, orchestral bed',
     generateAria: 'Generate music',
-    emptyWaveform: 'Describe instrumental music, then click Generate.',
+    emptyWaveform: 'Describe instrumental music or ambience, then click Generate.',
     defaultDuration: 20,
-    defaultCfg: 3.0,
-    defaultNegative: 'vocals, singing, speech, lyrics, choir, pop drums, trap beats, EDM, clipping, distortion',
-    negativeHint: 'Parts to avoid, such as vocals, singing, or speech.',
+    defaultCfg: 3.2,
+    defaultSteps: 25,
+    defaultNegative:
+      'vocals, singing, speech, voice, lyrics, spoken words, choir, talking, narration, pop drums, trap beats, harsh distortion, clipping, muffled, low quality',
+    negativeHint: 'Parts to avoid, such as vocals, singing, speech, or harsh beats.',
     chips: [
       'TrackType: Music',
       'instrumental',
       'no vocals',
-      'lute and bodhran',
+      'rich harmonics',
+      'seamless looping',
+      'lush acoustics',
       'slow tempo',
       'warm strings',
     ],
     starters: [
-      'TrackType: Music, instrumental tavern lute theme, warm and looping-friendly, no vocals',
-      'TrackType: Music, heroic brass fanfare, short motif, percussion, no vocals',
-      'TrackType: Music, sparse piano and cello, melancholy forest, slow, no vocals',
-      'TrackType: Music, tense dungeon drone with plucked strings, no vocals',
-      'TrackType: Music, bright folk jig, fiddle and flute, dance tempo, no vocals',
-      'TrackType: Music, quiet campfire acoustic guitar, fingerpicked, no vocals',
+      'TrackType: Music, instrumental tavern lute theme, warm and looping-friendly, rich acoustic timbre, no vocals',
+      'TrackType: Music, atmospheric dungeon drone with bowed strings and dark reverb pad, loopable ambience, no vocals',
+      'TrackType: Music, heroic orchestral brass fanfare, short melodic motif, timpani, no vocals',
+      'TrackType: Music, sparse piano and cello melody, melancholy forest ambience, slow tempo, no vocals',
+      'TrackType: Music, quiet campfire acoustic guitar, fingerpicked folk melody, warm reverb, no vocals',
+      'TrackType: Music, enchanted ethereal synth and flute bed, shimmering soundscape, seamless loop, no vocals',
     ],
   },
 }
-
 
 const TRACK_TYPE = /^tracktype:\s*\w+/i
 const TRACK_TYPE_ONLY = /^tracktype:\s*\w+\s*$/i
@@ -133,6 +140,17 @@ export function applyModeCfg(
     return GENERATE_MODES[to].defaultCfg
   }
   return cfg
+}
+
+export function applyModeSteps(
+  steps: number,
+  from: GenerateMode,
+  to: GenerateMode,
+): number {
+  if (steps === GENERATE_MODES[from].defaultSteps) {
+    return GENERATE_MODES[to].defaultSteps
+  }
+  return steps
 }
 
 export function clipMode(clip: { mode?: GenerateMode; prompt: string }): GenerateMode {

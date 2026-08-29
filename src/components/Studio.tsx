@@ -56,6 +56,7 @@ import {
   applyModeCfg,
   applyModeDuration,
   applyModeNegative,
+  applyModeSteps,
   clipMode,
   ensureTrackType,
   inferGenerateMode,
@@ -355,6 +356,11 @@ export function Studio() {
       if (next !== mode) {
         setNegative((n) => applyModeNegative(n, mode, next))
         setDuration((d) => applyModeDuration(d, mode, next))
+        setCfg((c) => applyModeCfg(c, mode, next))
+        setSteps((s) => applyModeSteps(s, mode, next))
+        if (next === 'sfx') {
+          setSeamlessLoop(false)
+        }
         setMode(next)
         setSettings((s) => ({ ...s, generateMode: next }))
       }
@@ -367,6 +373,10 @@ export function Studio() {
     setNegative((n) => applyModeNegative(n, mode, next))
     setDuration((d) => applyModeDuration(d, mode, next))
     setCfg((c) => applyModeCfg(c, mode, next))
+    setSteps((s) => applyModeSteps(s, mode, next))
+    if (next === 'sfx') {
+      setSeamlessLoop(false)
+    }
     setMode(next)
     setSettings((s) => ({ ...s, generateMode: next }))
   }
@@ -494,7 +504,15 @@ export function Studio() {
         const detected = extractInstruments(finalClip.prompt)
         if (detected.length) {
           finalClip = { ...finalClip, instruments: detected.slice(0, 3) }
-          finalWav = tagMusicWav(finalWav, musicWavInfo(finalClip.prompt, finalClip.instruments))
+          finalWav = tagMusicWav(
+            finalWav,
+            musicWavInfo(
+              finalClip.prompt,
+              finalClip.instruments,
+              finalClip.category,
+              finalClip.intensity,
+            ),
+          )
         }
       }
       if (!isTauri()) {
@@ -511,7 +529,12 @@ export function Studio() {
       }
       if (!engineMockRef.current) {
         rememberTiming(
-          recordGenerate(timingRef.current, request.seconds, Date.now() - weaveStartedRef.current),
+          recordGenerate(
+            timingRef.current,
+            request.seconds,
+            Date.now() - weaveStartedRef.current,
+            { steps: currentSteps, precision: settings.precision },
+          ),
         )
       }
       return 'ok'
@@ -662,14 +685,17 @@ export function Studio() {
     if (!wav) return undefined
     const clip = clips.find((c) => c.id === selectedId)
     const activePrompt = clip?.prompt ?? prompt
-    const isMusic = clip ? clipMode(clip) === 'music' : activePrompt.toLowerCase().includes('tracktype: music')
+    const isMusic = clip ? clipMode(clip) === 'music' : mode === 'music' || activePrompt.toLowerCase().includes('tracktype: music')
     let exportBuf = trimWav(wav, trimStart, trimEnd)
-    if (seamlessLoop) {
+    if (seamlessLoop && isMusic) {
       exportBuf = makeSeamlessLoop(exportBuf, crossfadeSec)
     }
     if (isMusic) {
       const detected = clip?.instruments?.length ? clip.instruments : extractInstruments(activePrompt)
-      exportBuf = tagMusicWav(exportBuf, musicWavInfo(activePrompt, detected))
+      exportBuf = tagMusicWav(
+        exportBuf,
+        musicWavInfo(activePrompt, detected, clip?.category, clip?.intensity),
+      )
     }
     return exportBuf
   }
@@ -886,8 +912,8 @@ export function Studio() {
         />
       ) : null}
       {tab === 'generate' ? (
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex min-h-[140px] flex-[1.4]">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <div className="flex min-h-0 flex-1 overflow-hidden">
             <ScrollCanvas
               wav={wav}
               weaving={weaving}
@@ -903,17 +929,25 @@ export function Studio() {
               completedSubcategoryCount={completedSubcategoryCount}
               historicalEstimateMs={
                 loadingModel
-                  ? estimateLoadMs(timing)
+                  ? estimateLoadMs(timing, { precision: settings.precision, isMock: engine.mock })
                   : weaving
                     ? estimateGenerateMs(
                         timing,
                         queueRunning ? (queue[0]?.duration ?? duration) : duration,
+                        {
+                          steps,
+                          precision: settings.precision,
+                          isMock: engine.mock,
+                        },
                       )
                     : undefined
               }
               queueTailEstimateMs={
                 queueRunning && queue.length > 1
-                  ? estimateQueueMs(timing, queue.slice(1))
+                  ? estimateQueueMs(timing, queue.slice(1), {
+                      precision: settings.precision,
+                      isMock: engine.mock,
+                    })
                   : undefined
               }
               duration={clipDuration}
@@ -931,6 +965,7 @@ export function Studio() {
               emptyLabel={GENERATE_MODES[mode].emptyWaveform}
             />
             <Altar
+              mode={selectedId ? (clips.find((c) => c.id === selectedId) ? clipMode(clips.find((c) => c.id === selectedId)!) : mode) : mode}
               hasClip={Boolean(wav)}
               weaving={weaving || loadingModel}
               playing={playing}
@@ -964,7 +999,7 @@ export function Studio() {
             />
           </div>
           <IncantationConsole
-            className="flex-1 min-h-[170px]"
+            className="shrink-0"
             mode={mode}
             prompt={prompt}
             duration={duration}
@@ -1000,10 +1035,23 @@ export function Studio() {
             onCancelQueue={cancelQueue}
             onClearQueue={() => updateQueue([])}
             onRemoveQueued={(id) => updateQueue(removeFromQueue(queueRef.current, id))}
-            loadEstimateMs={estimateLoadMs(timing)}
-            castEstimateMs={estimateGenerateMs(timing, duration)}
-            queueEstimateMs={estimateQueueMs(timing, queue)}
-            clipEstimateMs={(seconds) => estimateGenerateMs(timing, seconds)}
+            loadEstimateMs={estimateLoadMs(timing, { precision: settings.precision, isMock: engine.mock })}
+            castEstimateMs={estimateGenerateMs(timing, duration, {
+              steps,
+              precision: settings.precision,
+              isMock: engine.mock,
+            })}
+            queueEstimateMs={estimateQueueMs(timing, queue, {
+              precision: settings.precision,
+              isMock: engine.mock,
+            })}
+            clipEstimateMs={(seconds) =>
+              estimateGenerateMs(timing, seconds, {
+                steps,
+                precision: settings.precision,
+                isMock: engine.mock,
+              })
+            }
           />
         </div>
       ) : null}

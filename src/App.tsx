@@ -10,7 +10,7 @@ export default function App() {
 
   return (
     <TooltipProvider>
-      <div className="keep-vignette h-full min-h-0">
+      <div className="keep-vignette h-full min-h-0 overflow-hidden">
         {ready ? (
           <Studio />
         ) : (

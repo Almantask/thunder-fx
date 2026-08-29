@@ -1,5 +1,6 @@
 import { clampGenerateSeconds } from '@/lib/duration'
 import { clipMode } from '@/lib/generateMode'
+import { extractInstruments, parseInstrumentKeywords } from '@/lib/instruments'
 import type { Clip } from '@/lib/types'
 
 export type PromptLibrary = 'fx' | 'ambience'
@@ -21,6 +22,7 @@ export type CatalogEffect = {
   duration: number
   negative: string
   intensity?: string
+  instruments?: string[]
 }
 
 export type PromptCategory = {
@@ -32,6 +34,7 @@ export type PromptCategory = {
 
 const DURATION = /duration:\s*(\d+(?:\.\d+)?)\s*s\b/i
 const NEGATIVE = /negative:\s*(.+)$/im
+const INSTRUMENTS_LINE = /instruments:\s*(.+)$/im
 const TRACK_TYPE = /^\s*TrackType:\s*.+/im
 
 function slugify(value: string): string {
@@ -85,6 +88,12 @@ function parseNegative(block: string): string {
   return match?.[1]?.trim() ?? ''
 }
 
+function parseInstruments(block: string): string[] {
+  const match = block.match(INSTRUMENTS_LINE)
+  if (!match) return []
+  return parseInstrumentKeywords(match[1])
+}
+
 function parsePrompt(block: string): string | undefined {
   const match = block.match(TRACK_TYPE)
   const prompt = match?.[0]?.trim()
@@ -108,6 +117,10 @@ export function parsePromptMarkdown(path: string, markdown: string): PromptCateg
     const intensity = intensityMatch ? intensityMatch[1].toUpperCase() : undefined
     const effectSubcategory =
       library === 'fx' ? inferSubcategoryFromCategoryAndPrompt(name, prompt) : undefined
+    const effectInstruments =
+      library !== 'fx'
+        ? Array.from(new Set([...parseInstruments(body), ...extractInstruments(prompt)]))
+        : undefined
     effects.push({
       id: `${id}:${slugify(title)}`,
       library,
@@ -120,6 +133,7 @@ export function parsePromptMarkdown(path: string, markdown: string): PromptCateg
       duration,
       negative: parseNegative(body),
       intensity,
+      instruments: effectInstruments,
     })
   }
   return { id, library, name, effects }

@@ -3,18 +3,25 @@ use serde::{Deserialize, Serialize};
 use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, Write};
 use std::path::{Path, PathBuf};
-use std::process::{Child, ChildStdin, ChildStdout, Command, Stdio};
+use std::process::{Child, ChildStdin, Command, Stdio};
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, Manager, State};
+
+use std::collections::HashMap;
+use std::sync::mpsc::{channel, Sender};
 
 struct Engine {
     proc: Mutex<Option<Arc<EngineProc>>>,
 }
 
+struct PendingRequests {
+    map: Mutex<HashMap<String, Sender<serde_json::Value>>>,
+}
+
 struct EngineProc {
     stdin: Mutex<ChildStdin>,
-    stdout: Mutex<BufReader<ChildStdout>>,
+    pending: Arc<PendingRequests>,
     child: Mutex<Child>,
 }
 
@@ -256,9 +263,92 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
         .stdout
         .take()
         .ok_or_else(|| fail("engine stdout missing"))?;
+
+    let pending = Arc::new(PendingRequests {
+        map: Mutex::new(HashMap::new()),
+    });
+
+    let reader_pending = Arc::clone(&pending);
+    let app_handle = app.clone();
+    std::thread::spawn(move || {
+        let mut reader = BufReader::new(stdout);
+        let mut line = String::new();
+        loop {
+            line.clear();
+            match reader.read_line(&mut line) {
+                Ok(0) => {
+                    if let Ok(mut map) = reader_pending.map.lock() {
+                        for (_, tx) in map.drain() {
+                            let _ = tx.send(serde_json::json!({
+                                "event": "error",
+                                "message": "Engine process closed"
+                            }));
+                        }
+                    }
+                    break;
+                }
+                Ok(_) => {
+                    let trimmed = line.trim();
+                    if trimmed.is_empty() {
+                        continue;
+                    }
+                    if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(trimmed) {
+                        let event = parsed.get("event").and_then(|v| v.as_str()).unwrap_or("");
+                        if event == "progress" {
+                            let payload = WeaveProgressPayload {
+                                step: parsed.get("step").and_then(|v| v.as_u64()).unwrap_or(0) as u32,
+                                total: parsed.get("total").and_then(|v| v.as_u64()).unwrap_or(20) as u32,
+                                elapsed_ms: parsed
+                                    .get("elapsedMs")
+                                    .and_then(|v| v.as_u64())
+                                    .unwrap_or(0),
+                                phase: parsed
+                                    .get("phase")
+                                    .and_then(|v| v.as_str())
+                                    .map(|s| s.to_string()),
+                                ratio: parsed.get("ratio").and_then(|v| v.as_f64()),
+                                message: parsed
+                                    .get("message")
+                                    .and_then(|v| v.as_str())
+                                    .map(|s| s.to_string()),
+                            };
+                            let _ = app_handle.emit("weave-progress", payload.clone());
+                            let _ = app_handle.emit("scribe-progress", payload);
+                        } else if let Some(id_val) = parsed.get("id") {
+                            let id_str = match id_val {
+                                serde_json::Value::String(s) => s.clone(),
+                                _ => id_val.to_string(),
+                            };
+                            let tx_opt = if let Ok(mut map) = reader_pending.map.lock() {
+                                map.remove(&id_str)
+                            } else {
+                                None
+                            };
+                            if let Some(tx) = tx_opt {
+                                let _ = tx.send(parsed);
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    fail(format!("Engine stdout read error: {e}"));
+                    if let Ok(mut map) = reader_pending.map.lock() {
+                        for (_, tx) in map.drain() {
+                            let _ = tx.send(serde_json::json!({
+                                "event": "error",
+                                "message": format!("Engine read error: {e}")
+                            }));
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+    });
+
     Ok(EngineProc {
         stdin: Mutex::new(stdin),
-        stdout: Mutex::new(BufReader::new(stdout)),
+        pending,
         child: Mutex::new(child),
     })
 }
@@ -277,49 +367,49 @@ fn send_line(proc: &EngineProc, payload: &serde_json::Value) -> Result<(), Strin
     stdin.flush().map_err(|e| fail(e.to_string()))
 }
 
-fn read_until_terminal(
+fn send_and_receive(
     proc: &EngineProc,
-    id: &serde_json::Value,
-    app: Option<&AppHandle>,
-    progress_event: Option<&str>,
+    payload: serde_json::Value,
+    timeout_secs: u64,
 ) -> Result<serde_json::Value, String> {
-    let mut stdout = proc.stdout.lock().map_err(|e| fail(e.to_string()))?;
-    let mut line = String::new();
-    loop {
-        line.clear();
-        let n = stdout.read_line(&mut line).map_err(|e| fail(e.to_string()))?;
-        if n == 0 {
-            return Err(fail("engine closed"));
+    let id_str = match payload.get("id") {
+        Some(serde_json::Value::String(s)) => s.clone(),
+        Some(v) => v.to_string(),
+        None => return Err(fail("Payload missing id")),
+    };
+    let (tx, rx) = channel();
+    {
+        let mut map = proc.pending.map.lock().map_err(|e| fail(e.to_string()))?;
+        map.insert(id_str.clone(), tx);
+    }
+    if let Err(e) = send_line(proc, &payload) {
+        if let Ok(mut map) = proc.pending.map.lock() {
+            map.remove(&id_str);
         }
-        let parsed: serde_json::Value =
-            serde_json::from_str(line.trim()).map_err(|e| fail(e.to_string()))?;
-        if parsed.get("id") != Some(id) {
-            continue;
-        }
-        match parsed.get("event").and_then(|v| v.as_str()).unwrap_or("") {
-            "progress" => {
-                if let (Some(app), Some(name)) = (app, progress_event) {
-                    let payload = WeaveProgressPayload {
-                        step: parsed.get("step").and_then(|v| v.as_u64()).unwrap_or(0) as u32,
-                        total: parsed.get("total").and_then(|v| v.as_u64()).unwrap_or(20) as u32,
-                        elapsed_ms: parsed
-                            .get("elapsedMs")
-                            .and_then(|v| v.as_u64())
-                            .unwrap_or(0),
-                        phase: parsed
-                            .get("phase")
-                            .and_then(|v| v.as_str())
-                            .map(|s| s.to_string()),
-                        ratio: parsed.get("ratio").and_then(|v| v.as_f64()),
-                        message: parsed
-                            .get("message")
-                            .and_then(|v| v.as_str())
-                            .map(|s| s.to_string()),
-                    };
-                    let _ = app.emit(name, payload);
-                }
+        return Err(e);
+    }
+    match rx.recv_timeout(std::time::Duration::from_secs(timeout_secs)) {
+        Ok(res) => {
+            if res.get("event").and_then(|v| v.as_str()) == Some("error") {
+                let msg = res
+                    .get("message")
+                    .and_then(|v| v.as_str())
+                    .unwrap_or("Engine error");
+                return Err(fail(msg));
             }
-            _ => return Ok(parsed),
+            Ok(res)
+        }
+        Err(std::sync::mpsc::RecvTimeoutError::Timeout) => {
+            if let Ok(mut map) = proc.pending.map.lock() {
+                map.remove(&id_str);
+            }
+            Err(fail(format!("Engine command timed out after {timeout_secs}s")))
+        }
+        Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => {
+            if let Ok(mut map) = proc.pending.map.lock() {
+                map.remove(&id_str);
+            }
+            Err(fail("Engine disconnected"))
         }
     }
 }
@@ -335,12 +425,8 @@ async fn run_blocking<T: Send + 'static>(
 #[tauri::command]
 async fn engine_status(app: AppHandle, state: State<'_, Engine>) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
-    let payload = serde_json::json!({"id":"status","cmd":"status"});
-    run_blocking(move || {
-        send_line(&proc, &payload)?;
-        read_until_terminal(&proc, &payload["id"], None, None)
-    })
-    .await
+    let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "status"});
+    run_blocking(move || send_and_receive(&proc, payload, 10)).await
 }
 
 #[tauri::command]
@@ -350,12 +436,8 @@ async fn engine_probe(
     hf_token: Option<String>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
-    let payload = serde_json::json!({"id":"probe","cmd":"probe", "hf_token": hf_token});
-    run_blocking(move || {
-        send_line(&proc, &payload)?;
-        read_until_terminal(&proc, &payload["id"], None, None)
-    })
-    .await
+    let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "probe", "hf_token": hf_token});
+    run_blocking(move || send_and_receive(&proc, payload, 30)).await
 }
 
 #[tauri::command]
@@ -394,18 +476,14 @@ async fn engine_generate(
         "subcategory": subcategory,
         "intensity": intensity
     });
-    run_blocking(move || {
-        send_line(&proc, &payload)?;
-        read_until_terminal(&proc, &payload["id"], Some(&app), Some("weave-progress"))
-    })
-    .await
+    run_blocking(move || send_and_receive(&proc, payload, 600)).await
 }
 
 
 #[tauri::command]
 fn engine_cancel(app: AppHandle, state: State<Engine>) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
-    let payload = serde_json::json!({"id":"cancel","cmd":"cancel"});
+    let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "cancel"});
     send_line(&proc, &payload)?;
     Ok(payload)
 }
@@ -443,11 +521,7 @@ async fn engine_encode_audio(
         "bit_depth": bit_depth,
         "mono": mono.unwrap_or(false)
     });
-    run_blocking(move || {
-        send_line(&proc, &payload)?;
-        read_until_terminal(&proc, &payload["id"], None, None)
-    })
-    .await
+    run_blocking(move || send_and_receive(&proc, payload, 120)).await
 }
 
 #[tauri::command]
@@ -458,12 +532,13 @@ async fn engine_warmup(
     precision: Option<String>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
-    let payload = serde_json::json!({"id":"warmup","cmd":"warmup", "hf_token": hf_token, "precision": precision});
-    run_blocking(move || {
-        send_line(&proc, &payload)?;
-        read_until_terminal(&proc, &payload["id"], Some(&app), Some("scribe-progress"))
-    })
-    .await
+    let payload = serde_json::json!({
+        "id": uuid::Uuid::new_v4().to_string(),
+        "cmd": "warmup",
+        "hf_token": hf_token,
+        "precision": precision
+    });
+    run_blocking(move || send_and_receive(&proc, payload, 600)).await
 }
 
 #[tauri::command]
@@ -473,11 +548,7 @@ async fn engine_unload(
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
     let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "unload"});
-    run_blocking(move || {
-        send_line(&proc, &payload)?;
-        read_until_terminal(&proc, &payload["id"], None, None)
-    })
-    .await
+    run_blocking(move || send_and_receive(&proc, payload, 30)).await
 }
 
 #[tauri::command]

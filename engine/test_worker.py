@@ -90,7 +90,7 @@ class WorkerTests(unittest.TestCase):
         self.assertTrue(msg["loaded"])
         self.assertEqual(msg.get("gpuName"), "mock")
         self.assertGreater(msg.get("vramTotalGb") or 0, 0)
-        self.assertEqual(msg.get("precision"), "fp32")
+        self.assertEqual(msg.get("precision"), "fp16")
 
     def test_generate_writes_wav(self) -> None:
         self.client.send(
@@ -216,6 +216,42 @@ class WorkerTests(unittest.TestCase):
         info = read_wav_info(Path(done["path"]))
         self.assertEqual(info.get("IKEY"), "choir;celesta;waterphone;drone")
         self.assertIn("Instruments: choir, celesta, waterphone, drone", info.get("ICMT", ""))
+
+    def test_generate_embeds_category_intensity_and_instruments(self) -> None:
+        self.client.send(
+            {
+                "id": "g-cat-int",
+                "cmd": "generate",
+                "prompt": "TrackType: Music, misty forest with duduk and harp",
+                "seconds": 0.3,
+                "seed": 12,
+                "cfg": 1,
+                "negative": "",
+                "mode": "music",
+                "category": "Ancient Discovery",
+                "intensity": "Level I — Quiet looping bed",
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "g-cat-int":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        self.assertEqual(done.get("instruments"), ["duduk", "harp"])
+        from worker import read_wav_info
+
+        info = read_wav_info(Path(done["path"]))
+        self.assertEqual(info.get("ISBJ"), "Ancient Discovery")
+        self.assertEqual(info.get("IART"), "Level I — Quiet looping bed")
+        self.assertEqual(info.get("IKEY"), "duduk;harp")
+        self.assertIn("Category: Ancient Discovery", info.get("ICMT", ""))
+        self.assertIn("Intensity: Level I — Quiet looping bed", info.get("ICMT", ""))
+        self.assertIn("Instruments: duduk, harp", info.get("ICMT", ""))
 
     def test_generate_progress_includes_weaving_phase(self) -> None:
         self.client.send(

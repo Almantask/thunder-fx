@@ -71,5 +71,20 @@ describe('musicWavInfo', () => {
     expect(info.software).toBe('Thunder FX')
     expect(info.title).toMatch(/lute tavern theme/i)
   })
+
+  it('embeds category and intensity in INFO fields and comment', () => {
+    const info = musicWavInfo(
+      'TrackType: Music, ancient ruins with duduk and harp',
+      ['duduk', 'harp'],
+      'Ancient Discovery',
+      'Level I — Quiet looping bed',
+    )
+    expect(info.instruments).toEqual(['duduk', 'harp'])
+    expect(info.category).toBe('Ancient Discovery')
+    expect(info.intensity).toBe('Level I — Quiet looping bed')
+    expect(info.comment).toBe(
+      'Category: Ancient Discovery · Intensity: Level I — Quiet looping bed · Instruments: duduk, harp',
+    )
+  })
 })
 

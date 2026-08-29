@@ -92,7 +92,58 @@ engine\.venv\Scripts\python.exe -u engine\worker.py
 
 The CUDA venv is about 4 GB; Medium + T5Gemma weights are several more GB. If `C:` is full, set `UV_CACHE_DIR` and `HF_HUB_CACHE` to a larger drive and junction `engine/.venv` / `engine/.hf-cache` there. Setup downloads weights into `HF_HUB_CACHE`. You need a Hugging Face login that has accepted the Stability Community License and Gemma Terms.
 
-Quality settings are fixed: fp32, 8 steps, unchunked decode (retry chunked only on CUDA OOM). There is no quality slider.
+Quality settings default to FP16 (with optional FP32 in Settings), configurable diffusion steps (4–100, default 20), and chunked decode.
+
+## Performance benchmarks & estimates
+
+Thunder FX uses empirical performance benchmark models to predict generation and model load times. When launching a newly built executable, prior local estimates are automatically wiped and reset to these baseline benchmarks until new machine runs are recorded.
+
+### Hardware reference benchmarks (NVIDIA GeForce RTX 3090 24 GB)
+
+| Operation | Precision | Measured Time | Storage Medium |
+| :--- | :--- | :--- | :--- |
+| **Model Cold Load** | FP16 | **~3.5 s** | NVMe SSD (Samsung 980 PRO / Kingston SA2000) |
+| **Model Cold Load** | FP32 | **~5.2 s** | NVMe SSD |
+| **Model Cold Load** | FP16 | **221.4 s (~3.7 min)** | Mechanical SATA HDD (Toshiba HDWD240) |
+| **Model Cold Load** | FP32 | **330.2 s (~5.5 min)** | Mechanical SATA HDD (Toshiba HDWD240) |
+| **Fast Preview (1s @ 4 steps)** | FP16 | **12.6 s** | CUDA / Flash Attention 2 |
+
+> [!TIP]
+> Keep `HF_HUB_CACHE` on an **NVMe SSD** (e.g. `D:\huggingface\hub` or `C:\Users\<User>\.cache\huggingface\hub`) for near-instant cold loads (~3–5s) rather than a mechanical hard drive.
+
+### Performance estimates across parameter variations
+
+| Tier / Variation | Duration | Steps | Precision | Est. Compute Time | Real-Time Factor (RTF) | Est. VRAM |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Micro UI Click** | 0.5 s | 4 | FP16 | **~4.8 s** | 9.6× | ~6.2 GB |
+| **Micro UI Click (HQ)** | 0.5 s | 4 | FP32 | **~7.0 s** | 14.0× | ~12.8 GB |
+| **Quick Footstep / Foley** | 1.5 s | 8 | FP16 | **~6.6 s** | 4.4× | ~6.2 GB |
+| **Quick Action Impact** | 3.0 s | 15 | FP16 | **~9.9 s** | 3.3× | ~6.2 GB |
+| **Standard SFX (Default)** | 8.0 s | 20 | FP16 | **~14.5 s** | 1.8× | ~6.3 GB |
+| **Standard SFX (FP32)** | 8.0 s | 20 | FP32 | **~20.6 s** | 2.6× | ~12.9 GB |
+| **Detailed Creature Roar** | 10.0 s | 30 | FP16 | **~19.4 s** | 1.9× | ~6.3 GB |
+| **Short Music Stinger** | 15.0 s | 20 | FP16 | **~17.7 s** | 1.2× | ~6.3 GB |
+| **Music Bed (Default)** | 20.0 s | 20 | FP16 | **~20.0 s** | 1.0× | ~6.4 GB |
+| **Music Bed (FP32)** | 20.0 s | 20 | FP32 | **~28.8 s** | 1.4× | ~13.1 GB |
+| **Refined Music Track** | 30.0 s | 35 | FP16 | **~38.7 s** | 1.3× | ~6.4 GB |
+| **Seamless Loop Bed** | 45.0 s | 20 | FP16 | **~31.5 s** | 0.7× | ~6.6 GB |
+| **Extended Atmosphere** | 60.0 s | 25 | FP16 | **~45.7 s** | 0.8× | ~6.7 GB |
+| **Long Ambience Cue** | 120.0 s | 20 | FP16 | **~66.0 s** | 0.6× | ~7.2 GB |
+| **Dungeon Exploration Bed**| 180.0 s | 20 | FP16 | **~93.6 s** | 0.5× | ~7.6 GB |
+| **Epic Siege Ambience** | 240.0 s | 20 | FP16 | **~121.2 s** | 0.5× | ~8.1 GB |
+| **Max Duration Limit** | 380.0 s | 20 | FP16 | **~185.6 s** | 0.5× | ~9.2 GB |
+| **Max Duration Limit (FP32)**| 380.0 s | 20 | FP32 | **~273.6 s** | 0.7× | ~18.9 GB |
+| **Studio High-Step Master** | 8.0 s | 50 | FP32 | **~38.8 s** | 4.9× | ~12.9 GB |
+| **Studio Ultra Master** | 8.0 s | 100 | FP32 | **~69.8 s** | 8.7× | ~12.9 GB |
+| **Fast 4-Takes Casting** | 1.5 s (×4) | 4 | FP16 | **~20.4 s** | 3.4× | ~6.2 GB |
+| **Standard 4-Takes Casting**| 8.0 s (×4) | 20 | FP16 | **~58.0 s** | 1.8× | ~6.3 GB |
+| **Music 4-Takes Casting** | 20.0 s (×4) | 20 | FP16 | **~80.0 s** | 1.0× | ~6.4 GB |
+
+### Running performance benchmark tests
+
+```bash
+npm test src/lib/perfBenchmarks.test.ts
+```
 
 ## How it works
 

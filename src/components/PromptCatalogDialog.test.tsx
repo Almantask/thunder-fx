@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { PromptCatalogDialog } from '@/components/PromptCatalogDialog'
@@ -285,6 +285,113 @@ TrackType: Music, instrumental, tavern lute
     // Should find forest ambient even though Tavern was selected!
     expect(screen.getByRole('checkbox', { name: /forest ambient/i })).toBeInTheDocument()
     expect(screen.queryByRole('checkbox', { name: /tavern lute/i })).not.toBeInTheDocument()
+  })
+
+  it('renders clear instrument tags on non-fx prompts and previews them', async () => {
+    const user = userEvent.setup()
+    const ambienceCatalog = catalogFromFiles({
+      '/prompts/ambience/forest.md': `# Forest
+
+### Forest ambient (I)
+- Duration: 30s
+- Negative: speech, singing
+
+TrackType: Music, instrumental, forest ambient with Celtic harp and soft cello
+`,
+    })
+    renderDialog({ catalog: ambienceCatalog })
+    await user.click(screen.getByRole('button', { name: /level i — quiet looping bed/i }))
+
+    const instContainer = screen.getByLabelText('Instruments: harp, cello')
+    expect(instContainer).toBeInTheDocument()
+    expect(within(instContainer).getByText('harp')).toBeInTheDocument()
+    expect(within(instContainer).getByText('cello')).toBeInTheDocument()
+
+    // Preview
+    await user.click(screen.getByRole('button', { name: /preview forest ambient/i }))
+    expect(screen.getByText(/Instruments:/i)).toBeInTheDocument()
+  })
+
+  it('does not render instrument tags on FX prompts', () => {
+    renderDialog()
+    expect(screen.queryByLabelText(/Instruments:/i)).not.toBeInTheDocument()
+  })
+
+  it('filters by multiple selected instruments with Any and All match modes', async () => {
+    const user = userEvent.setup()
+    const ambienceCatalog = catalogFromFiles({
+      '/prompts/ambience/forest.md': `# Forest
+
+### Harp only (I)
+- Duration: 30s
+- Negative: speech
+
+TrackType: Music, peaceful grove with Celtic harp
+
+### Flute only (I)
+- Duration: 30s
+- Negative: speech
+
+TrackType: Music, peaceful grove with solo flute
+
+### Harp and Flute (I)
+- Duration: 30s
+- Negative: speech
+
+TrackType: Music, peaceful grove with Celtic harp and solo flute
+
+### Cello only (I)
+- Duration: 30s
+- Negative: speech
+
+TrackType: Music, peaceful grove with solo cello
+`,
+    })
+    renderDialog({ catalog: ambienceCatalog })
+    const level1Btn = screen.getByRole('button', { name: /level i — quiet looping bed/i })
+    await user.click(level1Btn)
+
+    // All 4 are visible initially
+    expect(screen.getByRole('checkbox', { name: /harp only/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /flute only/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /harp and flute/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /cello only/i })).toBeInTheDocument()
+
+    // Select Harp instrument filter
+    const harpFilterBtn = screen.getByRole('button', { name: /^harp/i })
+    await user.click(harpFilterBtn)
+
+    // Only prompts with harp should show
+    expect(screen.getByRole('checkbox', { name: /harp only/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /harp and flute/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /flute only/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /cello only/i })).not.toBeInTheDocument()
+
+    // Multi-select: also select Flute
+    const fluteFilterBtn = screen.getByRole('button', { name: /^flute/i })
+    await user.click(fluteFilterBtn)
+
+    // By default "Any" match mode is active -> prompts with harp OR flute show
+    expect(screen.getByRole('checkbox', { name: /harp only/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /flute only/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /harp and flute/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /cello only/i })).not.toBeInTheDocument()
+
+    // Switch match mode to "All"
+    await user.click(screen.getByRole('radio', { name: /^all$/i }))
+
+    // Only prompts with BOTH harp AND flute show
+    expect(screen.getByRole('checkbox', { name: /harp and flute/i })).toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /harp only/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /flute only/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('checkbox', { name: /cello only/i })).not.toBeInTheDocument()
+
+    // Clear instrument filter by clicking "All instruments"
+    await user.click(screen.getByRole('button', { name: /all instruments/i }))
+    expect(screen.getByRole('checkbox', { name: /harp only/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /flute only/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /harp and flute/i })).toBeInTheDocument()
+    expect(screen.getByRole('checkbox', { name: /cello only/i })).toBeInTheDocument()
   })
 })
 

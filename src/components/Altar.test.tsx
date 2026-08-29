@@ -61,14 +61,26 @@ describe('Altar', () => {
     expect(onMono).toHaveBeenCalledWith(true)
   })
 
-  it('shows a seamless loop crossfade when the toggle is on', async () => {
+  it('hides seamless loop options completely for sound fx mode', () => {
+    render(
+      <TooltipProvider>
+        <Altar {...props} mode="sfx" seamlessLoop={true} />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByRole('checkbox', { name: /seamless loop/i })).not.toBeInTheDocument()
+    expect(screen.queryByLabelText(/crossfade seconds/i)).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /preview seamless loop/i })).not.toBeInTheDocument()
+  })
+
+  it('shows a seamless loop crossfade when the toggle is on in music mode', async () => {
     const user = userEvent.setup()
     const onPreviewLoop = vi.fn()
     render(
       <TooltipProvider>
-        <Altar {...props} seamlessLoop onPreviewLoop={onPreviewLoop} />
+        <Altar {...props} mode="music" seamlessLoop onPreviewLoop={onPreviewLoop} />
       </TooltipProvider>,
     )
+    expect(screen.getByRole('checkbox', { name: /seamless loop/i })).toBeInTheDocument()
     expect(screen.getByLabelText(/crossfade seconds/i)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /preview seamless loop/i }))
     expect(onPreviewLoop).toHaveBeenCalled()

@@ -5,10 +5,10 @@ import {
   applyModeCfg,
   applyModeDuration,
   applyModeNegative,
+  applyModeSteps,
   ensureTrackType,
   inferGenerateMode,
 } from '@/lib/generateMode'
-
 
 describe('inferGenerateMode', () => {
   it('detects music from TrackType', () => {
@@ -65,8 +65,8 @@ describe('applyModeNegative', () => {
 
 describe('applyModeDuration', () => {
   it('moves from the sound-effect default to the instrumental default', () => {
-    expect(applyModeDuration(8, 'sfx', 'music')).toBe(20)
-    expect(applyModeDuration(20, 'music', 'sfx')).toBe(8)
+    expect(applyModeDuration(5, 'sfx', 'music')).toBe(20)
+    expect(applyModeDuration(20, 'music', 'sfx')).toBe(5)
   })
 
   it('leaves a custom duration alone', () => {
@@ -76,8 +76,8 @@ describe('applyModeDuration', () => {
 
 describe('applyModeCfg', () => {
   it('swaps default CFG between modes', () => {
-    expect(applyModeCfg(4.0, 'sfx', 'music')).toBe(3.0)
-    expect(applyModeCfg(3.0, 'music', 'sfx')).toBe(4.0)
+    expect(applyModeCfg(4.5, 'sfx', 'music')).toBe(3.2)
+    expect(applyModeCfg(3.2, 'music', 'sfx')).toBe(4.5)
   })
 
   it('leaves custom CFG alone', () => {
@@ -85,3 +85,13 @@ describe('applyModeCfg', () => {
   })
 })
 
+describe('applyModeSteps', () => {
+  it('swaps default steps between modes', () => {
+    expect(applyModeSteps(20, 'sfx', 'music')).toBe(25)
+    expect(applyModeSteps(25, 'music', 'sfx')).toBe(20)
+  })
+
+  it('leaves custom steps alone', () => {
+    expect(applyModeSteps(32, 'sfx', 'music')).toBe(32)
+  })
+})

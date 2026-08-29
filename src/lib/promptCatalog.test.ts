@@ -89,6 +89,24 @@ TrackType: Music, looping tavern lute bed, no vocals
     expect(parsed.effects.map((e) => e.title)).toEqual(['Sword draw, vintage'])
     expect(parsed.effects[0]?.duration).toBe(1.5)
   })
+
+  it('extracts instruments for non-fx prompts and leaves fx prompt instruments undefined', () => {
+    const musicMd = `# Forest
+
+### Forest ambient (I)
+- Duration: 90s
+- Negative: speech
+
+TrackType: Music, peaceful forest glade with Celtic harp, soft cello drone, and tin whistle
+`
+    const parsedAmbience = parsePromptMarkdown('ambience/forest.md', musicMd)
+    expect(parsedAmbience.library).toBe('ambience')
+    expect(parsedAmbience.effects[0]?.instruments).toEqual(['harp', 'cello', 'drone', 'whistle'])
+
+    const parsedFx = parsePromptMarkdown('fx/combat.md', combatMd)
+    expect(parsedFx.library).toBe('fx')
+    expect(parsedFx.effects[0]?.instruments).toBeUndefined()
+  })
 })
 
 describe('catalogFromFiles', () => {
@@ -162,6 +180,10 @@ describe('loadPromptCatalog', () => {
     expect(catalog.every((c) => c.effects.every((e) => e.prompt.toLowerCase().includes('tracktype:')))).toBe(
       true,
     )
+    const ambienceEffects = catalog.filter((c) => c.library === 'ambience').flatMap((c) => c.effects)
+    expect(ambienceEffects.some((e) => e.instruments && e.instruments.length > 0)).toBe(true)
+    const fxEffects = catalog.filter((c) => c.library === 'fx').flatMap((c) => c.effects)
+    expect(fxEffects.every((e) => e.instruments === undefined)).toBe(true)
   })
 })
 

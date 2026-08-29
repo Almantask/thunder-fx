@@ -52,6 +52,8 @@ export function PromptCatalogDialog({
     () => catalog.find((c) => c.library === (catalog.some((x) => x.library === 'fx') ? 'fx' : catalog[0]?.library))?.id ?? catalog[0]?.id ?? '',
   )
   const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null)
+  const [selectedInstruments, setSelectedInstruments] = useState<Set<string>>(new Set())
+  const [instrumentMatchMode, setInstrumentMatchMode] = useState<'any' | 'all'>('any')
   const [collapsedSubcategories, setCollapsedSubcategories] = useState<Set<string>>(new Set())
   const [openIntensities, setOpenIntensities] = useState<Set<string>>(new Set())
   const [query, setQuery] = useState('')
@@ -62,6 +64,28 @@ export function PromptCatalogDialog({
   const category = libraryCategories.find((c) => c.id === categoryId) ?? libraryCategories[0]
 
   const isSearching = query.trim().length > 0
+
+  const availableInstruments = useMemo(() => {
+    if (library === 'fx') return []
+    const effects = isSearching
+      ? libraryCategories.flatMap((c) => c.effects)
+      : category?.effects ?? []
+    const counts = new Map<string, number>()
+    for (const effect of effects) {
+      for (const inst of effect.instruments ?? []) {
+        counts.set(inst, (counts.get(inst) ?? 0) + 1)
+      }
+    }
+    const list: { name: string; count: number }[] = []
+    for (const [name, count] of counts.entries()) {
+      list.push({ name, count })
+    }
+    list.sort((a, b) => {
+      if (b.count !== a.count) return b.count - a.count
+      return a.name.localeCompare(b.name)
+    })
+    return list
+  }, [category, library, isSearching, libraryCategories])
 
   const subcategories = useMemo(() => {
     if (library !== 'fx') return []
@@ -100,19 +124,43 @@ export function PromptCatalogDialog({
         return sub === selectedSubcategory
       })
     }
+    if (library !== 'fx' && selectedInstruments.size > 0) {
+      effects = effects.filter((e) => {
+        if (!e.instruments || e.instruments.length === 0) return false
+        if (instrumentMatchMode === 'all') {
+          return Array.from(selectedInstruments).every((inst) => e.instruments!.includes(inst))
+        }
+        return e.instruments.some((inst) => selectedInstruments.has(inst))
+      })
+    }
     const q = query.trim().toLowerCase()
     if (!q) return effects
     return effects.filter((effect) => {
       if (effect.title.toLowerCase().includes(q)) return true
       if (effect.prompt.toLowerCase().includes(q)) return true
       if (effect.category && effect.category.toLowerCase().includes(q)) return true
+      if (
+        effect.instruments &&
+        effect.instruments.some((inst) => inst.toLowerCase().includes(q))
+      ) {
+        return true
+      }
       const sub =
         effect.subcategory ||
         inferSubcategoryFromCategoryAndPrompt(effect.category || category?.name || '', effect.prompt)
       if (sub.toLowerCase().includes(q)) return true
       return false
     })
-  }, [category, query, selectedSubcategory, isSearching, libraryCategories])
+  }, [
+    category,
+    query,
+    selectedSubcategory,
+    selectedInstruments,
+    instrumentMatchMode,
+    library,
+    isSearching,
+    libraryCategories,
+  ])
 
   const groupedVisible = useMemo(() => {
     if (isSearching) {
@@ -218,6 +266,22 @@ export function PromptCatalogDialog({
     })
   }
 
+  const toggleInstrument = (instName: string) => {
+    setSelectedInstruments((prev) => {
+      const next = new Set(prev)
+      if (next.has(instName)) {
+        next.delete(instName)
+      } else {
+        next.add(instName)
+      }
+      return next
+    })
+  }
+
+  const clearInstruments = () => {
+    setSelectedInstruments(new Set())
+  }
+
   function toggle(id: string, checked: boolean) {
     setSelected((current) => {
       const next = new Set(current)
@@ -230,6 +294,7 @@ export function PromptCatalogDialog({
   function selectCategory(id: string) {
     setCategoryId(id)
     setSelectedSubcategory(null)
+    setSelectedInstruments(new Set())
     setCollapsedSubcategories(new Set())
     setOpenIntensities(new Set())
     setSelected(new Set())
@@ -242,6 +307,7 @@ export function PromptCatalogDialog({
     setLibrary(next)
     setCategoryId(catalog.find((c) => c.library === next)?.id ?? '')
     setSelectedSubcategory(null)
+    setSelectedInstruments(new Set())
     setCollapsedSubcategories(new Set())
     setOpenIntensities(new Set())
     setSelected(new Set())
@@ -265,35 +331,55 @@ export function PromptCatalogDialog({
   const renderEffectItem = (effect: CatalogEffect) => {
     const checked = selected.has(effect.id)
     const previewing = previewId === effect.id
+    const hasInstruments = Boolean(effect.instruments && effect.instruments.length > 0)
     return (
       <li
         key={effect.id}
         className="rounded-book px-1 py-1 hover:bg-leather-2"
       >
         <div className="flex items-center gap-2">
-          <label className="flex min-w-0 flex-1 cursor-pointer items-center gap-2 text-sm text-cream">
+          <label className="flex min-w-0 flex-1 cursor-pointer items-start gap-2 text-sm text-cream">
             <Checkbox
-              className="shrink-0"
+              className="mt-0.5 shrink-0"
               checked={checked}
               onCheckedChange={(value) => toggle(effect.id, value === true)}
               aria-label={effect.title}
             />
-            <span className="min-w-0 flex-1 truncate">{effect.title}</span>
-            {isSearching && effect.category ? (
-              <span className="shrink-0 rounded bg-leather-2 px-1.5 py-0.5 text-[10px] text-muted">
-                {effect.category}
-              </span>
-            ) : null}
-            {effect.subcategory && !selectedSubcategory ? (
-              <span className="shrink-0 rounded bg-leather-2 px-1.5 py-0.5 text-[10px] text-gold/80">
-                {effect.subcategory}
-              </span>
-            ) : null}
-            <span className="shrink-0 font-mono text-[11px] text-muted">
-              {effect.duration}s
-            </span>
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span className="min-w-0 flex-1 truncate">{effect.title}</span>
+                {isSearching && effect.category ? (
+                  <span className="shrink-0 rounded bg-leather-2 px-1.5 py-0.5 text-[10px] text-muted">
+                    {effect.category}
+                  </span>
+                ) : null}
+                {effect.subcategory && !selectedSubcategory ? (
+                  <span className="shrink-0 rounded bg-leather-2 px-1.5 py-0.5 text-[10px] text-gold/80">
+                    {effect.subcategory}
+                  </span>
+                ) : null}
+                <span className="shrink-0 font-mono text-[11px] text-muted">
+                  {effect.duration}s
+                </span>
+              </div>
+              {hasInstruments ? (
+                <div
+                  className="mt-1 flex flex-wrap items-center gap-1"
+                  aria-label={`Instruments: ${effect.instruments!.join(', ')}`}
+                >
+                  {effect.instruments!.map((inst) => (
+                    <span
+                      key={inst}
+                      className="shrink-0 rounded border border-[color-mix(in_srgb,var(--color-gold)_25%,transparent)] bg-leather-2/80 px-1.5 py-0.5 text-[10px] font-mono text-gold/90"
+                    >
+                      {inst}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
           </label>
-          <div className="flex shrink-0 items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1 self-start pt-0.5">
             <Hint label="Show the full prompt text. Does not fill Generate.">
               <Button
                 type="button"
@@ -324,6 +410,12 @@ export function PromptCatalogDialog({
             <p className="text-xs leading-relaxed text-muted whitespace-pre-wrap break-words">
               {effect.prompt}
             </p>
+            {hasInstruments ? (
+              <p className="text-[11px] text-gold/90">
+                <span className="font-semibold text-cream/75">Instruments: </span>
+                {effect.instruments!.join(', ')}
+              </p>
+            ) : null}
             {effect.negative ? (
               <p className="text-[11px] text-muted break-words">Negative: {effect.negative}</p>
             ) : null}
@@ -465,6 +557,83 @@ export function PromptCatalogDialog({
                     </button>
                   )
                 })}
+              </div>
+            ) : null}
+            {library !== 'fx' && availableInstruments.length > 0 ? (
+              <div
+                role="group"
+                aria-label="Filter by instruments"
+                className="flex shrink-0 max-h-20 flex-wrap items-center gap-1 overflow-y-auto px-0.5 py-0.5"
+              >
+                <button
+                  type="button"
+                  aria-pressed={selectedInstruments.size === 0}
+                  className={cn(
+                    'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[11px] transition-colors',
+                    selectedInstruments.size === 0
+                      ? 'border-gold bg-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] font-medium text-cream'
+                      : 'border-[color-mix(in_srgb,var(--color-gold)_25%,transparent)] text-muted hover:border-gold/50 hover:text-cream',
+                  )}
+                  onClick={clearInstruments}
+                >
+                  <span>All instruments</span>
+                </button>
+                {availableInstruments.map((inst) => {
+                  const isSel = selectedInstruments.has(inst.name)
+                  return (
+                    <button
+                      key={inst.name}
+                      type="button"
+                      aria-pressed={isSel}
+                      className={cn(
+                        'inline-flex h-6 items-center gap-1 rounded-full border px-2 text-[11px] transition-colors',
+                        isSel
+                          ? 'border-gold bg-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] font-medium text-cream'
+                          : 'border-[color-mix(in_srgb,var(--color-gold)_25%,transparent)] text-muted hover:border-gold/50 hover:text-cream',
+                      )}
+                      onClick={() => toggleInstrument(inst.name)}
+                    >
+                      <span>{inst.name}</span>
+                      <span className="font-mono text-[10px] opacity-75">({inst.count})</span>
+                    </button>
+                  )
+                })}
+                {selectedInstruments.size >= 2 ? (
+                  <div
+                    role="radiogroup"
+                    aria-label="Instrument match mode"
+                    className="ml-1 inline-flex h-6 items-center rounded-full border border-[color-mix(in_srgb,var(--color-gold)_25%,transparent)] bg-leather-2 p-0.5 text-[10px]"
+                  >
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={instrumentMatchMode === 'any'}
+                      className={cn(
+                        'rounded-full px-1.5 py-0.5 transition-colors',
+                        instrumentMatchMode === 'any'
+                          ? 'bg-[color-mix(in_srgb,var(--color-gold)_25%,var(--color-leather))] font-medium text-cream'
+                          : 'text-muted hover:text-cream',
+                      )}
+                      onClick={() => setInstrumentMatchMode('any')}
+                    >
+                      Any
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={instrumentMatchMode === 'all'}
+                      className={cn(
+                        'rounded-full px-1.5 py-0.5 transition-colors',
+                        instrumentMatchMode === 'all'
+                          ? 'bg-[color-mix(in_srgb,var(--color-gold)_25%,var(--color-leather))] font-medium text-cream'
+                          : 'text-muted hover:text-cream',
+                      )}
+                      onClick={() => setInstrumentMatchMode('all')}
+                    >
+                      All
+                    </button>
+                  </div>
+                ) : null}
               </div>
             ) : null}
             <ScrollArea className="h-full min-h-0 flex-1 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)]">

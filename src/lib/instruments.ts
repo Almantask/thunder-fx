@@ -3,6 +3,8 @@ export type WavInfo = {
   comment?: string
   software?: string
   genre?: string
+  category?: string
+  intensity?: string
   instruments: string[]
 }
 
@@ -253,14 +255,39 @@ export function titleFromPrompt(prompt: string): string {
   return title.slice(0, 80)
 }
 
-export function musicWavInfo(prompt: string, instruments = extractInstruments(prompt)): WavInfo {
+export function buildMusicComment(
+  instruments: string[],
+  category?: string,
+  intensity?: string,
+): string | undefined {
+  const parts: string[] = []
+  if (category?.trim()) {
+    parts.push(`Category: ${category.trim()}`)
+  }
+  if (intensity?.trim()) {
+    parts.push(`Intensity: ${intensity.trim()}`)
+  }
+  if (instruments.length) {
+    parts.push(`Instruments: ${instruments.join(', ')}`)
+  }
+  return parts.length ? parts.join(' · ') : undefined
+}
+
+export function musicWavInfo(
+  prompt: string,
+  instruments = extractInstruments(prompt),
+  category?: string,
+  intensity?: string,
+): WavInfo {
   const title = titleFromPrompt(prompt)
   return {
     instruments,
     software: 'Thunder FX',
     genre: 'Instrumental',
     title: title || 'Instrumental',
-    comment: instruments.length ? `Instruments: ${instruments.join(', ')}` : undefined,
+    category: category?.trim() || undefined,
+    intensity: intensity?.trim() || undefined,
+    comment: buildMusicComment(instruments, category, intensity),
   }
 }
 
@@ -268,6 +295,8 @@ export function clipWavInfo(
   prompt: string,
   mode: 'music' | 'sfx' = 'sfx',
   instruments = extractInstruments(prompt),
+  category?: string,
+  intensity?: string,
 ): WavInfo {
   const title = titleFromPrompt(prompt)
   if (mode === 'music') {
@@ -276,7 +305,9 @@ export function clipWavInfo(
       software: 'Thunder FX',
       genre: 'Instrumental',
       title: title || 'Instrumental',
-      comment: instruments.length ? `Instruments: ${instruments.join(', ')}` : undefined,
+      category: category?.trim() || undefined,
+      intensity: intensity?.trim() || undefined,
+      comment: buildMusicComment(instruments, category, intensity),
     }
   }
   return {
@@ -284,12 +315,20 @@ export function clipWavInfo(
     software: 'Thunder FX',
     genre: 'Sound Effects',
     title: title || 'Sound Effect',
+    category: category?.trim() || undefined,
+    intensity: undefined,
     comment: prompt.trim() || undefined,
   }
 }
 
 export function parseInstrumentKeywords(value: string): string[] {
-  const body = value.trim().replace(/^instruments:\s*/i, '')
+  let body = value.trim()
+  const match = body.match(/instruments:\s*([^·|;]+(?:\s*,\s*[^·|;]+)*)/i)
+  if (match) {
+    body = match[1]
+  } else {
+    body = body.replace(/^instruments:\s*/i, '')
+  }
   return body
     .split(/[;,]/)
     .map((part) => part.trim())

@@ -7,11 +7,14 @@ import {
   estimateQueueMs,
   estimateRemainingMs,
   formatEstimateClock,
+  hasRealMachineSamples,
   loadTimingLog,
   recordGenerate,
   recordLoad,
   saveTimingLog,
+  wipeTimingLog,
 } from '@/lib/timing'
+import { getBaselineGenerateMs, getBaselineLoadMs } from '@/lib/perfBenchmarks'
 
 afterEach(() => {
   localStorage.clear()
@@ -46,11 +49,13 @@ describe('recordLoad', () => {
 })
 
 describe('estimateLoadMs', () => {
-  it('has no estimate until a load has finished', () => {
-    expect(estimateLoadMs(EMPTY_TIMING)).toBeUndefined()
+  it('uses performance test baseline estimate when no loads have finished', () => {
+    expect(estimateLoadMs(EMPTY_TIMING)).toBe(getBaselineLoadMs('fp16'))
+    expect(estimateLoadMs(EMPTY_TIMING, { precision: 'fp32' })).toBe(getBaselineLoadMs('fp32'))
+    expect(estimateLoadMs(EMPTY_TIMING, { isMock: true })).toBe(getBaselineLoadMs('fp16', true))
   })
 
-  it('uses the only completed load', () => {
+  it('uses the completed load once machine has recorded one', () => {
     expect(estimateLoadMs(recordLoad(EMPTY_TIMING, 45_000))).toBe(45_000)
   })
 
@@ -64,6 +69,11 @@ describe('estimateLoadMs', () => {
 })
 
 describe('estimateGenerateMs', () => {
+  it('uses baseline performance test estimate when no generates exist', () => {
+    const baseline = getBaselineGenerateMs(8, { steps: 20, precision: 'fp16' })
+    expect(estimateGenerateMs(EMPTY_TIMING, 8, { steps: 20, precision: 'fp16' })).toBe(baseline)
+  })
+
   it('scales a single sample to the requested clip length', () => {
     const log = recordGenerate(EMPTY_TIMING, 8, 40_000)
     expect(estimateGenerateMs(log, 8)).toBe(40_000)
@@ -80,15 +90,24 @@ describe('estimateGenerateMs', () => {
 })
 
 describe('estimateQueueMs', () => {
-  it('sums per-clip estimates', () => {
+  it('sums per-clip estimates using machine history when available', () => {
     const log = recordGenerate(EMPTY_TIMING, 8, 40_000)
     expect(
       estimateQueueMs(log, [{ duration: 8 }, { duration: 1.5 }, { duration: 8 }]),
     ).toBe(87_500)
   })
 
-  it('has no queue estimate without history', () => {
-    expect(estimateQueueMs(EMPTY_TIMING, [{ duration: 8 }])).toBeUndefined()
+  it('uses baseline performance estimates when queue is estimated with empty history', () => {
+    const baselineTotal =
+      getBaselineGenerateMs(8, { steps: 20, precision: 'fp16' }) +
+      getBaselineGenerateMs(1.5, { steps: 20, precision: 'fp16' })
+    expect(
+      estimateQueueMs(EMPTY_TIMING, [{ duration: 8 }, { duration: 1.5 }], { precision: 'fp16' }),
+    ).toBe(baselineTotal)
+  })
+
+  it('returns undefined for empty queue', () => {
+    expect(estimateQueueMs(EMPTY_TIMING, [])).toBeUndefined()
   })
 })
 
@@ -114,15 +133,32 @@ describe('estimateRemainingMs', () => {
   })
 })
 
-describe('timing persistence', () => {
-  it('round-trips a log through localStorage', () => {
+describe('timing persistence and build wiping', () => {
+  it('round-trips a log through localStorage with matching build ID', () => {
     const log = recordGenerate(recordLoad(EMPTY_TIMING, 45_000), 8, 40_000)
     saveTimingLog(log)
     expect(localStorage.getItem(TIMING_STORAGE_KEY)).toBeTruthy()
-    expect(loadTimingLog()).toEqual(log)
+    const loaded = loadTimingLog(log.buildId)
+    expect(loaded.loads).toEqual(log.loads)
+    expect(loaded.generates).toEqual(log.generates)
   })
 
-  it('returns an empty log when storage is missing', () => {
-    expect(loadTimingLog()).toEqual(EMPTY_TIMING)
+  it('wipes previous estimates when a new exe build ID is detected', () => {
+    const oldLog = recordGenerate(recordLoad({ buildId: 'build-v1', loads: [], generates: [] }, 45_000), 8, 40_000)
+    saveTimingLog(oldLog)
+    expect(hasRealMachineSamples(loadTimingLog('build-v1'))).toBe(true)
+
+    // Load with new build ID 'build-v2'
+    const newLog = loadTimingLog('build-v2')
+    expect(newLog.buildId).toBe('build-v2')
+    expect(newLog.loads).toEqual([])
+    expect(newLog.generates).toEqual([])
+    expect(hasRealMachineSamples(newLog)).toBe(false)
+  })
+
+  it('wipeTimingLog removes storage completely', () => {
+    saveTimingLog(recordLoad(EMPTY_TIMING, 10_000))
+    wipeTimingLog()
+    expect(localStorage.getItem(TIMING_STORAGE_KEY)).toBeNull()
   })
 })

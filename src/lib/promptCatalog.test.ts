@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
   catalogFromFiles,
+  clampQueueTakes,
+  expandEffectTakes,
+  expandTakes,
   formatIntensityLabel,
   getCompletedSubcategories,
   getCompletedSubcategoryCount,
@@ -178,6 +181,55 @@ describe('queue helpers', () => {
     const queued = mergeQueue([], [first!, first!, second!])
     expect(queued.map((e) => e.id)).toEqual([first!.id, second!.id])
     expect(removeFromQueue(queued, first!.id).map((e) => e.id)).toEqual([second!.id])
+  })
+
+  it('clamps takes to the supported range', () => {
+    expect(clampQueueTakes(0)).toBe(1)
+    expect(clampQueueTakes(-5)).toBe(1)
+    expect(clampQueueTakes(3.6)).toBe(4)
+    expect(clampQueueTakes(999)).toBe(10)
+    expect(clampQueueTakes(Number.NaN)).toBe(1)
+  })
+
+  it('leaves a single take unchanged with no seed assigned', () => {
+    const catalog = catalogFromFiles({ '/prompts/combat.md': combatMd })
+    const [first] = catalog[0]?.effects ?? []
+    expect(first).toBeDefined()
+    expect(expandEffectTakes(first!, 1)).toEqual([first])
+  })
+
+  it('expands an effect into distinct, seeded take entries', () => {
+    const catalog = catalogFromFiles({ '/prompts/combat.md': combatMd })
+    const [first] = catalog[0]?.effects ?? []
+    expect(first).toBeDefined()
+    const takes = expandEffectTakes(first!, 3)
+    expect(takes).toHaveLength(3)
+    // ids are unique so every take survives mergeQueue's dedupe
+    expect(new Set(takes.map((t) => t.id)).size).toBe(3)
+    expect(takes[0]!.id).toBe(first!.id)
+    expect(takes[1]!.id).toBe(`${first!.id}::take-2`)
+    expect(takes[2]!.id).toBe(`${first!.id}::take-3`)
+    // every take (including the first) gets an explicit random seed
+    for (const take of takes) {
+      expect(Number.isInteger(take.seed)).toBe(true)
+      expect(take.seed).toBeGreaterThan(0)
+      expect(take.prompt).toBe(first!.prompt)
+    }
+    const seeds = new Set(takes.map((t) => t.seed))
+    expect(seeds.size).toBe(3)
+    expect(takes[1]!.title).toBe(`${first!.title} (Take 2)`)
+  })
+
+  it('expands a whole selection and re-adding the same take count dedupes', () => {
+    const catalog = catalogFromFiles({ '/prompts/combat.md': combatMd })
+    const [first, second] = catalog[0]?.effects ?? []
+    const expanded = expandTakes([first!, second!], 2)
+    expect(expanded).toHaveLength(4)
+    const queued = mergeQueue([], expanded)
+    expect(queued).toHaveLength(4)
+    // Adding the same effects at the same take count again is a no-op...
+    const again = mergeQueue(queued, expandTakes([first!, second!], 2))
+    expect(again).toHaveLength(4)
   })
 })
 

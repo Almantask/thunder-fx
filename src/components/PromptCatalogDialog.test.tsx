@@ -86,6 +86,40 @@ describe('PromptCatalogDialog', () => {
     expect(onEnqueue.mock.calls[0]?.[0]).toHaveLength(2)
   })
 
+  it('queues extra takes per selected prompt when Takes is raised', async () => {
+    const user = userEvent.setup()
+    const { onEnqueue } = renderDialog()
+    await user.clear(screen.getByLabelText(/takes to queue per prompt/i))
+    await user.type(screen.getByLabelText(/takes to queue per prompt/i), '3')
+    await user.click(screen.getByRole('checkbox', { name: /fist punch/i }))
+    await user.click(screen.getByRole('button', { name: /add selected/i }))
+    const queued = onEnqueue.mock.calls[0]?.[0]
+    expect(queued).toHaveLength(3)
+    expect(new Set(queued.map((item: { id: string }) => item.id)).size).toBe(3)
+    expect(queued.every((item: { prompt: string }) => item.prompt === queued[0].prompt)).toBe(true)
+    expect(queued.every((item: { seed?: number }) => typeof item.seed === 'number')).toBe(true)
+    expect(new Set(queued.map((item: { seed?: number }) => item.seed)).size).toBe(3)
+  })
+
+  it('queues extra takes for every effect when adding a whole category', async () => {
+    const user = userEvent.setup()
+    const { onEnqueue } = renderDialog()
+    await user.clear(screen.getByLabelText(/takes to queue per prompt/i))
+    await user.type(screen.getByLabelText(/takes to queue per prompt/i), '2')
+    await user.click(screen.getByRole('button', { name: /add category/i }))
+    expect(onEnqueue.mock.calls[0]?.[0]).toHaveLength(4)
+  })
+
+  it('queues a single take per prompt by default', async () => {
+    const user = userEvent.setup()
+    const { onEnqueue } = renderDialog()
+    await user.click(screen.getByRole('checkbox', { name: /fist punch/i }))
+    await user.click(screen.getByRole('button', { name: /add selected/i }))
+    const queued = onEnqueue.mock.calls[0]?.[0]
+    expect(queued).toHaveLength(1)
+    expect(queued[0].seed).toBeUndefined()
+  })
+
   it('filters effects by search text', async () => {
     const user = userEvent.setup()
     renderDialog()

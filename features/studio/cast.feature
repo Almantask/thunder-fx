@@ -93,6 +93,13 @@ Feature: Generate a sound
     And Generates
     Then remaining time is shown
 
+  Scenario: A finished clip shows the seed it was generated with
+    Given the studio is open
+    When the user writes a tavern door prompt
+    And Generates
+    Then the seed used for the clip is shown beside its length
+    And the same seed is shown on the clip in the library
+
   Scenario: Instrumental seamless loop ends the same way it starts
     Given the studio is open
     When the user chooses Instrumental mode

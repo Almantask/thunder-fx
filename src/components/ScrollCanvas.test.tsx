@@ -198,6 +198,25 @@ describe('ScrollCanvas', () => {
     expect(onSeek).toHaveBeenCalled()
   })
 
+  it('shows the seed used alongside the clip length', () => {
+    const mockWav = generateMockSfxWav(1.0, 1)
+    render(
+      <TooltipProvider>
+        <ScrollCanvas {...base} wav={mockWav} duration={10} seed={492817} />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText(/seed 492817/i)).toBeInTheDocument()
+  })
+
+  it('does not show a seed when no clip is loaded', () => {
+    render(
+      <TooltipProvider>
+        <ScrollCanvas {...base} seed={492817} />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByText(/seed/i)).not.toBeInTheDocument()
+  })
+
   it('hides goblin crew and displays waveform when individual wav is loaded', () => {
     const mockWav = generateMockSfxWav(1.0, 1)
     render(

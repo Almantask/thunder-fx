@@ -146,6 +146,36 @@ describe('GrimoireRail', () => {
     expect(screen.queryByText(/taiko/)).not.toBeInTheDocument()
   })
 
+  it('shows the seed used to generate each clip', async () => {
+    const user = userEvent.setup()
+    render(
+      <TooltipProvider>
+        <GrimoireRail
+          clips={[
+            {
+              id: '1',
+              prompt: 'TrackType: SFX, steel shortsword leaving a leather scabbard',
+              duration: 1.5,
+              seed: 837462951,
+              createdAt: new Date().toISOString(),
+              cfg: 1,
+              negative: '',
+              mode: 'sfx',
+            },
+          ]}
+          query=""
+          onQuery={() => undefined}
+          onSelect={() => undefined}
+          onStarter={() => undefined}
+          onDelete={() => undefined}
+        />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('button', { name: /combat/i }))
+    await user.click(screen.getByRole('button', { name: /sword/i }))
+    expect(screen.getByText(/seed 837462951/i)).toBeInTheDocument()
+  })
+
   it('lists a prompt name instead of the full prompt', async () => {
     const user = userEvent.setup()
     render(

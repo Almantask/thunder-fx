@@ -245,6 +245,40 @@ describe('Studio', () => {
     expect(screen.getByRole('button', { name: /play trimmed clip/i })).toBeEnabled()
   }, 15000)
 
+  it('shows the seed used once a single track finishes generating', async () => {
+    const user = userEvent.setup()
+    renderStudio()
+    await user.type(screen.getByRole('textbox', { name: 'Prompt' }), 'tavern door')
+    await user.click(screen.getByRole('button', { name: /generate sound/i }))
+    await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 })
+    expect(screen.getByText(/seed \d+/i)).toBeInTheDocument()
+  }, 15000)
+
+  it(
+    'lets a prompt be queued while one is generating, then continues automatically',
+    async () => {
+      const user = userEvent.setup()
+      renderStudio()
+      await user.type(screen.getByRole('textbox', { name: 'Prompt' }), 'tavern door')
+      await user.click(screen.getByRole('button', { name: /generate sound/i }))
+      expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
+
+      // "Generate 4 takes" is replaced by "Queue next" while busy.
+      expect(screen.queryByRole('button', { name: /generate 4 takes/i })).not.toBeInTheDocument()
+      const queueNext = await screen.findByRole('button', { name: /queue next/i })
+      await user.click(queueNext)
+      expect(await screen.findByText(/queue · 1/i)).toBeInTheDocument()
+
+      // The running generate finishes, then the queued prompt runs and drains the queue,
+      // all without another click.
+      expect(
+        await screen.findByRole('button', { name: /generate sound/i }, { timeout: 20000 }),
+      ).toBeInTheDocument()
+      expect(screen.queryByText(/queue · 1/i)).not.toBeInTheDocument()
+    },
+    20000,
+  )
+
   it('allows unloading the model', async () => {
     const user = userEvent.setup()
     renderStudio()

@@ -37,6 +37,7 @@ type IncantationConsoleProps = {
   onRitesOpen: (open: boolean) => void
   onCast: () => void
   onCastTakes?: () => void
+  onQueueCurrent?: () => void
   onDispel: () => void
   onLoadModel?: () => void
   onCancelLoadModel?: () => void
@@ -79,6 +80,7 @@ export function IncantationConsole({
   onRitesOpen,
   onCast,
   onCastTakes,
+  onQueueCurrent,
   onDispel,
   onLoadModel,
   onCancelLoadModel,
@@ -106,6 +108,7 @@ export function IncantationConsole({
   const ready = canCast(prompt)
   const busy = weaving || loadingModel
   const canGenerate = ready && modelLoaded && !busy
+  const canQueueMore = ready && modelLoaded && !loadingModel
   const canLoad = engineReady && !modelLoaded && !busy
   const canUnload = engineReady && modelLoaded && !busy
   const canGenerateQueue = queue.length > 0 && modelLoaded && !busy
@@ -239,6 +242,7 @@ export function IncantationConsole({
                     </span>
                     <span className="shrink-0 font-mono text-[11px] text-muted">
                       {item.duration}s{itemEta ? ` ${itemEta}` : ''}
+                      {typeof item.seed === 'number' ? ` · seed ${item.seed}` : ''}
                     </span>
                     <Hint label={`Remove ${item.title} from the queue.`}>
                       <Button
@@ -401,7 +405,22 @@ export function IncantationConsole({
                 </Button>
               </Hint>
             )}
-            {weaving ? null : (
+            {weaving ? (
+              <Hint label="Queue this prompt. It generates automatically right after the current run finishes.">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="lg"
+                  className="w-full"
+                  disabled={!canQueueMore}
+                  onClick={() => onQueueCurrent?.()}
+                  aria-label="Queue next"
+                >
+                  <ListOrdered />
+                  Queue next
+                </Button>
+              </Hint>
+            ) : (
               <Hint label="Generate four variations with random seeds, then keep or discard each take.">
                 <Button
                   type="button"

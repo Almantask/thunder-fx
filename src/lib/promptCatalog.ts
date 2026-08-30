@@ -26,6 +26,8 @@ export type CatalogEffect = {
   negative: string
   intensity?: string
   instruments?: string[]
+  /** Explicit seed for this queue entry. Set when queueing more than one take so each take is a distinct variation, regardless of the Generate console's seed field. */
+  seed?: number
 }
 
 export type PromptCategory = {
@@ -171,6 +173,43 @@ export function loadPromptCatalog(): PromptCategory[] {
     _cachedCatalog = catalogFromFiles(promptFiles)
   }
   return _cachedCatalog
+}
+
+export const MIN_QUEUE_TAKES = 1
+export const MAX_QUEUE_TAKES = 10
+
+export function clampQueueTakes(takes: number): number {
+  if (!Number.isFinite(takes)) return MIN_QUEUE_TAKES
+  return Math.min(MAX_QUEUE_TAKES, Math.max(MIN_QUEUE_TAKES, Math.round(takes)))
+}
+
+function randomSeed(): number {
+  return 1 + Math.floor(Math.random() * 2_147_483_646)
+}
+
+/**
+ * Expands a single catalog effect into `takes` queue entries. Beyond the
+ * first, each entry gets a distinct id (so it survives mergeQueue's dedupe)
+ * and an explicit random seed, so every take is a fresh variation no matter
+ * what the Generate console's seed field is set to.
+ */
+export function expandEffectTakes(effect: CatalogEffect, takes: number): CatalogEffect[] {
+  const count = clampQueueTakes(takes)
+  if (count <= 1) return [effect]
+  const items: CatalogEffect[] = [{ ...effect, seed: randomSeed() }]
+  for (let n = 2; n <= count; n += 1) {
+    items.push({
+      ...effect,
+      id: `${effect.id}::take-${n}`,
+      title: `${effect.title} (Take ${n})`,
+      seed: randomSeed(),
+    })
+  }
+  return items
+}
+
+export function expandTakes(effects: CatalogEffect[], takes: number): CatalogEffect[] {
+  return effects.flatMap((effect) => expandEffectTakes(effect, takes))
 }
 
 export function mergeQueue(queue: CatalogEffect[], added: CatalogEffect[]): CatalogEffect[] {

@@ -32,6 +32,7 @@ type ScrollCanvasProps = {
   historicalEstimateMs?: number
   queueTailEstimateMs?: number
   mode?: GenerateMode
+  seed?: number
   startedAt?: number
   completedSubcategoryCount?: number
   onTrim: (start: number, end: number) => void
@@ -57,6 +58,7 @@ export function ScrollCanvas({
   historicalEstimateMs,
   queueTailEstimateMs,
   mode = 'sfx',
+  seed,
   completedSubcategoryCount = 0,
   onTrim,
   onSeek,
@@ -370,8 +372,17 @@ export function ScrollCanvas({
             </p>
           </Hint>
         ) : (
-          <Hint label="Length of the clip, in minutes:seconds.tenths.">
-            <p className="font-mono text-xs text-muted">{formatClock(duration)}</p>
+          <Hint
+            label={
+              wav && Number.isFinite(seed)
+                ? 'Length of the clip, in minutes:seconds.tenths, and the seed used to generate it.'
+                : 'Length of the clip, in minutes:seconds.tenths.'
+            }
+          >
+            <p className="font-mono text-xs text-muted">
+              {formatClock(duration)}
+              {wav && Number.isFinite(seed) ? ` · seed ${seed}` : ''}
+            </p>
           </Hint>
         )}
       </div>

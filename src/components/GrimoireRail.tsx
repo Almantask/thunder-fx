@@ -604,6 +604,7 @@ export function GrimoireRail({
               <span className="shrink-0 font-mono text-muted">
                 {bpm ? `${bpm} BPM · ` : null}
                 {relativeTime(clip.createdAt)}
+                {Number.isFinite(clip.seed) ? ` · seed ${clip.seed}` : null}
               </span>
             </div>
           </button>

@@ -53,6 +53,36 @@ describe('IncantationConsole', () => {
     expect(screen.getByRole('button', { name: /generate 4 takes/i })).toBeDisabled()
   })
 
+  it('replaces Generate 4 takes with Queue next while a generation runs', async () => {
+    const user = userEvent.setup()
+    const onQueueCurrent = vi.fn()
+    render(
+      <TooltipProvider>
+        <IncantationConsole
+          {...props}
+          prompt="tavern door"
+          weaving
+          onQueueCurrent={onQueueCurrent}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.queryByRole('button', { name: /generate sound/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /generate 4 takes/i })).not.toBeInTheDocument()
+    const queueNext = screen.getByRole('button', { name: /queue next/i })
+    expect(queueNext).toBeEnabled()
+    await user.click(queueNext)
+    expect(onQueueCurrent).toHaveBeenCalled()
+  })
+
+  it('disables Queue next while the prompt is too short', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole {...props} prompt="ab" weaving />
+      </TooltipProvider>,
+    )
+    expect(screen.getByRole('button', { name: /queue next/i })).toBeDisabled()
+  })
+
   it('calls onCastTakes from Generate 4 takes', async () => {
     const user = userEvent.setup()
     const onCastTakes = vi.fn()
@@ -281,6 +311,19 @@ describe('IncantationConsole', () => {
     expect(onRemoveQueued).toHaveBeenCalledWith('fx:ui:soft-button-click')
     await user.click(screen.getByRole('button', { name: /generate queue/i }))
     expect(onGenerateQueue).toHaveBeenCalled()
+  })
+
+  it('shows the seed on a queued take', () => {
+    render(
+      <TooltipProvider>
+        <IncantationConsole
+          {...props}
+          prompt=""
+          queue={[{ ...queued[0]!, id: `${queued[0]!.id}::take-2`, seed: 123456 }]}
+        />
+      </TooltipProvider>,
+    )
+    expect(screen.getByText(/seed 123456/i)).toBeInTheDocument()
   })
 
   it('shows Cancel button while weights go into VRAM and calls onCancelLoadModel', async () => {

@@ -15,10 +15,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import type { CatalogEffect, PromptCategory, PromptLibrary } from '@/lib/promptCatalog'
 import {
+  MAX_QUEUE_TAKES,
+  MIN_QUEUE_TAKES,
   PROMPT_LIBRARIES,
+  clampQueueTakes,
+  expandTakes,
   inferEffectIntensity,
   inferSubcategoryFromCategoryAndPrompt,
 } from '@/lib/promptCatalog'
@@ -59,6 +64,10 @@ export function PromptCatalogDialog({
   const [query, setQuery] = useState('')
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [previewId, setPreviewId] = useState<string | null>(null)
+  // Kept as free text while typing (so clearing the field doesn't snap back
+  // to 1 mid-edit); clamped to a usable take count wherever it is read.
+  const [takeCountInput, setTakeCountInput] = useState('1')
+  const takeCount = clampQueueTakes(Number(takeCountInput))
 
   const libraryCategories = catalog.filter((c) => c.library === library)
   const category = libraryCategories.find((c) => c.id === categoryId) ?? libraryCategories[0]
@@ -318,13 +327,13 @@ export function PromptCatalogDialog({
   function addSelected() {
     const items = visible.filter((effect) => selected.has(effect.id))
     if (items.length === 0) return
-    onEnqueue(items)
+    onEnqueue(expandTakes(items, takeCount))
     setSelected(new Set())
   }
 
   function addCategory() {
     if (visible.length === 0) return
-    onEnqueue(visible)
+    onEnqueue(expandTakes(visible, takeCount))
     setSelected(new Set())
   }
 
@@ -788,10 +797,33 @@ export function PromptCatalogDialog({
             </ScrollArea>
           </div>
         </div>
-        <div className="flex shrink-0 flex-wrap justify-end gap-2 pt-1">
+        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pt-1">
+          <Hint
+            className="mr-auto flex items-center gap-2"
+            label="How many random-seed takes to queue per prompt. Each take generates and saves as its own clip."
+          >
+            <div className="flex items-center gap-2">
+              <Label htmlFor="catalog-takes" className="text-xs whitespace-nowrap text-muted uppercase tracking-[0.1em]">
+                Takes
+              </Label>
+              <Input
+                id="catalog-takes"
+                type="number"
+                inputMode="numeric"
+                min={MIN_QUEUE_TAKES}
+                max={MAX_QUEUE_TAKES}
+                value={takeCountInput}
+                onChange={(e) => setTakeCountInput(e.target.value)}
+                onBlur={() => setTakeCountInput(String(clampQueueTakes(Number(takeCountInput))))}
+                className="h-8 w-16 text-center"
+                aria-label="Takes to queue per prompt"
+              />
+            </div>
+          </Hint>
           <Hint label={isSearching ? 'Add every visible prompt from the search results to the generate queue.' : 'Add every visible prompt in this category to the generate queue.'}>
             <Button type="button" variant="outline" onClick={addCategory} disabled={visible.length === 0}>
               {isSearching ? 'Add visible' : 'Add category'}
+              {takeCount > 1 ? ` ×${takeCount}` : ''}
             </Button>
           </Hint>
           <Hint label="Add the checked prompts to the generate queue. Duplicates are skipped.">
@@ -801,6 +833,7 @@ export function PromptCatalogDialog({
               disabled={!visible.some((effect) => selected.has(effect.id))}
             >
               Add selected
+              {takeCount > 1 ? ` ×${takeCount}` : ''}
             </Button>
           </Hint>
         </div>

@@ -144,7 +144,10 @@ export function Studio() {
   const timingRef = useRef(timing)
   const engineMockRef = useRef(false)
   const clipsRef = useRef(clips)
+  const queueRunningRef = useRef(false)
+  const queuedDuringRunRef = useRef(false)
   clipsRef.current = clips
+  queueRunningRef.current = queueRunning
 
   const library = useMemo(
     () => createAppLibrary(() => settings.libraryDir, () => clipsRef.current),
@@ -178,6 +181,7 @@ export function Studio() {
   )
   engineMockRef.current = engine.mock
   const clipDuration = wav ? wavDurationSeconds(wav) : duration
+  const activeClip = clips.find((c) => c.id === selectedId)
 
   function rememberTiming(next: TimingLog) {
     timingRef.current = next
@@ -569,11 +573,12 @@ export function Studio() {
     if (!canCast(prompt) || weaving || loadingModel || !engine.loaded) return
     setWav(undefined)
     setSelectedId(undefined)
+    queuedDuringRunRef.current = false
     const requestPrompt = ensureTrackType(prompt, mode)
     const requestNegative = negative.trim() || GENERATE_MODES[mode].defaultNegative
     setPrompt(requestPrompt)
     if (!negative.trim() && requestNegative) setNegative(requestNegative)
-    await generateOne(
+    const outcome = await generateOne(
       {
         prompt: requestPrompt,
         seconds: duration,
@@ -584,6 +589,35 @@ export function Studio() {
       },
       { setActiveClip: true },
     )
+    // Prompts queued with "Queue next" while this generation ran are picked
+    // up here so they keep generating without another click.
+    if (
+      outcome === 'ok' &&
+      queuedDuringRunRef.current &&
+      queueRef.current.length > 0 &&
+      !queueRunningRef.current
+    ) {
+      void castQueue()
+    }
+  }
+
+  function queueCurrentPrompt() {
+    if (!canCast(prompt) || loadingModel || !engine.loaded) return
+    const requestPrompt = ensureTrackType(prompt, mode)
+    const requestNegative = negative.trim() || GENERATE_MODES[mode].defaultNegative
+    const item: CatalogEffect = {
+      id: `custom:${crypto.randomUUID()}`,
+      library: mode === 'music' ? 'music' : mode === 'ambience' ? 'ambience' : 'fx',
+      categoryId: 'custom',
+      category: 'Custom',
+      title: promptName(requestPrompt) || 'Custom prompt',
+      prompt: requestPrompt,
+      duration,
+      negative: requestNegative,
+    }
+    queuedDuringRunRef.current = true
+    updateQueue([...queueRef.current, item])
+    toast('Added to queue.', { description: 'Generates automatically after the current run finishes.' })
   }
 
   async function castTakes() {
@@ -657,7 +691,7 @@ export function Studio() {
             intensity: item.intensity,
             seamlessLoop: loop,
           },
-          { manageBusy: false, setActiveClip: false },
+          { manageBusy: false, setActiveClip: false, seed: item.seed },
         )
         if (outcome !== 'ok') break
         const remaining = queueRef.current.filter((effect) => effect.id !== item.id)
@@ -948,6 +982,7 @@ export function Studio() {
               phase={weavePhase}
               ratio={weaveRatio}
               mode={mode}
+              seed={activeClip?.seed}
               completedSubcategoryCount={completedSubcategoryCount}
               historicalEstimateMs={
                 loadingModel
@@ -1045,6 +1080,7 @@ export function Studio() {
             onRitesOpen={setRitesOpen}
             onCast={() => void cast()}
             onCastTakes={() => void castTakes()}
+            onQueueCurrent={queueCurrentPrompt}
             onDispel={requestDispel}
             onLoadModel={() => void loadWeights()}
             onCancelLoadModel={cancelLoadWeights}

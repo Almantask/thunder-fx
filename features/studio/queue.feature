@@ -41,3 +41,18 @@ Feature: Generate a prompt queue
     Given the studio has generated a clip before
     And Steel sword draw is in the generate queue
     Then Generate queue shows an estimated duration
+
+  Scenario: Queueing more than one take adds distinct, seeded copies
+    Given the studio is open
+    When the user opens Browse prompts
+    And the user sets Takes to 3
+    And the user adds Steel sword draw from the catalog
+    Then the generate queue lists 3 takes of Steel sword draw
+    And each queued take shows the seed it will generate with
+
+  Scenario: A prompt can be queued while the console is busy
+    Given the studio is open
+    And the user Generates a track
+    When the user Queues the current prompt while it is busy
+    Then the generate queue lists the queued prompt
+    And the queued prompt generates automatically once the running track finishes

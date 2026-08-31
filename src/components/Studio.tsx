@@ -22,22 +22,23 @@ import {
 } from '@/components/ui/alert-dialog'
 import {
   cancelGenerate,
+  deleteDiskFile,
   engineStatus,
   exportClipFile,
   exportSoundPack,
   generate,
   loadModel,
+  pickDirectory,
   reportError,
   unloadModel,
-  bytesToBase64,
-  base64ToBytes,
   writeEncodedFile,
 } from '@/lib/engine'
+import { copyFile, joinPath, tempDir, writeFileBytes, writeTextFile } from '@/lib/tauriFs'
+import { randomSeed } from '@/lib/seed'
 import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
 import { formatNeedsDesktop, prepareExportWav } from '@/lib/audioExport'
 import { clipFilename, isUuidOrSymbol, promptName } from '@/lib/filename'
 import { buildPackManifest, formatPackFilename } from '@/lib/packNaming'
-import { DEFAULT_CROSSFADE_SEC, makeSeamlessLoop } from '@/lib/seamlessLoop'
 import { detectSilenceBounds } from '@/lib/silenceTrim'
 import { createAppLibrary } from '@/lib/library'
 import { mockStatus } from '@/lib/mockEngine'
@@ -118,11 +119,9 @@ export function Studio() {
   const [sampleRate, setSampleRate] = useState<SampleRateOption>(44100)
   const [bitDepth, setBitDepth] = useState<BitDepthOption>(16)
   const [mono, setMono] = useState(false)
-  const [seamlessLoop, setSeamlessLoop] = useState(false)
   const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(() =>
     modeSupportsSeamlessLoop(resolveGenerateMode(settings.generateMode)),
   )
-  const [crossfadeSec, setCrossfadeSec] = useState(DEFAULT_CROSSFADE_SEC)
   const [takes, setTakes] = useState<TakeCandidate[]>([])
   const [takesOpen, setTakesOpen] = useState(false)
   const [playhead, setPlayhead] = useState(0)
@@ -159,6 +158,9 @@ export function Studio() {
     () => getCompletedSubcategoryCount(clips, catalog),
     [clips, catalog],
   )
+  // Lookups by id happen on every render and every selection; a linear scan
+  // over a few thousand library clips adds up.
+  const clipsById = useMemo(() => new Map(clips.map((clip) => [clip.id, clip])), [clips])
   queueRef.current = queue
   timingRef.current = timing
 
@@ -181,7 +183,7 @@ export function Studio() {
   )
   engineMockRef.current = engine.mock
   const clipDuration = wav ? wavDurationSeconds(wav) : duration
-  const activeClip = clips.find((c) => c.id === selectedId)
+  const activeClip = selectedId ? clipsById.get(selectedId) : undefined
 
   function rememberTiming(next: TimingLog) {
     timingRef.current = next
@@ -189,6 +191,17 @@ export function Studio() {
     setTiming(next)
   }
 
+  function normalizeClip(clip: Clip): Clip {
+    return isUuidOrSymbol(clip.prompt)
+      ? { ...clip, prompt: promptName(clip.prompt, clip) }
+      : clip
+  }
+
+  /**
+   * Full rescan: walks and parses every WAV under the library folder. Cheap
+   * enough on entering the Library tab, far too expensive to run after each
+   * clip in a queue — see {@link addClipToLibraryList}.
+   */
   async function refreshLibrary() {
     let loadedClips: Clip[] = []
     try {
@@ -196,13 +209,16 @@ export function Studio() {
     } catch {
       loadedClips = []
     }
-    const normalized = loadedClips.map((c) => {
-      if (isUuidOrSymbol(c.prompt)) {
-        return { ...c, prompt: promptName(c.prompt, c) }
-      }
-      return c
+    setClips(loadedClips.map(normalizeClip))
+  }
+
+  /** Splices one freshly generated clip into the list, newest first. */
+  function addClipToLibraryList(clip: Clip) {
+    setClips((current) => {
+      const normalized = normalizeClip(clip)
+      const rest = current.filter((existing) => existing.id !== normalized.id)
+      return [normalized, ...rest]
     })
-    setClips(normalized)
   }
 
   async function refreshEngine() {
@@ -267,8 +283,14 @@ export function Studio() {
     }
   }, [wav])
 
+  // Held in a ref so the listener below can be registered once instead of on
+  // every render — progress ticks re-render several times a second.
+  const shortcutStateRef = useRef({ weaving, loadingModel, wav, clipDuration })
+  shortcutStateRef.current = { weaving, loadingModel, wav, clipDuration }
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      const { weaving, loadingModel, wav, clipDuration } = shortcutStateRef.current
       const target = e.target as HTMLElement | null
       const typing = target && (target.tagName === 'TEXTAREA' || target.tagName === 'INPUT')
       if (e.key === 'Escape') {
@@ -301,7 +323,7 @@ export function Studio() {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  })
+  }, [])
 
   function cancelQueue() {
     stopQueueRef.current = true
@@ -351,13 +373,24 @@ export function Studio() {
       })
       return
     }
+    // A WAV the library scanner picked up may not be one we can decode (the
+    // parser is 16-bit PCM only), so failure here has to stay a toast.
+    let clipSeconds: number
+    try {
+      clipSeconds = wavDurationSeconds(buf)
+    } catch (err) {
+      const message = reportError(err, 'Unsupported audio file')
+      toast.error('Could not open this clip.', {
+        description: `${message} Thunder FX reads 16-bit PCM WAV files.`,
+      })
+      return
+    }
     setSelectedId(id)
     setWav(buf)
-    const d = wavDurationSeconds(buf)
     setTrimStart(0)
-    setTrimEnd(d)
+    setTrimEnd(clipSeconds)
     setPlayhead(0)
-    const clip = clips.find((c) => c.id === id)
+    const clip = clipsById.get(id)
     if (clip) {
       const properPrompt = isUuidOrSymbol(clip.prompt) ? promptName(clip.prompt, clip) : clip.prompt
       setPrompt(properPrompt)
@@ -367,7 +400,6 @@ export function Studio() {
         setDuration((d) => applyModeDuration(d, mode, next))
         setSteps((s) => applyModeSteps(s, mode, next))
         if (next === 'sfx') {
-          setSeamlessLoop(false)
           setGenerateSeamlessLoop(false)
         } else {
           setGenerateSeamlessLoop(true)
@@ -385,7 +417,6 @@ export function Studio() {
     setDuration((d) => applyModeDuration(d, mode, next))
     setSteps((s) => applyModeSteps(s, mode, next))
     if (next === 'sfx') {
-      setSeamlessLoop(false)
       setGenerateSeamlessLoop(false)
     } else {
       setGenerateSeamlessLoop(true)
@@ -534,7 +565,7 @@ export function Studio() {
         await library.save(finalClip, finalWav)
       }
       options.onResult?.(finalClip, finalWav)
-      await refreshLibrary()
+      addClipToLibraryList(finalClip)
       if (setActiveClip) {
         setSelectedId(finalClip.id)
         setWav(finalWav)
@@ -632,7 +663,7 @@ export function Studio() {
     const collected: TakeCandidate[] = []
     try {
       for (let i = 0; i < 4; i += 1) {
-        const seedValue = 1 + Math.floor(Math.random() * 2_147_483_646)
+        const seedValue = randomSeed()
         const outcome = await generateOne(
           {
             prompt: requestPrompt,
@@ -735,16 +766,10 @@ export function Studio() {
 
   function prepareExportBuffer(): ArrayBuffer | undefined {
     if (!wav) return undefined
-    const clip = clips.find((c) => c.id === selectedId)
+    const clip = selectedId ? clipsById.get(selectedId) : undefined
     const activePrompt = clip?.prompt ?? prompt
     const isMusic = clip ? clipMode(clip) === 'music' : mode === 'music' || activePrompt.toLowerCase().includes('tracktype: music')
-    const canLoop = clip
-      ? modeSupportsSeamlessLoop(clipMode(clip))
-      : modeSupportsSeamlessLoop(mode)
     let exportBuf = trimWav(wav, trimStart, trimEnd)
-    if (seamlessLoop && canLoop) {
-      exportBuf = makeSeamlessLoop(exportBuf, crossfadeSec)
-    }
     if (isMusic) {
       const detected = clip?.instruments?.length ? clip.instruments : extractInstruments(activePrompt)
       exportBuf = tagMusicWav(
@@ -764,7 +789,7 @@ export function Studio() {
       })
       return
     }
-    const clip = clips.find((c) => c.id === selectedId)
+    const clip = selectedId ? clipsById.get(selectedId) : undefined
     const name = clipFilename(clip?.prompt ?? prompt, trimEnd - trimStart, format)
     try {
       const path = await exportClipFile({
@@ -798,28 +823,9 @@ export function Studio() {
     setTrimEnd(Math.min(clipDuration, Math.max(bounds.endSec, bounds.startSec + 0.05)))
   }
 
-  async function previewSeamlessLoop() {
-    if (!wav) return
-    playbackRef.current?.stop()
-    const looped = makeSeamlessLoop(trimWav(wav, trimStart, trimEnd), crossfadeSec)
-    const handle = await createPlayback(looped, () => setPlaying(false))
-    playbackRef.current?.dispose()
-    playbackRef.current = handle
-    const dur = wavDurationSeconds(looped)
-    setPlaying(true)
-    await handle.play(0, dur, true, 0)
-    cancelAnimationFrame(playRaf.current)
-    const tick = () => {
-      const t = playbackRef.current?.getCurrentTime() ?? 0
-      setPlayhead(trimStart + t)
-      playRaf.current = requestAnimationFrame(tick)
-    }
-    playRaf.current = requestAnimationFrame(tick)
-  }
-
   async function exportLibraryPack(request: PackExportRequest) {
     const selected = request.ids
-      .map((id) => clips.find((clip) => clip.id === id))
+      .map((id) => clipsById.get(id))
       .filter((clip): clip is Clip => Boolean(clip))
     if (!selected.length) return
     if (formatNeedsDesktop(request.format) && !isTauri()) {
@@ -847,19 +853,17 @@ export function Studio() {
       toast.error('Could not read the selected clips.')
       return
     }
+    // Encoded files stay on disk and are copied or zipped from there, so the
+    // bytes never make a round trip back through the webview.
+    let encodedPaths: { path: string; name: string }[] = []
     if (request.format !== 'wav' && isTauri()) {
-      const { invoke } = await import('@tauri-apps/api/core')
-      const temp = await invoke<string>('temp_dir')
-      const sep = temp.includes('/') && !temp.includes('\\') ? '/' : '\\'
-      const encoded: typeof files = []
+      const temp = await tempDir()
+      const batch = crypto.randomUUID()
       for (const file of files) {
-        const dest = `${temp.replace(/[\\/]+$/, '')}${sep}${file.name}`
+        const dest = joinPath(temp, `thunder-fx-pack-${batch}-${file.name}`)
         await writeEncodedFile({ buffer: file.buffer, path: dest, format: request.format })
-        const b64 = await invoke<string>('read_file_b64', { path: dest })
-        encoded.push({ ...file, buffer: base64ToBytes(b64) })
+        encodedPaths.push({ path: dest, name: file.name })
       }
-      files.length = 0
-      files.push(...encoded)
     }
     const manifest = request.includeManifest
       ? buildPackManifest(files.map((file) => ({ filename: file.name, clip: file.clip })))
@@ -868,6 +872,7 @@ export function Studio() {
       if (request.zip) {
         const path = await exportSoundPack({
           files: files.map((file) => ({ name: file.name, buffer: file.buffer })),
+          encodedFiles: encodedPaths,
           zipName: 'thunder-fx-pack.zip',
           manifest,
           defaultDir: settings.defaultExportDir,
@@ -882,25 +887,29 @@ export function Studio() {
         toast.success(`Saved ${files.length} files.`)
         return
       }
-      const { invoke } = await import('@tauri-apps/api/core')
-      const { open } = await import('@tauri-apps/plugin-dialog')
-      const folder = await open({ directory: true, defaultPath: settings.defaultExportDir || undefined })
-      if (typeof folder !== 'string') return
-      const sep = folder.includes('/') && !folder.includes('\\') ? '/' : '\\'
-      for (const file of files) {
-        const dest = `${folder.replace(/[\\/]+$/, '')}${sep}${file.name}`
-        await invoke('write_file_b64', { path: dest, data: bytesToBase64(file.buffer) })
+      const folder = await pickDirectory(settings.defaultExportDir)
+      if (!folder) return
+      if (encodedPaths.length) {
+        for (const encoded of encodedPaths) {
+          await copyFile(encoded.path, joinPath(folder, encoded.name))
+        }
+      } else {
+        for (const file of files) {
+          await writeFileBytes(joinPath(folder, file.name), file.buffer)
+        }
       }
       if (manifest) {
-        await invoke('write_file_b64', {
-          path: `${folder.replace(/[\\/]+$/, '')}${sep}manifest.json`,
-          data: bytesToBase64(new TextEncoder().encode(manifest).buffer),
-        })
+        await writeTextFile(joinPath(folder, 'manifest.json'), manifest)
       }
       toast.success(`Saved ${files.length} files.`)
     } catch (err) {
       const message = reportError(err, 'Pack export failed')
       toast.error('Pack export failed.', { description: `${message} Saved to the error log.` })
+    } finally {
+      for (const encoded of encodedPaths) {
+        await deleteDiskFile(encoded.path)
+      }
+      encodedPaths = []
     }
   }
 
@@ -1022,7 +1031,6 @@ export function Studio() {
               emptyLabel={GENERATE_MODES[mode].emptyWaveform}
             />
             <Altar
-              mode={selectedId ? (clips.find((c) => c.id === selectedId) ? clipMode(clips.find((c) => c.id === selectedId)!) : mode) : mode}
               hasClip={Boolean(wav)}
               weaving={weaving || loadingModel}
               playing={playing}
@@ -1033,8 +1041,6 @@ export function Studio() {
               sampleRate={sampleRate}
               bitDepth={bitDepth}
               mono={mono}
-              seamlessLoop={seamlessLoop}
-              crossfadeSec={crossfadeSec}
               onPlay={togglePlay}
               onStop={() => {
                 playbackRef.current?.stop()
@@ -1048,9 +1054,6 @@ export function Studio() {
               onSampleRate={setSampleRate}
               onBitDepth={setBitDepth}
               onMono={setMono}
-              onSeamlessLoop={setSeamlessLoop}
-              onCrossfadeSec={setCrossfadeSec}
-              onPreviewLoop={() => void previewSeamlessLoop()}
               onExportWav={() => void exportWav()}
               onExportFormat={(format) => void exportFormat(format)}
             />

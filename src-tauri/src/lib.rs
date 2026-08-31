@@ -2,8 +2,9 @@ use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde::{Deserialize, Serialize};
 use std::fs::OpenOptions;
 use std::io::{BufRead, BufReader, Write};
-use std::path::{Path, PathBuf};
+use std::path::{Component, Path, PathBuf};
 use std::process::{Child, ChildStdin, Command, Stdio};
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, Manager, State};
@@ -23,12 +24,23 @@ struct EngineProc {
     stdin: Mutex<ChildStdin>,
     pending: Arc<PendingRequests>,
     child: Mutex<Child>,
+    alive: Arc<AtomicBool>,
+}
+
+impl EngineProc {
+    /// False once the reader thread has seen the worker's stdout close, which
+    /// is how a crashed or killed Python process shows up here.
+    fn is_alive(&self) -> bool {
+        self.alive.load(Ordering::SeqCst)
+    }
 }
 
 impl Drop for EngineProc {
     fn drop(&mut self) {
+        self.alive.store(false, Ordering::SeqCst);
         if let Ok(mut child) = self.child.lock() {
             let _ = child.kill();
+            let _ = child.wait();
         }
     }
 }
@@ -45,11 +57,6 @@ struct WeaveProgressPayload {
     ratio: Option<f64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     message: Option<String>,
-}
-
-#[derive(Serialize)]
-struct TrimResult {
-    path: String,
 }
 
 fn library_dir() -> PathBuf {
@@ -82,6 +89,170 @@ fn logs_dir() -> PathBuf {
         return PathBuf::from(home).join(".thunder-fx").join("logs");
     }
     std::env::temp_dir().join("thunder-fx").join("logs")
+}
+
+/// Directories the webview is allowed to touch without an explicit grant.
+///
+/// The renderer only ever loads local assets, but these commands are the one
+/// place a compromised frontend could reach the whole disk, so every path
+/// argument is resolved and checked against this list first.
+fn default_scope_roots() -> Vec<PathBuf> {
+    vec![library_dir(), logs_dir(), std::env::temp_dir()]
+}
+
+/// Grants live outside every scope root on purpose: the frontend must not be
+/// able to widen its own sandbox by writing this file through `write_file`.
+fn scope_config_file() -> PathBuf {
+    if let Ok(dir) = std::env::var("THUNDER_FX_SCOPE_FILE") {
+        let trimmed = dir.trim();
+        if !trimmed.is_empty() {
+            return PathBuf::from(trimmed);
+        }
+    }
+    if let Ok(local) = std::env::var("LOCALAPPDATA") {
+        return PathBuf::from(local)
+            .join("thunder-fx")
+            .join("allowed-paths.json");
+    }
+    std::env::temp_dir().join("thunder-fx-allowed-paths.json")
+}
+
+/// Folders the user picked in a native dialog. Grants are only ever added by
+/// [`pick_save_path`] and [`pick_directory`], never on the frontend's word.
+struct PathScope {
+    granted: Mutex<Vec<PathBuf>>,
+}
+
+impl PathScope {
+    fn load() -> Self {
+        let granted = std::fs::read_to_string(scope_config_file())
+            .ok()
+            .and_then(|text| serde_json::from_str::<Vec<String>>(&text).ok())
+            .map(|paths| paths.iter().map(|p| normalize_path(Path::new(p))).collect())
+            .unwrap_or_default();
+        PathScope {
+            granted: Mutex::new(granted),
+        }
+    }
+
+    fn grant(&self, path: &Path) {
+        let normalized = normalize_path(path);
+        let snapshot = {
+            let Ok(mut granted) = self.granted.lock() else {
+                return;
+            };
+            if granted.contains(&normalized) {
+                return;
+            }
+            granted.push(normalized);
+            granted.clone()
+        };
+        let file = scope_config_file();
+        if let Some(parent) = file.parent() {
+            let _ = std::fs::create_dir_all(parent);
+        }
+        let encoded: Vec<String> = snapshot
+            .iter()
+            .map(|p| p.to_string_lossy().into_owned())
+            .collect();
+        if let Ok(text) = serde_json::to_string_pretty(&encoded) {
+            let _ = std::fs::write(&file, text);
+        }
+    }
+
+    fn roots(&self) -> Vec<PathBuf> {
+        let mut roots: Vec<PathBuf> = default_scope_roots()
+            .iter()
+            .map(|root| normalize_path(root))
+            .collect();
+        if let Ok(granted) = self.granted.lock() {
+            roots.extend(granted.iter().cloned());
+        }
+        roots
+    }
+}
+
+/// Lexical resolution: absolutise, then fold away `.` and `..` without
+/// touching the filesystem, so a path that does not exist yet still resolves.
+fn normalize_path(path: &Path) -> PathBuf {
+    let absolute = if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir()
+            .unwrap_or_else(|_| PathBuf::from("."))
+            .join(path)
+    };
+    // Prefer the real path when it exists so symlinks and 8.3 names collapse.
+    let candidate = strip_verbatim(std::fs::canonicalize(&absolute).unwrap_or(absolute));
+    let mut out = PathBuf::new();
+    for component in candidate.components() {
+        match component {
+            Component::ParentDir => {
+                out.pop();
+            }
+            Component::CurDir => {}
+            other => out.push(other.as_os_str()),
+        }
+    }
+    out
+}
+
+/// `canonicalize` returns `\\?\C:\…` on Windows while a path typed by a user or
+/// built lexically does not, so the two would never compare equal.
+fn strip_verbatim(path: PathBuf) -> PathBuf {
+    if cfg!(not(windows)) {
+        return path;
+    }
+    let text = path.to_string_lossy().into_owned();
+    if let Some(rest) = text.strip_prefix(r"\\?\UNC\") {
+        return PathBuf::from(format!(r"\\{rest}"));
+    }
+    match text.strip_prefix(r"\\?\") {
+        Some(rest) => PathBuf::from(rest),
+        None => path,
+    }
+}
+
+fn path_is_within(root: &Path, path: &Path) -> bool {
+    if root.as_os_str().is_empty() {
+        return false;
+    }
+    if cfg!(windows) {
+        // Windows paths are case-insensitive; compare on a folded copy so a
+        // drive letter or folder typed in another case still matches.
+        let fold = |p: &Path| PathBuf::from(p.to_string_lossy().to_lowercase());
+        let (root, path) = (fold(root), fold(path));
+        return path == root || path.starts_with(&root);
+    }
+    path == root || path.starts_with(root)
+}
+
+/// Returns the normalized path when it sits inside an allowed root.
+fn ensure_allowed(scope: &PathScope, path: &str) -> Result<PathBuf, String> {
+    let requested = Path::new(path);
+    if requested.as_os_str().is_empty() {
+        return Err(fail("Empty path"));
+    }
+    let normalized = normalize_path(requested);
+    // A file that does not exist yet cannot be canonicalized, so fall back to
+    // checking the directory it would be created in.
+    let probe = if normalized.exists() {
+        normalized.clone()
+    } else {
+        match normalized.parent() {
+            Some(parent) => normalize_path(parent),
+            None => normalized.clone(),
+        }
+    };
+    for root in scope.roots() {
+        if path_is_within(&root, &probe) || path_is_within(&root, &normalized) {
+            return Ok(normalized);
+        }
+    }
+    Err(fail(format!(
+        "Path is outside the folders Thunder FX may use: {}",
+        requested.display()
+    )))
 }
 
 fn error_log_file() -> PathBuf {
@@ -267,10 +438,15 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
     let pending = Arc::new(PendingRequests {
         map: Mutex::new(HashMap::new()),
     });
+    let alive = Arc::new(AtomicBool::new(true));
 
     let reader_pending = Arc::clone(&pending);
+    let reader_alive = Arc::clone(&alive);
     let app_handle = app.clone();
     std::thread::spawn(move || {
+        // Whatever ends this loop, the worker is no longer usable: flag it so
+        // the next command respawns instead of writing into a dead pipe.
+        let _guard = AliveGuard(reader_alive);
         let mut reader = BufReader::new(stdout);
         let mut line = String::new();
         loop {
@@ -296,8 +472,10 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
                         let event = parsed.get("event").and_then(|v| v.as_str()).unwrap_or("");
                         if event == "progress" {
                             let payload = WeaveProgressPayload {
-                                step: parsed.get("step").and_then(|v| v.as_u64()).unwrap_or(0) as u32,
-                                total: parsed.get("total").and_then(|v| v.as_u64()).unwrap_or(20) as u32,
+                                step: parsed.get("step").and_then(|v| v.as_u64()).unwrap_or(0)
+                                    as u32,
+                                total: parsed.get("total").and_then(|v| v.as_u64()).unwrap_or(20)
+                                    as u32,
                                 elapsed_ms: parsed
                                     .get("elapsedMs")
                                     .and_then(|v| v.as_u64())
@@ -350,15 +528,32 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
         stdin: Mutex::new(stdin),
         pending,
         child: Mutex::new(child),
+        alive,
     })
+}
+
+/// Clears the alive flag however the reader thread exits, including a panic.
+struct AliveGuard(Arc<AtomicBool>);
+
+impl Drop for AliveGuard {
+    fn drop(&mut self) {
+        self.0.store(false, Ordering::SeqCst);
+    }
 }
 
 fn ensure_engine(app: &AppHandle, state: &State<Engine>) -> Result<Arc<EngineProc>, String> {
     let mut guard = state.proc.lock().map_err(|e| fail(e.to_string()))?;
-    if guard.is_none() {
-        *guard = Some(Arc::new(spawn_engine(app)?));
+    if let Some(existing) = guard.as_ref() {
+        if existing.is_alive() {
+            return Ok(Arc::clone(existing));
+        }
+        // Dropping the dead handle reaps the child before we start a new one.
+        *guard = None;
+        append_error_log("Engine worker died; restarting it");
     }
-    Ok(Arc::clone(guard.as_ref().unwrap()))
+    let proc = Arc::new(spawn_engine(app)?);
+    *guard = Some(Arc::clone(&proc));
+    Ok(proc)
 }
 
 fn send_line(proc: &EngineProc, payload: &serde_json::Value) -> Result<(), String> {
@@ -403,7 +598,9 @@ fn send_and_receive(
             if let Ok(mut map) = proc.pending.map.lock() {
                 map.remove(&id_str);
             }
-            Err(fail(format!("Engine command timed out after {timeout_secs}s")))
+            Err(fail(format!(
+                "Engine command timed out after {timeout_secs}s"
+            )))
         }
         Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => {
             if let Ok(mut map) = proc.pending.map.lock() {
@@ -423,7 +620,10 @@ async fn run_blocking<T: Send + 'static>(
 }
 
 #[tauri::command]
-async fn engine_status(app: AppHandle, state: State<'_, Engine>) -> Result<serde_json::Value, String> {
+async fn engine_status(
+    app: AppHandle,
+    state: State<'_, Engine>,
+) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
     let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "status"});
     run_blocking(move || send_and_receive(&proc, payload, 10)).await
@@ -440,7 +640,20 @@ async fn engine_probe(
     run_blocking(move || send_and_receive(&proc, payload, 30)).await
 }
 
+/// Wall-clock budget for one generation.
+///
+/// Diffusion cost scales with `seconds × steps`; the constant is deliberately
+/// loose (roughly 6x slower than a mid-range GPU) because timing out a real
+/// run is far worse than waiting on a wedged one — a hung worker is now
+/// recovered by [`ensure_engine`] respawning it, and the user can cancel.
+fn generate_timeout_secs(seconds: f32, steps: u32) -> u64 {
+    let work = f64::from(seconds.max(0.0)) * f64::from(steps.max(1));
+    let budget = 240.0 + work * 0.6;
+    budget.clamp(600.0, 7200.0) as u64
+}
+
 #[tauri::command]
+#[allow(clippy::too_many_arguments)] // one parameter per IPC field
 async fn engine_generate(
     app: AppHandle,
     state: State<'_, Engine>,
@@ -460,6 +673,7 @@ async fn engine_generate(
     seamless_loop: Option<bool>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
+    let timeout = generate_timeout_secs(seconds, steps.unwrap_or(20));
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
         "cmd": "generate",
@@ -478,9 +692,8 @@ async fn engine_generate(
         "intensity": intensity,
         "seamless_loop": seamless_loop.unwrap_or(false)
     });
-    run_blocking(move || send_and_receive(&proc, payload, 600)).await
+    run_blocking(move || send_and_receive(&proc, payload, timeout)).await
 }
-
 
 #[tauri::command]
 fn engine_cancel(app: AppHandle, state: State<Engine>) -> Result<serde_json::Value, String> {
@@ -491,19 +704,11 @@ fn engine_cancel(app: AppHandle, state: State<Engine>) -> Result<serde_json::Val
 }
 
 #[tauri::command]
-async fn engine_encode_ogg(
-    app: AppHandle,
-    state: State<'_, Engine>,
-    wav_path: String,
-    ogg_path: String,
-) -> Result<serde_json::Value, String> {
-    engine_encode_audio(app, state, wav_path, ogg_path, Some("ogg".into()), None, None, None).await
-}
-
-#[tauri::command]
+#[allow(clippy::too_many_arguments)] // one parameter per IPC field
 async fn engine_encode_audio(
     app: AppHandle,
     state: State<'_, Engine>,
+    scope: State<'_, PathScope>,
     wav_path: String,
     dest_path: String,
     format: Option<String>,
@@ -511,6 +716,12 @@ async fn engine_encode_audio(
     bit_depth: Option<u32>,
     mono: Option<bool>,
 ) -> Result<serde_json::Value, String> {
+    let wav_path = ensure_allowed(&scope, &wav_path)?
+        .to_string_lossy()
+        .into_owned();
+    let dest_path = ensure_allowed(&scope, &dest_path)?
+        .to_string_lossy()
+        .into_owned();
     let proc = ensure_engine(&app, &state)?;
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
@@ -553,60 +764,76 @@ async fn engine_unload(
     run_blocking(move || send_and_receive(&proc, payload, 30)).await
 }
 
-#[tauri::command]
-fn trim_wav(src: String, dest: String, start: f32, end: f32) -> Result<TrimResult, String> {
-    let mut reader = hound::WavReader::open(&src).map_err(|e| fail(e.to_string()))?;
-    let spec = reader.spec();
-    let sr = spec.sample_rate as f32;
-    let ch = spec.channels as usize;
-    let samples: Vec<i16> = reader.samples::<i16>().filter_map(|s| s.ok()).collect();
-    let frames = samples.len() / ch.max(1);
-    let start_f = ((start * sr) as usize).min(frames.saturating_sub(1));
-    let end_f = ((end * sr) as usize).clamp(start_f + 1, frames);
-    let slice = &samples[start_f * ch..end_f * ch];
-    let dest_path = Path::new(&dest);
-    if let Some(parent) = dest_path.parent() {
+fn write_bytes_to(path: &Path, bytes: &[u8]) -> Result<(), String> {
+    if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
     }
-    let mut writer = hound::WavWriter::create(dest_path, spec).map_err(|e| fail(e.to_string()))?;
-    for s in slice {
-        writer.write_sample(*s).map_err(|e| fail(e.to_string()))?;
-    }
-    writer.finalize().map_err(|e| fail(e.to_string()))?;
-    Ok(TrimResult { path: dest })
+    std::fs::write(path, bytes).map_err(|e| fail(e.to_string()))
+}
+
+/// Raw-bytes write. The frontend sends an `ArrayBuffer` as the request body and
+/// the destination as a base64 header, so audio never round-trips through a
+/// base64 JSON string.
+#[tauri::command]
+async fn write_file(
+    scope: State<'_, PathScope>,
+    request: tauri::ipc::Request<'_>,
+) -> Result<(), String> {
+    let tauri::ipc::InvokeBody::Raw(bytes) = request.body() else {
+        return Err(fail("write_file expects a binary body"));
+    };
+    let path = header_path(&request, "x-thunder-path")?;
+    let path = ensure_allowed(&scope, &path)?;
+    let bytes = bytes.clone();
+    run_blocking(move || write_bytes_to(&path, &bytes)).await
+}
+
+/// Raw-bytes read: returns an `ArrayBuffer` straight to the webview.
+#[tauri::command]
+async fn read_file(
+    scope: State<'_, PathScope>,
+    path: String,
+) -> Result<tauri::ipc::Response, String> {
+    let path = ensure_allowed(&scope, &path)?;
+    let bytes = run_blocking(move || std::fs::read(path).map_err(|e| fail(e.to_string()))).await?;
+    Ok(tauri::ipc::Response::new(bytes))
 }
 
 #[tauri::command]
-async fn write_file_b64(path: String, data: String) -> Result<(), String> {
+async fn copy_file(scope: State<'_, PathScope>, src: String, dest: String) -> Result<(), String> {
+    let src = ensure_allowed(&scope, &src)?;
+    let dest = ensure_allowed(&scope, &dest)?;
     run_blocking(move || {
-        let bytes = STANDARD.decode(data).map_err(|e| fail(e.to_string()))?;
-        if let Some(parent) = Path::new(&path).parent() {
+        if let Some(parent) = dest.parent() {
             std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
         }
-        std::fs::write(path, bytes).map_err(|e| fail(e.to_string()))
+        std::fs::copy(&src, &dest).map_err(|e| fail(e.to_string()))?;
+        Ok(())
     })
     .await
 }
 
 #[tauri::command]
-async fn read_file_b64(path: String) -> Result<String, String> {
+async fn delete_file(scope: State<'_, PathScope>, path: String) -> Result<(), String> {
+    let path = ensure_allowed(&scope, &path)?;
     run_blocking(move || {
-        let bytes = std::fs::read(path).map_err(|e| fail(e.to_string()))?;
-        Ok(STANDARD.encode(bytes))
-    })
-    .await
-}
-
-#[tauri::command]
-async fn delete_file(path: String) -> Result<(), String> {
-    run_blocking(move || {
-        let p = Path::new(&path);
-        if p.exists() {
-            std::fs::remove_file(p).map_err(|e| fail(e.to_string()))?;
+        if path.exists() {
+            std::fs::remove_file(&path).map_err(|e| fail(e.to_string()))?;
         }
         Ok(())
     })
     .await
+}
+
+fn header_path(request: &tauri::ipc::Request<'_>, name: &str) -> Result<String, String> {
+    let raw = request
+        .headers()
+        .get(name)
+        .and_then(|value| value.to_str().ok())
+        .ok_or_else(|| fail(format!("Missing {name} header")))?;
+    // Base64 so non-ASCII paths survive HTTP header encoding.
+    let bytes = STANDARD.decode(raw).map_err(|e| fail(e.to_string()))?;
+    String::from_utf8(bytes).map_err(|e| fail(e.to_string()))
 }
 
 #[derive(Deserialize)]
@@ -615,13 +842,17 @@ struct ZipEntry {
     dest: String,
 }
 
-fn write_zip_archive(entries: Vec<ZipEntry>, dest: &Path, manifest: Option<String>) -> Result<(), String> {
+fn write_zip_archive(
+    entries: Vec<ZipEntry>,
+    dest: &Path,
+    manifest: Option<String>,
+) -> Result<(), String> {
     if let Some(parent) = dest.parent() {
         std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
     }
     let file = std::fs::File::create(dest).map_err(|e| fail(e.to_string()))?;
     let mut zip = zip::ZipWriter::new(file);
-    let options = zip::write::FileOptions::default()
+    let options = zip::write::SimpleFileOptions::default()
         .compression_method(zip::CompressionMethod::Deflated);
     for entry in entries {
         let bytes = std::fs::read(&entry.src).map_err(|e| fail(e.to_string()))?;
@@ -633,7 +864,8 @@ fn write_zip_archive(entries: Vec<ZipEntry>, dest: &Path, manifest: Option<Strin
     if let Some(body) = manifest {
         zip.start_file("manifest.json", options)
             .map_err(|e| fail(e.to_string()))?;
-        zip.write_all(body.as_bytes()).map_err(|e| fail(e.to_string()))?;
+        zip.write_all(body.as_bytes())
+            .map_err(|e| fail(e.to_string()))?;
     }
     zip.finish().map_err(|e| fail(e.to_string()))?;
     Ok(())
@@ -641,13 +873,18 @@ fn write_zip_archive(entries: Vec<ZipEntry>, dest: &Path, manifest: Option<Strin
 
 #[tauri::command]
 async fn zip_files(
+    scope: State<'_, PathScope>,
     entries: Vec<ZipEntry>,
     dest: String,
     manifest: Option<String>,
 ) -> Result<String, String> {
+    for entry in &entries {
+        ensure_allowed(&scope, &entry.src)?;
+    }
+    let dest_path = ensure_allowed(&scope, &dest)?;
     run_blocking(move || {
-        write_zip_archive(entries, Path::new(&dest), manifest)?;
-        Ok(dest)
+        write_zip_archive(entries, &dest_path, manifest)?;
+        Ok(dest_path.to_string_lossy().into_owned())
     })
     .await
 }
@@ -655,6 +892,90 @@ async fn zip_files(
 #[tauri::command]
 fn temp_dir() -> Result<String, String> {
     Ok(std::env::temp_dir().to_string_lossy().into_owned())
+}
+
+/// Native save dialog. The chosen path is granted to [`PathScope`], which is
+/// the only way the frontend can write outside the library and temp folders.
+#[tauri::command]
+async fn pick_save_path(
+    app: AppHandle,
+    scope: State<'_, PathScope>,
+    default_path: Option<String>,
+    filter_name: Option<String>,
+    extensions: Option<Vec<String>>,
+) -> Result<Option<String>, String> {
+    use tauri_plugin_dialog::DialogExt;
+
+    // The blocking dialog waits on the main thread, so it runs on a blocking
+    // worker rather than tying up an async-runtime thread.
+    let chosen = run_blocking(move || {
+        let mut builder = app.dialog().file();
+        if let Some(default) = default_path.filter(|p| !p.trim().is_empty()) {
+            let path = PathBuf::from(default);
+            if let Some(parent) = path.parent().filter(|p| !p.as_os_str().is_empty()) {
+                builder = builder.set_directory(parent);
+            }
+            if let Some(name) = path.file_name().and_then(|n| n.to_str()) {
+                builder = builder.set_file_name(name);
+            }
+        }
+        if let Some(exts) = extensions.filter(|e| !e.is_empty()) {
+            let refs: Vec<&str> = exts.iter().map(|s| s.as_str()).collect();
+            builder = builder.add_filter(filter_name.unwrap_or_else(|| "File".into()), &refs);
+        }
+        match builder.blocking_save_file() {
+            Some(file) => file.into_path().map(Some).map_err(|e| fail(e.to_string())),
+            None => Ok(None),
+        }
+    })
+    .await?;
+    let Some(path) = chosen else {
+        return Ok(None);
+    };
+    // Grant the folder so a later reveal or overwrite of a sibling also works.
+    scope.grant(path.parent().unwrap_or(&path));
+    Ok(Some(path.to_string_lossy().into_owned()))
+}
+
+/// Reveal in Explorer, scoped the same way as reads and writes so the webview
+/// cannot use it to probe arbitrary locations.
+#[tauri::command]
+fn reveal_path(app: AppHandle, scope: State<PathScope>, path: String) -> Result<(), String> {
+    use tauri_plugin_opener::OpenerExt;
+
+    let target = ensure_allowed(&scope, &path)?;
+    app.opener()
+        .reveal_item_in_dir(&target)
+        .map_err(|e| fail(e.to_string()))
+}
+
+#[tauri::command]
+async fn pick_directory(
+    app: AppHandle,
+    scope: State<'_, PathScope>,
+    default_path: Option<String>,
+) -> Result<Option<String>, String> {
+    use tauri_plugin_dialog::DialogExt;
+
+    let chosen = run_blocking(move || {
+        let mut builder = app.dialog().file();
+        if let Some(default) = default_path.filter(|p| !p.trim().is_empty()) {
+            builder = builder.set_directory(PathBuf::from(default));
+        }
+        match builder.blocking_pick_folder() {
+            Some(folder) => folder
+                .into_path()
+                .map(Some)
+                .map_err(|e| fail(e.to_string())),
+            None => Ok(None),
+        }
+    })
+    .await?;
+    let Some(path) = chosen else {
+        return Ok(None);
+    };
+    scope.grant(&path);
+    Ok(Some(path.to_string_lossy().into_owned()))
 }
 
 #[tauri::command]
@@ -704,7 +1025,10 @@ fn read_error_log() -> Result<String, String> {
 }
 
 fn format_utc_iso(time: SystemTime) -> String {
-    let secs = time.duration_since(UNIX_EPOCH).unwrap_or_default().as_secs();
+    let secs = time
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
     let days = (secs / 86400) as i64;
     let day_secs = (secs % 86400) as u32;
     let hour = day_secs / 3600;
@@ -744,13 +1068,18 @@ fn is_uuid_or_hex_stem(stem: &str) -> bool {
     }
     // Hex with dashes or underscores
     if cleaned.len() >= 8
-        && cleaned.chars().all(|c| c.is_ascii_hexdigit() || c == '-' || c == '_')
+        && cleaned
+            .chars()
+            .all(|c| c.is_ascii_hexdigit() || c == '-' || c == '_')
         && !cleaned.contains(|c: char| c.is_alphabetic() && !c.is_ascii_hexdigit())
     {
         return true;
     }
     // Pure symbols / digits
-    if cleaned.chars().all(|c| c.is_ascii_digit() || c == '-' || c == '_') {
+    if cleaned
+        .chars()
+        .all(|c| c.is_ascii_digit() || c == '-' || c == '_')
+    {
         return true;
     }
     false
@@ -759,29 +1088,31 @@ fn is_uuid_or_hex_stem(stem: &str) -> bool {
 fn slug_to_proper_name(stem: &str) -> String {
     let mut cleaned = stem.trim();
     // Strip trailing unique hex suffix e.g. -a1b2c3d4 or _a1b2c3d4 (6 to 12 hex chars)
-    if let Some(idx) = cleaned.rfind(|c| c == '-' || c == '_') {
+    if let Some(idx) = cleaned.rfind(['-', '_']) {
         let suffix = &cleaned[idx + 1..];
-        if suffix.len() >= 6 && suffix.len() <= 12 && suffix.chars().all(|c| c.is_ascii_hexdigit()) {
+        if suffix.len() >= 6 && suffix.len() <= 12 && suffix.chars().all(|c| c.is_ascii_hexdigit())
+        {
             cleaned = &cleaned[..idx];
         }
     }
     // Strip trailing duration suffix e.g. -8s, _8s, -8.5s, _1.5s, -0.4s
-    if let Some(idx) = cleaned.rfind(|c| c == '-' || c == '_') {
+    if let Some(idx) = cleaned.rfind(['-', '_']) {
         let suffix = &cleaned[idx + 1..];
         if suffix.ends_with('s') && suffix[..suffix.len() - 1].parse::<f32>().is_ok() {
             cleaned = &cleaned[..idx];
         }
     }
     // Strip secondary trailing hex suffix if duration came after hex
-    if let Some(idx) = cleaned.rfind(|c| c == '-' || c == '_') {
+    if let Some(idx) = cleaned.rfind(['-', '_']) {
         let suffix = &cleaned[idx + 1..];
-        if suffix.len() >= 6 && suffix.len() <= 12 && suffix.chars().all(|c| c.is_ascii_hexdigit()) {
+        if suffix.len() >= 6 && suffix.len() <= 12 && suffix.chars().all(|c| c.is_ascii_hexdigit())
+        {
             cleaned = &cleaned[..idx];
         }
     }
 
     let words: Vec<&str> = cleaned
-        .split(|c| c == '-' || c == '_' || c == ' ')
+        .split(['-', '_', ' '])
         .map(|s| s.trim())
         .filter(|s| !s.is_empty())
         .collect();
@@ -796,7 +1127,10 @@ fn slug_to_proper_name(stem: &str) -> String {
             let mut chars = w.chars();
             match chars.next() {
                 None => String::new(),
-                Some(first) => first.to_uppercase().collect::<String>() + chars.as_str().to_ascii_lowercase().as_str(),
+                Some(first) => {
+                    first.to_uppercase().collect::<String>()
+                        + chars.as_str().to_ascii_lowercase().as_str()
+                }
             }
         })
         .collect();
@@ -821,7 +1155,10 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
     if let Ok(mut file) = std::fs::File::open(path) {
         use std::io::{Read, Seek, SeekFrom};
         let mut magic = [0u8; 12];
-        if file.read_exact(&mut magic).is_ok() && &magic[0..4] == b"RIFF" && &magic[8..12] == b"WAVE" {
+        if file.read_exact(&mut magic).is_ok()
+            && &magic[0..4] == b"RIFF"
+            && &magic[8..12] == b"WAVE"
+        {
             let total_file_size = file.metadata().map(|m| m.len()).unwrap_or(u64::MAX);
             let mut curr_pos = 12u64;
             while curr_pos + 8 <= total_file_size {
@@ -833,26 +1170,38 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
                     break;
                 }
                 let chunk_id = &chunk_header[0..4];
-                let chunk_size = u32::from_le_bytes(chunk_header[4..8].try_into().unwrap_or_default()) as u64;
+                let chunk_size =
+                    u32::from_le_bytes(chunk_header[4..8].try_into().unwrap_or_default()) as u64;
                 let chunk_data_pos = curr_pos + 8;
-                let next_chunk_pos = chunk_data_pos.saturating_add(chunk_size).saturating_add(chunk_size % 2);
+                let next_chunk_pos = chunk_data_pos
+                    .saturating_add(chunk_size)
+                    .saturating_add(chunk_size % 2);
 
-                if chunk_id == b"LIST" && chunk_size >= 4 && chunk_size <= 2_000_000 {
+                if chunk_id == b"LIST" && (4..=2_000_000).contains(&chunk_size) {
                     let mut list_body = vec![0u8; chunk_size as usize];
-                    if file.read_exact(&mut list_body).is_ok() && list_body.len() >= 4 && &list_body[0..4] == b"INFO" {
+                    if file.read_exact(&mut list_body).is_ok()
+                        && list_body.len() >= 4
+                        && &list_body[0..4] == b"INFO"
+                    {
                         let mut sub_offset = 4;
                         while sub_offset + 8 <= list_body.len() {
                             let sub_id = &list_body[sub_offset..sub_offset + 4];
-                            let sub_size = u32::from_le_bytes(list_body[sub_offset + 4..sub_offset + 8].try_into().unwrap_or_default()) as usize;
+                            let sub_size = u32::from_le_bytes(
+                                list_body[sub_offset + 4..sub_offset + 8]
+                                    .try_into()
+                                    .unwrap_or_default(),
+                            ) as usize;
                             let sub_data_start = sub_offset + 8;
                             let sub_data_end = (sub_data_start + sub_size).min(list_body.len());
 
                             if sub_data_start <= sub_data_end {
-                                if let Ok(text) = std::str::from_utf8(&list_body[sub_data_start..sub_data_end]) {
+                                if let Ok(text) =
+                                    std::str::from_utf8(&list_body[sub_data_start..sub_data_end])
+                                {
                                     let trimmed = text.trim_matches('\0').trim();
-                                    if sub_id == b"INAM" && !trimmed.is_empty() {
-                                        prompt = trimmed.to_string();
-                                    } else if sub_id == b"ICMT" && prompt.is_empty() && !trimmed.is_empty() {
+                                    let is_title = sub_id == b"INAM"
+                                        || (sub_id == b"ICMT" && prompt.is_empty());
+                                    if is_title && !trimmed.is_empty() {
                                         prompt = trimmed.to_string();
                                     } else if sub_id == b"IKEY" && !trimmed.is_empty() {
                                         let list: Vec<String> = trimmed
@@ -863,14 +1212,20 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
                                         if !list.is_empty() {
                                             instruments = Some(list);
                                         }
-                                    } else if sub_id == b"IGNR" && trimmed.eq_ignore_ascii_case("Instrumental") {
+                                    } else if sub_id == b"IGNR"
+                                        && trimmed.eq_ignore_ascii_case("Instrumental")
+                                    {
                                         mode = "music".to_string();
-                                    } else if sub_id == b"IGNR" && trimmed.eq_ignore_ascii_case("Ambience") {
+                                    } else if sub_id == b"IGNR"
+                                        && trimmed.eq_ignore_ascii_case("Ambience")
+                                    {
                                         mode = "ambience".to_string();
                                     }
                                 }
                             }
-                            sub_offset = sub_data_start.saturating_add(sub_size).saturating_add(sub_size % 2);
+                            sub_offset = sub_data_start
+                                .saturating_add(sub_size)
+                                .saturating_add(sub_size % 2);
                         }
                     }
                 }
@@ -933,7 +1288,12 @@ fn count_wav_files_recursive(dir: &Path) -> usize {
 fn infer_metadata_from_path(
     root: &Path,
     file_path: &Path,
-) -> (Option<String>, Option<String>, Option<String>, Option<String>) {
+) -> (
+    Option<String>,
+    Option<String>,
+    Option<String>,
+    Option<String>,
+) {
     let mut mode = None;
     let mut category = None;
     let mut subcategory = None;
@@ -1015,7 +1375,11 @@ fn infer_metadata_from_path(
 }
 
 fn clip_json_from_path(root: &Path, path: &Path) -> Option<serde_json::Value> {
-    let file_stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("").to_string();
+    let file_stem = path
+        .file_stem()
+        .and_then(|s| s.to_str())
+        .unwrap_or("")
+        .to_string();
     if file_stem.is_empty() {
         return None;
     }
@@ -1314,6 +1678,43 @@ async fn scan_library_dir(dir: Option<String>) -> Result<Vec<serde_json::Value>,
     .await
 }
 
+pub fn run() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
+        .manage(Engine {
+            proc: Mutex::new(None),
+        })
+        .manage(PathScope::load())
+        .invoke_handler(tauri::generate_handler![
+            engine_status,
+            engine_probe,
+            engine_generate,
+            engine_cancel,
+            engine_encode_audio,
+            engine_warmup,
+            engine_unload,
+            write_file,
+            read_file,
+            copy_file,
+            delete_file,
+            zip_files,
+            temp_dir,
+            pick_save_path,
+            pick_directory,
+            reveal_path,
+            log_error,
+            error_log_path,
+            library_path,
+            read_error_log,
+            scan_library_dir,
+            scan_library_categories,
+            scan_folder_tracks
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running Thunder FX");
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1322,43 +1723,40 @@ mod tests {
 
     static ENV_LOCK: Mutex<()> = Mutex::new(());
 
-    #[test]
-    fn trim_shortens_file() {
-        let path = std_temp().join("thunder-fx-test.wav");
-        let spec = hound::WavSpec {
-            channels: 2,
-            sample_rate: 44100,
-            bits_per_sample: 16,
-            sample_format: hound::SampleFormat::Int,
-        };
-        {
-            let mut w = hound::WavWriter::create(&path, spec).unwrap();
-            for _ in 0..(44100 * 2) {
-                w.write_sample(0i16).unwrap();
-                w.write_sample(0i16).unwrap();
+    /// Sets an env var for the duration of a test and restores the previous
+    /// value on drop, so one test's override cannot leak into the next.
+    struct EnvGuard {
+        key: &'static str,
+        previous: Option<String>,
+    }
+
+    impl EnvGuard {
+        fn set(key: &'static str, value: &Path) -> Self {
+            let previous = std::env::var(key).ok();
+            unsafe {
+                std::env::set_var(key, value);
+            }
+            EnvGuard { key, previous }
+        }
+    }
+
+    impl Drop for EnvGuard {
+        fn drop(&mut self) {
+            unsafe {
+                match &self.previous {
+                    Some(value) => std::env::set_var(self.key, value),
+                    None => std::env::remove_var(self.key),
+                }
             }
         }
-        let dest = std_temp().join("thunder-fx-trim.wav");
-        trim_wav(
-            path.to_string_lossy().into(),
-            dest.to_string_lossy().into(),
-            0.5,
-            1.5,
-        )
-        .unwrap();
-        let r = hound::WavReader::open(&dest).unwrap();
-        let frames = r.duration();
-        assert!((frames as i32 - 44100).abs() < 10);
     }
 
     #[test]
     fn append_error_log_writes_file() {
-        let _guard = ENV_LOCK.lock().unwrap();
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         let dir = std_temp().join(format!("thunder-fx-log-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
-        unsafe {
-            std::env::set_var("THUNDER_FX_LOG_DIR", &dir);
-        }
+        let _guard = EnvGuard::set("THUNDER_FX_LOG_DIR", &dir);
         append_error_log("omen test");
         let text = std::fs::read_to_string(dir.join("error.log")).unwrap();
         assert!(text.contains("omen test"));
@@ -1367,15 +1765,58 @@ mod tests {
 
     #[test]
     fn read_error_log_returns_appended_text() {
-        let _guard = ENV_LOCK.lock().unwrap();
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         let dir = std_temp().join(format!("thunder-fx-read-log-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
-        unsafe {
-            std::env::set_var("THUNDER_FX_LOG_DIR", &dir);
-        }
+        let _guard = EnvGuard::set("THUNDER_FX_LOG_DIR", &dir);
         append_error_log("omen from sidecar");
         let text = read_error_log().unwrap();
         assert!(text.contains("omen from sidecar"));
+    }
+
+    #[test]
+    fn generate_timeout_scales_with_work_and_stays_bounded() {
+        // Short clips still get a floor generous enough for a cold pipeline.
+        assert_eq!(generate_timeout_secs(0.5, 20), 600);
+        // A long, high-step run gets far more than the old fixed 600s.
+        assert!(generate_timeout_secs(380.0, 100) > 600);
+        // And never unbounded.
+        assert_eq!(generate_timeout_secs(380.0, 100), 7200);
+        assert!(generate_timeout_secs(30.0, 20) >= generate_timeout_secs(30.0, 8));
+    }
+
+    #[test]
+    fn scope_allows_library_and_temp_but_rejects_elsewhere() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let lib = std_temp().join(format!("thunder-fx-scope-{}", std::process::id()));
+        std::fs::create_dir_all(&lib).unwrap();
+        let _guard = EnvGuard::set("THUNDER_FX_LIBRARY_DIR", &lib);
+        let scope = PathScope {
+            granted: Mutex::new(Vec::new()),
+        };
+
+        // Inside the library root, including a file that does not exist yet.
+        let inside = lib.join("sfx").join("Combat").join("new.wav");
+        assert!(ensure_allowed(&scope, &inside.to_string_lossy()).is_ok());
+
+        // Traversal out of an allowed root is rejected.
+        let escape = lib.join("..").join("..").join("secrets.txt");
+        assert!(ensure_allowed(&scope, &escape.to_string_lossy()).is_err());
+
+        // An unrelated absolute path is rejected until it is granted.
+        let outside = std_temp()
+            .parent()
+            .unwrap_or(Path::new("/"))
+            .join("thunder-fx-not-granted.txt");
+        assert!(ensure_allowed(&scope, &outside.to_string_lossy()).is_err());
+        scope
+            .granted
+            .lock()
+            .unwrap()
+            .push(normalize_path(outside.parent().unwrap_or(Path::new("/"))));
+        assert!(ensure_allowed(&scope, &outside.to_string_lossy()).is_ok());
+
+        let _ = std::fs::remove_dir_all(&lib);
     }
 
     #[test]
@@ -1400,11 +1841,9 @@ mod tests {
 
     #[test]
     fn library_path_uses_override_dir() {
-        let _guard = ENV_LOCK.lock().unwrap();
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         let dir = std_temp().join(format!("thunder-fx-lib-{}", std::process::id()));
-        unsafe {
-            std::env::set_var("THUNDER_FX_LIBRARY_DIR", &dir);
-        }
+        let _guard = EnvGuard::set("THUNDER_FX_LIBRARY_DIR", &dir);
         let path = library_path().unwrap();
         assert!(path.contains("thunder-fx-lib-"));
         assert!(dir.is_dir());
@@ -1442,8 +1881,9 @@ mod tests {
 
     #[test]
     fn scan_library_categories_and_tracks_discovers_nested_folders() {
+        // Taken outside the async block: a std guard must not span an await.
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
         tauri::async_runtime::block_on(async {
-            let _guard = ENV_LOCK.lock().unwrap();
             let dir = std_temp().join(format!("thunder-fx-cat-test-{}", std::process::id()));
             let sword_dir = dir.join("sfx").join("Combat").join("Sword");
             std::fs::create_dir_all(&sword_dir).unwrap();
@@ -1503,10 +1943,7 @@ mod tests {
             slug_to_proper_name("steel-shortsword-clash-8s-a1b2c3d4"),
             "Steel Shortsword Clash"
         );
-        assert_eq!(
-            slug_to_proper_name("laser-blast-0.4s"),
-            "Laser Blast"
-        );
+        assert_eq!(slug_to_proper_name("laser-blast-0.4s"), "Laser Blast");
         assert_eq!(
             slug_to_proper_name("tavern_door_heavy"),
             "Tavern Door Heavy"
@@ -1527,7 +1964,11 @@ mod tests {
         assert_eq!(cat.as_deref(), Some("General"));
         assert_eq!(sub, None);
 
-        let file_in_nested = root.join("sfx").join("Combat").join("Swords").join("sound-1.wav");
+        let file_in_nested = root
+            .join("sfx")
+            .join("Combat")
+            .join("Swords")
+            .join("sound-1.wav");
         let (mode, cat, sub, _) = infer_metadata_from_path(root, &file_in_nested);
         assert_eq!(mode.as_deref(), Some("sfx"));
         assert_eq!(cat.as_deref(), Some("Combat"));
@@ -1543,38 +1984,4 @@ mod tests {
         assert_eq!(cat.as_deref(), Some("Weather"));
         assert_eq!(sub.as_deref(), Some("Rain"));
     }
-}
-
-pub fn run() {
-    tauri::Builder::default()
-        .plugin(tauri_plugin_opener::init())
-        .plugin(tauri_plugin_dialog::init())
-        .manage(Engine {
-            proc: Mutex::new(None),
-        })
-        .invoke_handler(tauri::generate_handler![
-            engine_status,
-            engine_probe,
-            engine_generate,
-            engine_cancel,
-            engine_encode_ogg,
-            engine_encode_audio,
-            engine_warmup,
-            engine_unload,
-            trim_wav,
-            write_file_b64,
-            read_file_b64,
-            delete_file,
-            zip_files,
-            temp_dir,
-            log_error,
-            error_log_path,
-            library_path,
-            read_error_log,
-            scan_library_dir,
-            scan_library_categories,
-            scan_folder_tracks
-        ])
-        .run(tauri::generate_context!())
-        .expect("error while running Thunder FX");
 }

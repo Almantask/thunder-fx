@@ -27,5 +27,5 @@ Record discoveries, audio generation notes, prompt experiments, model behaviors,
 You can also run the bundled Python helper to append an entry deterministically:
 
 ```powershell
-python .agent/skills/add-learning/scripts/add_learning.py "For water dripping from a cave - what worked was specifying the intensity exactly and keeping it simple: `water dripping from a cave, 1 time in 10s`"
+python .cursor/skills/add-learning/scripts/add_learning.py "For water dripping from a cave - what worked was specifying the intensity exactly and keeping it simple: `water dripping from a cave, 1 time in 10s`"
 ```

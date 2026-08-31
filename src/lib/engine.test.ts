@@ -1,7 +1,8 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, expect, it } from 'vitest'
 import {
-  base64ToBytes,
-  bytesToBase64,
   generate,
   probeEngine,
   engineStatus,
@@ -15,11 +16,6 @@ import { isTauri } from '@/lib/utils'
 describe('engine bridge', () => {
   it('is not Tauri inside Vitest', () => {
     expect(isTauri()).toBe(false)
-  })
-
-  it('round-trips base64', () => {
-    const src = new Uint8Array([0, 1, 2, 250, 255]).buffer
-    expect([...new Uint8Array(base64ToBytes(bytesToBase64(src)))]).toEqual([0, 1, 2, 250, 255])
   })
 
   it('falls back to the mock probe and generate', async () => {

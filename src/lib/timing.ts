@@ -7,6 +7,8 @@ import type { PrecisionMode } from '@/lib/types'
 
 export const TIMING_STORAGE_KEY = 'thunder-fx.timing'
 const MAX_SAMPLES = 24
+/** Assumed step count for samples recorded before steps were logged. */
+const DEFAULT_STEPS = 20
 
 export type GenerateTimingSample = {
   seconds: number
@@ -107,10 +109,23 @@ function generateRateSamples(log: TimingLog): GenerateTimingSample[] {
     (sample) => sample.seconds > 0 && sample.elapsedMs > 0,
   )
   if (samples.length < 4) return samples
-  const rates = samples.map((sample) => sample.elapsedMs / sample.seconds)
-  const med = median(rates)
-  const filtered = samples.filter((sample) => sample.elapsedMs / sample.seconds <= med * 3)
+  // Outlier filter on a per-unit-of-work rate, so a slow high-step run is not
+  // mistaken for a stall.
+  const rate = (sample: GenerateTimingSample) =>
+    sample.elapsedMs / (sample.seconds * (sample.steps && sample.steps > 0 ? sample.steps : DEFAULT_STEPS))
+  const med = median(samples.map(rate))
+  const filtered = samples.filter((sample) => rate(sample) <= med * 3)
   return filtered.length ? filtered : samples
+}
+
+/**
+ * Diffusion cost scales with `seconds × steps`, so the fit runs against that
+ * product rather than duration alone. Without it, switching quality (8 steps
+ * vs 32) silently poisons every estimate until the sample log rolls over.
+ */
+function sampleWork(sample: GenerateTimingSample, fallbackSteps: number): number {
+  const steps = sample.steps && sample.steps > 0 ? sample.steps : fallbackSteps
+  return sample.seconds * steps
 }
 
 export function estimateGenerateMs(
@@ -123,10 +138,14 @@ export function estimateGenerateMs(
   if (!samples.length) {
     return getBaselineGenerateMs(seconds, options)
   }
+  const targetSteps = options?.steps && options.steps > 0 ? options.steps : DEFAULT_STEPS
+  const targetWork = seconds * targetSteps
   if (samples.length === 1) {
     const sample = samples[0]
     if (!sample) return getBaselineGenerateMs(seconds, options)
-    return Math.round(sample.elapsedMs * (seconds / sample.seconds))
+    const work = sampleWork(sample, targetSteps)
+    if (work <= 0) return getBaselineGenerateMs(seconds, options)
+    return Math.round(sample.elapsedMs * (targetWork / work))
   }
 
   const n = samples.length
@@ -135,26 +154,27 @@ export function estimateGenerateMs(
   let sumXY = 0
   let sumXX = 0
   for (const sample of samples) {
-    sumX += sample.seconds
+    const work = sampleWork(sample, targetSteps)
+    sumX += work
     sumY += sample.elapsedMs
-    sumXY += sample.seconds * sample.elapsedMs
-    sumXX += sample.seconds * sample.seconds
+    sumXY += work * sample.elapsedMs
+    sumXX += work * work
   }
   const denom = n * sumXX - sumX * sumX
   if (Math.abs(denom) < 1e-9) {
     const meanMs = sumY / n
-    const meanSec = sumX / n
-    if (meanSec <= 0) return getBaselineGenerateMs(seconds, options)
-    return Math.round(meanMs * (seconds / meanSec))
+    const meanWork = sumX / n
+    if (meanWork <= 0) return getBaselineGenerateMs(seconds, options)
+    return Math.round(meanMs * (targetWork / meanWork))
   }
   let slope = (n * sumXY - sumX * sumY) / denom
   let intercept = (sumY - slope * sumX) / n
   if (slope < 0) {
-    slope = median(samples.map((sample) => sample.elapsedMs / sample.seconds))
+    slope = median(samples.map((sample) => sample.elapsedMs / sampleWork(sample, targetSteps)))
     intercept = 0
   }
   intercept = Math.max(0, intercept)
-  return Math.round(intercept + slope * seconds)
+  return Math.round(intercept + slope * targetWork)
 }
 
 export function estimateQueueMs(

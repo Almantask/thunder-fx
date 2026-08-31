@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""stop: if shipped app files changed, make the agent rebuild the desktop exe."""
+"""If shipped app files changed, make the agent rebuild the desktop exe.
+
+Cursor/Antigravity call this as a `stop` hook and expect `followup_message`;
+Claude Code calls it as a `Stop` hook and expects `decision: block` + `reason`.
+"""
 
 from __future__ import annotations
 
@@ -35,19 +39,30 @@ def main() -> int:
     if not Path("E:/thunder-fx-engine").exists():
         emit({})
         return 0
-    if data.get("status") != "completed":
-        emit({})
-        return 0
-    if int(data.get("loop_count") or 0) > 0:
-        emit({})
-        return 0
+
+    claude = data.get("hook_event_name") == "Stop"
+    if claude:
+        # Already re-entered from a previous block; let the turn end.
+        if data.get("stop_hook_active"):
+            emit({})
+            return 0
+    else:
+        if data.get("status") != "completed":
+            emit({})
+            return 0
+        if int(data.get("loop_count") or 0) > 0:
+            emit({})
+            return 0
 
     stamp = Path.cwd() / ".cursor" / "hooks" / "state" / "exe-dirty.txt"
     if not stamp.exists() or stamp.stat().st_size == 0:
         emit({})
         return 0
 
-    emit({"followup_message": FOLLOWUP})
+    if claude:
+        emit({"decision": "block", "reason": FOLLOWUP})
+    else:
+        emit({"followup_message": FOLLOWUP})
     return 0
 
 

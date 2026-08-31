@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { afterEach, describe, expect, it } from 'vitest'
 import {
   EMPTY_TIMING,
@@ -13,6 +16,7 @@ import {
   recordLoad,
   saveTimingLog,
   wipeTimingLog,
+  type TimingLog,
 } from '@/lib/timing'
 import { getBaselineGenerateMs, getBaselineLoadMs } from '@/lib/perfBenchmarks'
 
@@ -160,5 +164,35 @@ describe('timing persistence and build wiping', () => {
     saveTimingLog(recordLoad(EMPTY_TIMING, 10_000))
     wipeTimingLog()
     expect(localStorage.getItem(TIMING_STORAGE_KEY)).toBeNull()
+  })
+
+  it('scales the estimate with step count, not just duration', () => {
+    // Samples all recorded at 10 steps: 8s took 8s, 16s took 16s.
+    let log: TimingLog = { buildId: 'b', loads: [], generates: [] }
+    log = recordGenerate(log, 8, 8_000, { steps: 10 })
+    log = recordGenerate(log, 16, 16_000, { steps: 10 })
+    log = recordGenerate(log, 24, 24_000, { steps: 10 })
+    log = recordGenerate(log, 32, 32_000, { steps: 10 })
+
+    const atTenSteps = estimateGenerateMs(log, 16, { steps: 10 })
+    const atTwentySteps = estimateGenerateMs(log, 16, { steps: 20 })
+
+    expect(atTenSteps).toBeGreaterThan(0)
+    // Twice the steps is roughly twice the work.
+    expect(atTwentySteps / atTenSteps).toBeGreaterThan(1.8)
+    expect(atTwentySteps / atTenSteps).toBeLessThan(2.2)
+  })
+
+  it('does not let samples at different step counts skew each other', () => {
+    // A mix of cheap draft runs and expensive hi-fi runs of the same duration.
+    let log: TimingLog = { buildId: 'b', loads: [], generates: [] }
+    log = recordGenerate(log, 10, 5_000, { steps: 8 })
+    log = recordGenerate(log, 10, 5_000, { steps: 8 })
+    log = recordGenerate(log, 10, 20_000, { steps: 32 })
+    log = recordGenerate(log, 10, 20_000, { steps: 32 })
+
+    // Each quality setting should predict close to what it actually took.
+    expect(estimateGenerateMs(log, 10, { steps: 8 })).toBeLessThan(9_000)
+    expect(estimateGenerateMs(log, 10, { steps: 32 })).toBeGreaterThan(16_000)
   })
 })

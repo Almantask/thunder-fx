@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, expect, it } from 'vitest'
 import { generateMockMusicWav, wavDurationSeconds } from '@/lib/wav'
 import { loopOverlapSeconds, loopWrapJump, makeSeamlessLoop } from '@/lib/seamlessLoop'

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""afterFileEdit: record shipped-app edits that stale thunder-fx.exe."""
+"""Record shipped-app edits that stale thunder-fx.exe.
+
+Cursor/Antigravity call this as an afterFileEdit hook; Claude Code calls it as a
+PostToolUse hook. The two payloads differ only in where the path lives.
+"""
 
 from __future__ import annotations
 
@@ -26,7 +30,8 @@ def main() -> int:
         emit({})
         return 0
 
-    file_path = data.get("file_path") or ""
+    tool_input = data.get("tool_input") or {}
+    file_path = data.get("file_path") or tool_input.get("file_path") or ""
     root = Path.cwd().resolve()
     try:
         rel = Path(file_path).resolve().relative_to(root).as_posix()

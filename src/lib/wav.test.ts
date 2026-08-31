@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, expect, it } from 'vitest'
 import { generateMockMusicWav, generateMockSfxWav, parseWav, tagMusicWav, trimWav, wavDurationSeconds } from '@/lib/wav'
 import { musicWavInfo } from '@/lib/instruments'

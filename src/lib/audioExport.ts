@@ -11,18 +11,7 @@ export type ExportOptions = {
   mono: boolean
 }
 
-export const DEFAULT_EXPORT_OPTIONS: ExportOptions = {
-  format: 'wav',
-  sampleRate: 44100,
-  bitDepth: 16,
-  mono: false,
-}
-
 export const DESKTOP_ONLY_FORMATS: readonly AudioFormat[] = ['flac', 'mp3', 'ogg']
-
-export function isAudioFormat(value: unknown): value is AudioFormat {
-  return value === 'wav' || value === 'flac' || value === 'mp3' || value === 'ogg'
-}
 
 export function formatNeedsDesktop(format: AudioFormat): boolean {
   return DESKTOP_ONLY_FORMATS.includes(format)

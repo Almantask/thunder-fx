@@ -244,6 +244,7 @@ class WorkerTests(unittest.TestCase):
                 "cfg": 1,
                 "negative": "",
                 "mode": "music",
+                "instruments": ["lute", "cello"],
             }
         )
         done = None
@@ -275,6 +276,7 @@ class WorkerTests(unittest.TestCase):
                 "cfg": 1,
                 "negative": "",
                 "mode": "music",
+                "instruments": ["choir", "celesta", "waterphone", "drone"],
             }
         )
         done = None
@@ -305,6 +307,7 @@ class WorkerTests(unittest.TestCase):
                 "cfg": 1,
                 "negative": "",
                 "mode": "music",
+                "instruments": ["duduk", "harp"],
                 "category": "Ancient Discovery",
                 "intensity": "Level I — Quiet looping bed",
             }
@@ -506,6 +509,49 @@ class WorkerTests(unittest.TestCase):
         self.client.send({"id": "s_reloaded", "cmd": "status"})
         status_reloaded = self.client.read()
         self.assertTrue(status_reloaded["loaded"])
+
+    def test_unload_is_refused_while_a_generation_runs(self) -> None:
+        # A long mock run holds the generation lock while we try to unload.
+        self.client.send(
+            {
+                "id": "g_slow",
+                "cmd": "generate",
+                "prompt": "slow one",
+                "seconds": 0.3,
+                "seed": 5,
+                "cfg": 1,
+                "negative": "",
+                "steps": 40,
+            }
+        )
+        # Wait for the run to actually start before racing it.
+        while True:
+            msg = self.client.read()
+            if msg.get("id") == "g_slow" and msg.get("event") == "progress":
+                break
+
+        self.client.send({"id": "u_busy", "cmd": "unload"})
+        unload = None
+        done = None
+        while unload is None or done is None:
+            msg = self.client.read(timeout_s=20.0)
+            if msg.get("id") == "u_busy":
+                unload = msg
+            elif msg.get("id") == "g_slow" and msg.get("event") == "done":
+                done = msg
+
+        self.assertEqual(unload["event"], "error")
+        self.assertIn("in progress", unload["message"].lower())
+
+        # The model is still loaded, and unloading works once the run is over.
+        self.client.send({"id": "s_busy", "cmd": "status"})
+        while True:
+            status = self.client.read()
+            if status.get("id") == "s_busy":
+                break
+        self.assertTrue(status["loaded"])
+        self.client.send({"id": "u_free", "cmd": "unload"})
+        self.assertEqual(self.client.read()["event"], "done")
 
     def test_encode_ogg(self) -> None:
         try:

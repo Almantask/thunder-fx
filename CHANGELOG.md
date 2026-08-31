@@ -2,6 +2,39 @@
 
 All notable Thunder FX changes are listed here.
 
+## Unreleased
+
+### Fixed
+
+- **The engine restarts itself.** A crashed Python worker previously bricked the session until the
+  app was relaunched; every command now checks the worker is alive and respawns it if not.
+- **Generation no longer times out on long clips.** The 600s cap could fire on a legitimate long,
+  high-step run — reporting a failure while the worker went on to write the clip. The budget now
+  scales with `seconds × steps`.
+- **Cancel stops the GPU.** Cancellation is wired into the sampler's per-step hook where the model
+  exposes one, instead of only taking effect after the run finished.
+- **Unload is refused during a generation** rather than reporting freed VRAM the running job still
+  holds.
+- Seamless-loop crossfades clamp to the 16-bit range; an equal-power sum of two loud samples could
+  overflow and abort the write.
+- Opening a clip the parser cannot decode shows an error instead of failing silently.
+- An unexpected render error now shows a recovery screen instead of a blank window.
+- Time estimates account for quality steps, so switching between Draft and Hi-Fi no longer skews
+  every prediction.
+
+### Changed
+
+- **Audio no longer round-trips through base64.** Clips move over the IPC boundary as raw bytes,
+  and the redundant read-modify-write tagging pass after each generation is gone — the worker
+  already embeds the same RIFF INFO tags.
+- **Queues no longer rescan the library after every clip.** A full scan parses every WAV on disk;
+  new clips are now spliced into the list, and full scans happen on entering the Library tab.
+- File access is confined to the library, temp, and log folders, plus folders the user picks in a
+  native dialog. Save and folder pickers moved to Rust so a picked folder is what grants access.
+- A content security policy is enforced, and the broad `reveal-item-in-dir` permission is gone.
+- Instrument names have a single source (`src/lib/instruments.ts`); the duplicate ~200-entry table
+  in the worker was removed.
+
 ## 0.4.0 — 2026-08-27
 
 ### Added

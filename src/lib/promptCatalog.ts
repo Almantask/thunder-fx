@@ -1,6 +1,7 @@
 import { clampGenerateSeconds } from '@/lib/duration'
 import { clipMode } from '@/lib/generateMode'
 import { extractInstruments, parseInstrumentKeywords } from '@/lib/instruments'
+import { randomSeed } from '@/lib/seed'
 import type { Clip } from '@/lib/types'
 
 export type PromptLibrary = 'fx' | 'ambience' | 'music'
@@ -183,10 +184,6 @@ export function clampQueueTakes(takes: number): number {
   return Math.min(MAX_QUEUE_TAKES, Math.max(MIN_QUEUE_TAKES, Math.round(takes)))
 }
 
-function randomSeed(): number {
-  return 1 + Math.floor(Math.random() * 2_147_483_646)
-}
-
 /**
  * Expands a single catalog effect into `takes` queue entries. Beyond the
  * first, each entry gets a distinct id (so it survives mergeQueue's dedupe)
@@ -281,7 +278,23 @@ function isValidCategoryName(name?: string): boolean {
   return true
 }
 
+/**
+ * Category inference scans every effect in the catalog, so results are cached
+ * per clip. Bounded because the key includes the clip id: a long session that
+ * generates thousands of clips would otherwise grow this without limit.
+ */
+const CATEGORY_CACHE_LIMIT = 2_000
 const _categoryCache = new Map<string, string>()
+
+function cacheCategory(key: string, value: string): string {
+  if (_categoryCache.size >= CATEGORY_CACHE_LIMIT) {
+    // Oldest insertion first — Map preserves insertion order.
+    const oldest = _categoryCache.keys().next()
+    if (!oldest.done) _categoryCache.delete(oldest.value)
+  }
+  _categoryCache.set(key, value)
+  return value
+}
 
 export function inferClipCategory(clip: Clip, catalog?: PromptCategory[]): string {
   if (isValidCategoryName(clip.category)) {
@@ -302,8 +315,7 @@ export function inferClipCategory(clip: Clip, catalog?: PromptCategory[]): strin
     .trim()
 
   if (!normPrompt) {
-    _categoryCache.set(cacheKey, 'Custom')
-    return 'Custom'
+    return cacheCategory(cacheKey, 'Custom')
   }
 
   const libraryCats = catList.filter((c) => c.library === targetLibrary)
@@ -391,9 +403,7 @@ export function inferClipCategory(clip: Clip, catalog?: PromptCategory[]): strin
     }
   }
 
-  const result = bestScore >= 50 ? bestCat : 'Custom'
-  _categoryCache.set(cacheKey, result)
-  return result
+  return cacheCategory(cacheKey, bestScore >= 50 ? bestCat : 'Custom')
 }
 
 export function formatIntensityLabel(code: string): string {

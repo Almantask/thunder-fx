@@ -6,10 +6,8 @@ import {
   type GenerateHandlers,
 } from '@/lib/mockEngine'
 import type {
-  CategorySummary,
   Clip,
   EngineStatus,
-  GenerateMode,
   GenerateRequest,
   GenerateResult,
   PrecisionMode,
@@ -24,8 +22,20 @@ import type {
 } from '@/lib/audioExport'
 import { formatMime, formatNeedsDesktop, prepareExportWav } from '@/lib/audioExport'
 import { buildZipStore } from '@/lib/zipStore'
-import { downloadArrayBuffer, tagWav, wavDurationSeconds } from '@/lib/wav'
-import { clipWavInfo, extractInstruments } from '@/lib/instruments'
+import { downloadArrayBuffer, wavDurationSeconds } from '@/lib/wav'
+import { extractInstruments } from '@/lib/instruments'
+import {
+  fileNameOf,
+  joinPath,
+  pickSavePath,
+  readFileBytes,
+  revealPath,
+  tempDir,
+  writeFileBytes,
+  zipFiles,
+  deleteFile as deleteScopedFile,
+  pickDirectory as pickScopedDirectory,
+} from '@/lib/tauriFs'
 import { clampGenerateSeconds } from '@/lib/duration'
 import { FIXED_CFG, modeSupportsSeamlessLoop, resolveGenerateMode } from '@/lib/generateMode'
 import { loadSettings } from '@/lib/setup'
@@ -104,8 +114,7 @@ export async function errorLogPath(): Promise<string | null> {
 export async function revealErrorLog(): Promise<void> {
   const path = await errorLogPath()
   if (!path) return
-  const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
-  await revealItemInDir(path)
+  await revealPath(path)
 }
 
 export async function libraryPath(): Promise<string | null> {
@@ -121,18 +130,11 @@ export async function libraryPath(): Promise<string | null> {
 export async function revealLibrary(path?: string): Promise<void> {
   const target = path?.trim() || (await libraryPath())
   if (!target) return
-  const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
-  await revealItemInDir(target)
+  await revealPath(target)
 }
 
 export async function pickDirectory(defaultPath?: string): Promise<string | null> {
-  if (!isTauri()) return null
-  const { open } = await import('@tauri-apps/plugin-dialog')
-  const selected = await open({
-    directory: true,
-    defaultPath: defaultPath?.trim() || undefined,
-  })
-  return typeof selected === 'string' ? selected : null
+  return await pickScopedDirectory(defaultPath)
 }
 
 export async function scanDiskLibrary(dir?: string): Promise<Clip[]> {
@@ -145,37 +147,10 @@ export async function scanDiskLibrary(dir?: string): Promise<Clip[]> {
   }
 }
 
-export async function scanDiskCategories(
-  dir?: string,
-  mode?: GenerateMode,
-): Promise<CategorySummary[]> {
-  if (!isTauri()) return []
-  try {
-    const { invoke } = await import('@tauri-apps/api/core')
-    return await invoke<CategorySummary[]>('scan_library_categories', {
-      dir: dir?.trim() || null,
-      mode: mode || null,
-    })
-  } catch {
-    return []
-  }
-}
-
-export async function scanDiskCategoryTracks(folderPath: string): Promise<Clip[]> {
-  if (!isTauri()) return []
-  try {
-    const { invoke } = await import('@tauri-apps/api/core')
-    return await invoke<Clip[]>('scan_folder_tracks', { folderPath })
-  } catch {
-    return []
-  }
-}
-
 export async function deleteDiskFile(path: string): Promise<void> {
   if (!isTauri()) return
   try {
-    const { invoke } = await import('@tauri-apps/api/core')
-    await invoke('delete_file', { path })
+    await deleteScopedFile(path)
   } catch {
     /* ignore error */
   }
@@ -191,34 +166,8 @@ export async function readErrorLog(): Promise<string> {
   }
 }
 
-export function bytesToBase64(buffer: ArrayBuffer): string {
-  const bytes = new Uint8Array(buffer)
-  const chunk = 0x8000
-  let binary = ''
-  for (let i = 0; i < bytes.length; i += chunk) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunk))
-  }
-  return btoa(binary)
-}
-
-export function base64ToBytes(b64: string): ArrayBuffer {
-  const binary = atob(b64)
-  const bytes = new Uint8Array(binary.length)
-  for (let i = 0; i < binary.length; i += 1) {
-    bytes[i] = binary.charCodeAt(i)
-  }
-  return bytes.buffer
-}
-
-function joinPath(dir: string, file: string): string {
-  if (!dir) return file
-  const sep = dir.includes('/') && !dir.includes('\\') ? '/' : '\\'
-  return `${dir.replace(/[\\/]+$/, '')}${sep}${file}`
-}
-
 function clipIdFromPath(path: string): string {
-  const name = path.split(/[/\\]/).pop() ?? ''
-  return name.replace(/\.wav$/i, '') || crypto.randomUUID()
+  return fileNameOf(path).replace(/\.wav$/i, '') || crypto.randomUUID()
 }
 
 export async function probeEngine(): Promise<SetupProbe> {
@@ -326,17 +275,10 @@ export async function generate(
     })
     throwIfEngineError(result)
     if (!result.path) throw new Error('Engine did not return a WAV path')
-    const b64 = await invoke<string>('read_file_b64', { path: result.path })
-    let wav = base64ToBytes(b64)
-    const wavInfo = clipWavInfo(
-      request.prompt,
-      mode,
-      topInstruments,
-      resolvedCategory,
-      resolvedIntensity,
-    )
-    wav = tagWav(wav, wavInfo)
-    await invoke('write_file_b64', { path: result.path, data: bytesToBase64(wav) })
+    // The worker already embedded the RIFF INFO tags from the same fields sent
+    // above, so this is a plain read — no second parse-and-rewrite of the file.
+    const wav = await readFileBytes(result.path)
+    if (!wav) throw new Error('Could not read the generated WAV')
     const clip: Clip = {
       id: clipIdFromPath(result.path),
       path: result.path,
@@ -442,9 +384,6 @@ export async function exportClipFile(options: {
     return null
   }
   const { invoke } = await import('@tauri-apps/api/core')
-  const { save } = await import('@tauri-apps/plugin-dialog')
-  const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
-  const defaultPath = joinPath(options.defaultDir ?? '', options.filename)
   const filterName =
     options.format === 'ogg'
       ? 'OGG Vorbis'
@@ -453,17 +392,17 @@ export async function exportClipFile(options: {
         : options.format === 'mp3'
           ? 'MP3'
           : 'WAV'
-  const path = await save({
-    defaultPath,
-    filters: [{ name: filterName, extensions: [options.format] }],
+  const path = await pickSavePath({
+    defaultPath: joinPath(options.defaultDir ?? '', options.filename),
+    filterName,
+    extensions: [options.format],
   })
   if (!path) return null
   if (options.format === 'wav') {
-    await invoke('write_file_b64', { path, data: bytesToBase64(prepared) })
+    await writeFileBytes(path, prepared)
   } else {
-    const temp = await invoke<string>('temp_dir')
-    const wavPath = joinPath(temp, 'thunder-fx-export.wav')
-    await invoke('write_file_b64', { path: wavPath, data: bytesToBase64(prepared) })
+    const wavPath = joinPath(await tempDir(), `thunder-fx-export-${crypto.randomUUID()}.wav`)
+    await writeFileBytes(wavPath, prepared)
     const encoded = await invoke<EngineMsg>('engine_encode_audio', {
       wavPath,
       destPath: path,
@@ -473,17 +412,22 @@ export async function exportClipFile(options: {
       mono: Boolean(options.mono),
     })
     throwIfEngineError(encoded)
+    await deleteDiskFile(wavPath)
   }
-  try {
-    await revealItemInDir(path)
-  } catch {
+  await revealPath(path).catch(() => {
     /* reveal is best-effort */
-  }
+  })
   return path
 }
 
 export async function exportSoundPack(options: {
   files: { name: string; buffer: ArrayBuffer }[]
+  /**
+   * Already-encoded files sitting on disk. When present the archive is built
+   * straight from these paths, so encoded audio is never carried back through
+   * the webview only to be written out again.
+   */
+  encodedFiles?: { path: string; name: string }[]
   zipName: string
   manifest?: string
   defaultDir?: string
@@ -498,32 +442,41 @@ export async function exportSoundPack(options: {
     downloadArrayBuffer(zip, options.zipName, 'application/zip')
     return null
   }
-  const { invoke } = await import('@tauri-apps/api/core')
-  const { save } = await import('@tauri-apps/plugin-dialog')
-  const { revealItemInDir } = await import('@tauri-apps/plugin-opener')
-  const defaultPath = joinPath(options.defaultDir ?? '', options.zipName)
-  const path = await save({
-    defaultPath,
-    filters: [{ name: 'ZIP archive', extensions: ['zip'] }],
+  const path = await pickSavePath({
+    defaultPath: joinPath(options.defaultDir ?? '', options.zipName),
+    filterName: 'ZIP archive',
+    extensions: ['zip'],
   })
   if (!path) return null
-  const temp = await invoke<string>('temp_dir')
+  if (options.encodedFiles?.length) {
+    await zipFiles({
+      entries: options.encodedFiles.map((file) => ({ src: file.path, dest: file.name })),
+      dest: path,
+      manifest: options.manifest,
+    })
+    await revealPath(path).catch(() => {
+      /* reveal is best-effort */
+    })
+    return path
+  }
+  const temp = await tempDir()
   const entries: { src: string; dest: string }[] = []
   for (const [index, file] of options.files.entries()) {
     const src = joinPath(temp, `thunder-fx-pack-${index}-${file.name.replace(/[\\/]/g, '_')}`)
-    await invoke('write_file_b64', { path: src, data: bytesToBase64(file.buffer) })
+    await writeFileBytes(src, file.buffer)
     entries.push({ src, dest: file.name })
   }
-  await invoke('zip_files', {
-    entries,
-    dest: path,
-    manifest: options.manifest ?? null,
-  })
   try {
-    await revealItemInDir(path)
-  } catch {
-    /* reveal is best-effort */
+    await zipFiles({ entries, dest: path, manifest: options.manifest })
+  } finally {
+    // The zip has the bytes now; don't leave a copy of every clip in temp.
+    for (const entry of entries) {
+      await deleteDiskFile(entry.src)
+    }
   }
+  await revealPath(path).catch(() => {
+    /* reveal is best-effort */
+  })
   return path
 }
 
@@ -548,14 +501,13 @@ export async function writeEncodedFile(options: {
     downloadArrayBuffer(prepared, options.path.split(/[/\\]/).pop() ?? 'export.wav', formatMime(options.format))
     return
   }
-  const { invoke } = await import('@tauri-apps/api/core')
   if (options.format === 'wav') {
-    await invoke('write_file_b64', { path: options.path, data: bytesToBase64(prepared) })
+    await writeFileBytes(options.path, prepared)
     return
   }
-  const temp = await invoke<string>('temp_dir')
-  const wavPath = joinPath(temp, `thunder-fx-encode-${crypto.randomUUID()}.wav`)
-  await invoke('write_file_b64', { path: wavPath, data: bytesToBase64(prepared) })
+  const { invoke } = await import('@tauri-apps/api/core')
+  const wavPath = joinPath(await tempDir(), `thunder-fx-encode-${crypto.randomUUID()}.wav`)
+  await writeFileBytes(wavPath, prepared)
   const encoded = await invoke<EngineMsg>('engine_encode_audio', {
     wavPath,
     destPath: options.path,
@@ -565,4 +517,5 @@ export async function writeEncodedFile(options: {
     mono: Boolean(options.mono),
   })
   throwIfEngineError(encoded)
+  await deleteDiskFile(wavPath)
 }

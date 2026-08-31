@@ -1,6 +1,7 @@
 import type { Clip } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
-import { base64ToBytes, deleteDiskFile, libraryPath, scanDiskLibrary } from '@/lib/engine'
+import { deleteDiskFile, scanDiskLibrary } from '@/lib/engine'
+import { readFileBytes } from '@/lib/tauriFs'
 
 const DB_NAME = 'thunder-fx'
 const DB_VERSION = 1
@@ -30,6 +31,15 @@ export type LibraryStore = {
   clear(): Promise<void>
 }
 
+/**
+ * Disk clips always carry the path the worker wrote them to, and they live
+ * under `mode/category/subcategory`, so there is no flat `<dir>/<id>.wav` to
+ * fall back to guessing.
+ */
+function findClipPath(getClips: (() => Clip[]) | undefined, id: string): string | undefined {
+  return getClips?.().find((clip) => clip.id === id)?.path
+}
+
 export function createDiskLibrary(
   getLibraryDir: () => string,
   getClips?: () => Clip[],
@@ -41,18 +51,9 @@ export function createDiskLibrary(
     async getWav(id: string) {
       if (!isTauri()) return undefined
       try {
-        const clips = getClips?.() ?? []
-        const clip = clips.find((c) => c.id === id)
-        let filePath = clip?.path
-        if (!filePath) {
-          const dir = getLibraryDir().trim() || (await libraryPath())
-          const sep = dir && dir.includes('/') && !dir.includes('\\') ? '/' : '\\'
-          filePath = dir ? `${dir.replace(/[\\/]+$/, '')}${sep}${id}.wav` : ''
-        }
+        const filePath = findClipPath(getClips, id)
         if (!filePath) return undefined
-        const { invoke } = await import('@tauri-apps/api/core')
-        const b64 = await invoke<string>('read_file_b64', { path: filePath })
-        return b64 ? base64ToBytes(b64) : undefined
+        return await readFileBytes(filePath)
       } catch {
         return undefined
       }
@@ -63,14 +64,7 @@ export function createDiskLibrary(
     async delete(id: string) {
       if (!isTauri()) return
       try {
-        const clips = getClips?.() ?? []
-        const clip = clips.find((c) => c.id === id)
-        let filePath = clip?.path
-        if (!filePath) {
-          const dir = getLibraryDir().trim() || (await libraryPath())
-          const sep = dir && dir.includes('/') && !dir.includes('\\') ? '/' : '\\'
-          filePath = dir ? `${dir.replace(/[\\/]+$/, '')}${sep}${id}.wav` : ''
-        }
+        const filePath = findClipPath(getClips, id)
         if (filePath) {
           await deleteDiskFile(filePath)
         }
@@ -179,18 +173,4 @@ export function createIdbLibrary(): LibraryStore {
       })
     },
   }
-}
-
-export function downloadArrayBuffer(
-  buffer: ArrayBuffer,
-  filename: string,
-  mime = 'audio/wav',
-): void {
-  const blob = new Blob([buffer], { type: mime })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
 }

@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { createPlayback } from '@/lib/playback'
 import { generateMockSfxWav } from '@/lib/wav'

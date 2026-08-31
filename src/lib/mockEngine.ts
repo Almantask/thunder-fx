@@ -1,4 +1,5 @@
 import { clampGenerateSeconds } from '@/lib/duration'
+import { resolveSeed } from '@/lib/seed'
 import { loopOverlapSeconds, makeSeamlessLoop } from '@/lib/seamlessLoop'
 import { generateMockMusicWav, generateMockSfxWav, tagWav, wavDurationSeconds } from '@/lib/wav'
 import { modeSupportsSeamlessLoop, resolveGenerateMode } from '@/lib/generateMode'
@@ -26,11 +27,6 @@ export type GenerateHandlers = {
 
 function randomId(): string {
   return crypto.randomUUID()
-}
-
-function pickSeed(seed: number): number {
-  if (seed > 0) return seed
-  return 1 + Math.floor(Math.random() * 2_147_483_646)
 }
 
 export function mockProbe(): SetupProbe {
@@ -63,7 +59,7 @@ export async function mockGenerate(
   handlers: GenerateHandlers = {},
 ): Promise<GenerateResult> {
   const started = Date.now()
-  const seed = pickSeed(request.seed)
+  const seed = resolveSeed(request.seed)
   const total = request.steps ?? TOTAL_RITES
   for (let step = 1; step <= total; step += 1) {
     if (handlers.signal?.aborted) {

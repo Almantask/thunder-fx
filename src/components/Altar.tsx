@@ -10,15 +10,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Slider } from '@/components/ui/slider'
 import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
-import { DEFAULT_CROSSFADE_SEC, MAX_CROSSFADE_SEC, MIN_CROSSFADE_SEC } from '@/lib/seamlessLoop'
-import { modeSupportsSeamlessLoop } from '@/lib/generateMode'
-import type { GenerateMode } from '@/lib/types'
 import { formatClock } from '@/lib/utils'
 
 type AltarProps = {
-  mode?: GenerateMode
   hasClip: boolean
   weaving: boolean
   playing: boolean
@@ -29,8 +24,6 @@ type AltarProps = {
   sampleRate: SampleRateOption
   bitDepth: BitDepthOption
   mono: boolean
-  seamlessLoop: boolean
-  crossfadeSec: number
   onPlay: () => void
   onStop: () => void
   onLoop: (loop: boolean) => void
@@ -40,9 +33,6 @@ type AltarProps = {
   onSampleRate: (value: SampleRateOption) => void
   onBitDepth: (value: BitDepthOption) => void
   onMono: (value: boolean) => void
-  onSeamlessLoop: (value: boolean) => void
-  onCrossfadeSec: (value: number) => void
-  onPreviewLoop: () => void
   onExportWav: () => void
   onExportFormat: (format: AudioFormat) => void
 }
@@ -51,7 +41,6 @@ const selectClass =
   'mt-1 h-8 w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-leather-2 px-2 font-mono text-xs text-cream'
 
 export function Altar({
-  mode = 'music',
   hasClip,
   weaving,
   playing,
@@ -62,8 +51,6 @@ export function Altar({
   sampleRate,
   bitDepth,
   mono,
-  seamlessLoop,
-  crossfadeSec,
   onPlay,
   onStop,
   onLoop,
@@ -73,9 +60,6 @@ export function Altar({
   onSampleRate,
   onBitDepth,
   onMono,
-  onSeamlessLoop,
-  onCrossfadeSec,
-  onPreviewLoop,
   onExportWav,
   onExportFormat,
 }: AltarProps) {
@@ -163,54 +147,6 @@ export function Altar({
           Export {formatClock(Math.max(0, trimEnd - trimStart))} of {formatClock(duration)}
         </p>
       </Hint>
-      {modeSupportsSeamlessLoop(mode) ? (
-        <>
-          <Hint
-            className="w-full"
-            label="Blend the tail into the head so beds and music loop without a click. Preview plays the processed loop."
-          >
-            <label className="flex w-full items-center gap-2 text-sm text-cream">
-              <Checkbox
-                checked={seamlessLoop}
-                onCheckedChange={(value) => onSeamlessLoop(value === true)}
-                aria-label="Seamless loop"
-              />
-              Seamless loop
-            </label>
-          </Hint>
-          {seamlessLoop ? (
-            <>
-              <Hint className="w-full flex-col" label="Equal-power crossfade length, 0.5 to 3 seconds.">
-                <div className="w-full">
-                  <Label htmlFor="crossfade">Crossfade {crossfadeSec.toFixed(1)}s</Label>
-                  <Slider
-                    id="crossfade"
-                    className="mt-2"
-                    min={MIN_CROSSFADE_SEC}
-                    max={MAX_CROSSFADE_SEC}
-                    step={0.1}
-                    value={[crossfadeSec]}
-                    onValueChange={(v) => onCrossfadeSec(v[0] ?? DEFAULT_CROSSFADE_SEC)}
-                    aria-label="Crossfade seconds"
-                  />
-                </div>
-              </Hint>
-              <Hint label="Play the crossfaded loop to check for a gap or click before export.">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  className="w-full"
-                  disabled={!hasClip || weaving}
-                  onClick={onPreviewLoop}
-                  aria-label="Preview seamless loop"
-                >
-                  Preview loop
-                </Button>
-              </Hint>
-            </>
-          ) : null}
-        </>
-      ) : null}
       <div className="grid grid-cols-2 gap-2">
         <Hint className="w-full flex-col" label="44.1 kHz is the generate default. 48 kHz matches Unreal, Unity, and video.">
           <div className="w-full">

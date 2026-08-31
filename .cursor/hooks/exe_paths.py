@@ -53,6 +53,4 @@ def is_exe_relevant(relative_posix: str) -> bool:
         return True
     if len(parts) == 1 and parts[0] in FRONTEND_CONFIG:
         return True
-    if rel in FRONTEND_CONFIG:
-        return True
-    return False
+    return rel in FRONTEND_CONFIG

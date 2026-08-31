@@ -125,6 +125,10 @@ export function IncantationConsole({
     loadHint = `Load Medium into VRAM once. About ${loadEta} from past loads on this machine. Generate stays a separate, shorter step.`
   }
 
+  const durationHint = castEta
+    ? `How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. About ${castEta} at this duration, from past clips on this machine.`
+    : 'How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. Ambience often uses 30s; Instrumental often uses 20s.'
+
   return (
     <footer className={cn('flex flex-col min-h-0 max-h-[60vh] border-t border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather px-4 py-3 overflow-y-auto', className)}>
       <div className="mb-2 flex shrink-0 flex-wrap items-center gap-3">
@@ -284,19 +288,30 @@ export function IncantationConsole({
           </div>
         </Hint>
         <div className="flex w-56 shrink-0 flex-col justify-end gap-2.5">
-          <Hint
-            className="w-full flex-col"
-            label={
-              castEta
-                ? `How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. About ${castEta} at this duration, from past clips on this machine.`
-                : 'How many seconds of audio to generate. 0.5–380s (Stable Audio 3 Medium max, 6m 20s). Longer takes more VRAM and time. Ambience often uses 30s; Instrumental often uses 20s.'
-            }
-          >
-            <div className="w-full">
-              <Label htmlFor="duration">Duration {duration.toFixed(1)}s</Label>
+          <div className="w-full">
+            <div className="flex w-full items-center justify-between gap-2">
+              <Hint label={durationHint}>
+                <Label htmlFor="duration">Duration {duration.toFixed(1)}s</Label>
+              </Hint>
+              {modeSupportsSeamlessLoop(mode) ? (
+                <Hint label="Generate extra overlap and blend the tail into the head so the clip starts and ends the same. Playback loops after generate.">
+                  <label className="flex shrink-0 items-center gap-1.5 whitespace-nowrap text-xs text-cream">
+                    <Checkbox
+                      className="size-4"
+                      checked={generateSeamlessLoop}
+                      disabled={busy}
+                      onCheckedChange={(value) => onGenerateSeamlessLoop?.(value === true)}
+                      aria-label="Generate seamless loop"
+                    />
+                    Seamless loop
+                  </label>
+                </Hint>
+              ) : null}
+            </div>
+            <Hint className="w-full" label={durationHint}>
               <Slider
                 id="duration"
-                className="mt-2"
+                className="mt-2 w-full"
                 min={MIN_GENERATE_SECONDS}
                 max={MAX_GENERATE_SECONDS}
                 step={0.5}
@@ -304,24 +319,8 @@ export function IncantationConsole({
                 onValueChange={(v) => onDuration(clampGenerateSeconds(v[0] ?? duration))}
                 aria-label="Duration in seconds"
               />
-            </div>
-          </Hint>
-          {modeSupportsSeamlessLoop(mode) ? (
-            <Hint
-              className="w-full"
-              label="Generate extra overlap and blend the tail into the head so the clip starts and ends the same. Playback loops after generate."
-            >
-              <label className="flex w-full items-center gap-2 text-sm text-cream">
-                <Checkbox
-                  checked={generateSeamlessLoop}
-                  disabled={busy}
-                  onCheckedChange={(value) => onGenerateSeamlessLoop?.(value === true)}
-                  aria-label="Generate seamless loop"
-                />
-                Seamless loop
-              </label>
             </Hint>
-          ) : null}
+          </div>
           <div className="flex flex-col gap-2">
             {loadingModel ? (
               <Hint label="Cancel putting Medium into VRAM.">

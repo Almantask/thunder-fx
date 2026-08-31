@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
@@ -15,8 +18,6 @@ const props = {
   sampleRate: 44100 as const,
   bitDepth: 16 as const,
   mono: false,
-  seamlessLoop: false,
-  crossfadeSec: 1,
   onPlay: vi.fn(),
   onStop: vi.fn(),
   onLoop: vi.fn(),
@@ -26,9 +27,6 @@ const props = {
   onSampleRate: vi.fn(),
   onBitDepth: vi.fn(),
   onMono: vi.fn(),
-  onSeamlessLoop: vi.fn(),
-  onCrossfadeSec: vi.fn(),
-  onPreviewLoop: vi.fn(),
   onExportWav: vi.fn(),
   onExportFormat: vi.fn(),
 }
@@ -61,39 +59,15 @@ describe('Altar', () => {
     expect(onMono).toHaveBeenCalledWith(true)
   })
 
-  it('hides seamless loop options completely for sound fx mode', () => {
+  it('keeps seamless loop out of the export panel', () => {
     render(
       <TooltipProvider>
-        <Altar {...props} mode="sfx" seamlessLoop={true} />
+        <Altar {...props} />
       </TooltipProvider>,
     )
     expect(screen.queryByRole('checkbox', { name: /seamless loop/i })).not.toBeInTheDocument()
     expect(screen.queryByLabelText(/crossfade seconds/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /preview seamless loop/i })).not.toBeInTheDocument()
-  })
-
-  it('shows a seamless loop crossfade when the toggle is on in ambience mode', () => {
-    render(
-      <TooltipProvider>
-        <Altar {...props} mode="ambience" seamlessLoop />
-      </TooltipProvider>,
-    )
-    expect(screen.getByRole('checkbox', { name: /seamless loop/i })).toBeChecked()
-    expect(screen.getByLabelText(/crossfade seconds/i)).toBeInTheDocument()
-  })
-
-  it('shows a seamless loop crossfade when the toggle is on in music mode', async () => {
-    const user = userEvent.setup()
-    const onPreviewLoop = vi.fn()
-    render(
-      <TooltipProvider>
-        <Altar {...props} mode="music" seamlessLoop onPreviewLoop={onPreviewLoop} />
-      </TooltipProvider>,
-    )
-    expect(screen.getByRole('checkbox', { name: /seamless loop/i })).toBeInTheDocument()
-    expect(screen.getByLabelText(/crossfade seconds/i)).toBeInTheDocument()
-    await user.click(screen.getByRole('button', { name: /preview seamless loop/i }))
-    expect(onPreviewLoop).toHaveBeenCalled()
   })
 
   it('lists FLAC and MP3 under more formats', async () => {

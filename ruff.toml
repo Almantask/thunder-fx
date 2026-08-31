@@ -1,0 +1,23 @@
+# Pinned so local runs and CI agree. Without this, ruff falls back to whatever
+# user-level config happens to exist on the machine.
+line-length = 100
+target-version = "py312"
+
+exclude = [
+  "engine/.venv",
+  "engine/.hf-cache",
+  "**/__pycache__",
+]
+
+[lint]
+# Default correctness rules (pyflakes + the pycodestyle errors that matter),
+# plus import hygiene, modern syntax, and common bug patterns.
+select = ["E4", "E7", "E9", "F", "I", "UP", "B", "SIM"]
+
+# The worker and the hooks deliberately swallow exceptions in places where a
+# failure must not take down generation (logging, best-effort cleanup, optional
+# GPU probes). Those are commented at each site.
+ignore = ["B008"]
+
+[format]
+quote-style = "double"

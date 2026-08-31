@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { describe, expect, it } from 'vitest'
 import { createMemoryLibrary } from '@/lib/library'
 import { mockGenerate } from '@/lib/mockEngine'

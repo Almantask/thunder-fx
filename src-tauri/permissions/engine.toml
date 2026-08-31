@@ -1,21 +1,22 @@
 [[permission]]
 identifier = "allow-engine"
-description = "Python sidecar, trim, and export helpers"
+description = "Python sidecar, scoped file access, and export helpers"
 commands.allow = [
   "engine_status",
   "engine_probe",
   "engine_generate",
   "engine_cancel",
-  "engine_encode_ogg",
   "engine_encode_audio",
   "engine_warmup",
   "engine_unload",
-  "trim_wav",
-  "write_file_b64",
-  "read_file_b64",
+  "write_file",
+  "read_file",
+  "copy_file",
   "delete_file",
   "zip_files",
   "temp_dir",
+  "pick_save_path",
+  "pick_directory",
   "log_error",
   "error_log_path",
   "library_path",

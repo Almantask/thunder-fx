@@ -20,8 +20,3 @@ Feature: Export a clipped sound
     Given a clip is on the waveform with leading silence
     When Auto-trim silence is chosen
     Then the In and Out markers skip the quiet ends
-
-  Scenario: Seamless loop shortens the export with a crossfade
-    Given a clip is on the waveform
-    When Seamless loop is on
-    Then export blends the tail into the head

@@ -16,6 +16,9 @@ Medium. Tests force mock; the desktop sidecar prefers engine/.venv.
 
 from __future__ import annotations
 
+import array
+import contextlib
+import inspect
 import json
 import math
 import os
@@ -223,6 +226,10 @@ def _wants_seamless_loop(msg: dict, loopable: bool) -> bool:
     return _flag_true(msg.get("seamless_loop") if "seamless_loop" in msg else msg.get("seamlessLoop"))
 
 
+def _clamp_pcm16(value: float) -> int:
+    return max(-32768, min(32767, int(round(value))))
+
+
 def _make_seamless_loop_frames(
     frames: list[tuple[int, int]],
     fade_sec: float,
@@ -240,10 +247,12 @@ def _make_seamless_loop_frames(
         tail_gain = math.cos((t * math.pi) / 2)
         head_l, head_r = frames[i]
         tail_l, tail_r = frames[total - fade + i]
+        # An equal-power sum of two near-full-scale samples reaches ~1.41x, so
+        # clamp before it overflows the 16-bit range on write.
         out.append(
             (
-                int(round(tail_l * tail_gain + head_l * head_gain)),
-                int(round(tail_r * tail_gain + head_r * head_gain)),
+                _clamp_pcm16(tail_l * tail_gain + head_l * head_gain),
+                _clamp_pcm16(tail_r * tail_gain + head_r * head_gain),
             )
         )
     out.extend(frames[fade : total - fade])
@@ -268,259 +277,33 @@ def _make_seamless_loop_tensor(wav, fade_sec: float, sample_rate: int = SAMPLE_R
 
 def _write_wav(path: Path, frames: list[tuple[int, int]]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
+    # One bulk conversion rather than a struct.pack per frame.
+    flat = array.array("h", [sample for frame in frames for sample in frame])
+    if sys.byteorder != "little":
+        flat.byteswap()
     with wave.open(str(path), "wb") as wav:
         wav.setnchannels(CHANNELS)
         wav.setsampwidth(2)
         wav.setframerate(SAMPLE_RATE)
-        packed = b"".join(struct.pack("<hh", l, r) for l, r in frames)
-        wav.writeframes(packed)
+        wav.writeframes(flat.tobytes())
 
 
-_INSTRUMENT_TERMS = (
-    ("fingerpicked acoustic guitar", "acoustic guitar"),
-    ("acoustic guitar", "acoustic guitar"),
-    ("classical guitar", "classical guitar"),
-    ("electric guitar", "electric guitar"),
-    ("plucked strings", "strings"),
-    ("string ensemble", "strings"),
-    ("string orchestra", "strings"),
-    ("string section", "strings"),
-    ("string harmonics", "strings"),
-    ("string swells", "strings"),
-    ("string runs", "strings"),
-    ("string pads", "strings"),
-    ("string pad", "strings"),
-    ("low strings", "strings"),
-    ("high strings", "strings"),
-    ("warm strings", "strings"),
-    ("muted strings", "strings"),
-    ("bowed strings", "strings"),
-    ("plucked runs", "strings"),
-    ("plucked notes", "strings"),
-    ("plucked patterns", "strings"),
-    ("viola da gamba", "viola da gamba"),
-    ("glass harmonica", "glass harmonica"),
-    ("glass marimba", "marimba"),
-    ("glass bells", "bells"),
-    ("glass bell", "bells"),
-    ("double bass", "double bass"),
-    ("french horn", "french horn"),
-    ("english horn", "english horn"),
-    ("cor anglais", "english horn"),
-    ("steel drums", "steel drum"),
-    ("steel drum", "steel drum"),
-    ("hurdy-gurdy", "hurdy-gurdy"),
-    ("hurdy gurdy", "hurdy-gurdy"),
-    ("pan flute", "pan flute"),
-    ("pan pipes", "pan flute"),
-    ("panpipes", "pan flute"),
-    ("tin whistle", "whistle"),
-    ("penny whistle", "whistle"),
-    ("low whistle", "whistle"),
-    ("woodwinds", "woodwinds"),
-    ("woodwind", "woodwinds"),
-    ("ambient pads", "pad"),
-    ("ambient pad", "pad"),
-    ("glow pads", "pad"),
-    ("glow pad", "pad"),
-    ("warm pads", "pad"),
-    ("warm pad", "pad"),
-    ("synth pads", "synth"),
-    ("synth pad", "synth"),
-    ("synthesizer", "synth"),
-    ("church organ", "organ"),
-    ("pipe organ", "organ"),
-    ("reed organ", "organ"),
-    ("pump organ", "organ"),
-    ("finger cymbals", "zils"),
-    ("finger cymbal", "zils"),
-    ("wordless choir", "choir"),
-    ("female choir", "choir"),
-    ("male choir", "choir"),
-    ("vocal choir", "choir"),
-    ("boy choir", "choir"),
-    ("choral swells", "choir"),
-    ("full orchestra", "orchestra"),
-    ("chamber orchestra", "orchestra"),
-    ("taiko drums", "taiko"),
-    ("taiko drum", "taiko"),
-    ("taiko", "taiko"),
-    ("war drums", "war drums"),
-    ("war drum", "war drums"),
-    ("hand drums", "hand drums"),
-    ("hand drum", "hand drums"),
-    ("snare drum", "snare"),
-    ("heavy horns", "horns"),
-    ("solo cello", "cello"),
-    ("solo violin", "violin"),
-    ("solo flute", "flute"),
-    ("solo horn", "horn"),
-    ("harpsichord", "harpsichord"),
-    ("glockenspiel", "glockenspiel"),
-    ("celesta", "celesta"),
-    ("celeste", "celesta"),
-    ("waterphone", "waterphone"),
-    ("darbuka", "darbuka"),
-    ("dumbek", "darbuka"),
-    ("oud", "oud"),
-    ("contrabass", "contrabass"),
-    ("contra bass", "contrabass"),
-    ("gamba", "viola da gamba"),
-    ("percussion", "percussion"),
-    ("accordion", "accordion"),
-    ("bagpipes", "bagpipes"),
-    ("mandolin", "mandolin"),
-    ("clarinet", "clarinet"),
-    ("trombone", "trombone"),
-    ("trumpet", "trumpet"),
-    ("bassoon", "bassoon"),
-    ("piccolo", "piccolo"),
-    ("dulcimer", "dulcimer"),
-    ("ocarina", "ocarina"),
-    ("bodhran", "bodhran"),
-    ("timpani", "timpani"),
-    ("snare", "snare"),
-    ("cymbals", "cymbals"),
-    ("cymbal", "cymbals"),
-    ("gongs", "gong"),
-    ("gong", "gong"),
-    ("tambourine", "tambourine"),
-    ("shakers", "shaker"),
-    ("shaker", "shaker"),
-    ("castanets", "castanets"),
-    ("xylophone", "xylophone"),
-    ("marimba", "marimba"),
-    ("vibraphone", "vibraphone"),
-    ("kalimba", "kalimba"),
-    ("whistle", "whistle"),
-    ("recorder", "recorder"),
-    ("duduk", "duduk"),
-    ("shakuhachi", "shakuhachi"),
-    ("erhu", "erhu"),
-    ("koto", "koto"),
-    ("shamisen", "shamisen"),
-    ("sitar", "sitar"),
-    ("bouzouki", "bouzouki"),
-    ("nyckelharpa", "nyckelharpa"),
-    ("cittern", "cittern"),
-    ("theorbo", "theorbo"),
-    ("zils", "zils"),
-    ("zil", "zils"),
-    ("ney", "ney"),
-    ("shawm", "shawm"),
-    ("crumhorn", "crumhorn"),
-    ("sackbut", "sackbut"),
-    ("lyre", "lyre"),
-    ("zither", "zither"),
-    ("autoharp", "autoharp"),
-    ("didgeridoo", "didgeridoo"),
-    ("harmonica", "harmonica"),
-    ("theremin", "theremin"),
-    ("mellotron", "mellotron"),
-    ("orchestra", "orchestra"),
-    ("orchestral", "orchestra"),
-    ("symphonic", "orchestra"),
-    ("choir", "choir"),
-    ("choral", "choir"),
-    ("vocalise", "choir"),
-    ("strings", "strings"),
-    ("string", "strings"),
-    ("plucked", "strings"),
-    ("plucks", "strings"),
-    ("strums", "guitar"),
-    ("violin", "violin"),
-    ("fiddle", "fiddle"),
-    ("guitar", "guitar"),
-    ("piano", "piano"),
-    ("cello", "cello"),
-    ("viola", "viola"),
-    ("flute", "flute"),
-    ("brass", "brass"),
-    ("drums", "drums"),
-    ("drum", "drums"),
-    ("organ", "organ"),
-    ("banjo", "banjo"),
-    ("harp", "harp"),
-    ("lute", "lute"),
-    ("oboe", "oboe"),
-    ("horns", "horns"),
-    ("horn", "horn"),
-    ("tuba", "tuba"),
-    ("bass", "bass"),
-    ("synth", "synth"),
-    ("chimes", "chimes"),
-    ("bells", "bells"),
-    ("bell", "bells"),
-    ("pads", "pad"),
-    ("pad", "pad"),
-    ("drone", "drone"),
-    ("drones", "drone"),
-    ("winds", "woodwinds"),
-    ("wind", "woodwinds"),
-    ("reeds", "woodwinds"),
-    ("reed", "woodwinds"),
-    ("djembe", "djembe"),
-    ("cajon", "cajon"),
-    ("congas", "congas"),
-    ("conga", "congas"),
-    ("bongos", "bongos"),
-    ("bongo", "bongos"),
-    ("tabla", "tabla"),
-    ("kantele", "kantele"),
-    ("balalaika", "balalaika"),
-    ("santoor", "santoor"),
-    ("santur", "santoor"),
-    ("psaltery", "psaltery"),
-    ("clavichord", "clavichord"),
-)
+def _resolve_instruments(msg: dict) -> list[str]:
+    """Instrument names come from the caller.
 
-
-def _fold_text(text: str) -> str:
-    import unicodedata
-
-    return "".join(
-        ch for ch in unicodedata.normalize("NFD", text.lower()) if unicodedata.category(ch) != "Mn"
-    )
-
-
-def extract_instruments(prompt: str) -> list[str]:
-    hay = _fold_text(prompt)
-    hits: list[tuple[int, str]] = []
-    occupied: list[tuple[int, int]] = []
-    for term, name in sorted(_INSTRUMENT_TERMS, key=lambda item: -len(item[0])):
-        start = 0
-        while True:
-            idx = hay.find(term, start)
-            if idx < 0:
-                break
-            before = hay[idx - 1] if idx > 0 else " "
-            after_i = idx + len(term)
-            after = hay[after_i] if after_i < len(hay) else " "
-            if (not before.isalnum()) and (not after.isalnum()):
-                if not any(idx < end and after_i > begin for begin, end in occupied):
-                    hits.append((idx, name))
-                    occupied.append((idx, after_i))
-            start = idx + 1
-    hits.sort()
-    names: list[str] = []
-    seen: set[str] = set()
-    for _, name in hits:
-        if name in seen:
-            continue
-        seen.add(name)
-        names.append(name)
-    return names
-
-
-def _resolve_instruments(msg: dict, prompt: str) -> list[str]:
+    The term table and the matching rules live in `src/lib/instruments.ts`;
+    the studio extracts names there and sends them on the generate request, so
+    the worker keeps no second copy to drift out of sync.
+    """
     raw = msg.get("instruments")
-    if isinstance(raw, list):
-        names = [str(item).strip() for item in raw if str(item).strip()]
-        if names:
-            return names
-    if _wants_music(msg):
-        return extract_instruments(prompt)
-    return []
+    if not isinstance(raw, list):
+        return []
+    names: list[str] = []
+    for item in raw:
+        name = str(item).strip()
+        if name and name not in names:
+            names.append(name)
+    return names
 
 
 def _slugify_prompt(prompt: str, max_len: int = 48) -> str:
@@ -567,21 +350,6 @@ def _wav_info_fields(
         fields["ICMT"] = prompt[:200]
 
     return fields
-
-
-def _music_info_fields(
-    prompt: str,
-    instruments: list[str],
-    category: str = "",
-    intensity: str = "",
-) -> dict[str, str]:
-    return _wav_info_fields(
-        prompt,
-        instruments,
-        mode="music",
-        category=category,
-        intensity=intensity,
-    )
 
 
 def _info_subchunk(tag: bytes, text: str) -> bytes:
@@ -665,8 +433,6 @@ def _to_stereo_cpu(audio):
 
 def _master_audio_cpu(wav):
     """Studio mastering pipeline for generated audio tensor [channels, samples]."""
-    import torch
-
     # 1. DC offset correction on full-length audio
     if wav.shape[-1] >= 1024:
         wav = wav - wav.mean(dim=-1, keepdim=True)
@@ -906,17 +672,15 @@ def _hub_progress(heartbeat: _Heartbeat):
             original = getattr(mod, "tqdm", None)
             if original is None:
                 continue
-            setattr(mod, "tqdm", EmitTqdm)
+            mod.tqdm = EmitTqdm
             restore.append((mod, original))
 
     try:
         yield
     finally:
         for mod, original in restore:
-            try:
-                setattr(mod, "tqdm", original)
-            except Exception:
-                pass
+            with contextlib.suppress(Exception):
+                mod.tqdm = original
 
 
 def _logs_dir() -> Path:
@@ -962,9 +726,8 @@ def _log_error(
         if exc is not None:
             block.append("".join(traceback.format_exception(exc)).rstrip())
         text = "\n".join(block) + "\n\n"
-        with _log_lock:
-            with path.open("a", encoding="utf-8") as fh:
-                fh.write(text)
+        with _log_lock, path.open("a", encoding="utf-8") as fh:
+            fh.write(text)
     except Exception:
         return
 
@@ -1149,6 +912,34 @@ def cmd_probe(msg_id: str, msg: dict | None = None) -> None:
     )
 
 
+class GenerationCancelled(Exception):
+    """Raised from the per-step hook so diffusion unwinds promptly."""
+
+
+def _cancel_hook(*_args, **_kwargs):
+    if _cancel.is_set():
+        raise GenerationCancelled("Generation cancelled")
+    # Diffusers-style callbacks expect a (possibly empty) kwargs dict back.
+    return {}
+
+
+def _cancel_hook_kwargs(generate_fn) -> dict:
+    """Wire cancellation into the sampler when the model exposes a step hook.
+
+    Without one, `cancel` can only take effect after `generate` returns, so the
+    GPU keeps working until the run finishes. Probing by signature keeps this
+    working across Stable Audio versions instead of guessing a parameter name.
+    """
+    try:
+        params = inspect.signature(generate_fn).parameters
+    except (TypeError, ValueError):
+        return {}
+    for name in ("callback_on_step_end", "callback", "step_callback", "on_step"):
+        if name in params:
+            return {name: _cancel_hook}
+    return {}
+
+
 def cmd_generate(msg: dict) -> None:
     if not _gen_lock.acquire(blocking=False):
         _emit_error(msg.get("id"), "A generation or model load is already in progress")
@@ -1228,7 +1019,7 @@ def _generate_body(msg: dict) -> None:
             frames = _make_seamless_loop_frames(frames, fade)
         _write_wav(out, frames)
         actual_duration = len(frames) / SAMPLE_RATE
-        instruments = _resolve_instruments(msg, prompt)
+        instruments = _resolve_instruments(msg)
         intensity_val = str(msg.get("intensity") or (subcat_str if mode_str == "music" else "")).strip()
         embed_wav_info(
             out,
@@ -1276,29 +1067,34 @@ def _generate_body(msg: dict) -> None:
             "precision": _model_precision,
             "seamlessLoop": loop,
         }
-        try:
-            audio = model.generate(
+        hook = _cancel_hook_kwargs(model.generate)
+
+        def run_generate(use_chunked: bool):
+            return model.generate(
                 prompt=model_prompt,
                 duration=gen_seconds,
                 steps=steps,
                 seed=seed,
                 cfg_scale=cfg,
                 negative_prompt=model_negative,
-                chunked_decode=chunked,
+                chunked_decode=use_chunked,
+                **hook,
             )
+
+        try:
+            audio = run_generate(chunked)
+        except GenerationCancelled:
+            _emit_error(msg_id, "Generation cancelled", log=False)
+            return
         except Exception as exc:  # noqa: BLE001
             if "out of memory" in str(exc).lower() or "oom" in str(exc).lower():
                 _log_error("CUDA OOM; retrying with chunked decode", exc, context=gen_context)
                 chunked = True
-                audio = model.generate(
-                    prompt=model_prompt,
-                    duration=gen_seconds,
-                    steps=steps,
-                    seed=seed,
-                    cfg_scale=cfg,
-                    negative_prompt=model_negative,
-                    chunked_decode=True,
-                )
+                try:
+                    audio = run_generate(True)
+                except GenerationCancelled:
+                    _emit_error(msg_id, "Generation cancelled", log=False)
+                    return
             else:
                 _emit_error(msg_id, str(exc), exc, context=gen_context)
                 return
@@ -1324,7 +1120,7 @@ def _generate_body(msg: dict) -> None:
                 context=gen_context,
             )
             return
-        instruments = _resolve_instruments(msg, prompt)
+        instruments = _resolve_instruments(msg)
         intensity_val = str(msg.get("intensity") or (subcat_str if mode_str == "music" else "")).strip()
         embed_wav_info(
             out,
@@ -1397,7 +1193,8 @@ def _downmix_mono(data):
     if getattr(data, "ndim", 1) == 1:
         return data
     try:
-        import numpy as np
+        # Fails fast when numpy is missing; the mean below is a numpy method.
+        import numpy  # noqa: F401
 
         if data.shape[1] <= 8:
             return data.mean(axis=1)
@@ -1549,13 +1346,21 @@ def _warmup_body(msg: dict) -> None:
 
 def cmd_unload(msg_id: str) -> None:
     global _model, _mock_unloaded
-    if _env_mock():
-        _mock_unloaded = True
-        _emit({"id": msg_id, "event": "done", "message": "Mock model unloaded."})
+    # Unloading under a running generation would report freed VRAM that the
+    # in-flight run still holds, so refuse rather than lie about the state.
+    if not _gen_lock.acquire(blocking=False):
+        _emit_error(msg_id, "A generation or model load is already in progress")
         return
-    with _model_lock:
-        _unload_model_locked()
-    _emit({"id": msg_id, "event": "done", "message": "Model unloaded."})
+    try:
+        if _env_mock():
+            _mock_unloaded = True
+            _emit({"id": msg_id, "event": "done", "message": "Mock model unloaded."})
+            return
+        with _model_lock:
+            _unload_model_locked()
+        _emit({"id": msg_id, "event": "done", "message": "Model unloaded."})
+    finally:
+        _gen_lock.release()
 
 
 def main() -> None:

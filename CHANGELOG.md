@@ -4,6 +4,18 @@ All notable Thunder FX changes are listed here.
 
 ## Unreleased
 
+### Added
+
+- **Default audio format** in Settings. The export panel and the sound-pack dialog start on the
+  chosen format instead of always on WAV, and the Export button names it. Generation still masters
+  to WAV; the default is the format that master is written out as. In the browser build, a
+  compressed default falls back to WAV.
+- **Opus and AIFF exports**, bringing the format list to WAV, AIFF, FLAC, Opus, OGG Vorbis, and
+  MP3 320. **Opus is the new default** — transparent quality at roughly a third of an MP3 320 file.
+  Opus is always written at 48 kHz, the only rate near CD quality the codec defines.
+- MP3 falls back to libsndfile's own encoder when neither torchaudio nor ffmpeg is available,
+  instead of failing the export.
+
 ### Fixed
 
 - **The engine restarts itself.** A crashed Python worker previously bricked the session until the

@@ -51,6 +51,22 @@ describe('SettingsPanel', () => {
     expect(screen.getByLabelText(/default duration/i)).toHaveAttribute('max', '380')
   })
 
+  it('lets you pick the default audio format for generated audio', async () => {
+    const user = userEvent.setup()
+    renderPanel()
+    const select = screen.getByLabelText(/default audio format/i)
+    expect(select).toHaveValue('opus')
+    expect(screen.getByRole('option', { name: /aiff/i })).toBeInTheDocument()
+    await user.selectOptions(select, 'flac')
+    expect(select).toHaveValue('flac')
+    expect(screen.getByText(/lossless, about half the size of wav/i)).toBeInTheDocument()
+  })
+
+  it('warns that a compressed default falls back to wav in the browser', () => {
+    renderPanel({ ...DEFAULT_SETTINGS, defaultExportFormat: 'mp3' })
+    expect(screen.getByText(/needs the desktop app/i)).toBeInTheDocument()
+  })
+
   it('lets you pick a low-VRAM precision profile', async () => {
     const user = userEvent.setup()
     renderPanel()

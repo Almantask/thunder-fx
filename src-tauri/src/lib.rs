@@ -117,27 +117,65 @@ fn scope_config_file() -> PathBuf {
     std::env::temp_dir().join("thunder-fx-allowed-paths.json")
 }
 
-/// Folders the user picked in a native dialog. Grants are only ever added by
-/// [`pick_save_path`] and [`pick_directory`], never on the frontend's word.
+/// Folders the frontend may touch beyond the built-in defaults.
+///
+/// `granted` only ever grows through a native dialog ([`pick_save_path`] and
+/// [`pick_directory`]) — the webview cannot add to it on its own word.
+/// `library` is the one exception, and a deliberate one: the "Generated sounds
+/// folder" setting already decides where the Python worker writes and which
+/// tree the scan commands walk, so the app has to be able to read back what it
+/// just wrote there. It is a single replaceable root rather than a growing
+/// list, so pointing it somewhere else narrows the sandbox again instead of
+/// widening it further.
 struct PathScope {
     granted: Mutex<Vec<PathBuf>>,
+    library: Mutex<Option<PathBuf>>,
+}
+
+#[derive(Serialize, Deserialize, Default)]
+struct ScopeConfig {
+    #[serde(default)]
+    granted: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    library: Option<String>,
 }
 
 impl PathScope {
     fn load() -> Self {
-        let granted = std::fs::read_to_string(scope_config_file())
+        let config = std::fs::read_to_string(scope_config_file())
             .ok()
-            .and_then(|text| serde_json::from_str::<Vec<String>>(&text).ok())
-            .map(|paths| paths.iter().map(|p| normalize_path(Path::new(p))).collect())
+            .and_then(|text| {
+                serde_json::from_str::<ScopeConfig>(&text).ok().or_else(|| {
+                    // Older builds stored a bare array of granted folders.
+                    serde_json::from_str::<Vec<String>>(&text)
+                        .ok()
+                        .map(|granted| ScopeConfig {
+                            granted,
+                            library: None,
+                        })
+                })
+            })
             .unwrap_or_default();
         PathScope {
-            granted: Mutex::new(granted),
+            granted: Mutex::new(
+                config
+                    .granted
+                    .iter()
+                    .map(|p| normalize_path(Path::new(p)))
+                    .collect(),
+            ),
+            library: Mutex::new(
+                config
+                    .library
+                    .map(|p| normalize_path(Path::new(&p)))
+                    .filter(|p| !p.as_os_str().is_empty()),
+            ),
         }
     }
 
     fn grant(&self, path: &Path) {
         let normalized = normalize_path(path);
-        let snapshot = {
+        {
             let Ok(mut granted) = self.granted.lock() else {
                 return;
             };
@@ -145,17 +183,49 @@ impl PathScope {
                 return;
             }
             granted.push(normalized);
-            granted.clone()
+        }
+        self.persist();
+    }
+
+    /// Points the library root at `dir`, or back at the built-in default when
+    /// it is empty. Called whenever the frontend hands a library folder to the
+    /// engine or the settings panel changes it.
+    fn set_library(&self, dir: Option<&str>) {
+        let next = dir
+            .map(str::trim)
+            .filter(|d| !d.is_empty())
+            .map(|d| normalize_path(Path::new(d)));
+        {
+            let Ok(mut library) = self.library.lock() else {
+                return;
+            };
+            if *library == next {
+                return;
+            }
+            *library = next;
+        }
+        self.persist();
+    }
+
+    fn persist(&self) {
+        let config = ScopeConfig {
+            granted: match self.granted.lock() {
+                Ok(granted) => granted
+                    .iter()
+                    .map(|p| p.to_string_lossy().into_owned())
+                    .collect(),
+                Err(_) => return,
+            },
+            library: match self.library.lock() {
+                Ok(library) => library.as_ref().map(|p| p.to_string_lossy().into_owned()),
+                Err(_) => return,
+            },
         };
         let file = scope_config_file();
         if let Some(parent) = file.parent() {
             let _ = std::fs::create_dir_all(parent);
         }
-        let encoded: Vec<String> = snapshot
-            .iter()
-            .map(|p| p.to_string_lossy().into_owned())
-            .collect();
-        if let Ok(text) = serde_json::to_string_pretty(&encoded) {
+        if let Ok(text) = serde_json::to_string_pretty(&config) {
             let _ = std::fs::write(&file, text);
         }
     }
@@ -165,6 +235,9 @@ impl PathScope {
             .iter()
             .map(|root| normalize_path(root))
             .collect();
+        if let Ok(library) = self.library.lock() {
+            roots.extend(library.iter().cloned());
+        }
         if let Ok(granted) = self.granted.lock() {
             roots.extend(granted.iter().cloned());
         }
@@ -390,7 +463,12 @@ fn spawn_python(script: &Path) -> Result<Child, String> {
         cmd.stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
-            .env("PYTHONUNBUFFERED", "1");
+            .env("PYTHONUNBUFFERED", "1")
+            // Without these, Python decodes our UTF-8 JSON with the Windows ANSI
+            // code page: an em dash in a category name arrives as mojibake and
+            // an undefined byte kills the worker outright.
+            .env("PYTHONUTF8", "1")
+            .env("PYTHONIOENCODING", "utf-8");
         if let Some(parent) = script.parent() {
             let hf = parent.join(".hf-cache");
             if hf.exists() && std::env::var("HF_HUB_CACHE").is_err() {
@@ -657,6 +735,7 @@ fn generate_timeout_secs(seconds: f32, steps: u32) -> u64 {
 async fn engine_generate(
     app: AppHandle,
     state: State<'_, Engine>,
+    scope: State<'_, PathScope>,
     prompt: String,
     seconds: f32,
     seed: i64,
@@ -673,6 +752,10 @@ async fn engine_generate(
     seamless_loop: Option<bool>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
+    // The worker writes the WAV under this folder, so the app has to be able to
+    // read it straight back; adopting it here keeps scope and output in step
+    // even for a folder that was typed in rather than picked in a dialog.
+    scope.set_library(library_dir.as_deref());
     let timeout = generate_timeout_secs(seconds, steps.unwrap_or(20));
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
@@ -992,6 +1075,27 @@ fn log_error(message: String, detail: Option<String>) -> Result<(), String> {
 #[tauri::command]
 fn error_log_path() -> Result<String, String> {
     Ok(error_log_file().to_string_lossy().into_owned())
+}
+
+/// Records the "Generated sounds folder" setting so reads and writes under it
+/// pass [`ensure_allowed`]. Pass an empty string to fall back to the default
+/// library under Local AppData.
+#[tauri::command]
+fn set_library_dir(scope: State<PathScope>, dir: Option<String>) -> Result<String, String> {
+    scope.set_library(dir.as_deref());
+    let resolved = dir
+        .as_deref()
+        .map(str::trim)
+        .filter(|d| !d.is_empty())
+        .map(PathBuf::from)
+        .unwrap_or_else(library_dir);
+    if let Err(err) = std::fs::create_dir_all(&resolved) {
+        return Err(fail(format!(
+            "Could not use the generated sounds folder {}: {err}",
+            resolved.display()
+        )));
+    }
+    Ok(resolved.to_string_lossy().into_owned())
 }
 
 #[tauri::command]
@@ -1706,6 +1810,7 @@ pub fn run() {
             log_error,
             error_log_path,
             library_path,
+            set_library_dir,
             read_error_log,
             scan_library_dir,
             scan_library_categories,
@@ -1793,6 +1898,7 @@ mod tests {
         let _guard = EnvGuard::set("THUNDER_FX_LIBRARY_DIR", &lib);
         let scope = PathScope {
             granted: Mutex::new(Vec::new()),
+            library: Mutex::new(None),
         };
 
         // Inside the library root, including a file that does not exist yet.
@@ -1817,6 +1923,42 @@ mod tests {
         assert!(ensure_allowed(&scope, &outside.to_string_lossy()).is_ok());
 
         let _ = std::fs::remove_dir_all(&lib);
+    }
+
+    #[test]
+    fn scope_follows_the_configured_library_folder() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        // Deliberately outside the temp dir, which is an allowed root already.
+        let base = std_temp().parent().unwrap_or(Path::new("/")).to_path_buf();
+        let default_lib = base.join(format!("thunder-fx-default-{}", std::process::id()));
+        let _guard = EnvGuard::set("THUNDER_FX_LIBRARY_DIR", &default_lib);
+        // `set_library` persists, so keep it off the real config file.
+        let scope_file = std_temp().join(format!("thunder-fx-scope-{}.json", std::process::id()));
+        let _scope_guard = EnvGuard::set("THUNDER_FX_SCOPE_FILE", &scope_file);
+        let scope = PathScope {
+            granted: Mutex::new(Vec::new()),
+            library: Mutex::new(None),
+        };
+
+        // A library folder the user typed rather than picked in a dialog: the
+        // engine writes there, so reading it back has to be allowed.
+        let custom = base.join(format!("thunder-fx-custom-{}", std::process::id()));
+        let clip = custom.join("music").join("Learning").join("clip.wav");
+        assert!(ensure_allowed(&scope, &clip.to_string_lossy()).is_err());
+        scope.set_library(Some(custom.to_string_lossy().as_ref()));
+        assert!(ensure_allowed(&scope, &clip.to_string_lossy()).is_ok());
+
+        // Pointing it elsewhere replaces the root instead of accumulating one.
+        let other = base.join(format!("thunder-fx-other-{}", std::process::id()));
+        scope.set_library(Some(other.to_string_lossy().as_ref()));
+        assert!(ensure_allowed(&scope, &clip.to_string_lossy()).is_err());
+
+        // Clearing it falls back to the default library root.
+        scope.set_library(None);
+        assert!(ensure_allowed(&scope, &other.join("clip.wav").to_string_lossy()).is_err());
+        assert!(ensure_allowed(&scope, &default_lib.join("clip.wav").to_string_lossy()).is_ok());
+
+        let _ = std::fs::remove_file(&scope_file);
     }
 
     #[test]

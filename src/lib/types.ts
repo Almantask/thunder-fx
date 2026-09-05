@@ -1,3 +1,5 @@
+import { DEFAULT_EXPORT_FORMAT, type AudioFormat } from '@/lib/audioExport'
+
 export type GenerateMode = 'sfx' | 'ambience' | 'music'
 
 export type Clip = {
@@ -101,6 +103,7 @@ export type KeepSettings = {
   libraryDir: string
   generateMode: GenerateMode
   precision: PrecisionMode
+  defaultExportFormat: AudioFormat
 }
 
 export type KeepTab = 'library' | 'generate' | 'settings'
@@ -114,6 +117,7 @@ export const DEFAULT_SETTINGS: KeepSettings = {
   libraryDir: '',
   generateMode: 'sfx',
   precision: 'fp32',
+  defaultExportFormat: DEFAULT_EXPORT_FORMAT,
 }
 
 

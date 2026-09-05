@@ -30,6 +30,9 @@ describe('extractInstruments', () => {
     expect(
       extractInstruments('TrackType: Music, glass harmonica swells, contrabass drone, ambient pads'),
     ).toEqual(['glass harmonica', 'contrabass', 'drone', 'pad'])
+    expect(
+      extractInstruments('TrackType: Music, retro synthwave arpeggio, delicate wind chimes, and 80s rock guitar'),
+    ).toEqual(['synth', 'chimes', 'electric guitar'])
   })
 
   it('prefers the longer name when one term contains another', () => {

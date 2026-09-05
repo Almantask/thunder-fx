@@ -1,3 +1,4 @@
+import { isAudioFormat } from '@/lib/audioExport'
 import { clampGenerateSeconds } from '@/lib/duration'
 import { isGenerateMode } from '@/lib/generateMode'
 import { isPrecisionMode } from '@/lib/precision'
@@ -32,7 +33,17 @@ export function loadSettings(): KeepSettings {
     const defaultDuration = clampGenerateSeconds(
       typeof parsed.defaultDuration === 'number' ? parsed.defaultDuration : DEFAULT_SETTINGS.defaultDuration,
     )
-    return { ...DEFAULT_SETTINGS, ...parsed, generateMode, precision, defaultDuration }
+    const defaultExportFormat = isAudioFormat(parsed.defaultExportFormat)
+      ? parsed.defaultExportFormat
+      : DEFAULT_SETTINGS.defaultExportFormat
+    return {
+      ...DEFAULT_SETTINGS,
+      ...parsed,
+      generateMode,
+      precision,
+      defaultDuration,
+      defaultExportFormat,
+    }
   } catch {
     return { ...DEFAULT_SETTINGS }
   }

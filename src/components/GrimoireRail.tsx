@@ -40,6 +40,7 @@ type GrimoireRailProps = {
   selectedId?: string
   query: string
   mode?: GenerateMode
+  defaultFormat?: AudioFormat
   error?: string
   loading?: boolean
   onQuery: (value: string) => void
@@ -95,6 +96,7 @@ export function GrimoireRail({
   selectedId,
   query,
   mode = 'sfx',
+  defaultFormat = 'wav',
   error,
   loading,
   onQuery,
@@ -115,7 +117,7 @@ export function GrimoireRail({
   const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set())
   const [packOpen, setPackOpen] = useState(false)
   const [packTemplate, setPackTemplate] = useState(DEFAULT_PACK_TEMPLATE)
-  const [packFormat, setPackFormat] = useState<AudioFormat>('wav')
+  const [packFormat, setPackFormat] = useState<AudioFormat>(defaultFormat)
   const [packZip, setPackZip] = useState(true)
   const [packManifest, setPackManifest] = useState(true)
   const fxPlaybacksRef = useRef<Map<string, PlaybackHandle>>(new Map())
@@ -717,7 +719,12 @@ export function GrimoireRail({
                   variant="outline"
                   size="sm"
                   disabled={selectedIds.size === 0}
-                  onClick={() => setPackOpen(true)}
+                  onClick={() => {
+                    // Each pack starts from the default format in Settings; a
+                    // per-export choice only lives as long as the dialog.
+                    setPackFormat(defaultFormat)
+                    setPackOpen(true)
+                  }}
                   aria-label="Export pack"
                 >
                   Export pack{selectedIds.size ? ` (${selectedIds.size})` : ''}

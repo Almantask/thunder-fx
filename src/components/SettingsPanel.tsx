@@ -6,6 +6,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
+  AUDIO_FORMATS,
+  formatLabel,
+  formatNeedsDesktop,
+  formatNote,
+  type AudioFormat,
+} from '@/lib/audioExport'
+import {
   errorLogPath,
   libraryPath,
   pickDirectory,
@@ -106,6 +113,36 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
                 />
               </div>
             </Hint>
+
+            <Hint
+              className="w-full flex-col"
+              label="Format pre-selected on the export panel and the sound-pack dialog. Generation always masters to WAV; this is what that master is written out as. Opus is the default: transparent quality at roughly a third of an MP3 320."
+            >
+              <div className="w-full">
+                <Label htmlFor="default-export-format">Default audio format</Label>
+                <select
+                  id="default-export-format"
+                  className="mt-1 h-9 w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-leather-2 px-2 font-mono text-sm text-cream"
+                  value={settings.defaultExportFormat}
+                  onChange={(e) =>
+                    onChange({ ...settings, defaultExportFormat: e.target.value as AudioFormat })
+                  }
+                >
+                  {AUDIO_FORMATS.map((format) => (
+                    <option key={format} value={format}>
+                      {formatLabel(format)}
+                      {!isTauri() && formatNeedsDesktop(format) ? ' (desktop only)' : ''}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </Hint>
+            <p className="text-xs text-muted">
+              {formatNote(settings.defaultExportFormat)}
+              {formatNeedsDesktop(settings.defaultExportFormat) && !isTauri()
+                ? ` ${formatLabel(settings.defaultExportFormat)} needs the desktop app; exports in the browser fall back to WAV.`
+                : ''}
+            </p>
           </div>
 
           <div className="space-y-4">

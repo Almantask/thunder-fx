@@ -10,7 +10,14 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
+import {
+  AUDIO_FORMATS,
+  formatLabel,
+  isLosslessFormat,
+  type AudioFormat,
+  type BitDepthOption,
+  type SampleRateOption,
+} from '@/lib/audioExport'
 import { formatClock } from '@/lib/utils'
 
 type AltarProps = {
@@ -21,6 +28,7 @@ type AltarProps = {
   trimStart: number
   trimEnd: number
   duration: number
+  format: AudioFormat
   sampleRate: SampleRateOption
   bitDepth: BitDepthOption
   mono: boolean
@@ -30,10 +38,11 @@ type AltarProps = {
   onTrimStart: (value: number) => void
   onTrimEnd: (value: number) => void
   onAutoTrim: () => void
+  onFormat: (value: AudioFormat) => void
   onSampleRate: (value: SampleRateOption) => void
   onBitDepth: (value: BitDepthOption) => void
   onMono: (value: boolean) => void
-  onExportWav: () => void
+  onExport: () => void
   onExportFormat: (format: AudioFormat) => void
 }
 
@@ -48,6 +57,7 @@ export function Altar({
   trimStart,
   trimEnd,
   duration,
+  format,
   sampleRate,
   bitDepth,
   mono,
@@ -57,12 +67,21 @@ export function Altar({
   onTrimStart,
   onTrimEnd,
   onAutoTrim,
+  onFormat,
   onSampleRate,
   onBitDepth,
   onMono,
-  onExportWav,
+  onExport,
   onExportFormat,
 }: AltarProps) {
+  const otherFormats = AUDIO_FORMATS.filter((option) => option !== format)
+  // Rate and Bits are PCM settings; the lossy encoders set their own.
+  const formatCaveat =
+    format === 'opus'
+      ? 'Opus always writes 48 kHz. Bits do not apply.'
+      : isLosslessFormat(format)
+        ? ''
+        : 'Bits do not apply to a lossy format.'
   return (
     <aside className="flex w-[252px] shrink-0 min-h-0 flex-col gap-2.5 overflow-y-auto border-l border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather p-3">
       <Hint label="Preview, trim, and export the clip on the waveform.">
@@ -147,6 +166,27 @@ export function Altar({
           Export {formatClock(Math.max(0, trimEnd - trimStart))} of {formatClock(duration)}
         </p>
       </Hint>
+      <Hint
+        className="w-full flex-col"
+        label="Format the Export button writes. Starts from the default audio format in Settings."
+      >
+        <div className="w-full">
+          <Label htmlFor="export-format">Format</Label>
+          <select
+            id="export-format"
+            className={selectClass}
+            value={format}
+            onChange={(e) => onFormat(e.target.value as AudioFormat)}
+            aria-label="Export format"
+          >
+            {AUDIO_FORMATS.map((option) => (
+              <option key={option} value={option}>
+                {formatLabel(option)}
+              </option>
+            ))}
+          </select>
+        </div>
+      </Hint>
       <div className="grid grid-cols-2 gap-2">
         <Hint className="w-full flex-col" label="44.1 kHz is the generate default. 48 kHz matches Unreal, Unity, and video.">
           <div className="w-full">
@@ -179,6 +219,7 @@ export function Altar({
           </div>
         </Hint>
       </div>
+      {formatCaveat ? <p className="text-xs text-muted">{formatCaveat}</p> : null}
       <Hint label="Downmix to one channel for 3D positional emitters in a game engine.">
         <label className="flex items-center gap-2 text-sm text-cream">
           <Checkbox
@@ -190,19 +231,22 @@ export function Altar({
         </label>
       </Hint>
       <div className="mt-auto flex shrink-0 flex-col gap-2 pt-2">
-        <Hint className="w-full" label="Save the trim as WAV using the sample rate, bit depth, and mono setting above.">
+        <Hint
+          className="w-full"
+          label="Save the trim using the format, sample rate, bit depth, and mono setting above."
+        >
           <Button
             type="button"
             variant="outline"
             className="w-full"
             disabled={!hasClip || weaving}
-            onClick={onExportWav}
-            aria-label="Export WAV"
+            onClick={onExport}
+            aria-label={`Export ${formatLabel(format)}`}
           >
-            <Download /> Export WAV
+            <Download /> Export {formatLabel(format)}
           </Button>
         </Hint>
-        <Hint className="w-full" label="FLAC, MP3 320 kbps, and OGG Vorbis. Compressed formats need the desktop app.">
+        <Hint className="w-full" label="Export once in another format without changing the setting above. Compressed formats need the desktop app.">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button type="button" variant="ghost" className="w-full" disabled={!hasClip || weaving}>
@@ -210,9 +254,11 @@ export function Altar({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => onExportFormat('flac')}>Export FLAC</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => onExportFormat('mp3')}>Export MP3 320</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => onExportFormat('ogg')}>Export OGG Vorbis</DropdownMenuItem>
+              {otherFormats.map((option) => (
+                <DropdownMenuItem key={option} onSelect={() => onExportFormat(option)}>
+                  Export {formatLabel(option)}
+                </DropdownMenuItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         </Hint>

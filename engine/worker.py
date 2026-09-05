@@ -1203,6 +1203,11 @@ def _downmix_mono(data):
         return data
 
 
+# Opus is defined only for these rates; libsndfile refuses anything else
+# instead of resampling for us.
+OPUS_RATES = (8000, 12000, 16000, 24000, 48000)
+
+
 def _write_mp3(data, sr: int, dest: Path) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
     try:
@@ -1224,6 +1229,13 @@ def _write_mp3(data, sr: int, dest: Path) -> None:
 
     ffmpeg = shutil.which("ffmpeg")
     if not ffmpeg:
+        # libsndfile 1.1+ writes MP3 itself. No bitrate control, so this is the
+        # fallback rather than the first choice for a 320 kbps export.
+        import soundfile as sf
+
+        if "MP3" in sf.available_formats():
+            sf.write(str(dest), data, sr, format="MP3", subtype="MPEG_LAYER_III")
+            return
         raise RuntimeError("MP3 export needs ffmpeg on PATH (320 kbps CBR).")
     tmp_path = ""
     try:
@@ -1250,6 +1262,8 @@ def cmd_encode_audio(msg: dict) -> None:
     fmt = str(msg.get("format") or "ogg").strip().lower()
     if fmt in {"vorbis"}:
         fmt = "ogg"
+    elif fmt in {"aif", "aifc"}:
+        fmt = "aiff"
     try:
         sample_rate = int(msg.get("sample_rate") or msg.get("sampleRate") or 0)
     except (TypeError, ValueError):
@@ -1273,12 +1287,19 @@ def cmd_encode_audio(msg: dict) -> None:
         dest_path.parent.mkdir(parents=True, exist_ok=True)
         if fmt == "ogg":
             sf.write(str(dest_path), data, sr, format="OGG", subtype="VORBIS")
+        elif fmt == "opus":
+            if int(sr) not in OPUS_RATES:
+                data, sr = _resample_audio(data, int(sr), 48000)
+            sf.write(str(dest_path), data, sr, format="OGG", subtype="OPUS")
         elif fmt == "flac":
             subtype = "PCM_24" if bit_depth >= 24 else "PCM_16"
             sf.write(str(dest_path), data, sr, format="FLAC", subtype=subtype)
         elif fmt == "wav":
             subtype = "PCM_24" if bit_depth >= 24 else "PCM_16"
             sf.write(str(dest_path), data, sr, format="WAV", subtype=subtype)
+        elif fmt == "aiff":
+            subtype = "PCM_24" if bit_depth >= 24 else "PCM_16"
+            sf.write(str(dest_path), data, sr, format="AIFF", subtype=subtype)
         elif fmt == "mp3":
             _write_mp3(data, int(sr), dest_path)
         else:
@@ -1363,7 +1384,26 @@ def cmd_unload(msg_id: str) -> None:
         _gen_lock.release()
 
 
+def _force_utf8_pipes() -> None:
+    """Talk UTF-8 on stdin/stdout whatever the console code page says.
+
+    The host sets PYTHONUTF8, but an older interpreter or a hand-started worker
+    would otherwise decode the JSON with the Windows ANSI code page, turning an
+    em dash in a category name into mojibake and choking on bytes cp1252 has no
+    mapping for.
+    """
+    for stream in (sys.stdin, sys.stdout):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        try:
+            reconfigure(encoding="utf-8", errors="replace")
+        except (ValueError, OSError):
+            pass
+
+
 def main() -> None:
+    _force_utf8_pipes()
     sys.excepthook = _excepthook
     threading.excepthook = _thread_excepthook
     for raw in sys.stdin:

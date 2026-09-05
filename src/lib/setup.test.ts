@@ -39,6 +39,18 @@ describe('setup and queue storage', () => {
     expect(reloaded.precision).toBe('fp16')
   })
 
+  it('defaults the audio format to opus and keeps a saved one', () => {
+    expect(loadSettings().defaultExportFormat).toBe('opus')
+
+    saveSettings({ ...loadSettings(), defaultExportFormat: 'flac' })
+    expect(loadSettings().defaultExportFormat).toBe('flac')
+  })
+
+  it('falls back to the default when the stored audio format is not a format', () => {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify({ defaultExportFormat: 'wma' }))
+    expect(loadSettings().defaultExportFormat).toBe('opus')
+  })
+
   it('loads, saves and clears queue in storage', () => {
     expect(loadQueue()).toEqual([])
 

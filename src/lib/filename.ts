@@ -1,3 +1,5 @@
+import type { AudioFormat } from '@/lib/audioExport'
+
 const MAX_SLUG = 48
 
 export function isUuidOrSymbol(text: string): boolean {
@@ -133,7 +135,7 @@ export function promptName(prompt: string, clip?: ClipLike): string {
   return target.charAt(0).toUpperCase() + target.slice(1)
 }
 
-export type AudioExt = 'wav' | 'ogg' | 'flac' | 'mp3'
+export type AudioExt = AudioFormat
 
 export function clipFilename(
   prompt: string,

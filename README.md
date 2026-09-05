@@ -36,6 +36,8 @@ On the desktop app, Generate writes WAV files to the generated-sounds folder. In
 
 - Generated-sounds folder (desktop default: `%LOCALAPPDATA%\thunder-fx\library`)
 - Default export folder
+- Default audio format for exports: WAV, AIFF, FLAC, Opus (default), OGG Vorbis, MP3 320.
+  Everything but WAV is encoded by the Python engine, so those need the desktop app.
 - Hugging Face token and default duration
 - Error log (newest first; Reveal file)
 

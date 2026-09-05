@@ -20,7 +20,7 @@ import type {
   BitDepthOption,
   SampleRateOption,
 } from '@/lib/audioExport'
-import { formatMime, formatNeedsDesktop, prepareExportWav } from '@/lib/audioExport'
+import { formatLabel, formatMime, formatNeedsDesktop, prepareExportWav } from '@/lib/audioExport'
 import { buildZipStore } from '@/lib/zipStore'
 import { downloadArrayBuffer, wavDurationSeconds } from '@/lib/wav'
 import { extractInstruments } from '@/lib/instruments'
@@ -122,6 +122,18 @@ export async function libraryPath(): Promise<string | null> {
   try {
     const { invoke } = await import('@tauri-apps/api/core')
     return await invoke<string>('library_path')
+  } catch {
+    return null
+  }
+}
+
+// Tells the backend which folder Generate writes to, so reads and writes under
+// it are inside the sandbox even when the path was typed instead of picked.
+export async function setLibraryDir(dir: string | undefined): Promise<string | null> {
+  if (!isTauri()) return null
+  try {
+    const { invoke } = await import('@tauri-apps/api/core')
+    return await invoke<string>('set_library_dir', { dir: dir?.trim() || null })
   } catch {
     return null
   }
@@ -384,14 +396,7 @@ export async function exportClipFile(options: {
     return null
   }
   const { invoke } = await import('@tauri-apps/api/core')
-  const filterName =
-    options.format === 'ogg'
-      ? 'OGG Vorbis'
-      : options.format === 'flac'
-        ? 'FLAC'
-        : options.format === 'mp3'
-          ? 'MP3'
-          : 'WAV'
+  const filterName = formatLabel(options.format)
   const path = await pickSavePath({
     defaultPath: joinPath(options.defaultDir ?? '', options.filename),
     filterName,

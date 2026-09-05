@@ -30,13 +30,14 @@ import {
   loadModel,
   pickDirectory,
   reportError,
+  setLibraryDir,
   unloadModel,
   writeEncodedFile,
 } from '@/lib/engine'
 import { copyFile, joinPath, tempDir, writeFileBytes, writeTextFile } from '@/lib/tauriFs'
 import { randomSeed } from '@/lib/seed'
 import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
-import { formatNeedsDesktop, prepareExportWav } from '@/lib/audioExport'
+import { formatNeedsDesktop, prepareExportWav, resolveDefaultFormat } from '@/lib/audioExport'
 import { clipFilename, isUuidOrSymbol, promptName } from '@/lib/filename'
 import { buildPackManifest, formatPackFilename } from '@/lib/packNaming'
 import { detectSilenceBounds } from '@/lib/silenceTrim'
@@ -63,7 +64,6 @@ import {
   modeFromCatalog,
   modeSupportsSeamlessLoop,
   resolveGenerateMode,
-  promptLooksLoopable,
 } from '@/lib/generateMode'
 import { loadQueue, loadSettings, saveQueue, saveSettings } from '@/lib/setup'
 import {
@@ -116,12 +116,15 @@ export function Studio() {
   const [trimEnd, setTrimEnd] = useState(8)
   const [playing, setPlaying] = useState(false)
   const [looping, setLooping] = useState(false)
+  const [exportFmt, setExportFmt] = useState<AudioFormat>(() =>
+    resolveDefaultFormat(settings.defaultExportFormat, isTauri()),
+  )
   const [sampleRate, setSampleRate] = useState<SampleRateOption>(44100)
   const [bitDepth, setBitDepth] = useState<BitDepthOption>(16)
   const [mono, setMono] = useState(false)
-  const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(() =>
-    modeSupportsSeamlessLoop(resolveGenerateMode(settings.generateMode)),
-  )
+  // Off by default: looping is a deliberate choice, not something a mode
+  // switch turns on behind the user's back.
+  const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(false)
   const [takes, setTakes] = useState<TakeCandidate[]>([])
   const [takesOpen, setTakesOpen] = useState(false)
   const [playhead, setPlayhead] = useState(0)
@@ -231,9 +234,11 @@ export function Studio() {
     }
   }
 
+  // The backend only reads and writes inside folders it knows about, so the
+  // configured library folder has to be registered before the first scan.
   useEffect(() => {
-    void refreshLibrary()
-  }, [])
+    void setLibraryDir(settings.libraryDir).then(() => refreshLibrary())
+  }, [settings.libraryDir])
 
   useEffect(() => {
     if (tab === 'library') {
@@ -358,7 +363,7 @@ export function Studio() {
     setPrompt(effect.prompt)
     setDuration(effect.duration)
     setNegative(effect.negative)
-    setGenerateSeamlessLoop(modeSupportsSeamlessLoop(next))
+    if (!modeSupportsSeamlessLoop(next)) setGenerateSeamlessLoop(false)
   }
 
   async function getClipWav(id: string): Promise<ArrayBuffer | undefined> {
@@ -399,11 +404,7 @@ export function Studio() {
         setNegative((n) => applyModeNegative(n, mode, next))
         setDuration((d) => applyModeDuration(d, mode, next))
         setSteps((s) => applyModeSteps(s, mode, next))
-        if (next === 'sfx') {
-          setGenerateSeamlessLoop(false)
-        } else {
-          setGenerateSeamlessLoop(true)
-        }
+        if (!modeSupportsSeamlessLoop(next)) setGenerateSeamlessLoop(false)
         setMode(next)
         setSettings((s) => ({ ...s, generateMode: next }))
       }
@@ -416,11 +417,7 @@ export function Studio() {
     setNegative((n) => applyModeNegative(n, mode, next))
     setDuration((d) => applyModeDuration(d, mode, next))
     setSteps((s) => applyModeSteps(s, mode, next))
-    if (next === 'sfx') {
-      setGenerateSeamlessLoop(false)
-    } else {
-      setGenerateSeamlessLoop(true)
-    }
+    if (!modeSupportsSeamlessLoop(next)) setGenerateSeamlessLoop(false)
     setMode(next)
     setSettings((s) => ({ ...s, generateMode: next }))
   }
@@ -707,9 +704,7 @@ export function Studio() {
         if (!item) break
         const nextMode = modeFromCatalog(item)
         applyCatalogEffect(item)
-        const loop =
-          modeSupportsSeamlessLoop(nextMode) &&
-          (generateSeamlessLoop || promptLooksLoopable(item.prompt))
+        const loop = modeSupportsSeamlessLoop(nextMode) && generateSeamlessLoop
         const outcome = await generateOne(
           {
             prompt: ensureTrackType(item.prompt, nextMode),
@@ -806,6 +801,19 @@ export function Studio() {
       const message = reportError(err, 'Export failed')
       toast.error('Export failed.', { description: `${message} Saved to the error log.` })
     }
+  }
+
+  // Changing the default in Settings retargets the export panel right away
+  // rather than waiting for the next launch.
+  function applySettings(next: KeepSettings) {
+    if (next.defaultExportFormat !== settings.defaultExportFormat) {
+      setExportFmt(resolveDefaultFormat(next.defaultExportFormat, isTauri()))
+    }
+    setSettings(next)
+  }
+
+  async function exportSelectedFormat() {
+    await exportFormat(exportFmt)
   }
 
   async function exportWav() {
@@ -953,6 +961,7 @@ export function Studio() {
           selectedId={selectedId}
           query={query}
           mode={mode}
+          defaultFormat={exportFmt}
           onQuery={setQuery}
           onSelect={(id) => {
             void loadClip(id)
@@ -963,7 +972,7 @@ export function Studio() {
             if (next !== mode) {
               setNegative((n) => applyModeNegative(n, mode, next))
               setDuration((d) => applyModeDuration(d, mode, next))
-              setGenerateSeamlessLoop(modeSupportsSeamlessLoop(next))
+              if (!modeSupportsSeamlessLoop(next)) setGenerateSeamlessLoop(false)
               setMode(next)
               setSettings((s) => ({ ...s, generateMode: next }))
             }
@@ -1038,6 +1047,7 @@ export function Studio() {
               trimStart={trimStart}
               trimEnd={trimEnd}
               duration={clipDuration}
+              format={exportFmt}
               sampleRate={sampleRate}
               bitDepth={bitDepth}
               mono={mono}
@@ -1051,10 +1061,11 @@ export function Studio() {
               onTrimStart={(v) => setTrimStart(Math.max(0, Math.min(v, trimEnd - 0.05)))}
               onTrimEnd={(v) => setTrimEnd(Math.min(clipDuration, Math.max(v, trimStart + 0.05)))}
               onAutoTrim={autoTrimSilence}
+              onFormat={setExportFmt}
               onSampleRate={setSampleRate}
               onBitDepth={setBitDepth}
               onMono={setMono}
-              onExportWav={() => void exportWav()}
+              onExport={() => void exportSelectedFormat()}
               onExportFormat={(format) => void exportFormat(format)}
             />
           </div>
@@ -1116,7 +1127,9 @@ export function Studio() {
           />
         </div>
       ) : null}
-      {tab === 'settings' ? <SettingsPanel settings={settings} onChange={setSettings} /> : null}
+      {tab === 'settings' ? (
+        <SettingsPanel settings={settings} onChange={applySettings} />
+      ) : null}
       <PromptCatalogDialog
         open={catalogOpen}
         catalog={catalog}

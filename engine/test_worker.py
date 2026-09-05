@@ -596,6 +596,65 @@ class WorkerTests(unittest.TestCase):
                 self.assertGreater(Path(msg["path"]).stat().st_size, 0)
                 break
 
+    def test_encode_opus_and_aiff(self) -> None:
+        try:
+            import soundfile as sf
+        except ImportError:
+            self.skipTest("soundfile is not installed")
+        if "OPUS" not in sf.available_subtypes("OGG"):
+            self.skipTest("libsndfile has no Opus support")
+        self.client.send(
+            {
+                "id": "g3",
+                "cmd": "generate",
+                "prompt": "opus source",
+                "seconds": 0.3,
+                "seed": 5,
+                "cfg": 1,
+                "negative": "",
+            }
+        )
+        while True:
+            msg = self.client.read()
+            if msg.get("id") == "g3" and msg.get("event") == "done":
+                wav_path = msg["path"]
+                break
+            if msg.get("id") == "g3" and msg.get("event") == "error":
+                self.fail(msg.get("message"))
+
+        # 44.1 kHz is the generate rate and Opus does not accept it, so the
+        # worker has to resample rather than fail the export.
+        for req_id, fmt, name, expect_rate in (
+            ("op", "opus", "clip.opus", 48000),
+            ("ai", "aiff", "clip.aiff", 44100),
+        ):
+            dest = str(self.library / name)
+            self.client.send(
+                {
+                    "id": req_id,
+                    "cmd": "encode_audio",
+                    "wav_path": wav_path,
+                    "dest_path": dest,
+                    "format": fmt,
+                    "sample_rate": 44100,
+                    "bit_depth": 24,
+                    "mono": False,
+                }
+            )
+            while True:
+                msg = self.client.read()
+                if msg.get("id") != req_id:
+                    continue
+                if msg.get("event") == "error":
+                    self.fail(f"{fmt}: {msg.get('message')}")
+                if msg.get("event") == "done":
+                    written = Path(msg["path"])
+                    self.assertTrue(written.is_file())
+                    self.assertGreater(written.stat().st_size, 0)
+                    info = sf.info(str(written))
+                    self.assertEqual(info.samplerate, expect_rate)
+                    break
+
     def test_encode_flac_48k(self) -> None:
         try:
             import soundfile  # noqa: F401

@@ -8,6 +8,7 @@ import { Studio } from '@/components/Studio'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { GENERATE_MODES } from '@/lib/generateMode'
 import { TIMING_STORAGE_KEY } from '@/lib/timing'
+import { DEFAULT_SETTINGS, SETTINGS_STORAGE_KEY } from '@/lib/types'
 
 
 function renderStudio() {
@@ -33,6 +34,16 @@ describe('Studio', () => {
     await user.click(screen.getByRole('tab', { name: 'Library' }))
     expect(screen.getByLabelText('Search library')).toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /generate sound/i })).not.toBeInTheDocument()
+  })
+
+  it('falls back to WAV on the export button when the browser cannot write the default format', () => {
+    localStorage.setItem(
+      SETTINGS_STORAGE_KEY,
+      JSON.stringify({ ...DEFAULT_SETTINGS, defaultExportFormat: 'flac' }),
+    )
+    renderStudio()
+    expect(screen.getByRole('button', { name: /export wav/i })).toBeInTheDocument()
+    localStorage.removeItem(SETTINGS_STORAGE_KEY)
   })
 
   it('shows the library folder and error log on Settings', async () => {
@@ -83,12 +94,15 @@ describe('Studio', () => {
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
   }, 15000)
 
-  it('turns on generate seamless loop for instrumental and loops preview after generate', async () => {
+  it('leaves generate seamless loop off until it is ticked, then loops the preview', async () => {
     const user = userEvent.setup()
     renderStudio()
     expect(screen.queryByRole('checkbox', { name: /generate seamless loop/i })).not.toBeInTheDocument()
     await user.click(screen.getByRole('radio', { name: /instrumental/i }))
-    expect(screen.getByRole('checkbox', { name: /generate seamless loop/i })).toBeChecked()
+    const loopBox = screen.getByRole('checkbox', { name: /generate seamless loop/i })
+    expect(loopBox).not.toBeChecked()
+    await user.click(loopBox)
+    expect(loopBox).toBeChecked()
     await user.type(screen.getByRole('textbox', { name: 'Prompt' }), ', lute tavern theme')
     await user.click(screen.getByRole('button', { name: /generate music/i }))
     expect(
@@ -100,7 +114,7 @@ describe('Studio', () => {
     )
   }, 15000)
 
-  it('switches to ambience mode with loop on and a music-avoiding negative', async () => {
+  it('switches to ambience mode with loop off and a music-avoiding negative', async () => {
     const user = userEvent.setup()
     renderStudio()
     await user.click(screen.getByRole('radio', { name: /^ambience$/i }))
@@ -109,7 +123,7 @@ describe('Studio', () => {
       'true',
     )
     expect(screen.getByRole('textbox', { name: 'Prompt' })).toHaveValue('TrackType: SFX')
-    expect(screen.getByRole('checkbox', { name: /generate seamless loop/i })).toBeChecked()
+    expect(screen.getByRole('checkbox', { name: /generate seamless loop/i })).not.toBeChecked()
     await user.click(screen.getByRole('button', { name: /advanced/i }))
     expect(screen.getByLabelText(/negative prompt/i)).toHaveValue(
       GENERATE_MODES.ambience.defaultNegative,
@@ -121,7 +135,7 @@ describe('Studio', () => {
     ).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /loop trim preview/i })).toHaveAttribute(
       'aria-pressed',
-      'true',
+      'false',
     )
   }, 15000)
 

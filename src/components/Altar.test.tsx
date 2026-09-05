@@ -15,6 +15,7 @@ const props = {
   trimStart: 0.2,
   trimEnd: 1.5,
   duration: 8,
+  format: 'wav' as const,
   sampleRate: 44100 as const,
   bitDepth: 16 as const,
   mono: false,
@@ -24,10 +25,11 @@ const props = {
   onTrimStart: vi.fn(),
   onTrimEnd: vi.fn(),
   onAutoTrim: vi.fn(),
+  onFormat: vi.fn(),
   onSampleRate: vi.fn(),
   onBitDepth: vi.fn(),
   onMono: vi.fn(),
-  onExportWav: vi.fn(),
+  onExport: vi.fn(),
   onExportFormat: vi.fn(),
 }
 
@@ -68,6 +70,33 @@ describe('Altar', () => {
     expect(screen.queryByRole('checkbox', { name: /seamless loop/i })).not.toBeInTheDocument()
     expect(screen.queryByLabelText(/crossfade seconds/i)).not.toBeInTheDocument()
     expect(screen.queryByRole('button', { name: /preview seamless loop/i })).not.toBeInTheDocument()
+  })
+
+  it('labels the export button with the selected format and exports it', async () => {
+    const user = userEvent.setup()
+    const onExport = vi.fn()
+    render(
+      <TooltipProvider>
+        <Altar {...props} format="mp3" onExport={onExport} />
+      </TooltipProvider>,
+    )
+    await user.click(screen.getByRole('button', { name: /export mp3 320/i }))
+    expect(onExport).toHaveBeenCalled()
+  })
+
+  it('picks the export format and leaves the current format out of more formats', async () => {
+    const user = userEvent.setup()
+    const onFormat = vi.fn()
+    render(
+      <TooltipProvider>
+        <Altar {...props} format="flac" onFormat={onFormat} />
+      </TooltipProvider>,
+    )
+    await user.selectOptions(screen.getByLabelText(/export format/i), 'ogg')
+    expect(onFormat).toHaveBeenCalledWith('ogg')
+    await user.click(screen.getByRole('button', { name: /more formats/i }))
+    expect(screen.queryByRole('menuitem', { name: /export flac/i })).not.toBeInTheDocument()
+    expect(screen.getByRole('menuitem', { name: /export wav/i })).toBeInTheDocument()
   })
 
   it('lists FLAC and MP3 under more formats', async () => {

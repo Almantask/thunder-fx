@@ -1,6 +1,6 @@
 import { parseWav, writeWav, type WavAudio } from '@/lib/wav'
 
-export type AudioFormat = 'wav' | 'flac' | 'mp3' | 'ogg'
+export type AudioFormat = 'wav' | 'aiff' | 'flac' | 'opus' | 'ogg' | 'mp3'
 export type SampleRateOption = 44100 | 48000
 export type BitDepthOption = 16 | 24
 
@@ -11,17 +11,75 @@ export type ExportOptions = {
   mono: boolean
 }
 
-export const DESKTOP_ONLY_FORMATS: readonly AudioFormat[] = ['flac', 'mp3', 'ogg']
+/** Lossless first, then lossy, each group ordered by how widely it is accepted. */
+export const AUDIO_FORMATS: readonly AudioFormat[] = ['wav', 'aiff', 'flac', 'opus', 'ogg', 'mp3']
+
+export const DESKTOP_ONLY_FORMATS: readonly AudioFormat[] = ['aiff', 'flac', 'opus', 'ogg', 'mp3']
+
+/**
+ * Opus holds transparent quality at roughly a third of an MP3 320 file, which
+ * is why it is what a fresh install exports.
+ */
+export const DEFAULT_EXPORT_FORMAT: AudioFormat = 'opus'
+
+const FORMAT_LABELS: Record<AudioFormat, string> = {
+  wav: 'WAV',
+  aiff: 'AIFF',
+  flac: 'FLAC',
+  opus: 'Opus',
+  ogg: 'OGG Vorbis',
+  mp3: 'MP3 320',
+}
+
+const FORMAT_NOTES: Record<AudioFormat, string> = {
+  wav: 'Uncompressed PCM. The master every engine imports.',
+  aiff: 'Uncompressed PCM for Apple and DAW pipelines.',
+  flac: 'Lossless, about half the size of WAV.',
+  opus: 'Best size for the quality. Always written at 48 kHz.',
+  ogg: 'Vorbis. The lossy format Unity and Godot read natively.',
+  mp3: '320 kbps CBR. Plays anywhere.',
+}
+
+export function formatNote(format: AudioFormat): string {
+  return FORMAT_NOTES[format]
+}
+
+export function isLosslessFormat(format: AudioFormat): boolean {
+  return format === 'wav' || format === 'aiff' || format === 'flac'
+}
+
+export function isAudioFormat(value: unknown): value is AudioFormat {
+  return typeof value === 'string' && AUDIO_FORMATS.includes(value as AudioFormat)
+}
+
+export function formatLabel(format: AudioFormat): string {
+  return FORMAT_LABELS[format]
+}
 
 export function formatNeedsDesktop(format: AudioFormat): boolean {
   return DESKTOP_ONLY_FORMATS.includes(format)
 }
 
+/**
+ * The browser build can only write WAV, so a compressed default silently falls
+ * back there instead of handing the user an export button that always fails.
+ */
+export function resolveDefaultFormat(format: AudioFormat, desktop: boolean): AudioFormat {
+  if (!desktop && formatNeedsDesktop(format)) return 'wav'
+  return format
+}
+
+const FORMAT_MIME: Record<AudioFormat, string> = {
+  wav: 'audio/wav',
+  aiff: 'audio/aiff',
+  flac: 'audio/flac',
+  opus: 'audio/opus',
+  ogg: 'audio/ogg',
+  mp3: 'audio/mpeg',
+}
+
 export function formatMime(format: AudioFormat): string {
-  if (format === 'ogg') return 'audio/ogg'
-  if (format === 'flac') return 'audio/flac'
-  if (format === 'mp3') return 'audio/mpeg'
-  return 'audio/wav'
+  return FORMAT_MIME[format] ?? 'audio/wav'
 }
 
 export function pcmToFloat(pcm: Int16Array): Float32Array {
@@ -112,7 +170,7 @@ export function prepareExportAudio(buffer: ArrayBuffer, options: ExportOptions):
   return {
     sampleRate: options.sampleRate,
     channels,
-    bitsPerSample: options.format === 'wav' || options.format === 'flac' ? options.bitDepth : 16,
+    bitsPerSample: isLosslessFormat(options.format) ? options.bitDepth : 16,
     pcm,
     info: wav.info,
   }

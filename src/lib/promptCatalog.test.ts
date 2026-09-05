@@ -269,6 +269,46 @@ describe('loadPromptCatalog', () => {
     expect(ambienceEffects.every((e) => e.instruments === undefined)).toBe(true)
     expect(ambienceEffects.every((e) => e.prompt.toLowerCase().startsWith('tracktype: sfx'))).toBe(true)
   })
+
+  it('loads 15 focus music categories across learning, reading, programming, walking, and workout', () => {
+    const catalog = loadPromptCatalog()
+    const focusCategoryIds = [
+      'music:learning-deep-study',
+      'music:learning-concept-mastery',
+      'music:learning-curious-mind',
+      'music:reading',
+      'music:reading-epic-lore',
+      'music:reading-philosophical',
+      'music:programming-flow-state',
+      'music:programming-algorithmic-focus',
+      'music:programming-synth-horizon',
+      'music:walking-mindful-stroll',
+      'music:walking-brisk-stride',
+      'music:walking-twilight-wander',
+      'music:workout-cardio-flow',
+      'music:workout-power-drive',
+      'music:workout-stretch-cooldown',
+    ]
+
+    for (const catId of focusCategoryIds) {
+      const category = catalog.find((c) => c.id === catId)
+      expect(category, `Expected category ${catId} to exist`).toBeDefined()
+      expect(category!.library).toBe('music')
+      expect(category!.effects.length).toBeGreaterThanOrEqual(15)
+
+      const intensities = new Set(category!.effects.map((e) => e.intensity))
+      expect(intensities.has('I')).toBe(true)
+      expect(intensities.has('II')).toBe(true)
+      expect(intensities.has('III')).toBe(true)
+
+      // All effects must exclude percussion in negative prompt
+      for (const effect of category!.effects) {
+        expect(effect.negative.toLowerCase()).toContain('percussion')
+        expect(effect.duration).toBeGreaterThanOrEqual(40)
+        expect(effect.duration).toBeLessThanOrEqual(380)
+      }
+    }
+  })
 })
 
 describe('inferClipCategory', () => {

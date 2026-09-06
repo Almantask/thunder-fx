@@ -10,178 +10,178 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court ambient, silver and serene, flowing harp arpeggios, airy string sheen, faint celesta, 60 BPM, moonlight through crystal galleries, timeless calm
+TrackType: Music, VocalType: Instrumental, elven court ambient, silver and serene, flowing harp arpeggios, airy string sheen, faint celesta, moonlight through crystal galleries, timeless calm. BPM: 60. Length: 60 seconds
 
 ### Starlight-audience piece
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, starlight-audience piece, graceful and luminous, celesta melody over gliding strings, harp cascades, 80 BPM, the queen listens with eyes that have seen empires
+TrackType: Music, VocalType: Instrumental, starlight-audience piece, graceful and luminous, celesta melody over gliding strings, harp cascades, the queen listens with eyes that have seen empires. BPM: 80. Length: 90 seconds
 
 ### Eternal-garden ambient
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, eternal-garden ambient, blooming and slow, delicate plucked traceries, soft flute, dew-glint chimes, 55 BPM, flowers that only open for the old songs
+TrackType: Music, VocalType: Instrumental, eternal-garden ambient, blooming and slow, delicate plucked traceries, soft flute, dew-glint chimes, flowers that only open for the old songs. BPM: 55. Length: 120 seconds
 
 ### Elven-waltz
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven-waltz, weightless and fine, waltzing harp and violin, glassy accents, 90 BPM waltz, dancers whose feet forget the floor
+TrackType: Music, VocalType: Instrumental, elven-waltz, weightless and fine, waltzing harp and violin, glassy accents waltz, dancers whose feet forget the floor. BPM: 90. Length: 150 seconds
 
 ### Council-of-ages piece
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, council-of-ages piece, wise and cool, long string suspensions, sparse harp punctuation, deep calm, 66 BPM, decisions measured in centuries
+TrackType: Music, VocalType: Instrumental, council-of-ages piece, wise and cool, long string suspensions, sparse harp punctuation, deep calm, decisions measured in centuries. BPM: 66. Length: 180 seconds
 
 ### Silverwood-procession
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing, drums, percussion
 
-TrackType: Music, silverwood-procession, stately and shining, processional strings, celesta bells, airy choir-like pads, 76 BPM, the court moves through trees older than language
+TrackType: Music, VocalType: Instrumental, silverwood-procession, stately and shining, processional strings, celesta bells, airy choir-like pads, the court moves through trees older than language. BPM: 76. Length: 210 seconds
 
 ### Moon-feast piece
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, moon-feast piece, delicate and glad, bright plucked patterns, flute garlands, soft string joy, 96 BPM, wine like light and laughter like chimes
+TrackType: Music, VocalType: Instrumental, moon-feast piece, delicate and glad, bright plucked patterns, flute garlands, soft string joy, wine like light and laughter like chimes. BPM: 96. Length: 240 seconds
 
 ### Archive-of-songs ambient
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, archive-of-songs ambient, reverent and thin, single harp lines in vast quiet, celesta echoes, 50 BPM, every melody the world has lost, kept here
+TrackType: Music, VocalType: Instrumental, archive-of-songs ambient, reverent and thin, single harp lines in vast quiet, celesta echoes, every melody the world has lost, kept here. BPM: 50. Length: 270 seconds
 
 ### Blade-dance-of-grace
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, blade-dance-of-grace, swift and silken, quick string filigree, harp glitter, precise light accents, 108 BPM, the ceremonial duel that no one ever wins rudely
+TrackType: Music, VocalType: Instrumental, blade-dance-of-grace, swift and silken, quick string filigree, harp glitter, precise light accents, the ceremonial duel that no one ever wins rudely. BPM: 108. Length: 320 seconds
 
 ### Farewell-to-the-shore piece
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, farewell-to-the-shore piece, luminous and sorrow-sweet, soaring gentle theme, harp tides, airy swells, 70 BPM, the white ships take another family west
+TrackType: Music, VocalType: Instrumental, farewell-to-the-shore piece, luminous and sorrow-sweet, soaring gentle theme, harp tides, airy swells, the white ships take another family west. BPM: 70. Length: 380 seconds
 
 ### Elven Court opening theme
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 65 BPM, travelers making steady progress along winding trails
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 65. Length: 50 seconds
 
 ### Elven Court traveler ballad
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, 68 BPM, scouts charting unexplored routes through the elven court
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the elven court. BPM: 68. Length: 65 seconds
 
 ### Elven Court hearth song
 - Duration: 80s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, 71 BPM, gathering around the evening fire sharing stories and warmth
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 71. Length: 80 seconds
 
 ### Elven Court quiet reflections
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, 74 BPM, navigating treacherous switchbacks with focused determination
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 74. Length: 95 seconds
 
 ### Elven Court road rhythm
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 77 BPM, merchants guiding pack animals through historic passes
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 77. Length: 110 seconds
 
 ### Elven Court ancient mystery
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 80 BPM, exploring hidden chambers and uncovering mysterious artifacts
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 125 seconds
 
 ### Elven Court festival celebration
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, 83 BPM, village festival celebrating ancient traditions and good harvest
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 83. Length: 140 seconds
 
 ### Elven Court twilight melody
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 86 BPM, patrolling border outposts with watchful vigilance
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 86. Length: 155 seconds
 
 ### Elven Court noble fanfare
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, 89 BPM, descending into shadowy depths with raised lanterns
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 89. Length: 170 seconds
 
 ### Elven Court solitary wanderer
 - Duration: 185s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 92 BPM, riding sure-footed mounts across expansive terrain
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 92. Length: 185 seconds
 
 ### Elven Court starlight suite
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 95 BPM, crossing wooden bridges spanning misty canyon depths
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 95. Length: 200 seconds
 
 ### Elven Court courageous march
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, 98 BPM, tracking faint footprints across rugged earth
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 98. Length: 215 seconds
 
 ### Elven Court lyrical meditation
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, 101 BPM, caravan rolling steadily along cobblestone trade routes
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 101. Length: 230 seconds
 
 ### Elven Court energetic reel
 - Duration: 250s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, 104 BPM, scholars deciphering worn runes etched into stone arches
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 104. Length: 250 seconds
 
 ### Elven Court emotional reunion
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 107 BPM, hunters stalking elusive quarry through shifting cover
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 107. Length: 270 seconds
 
 ### Elven Court solemn anthem
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 110 BPM, climbing ancient stone stairways leading to forgotten vistas
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 110. Length: 290 seconds
 
 ### Elven Court heroic ascent
 - Duration: 310s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, 113 BPM, meeting mysterious contacts in secluded taverns and alcoves
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 113. Length: 310 seconds
 
 ### Elven Court joyful chorus
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 116 BPM, sailing swift vessels through challenging waters
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 116. Length: 330 seconds
 
 ### Elven Court grand panorama
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, 119 BPM, forging new alliances over hearty food and drink
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 119. Length: 350 seconds
 
 ### Elven Court lasting legacy
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, elven court theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 122 BPM, reaching high overlooks revealing vast breathtaking horizons
+TrackType: Music, VocalType: Instrumental, elven court theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 122. Length: 380 seconds

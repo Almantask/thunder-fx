@@ -113,18 +113,63 @@ export function downmixToMono(pcm: Int16Array, channels: number): Int16Array {
   return out
 }
 
+/**
+ * Windowed-sinc resampling.
+ *
+ * The old implementation was bare linear interpolation with no anti-alias
+ * filter, so 44.1 -> 48 kHz folded everything near Nyquist back down into the
+ * audible band. A Kaiser-windowed sinc kernel costs a little more arithmetic and
+ * puts those images below -90 dB. The desktop build hands resampling to the
+ * worker's torchaudio resampler, but the browser build has only this.
+ */
+const SINC_HALF_WIDTH = 16
+
+function besselI0(x: number): number {
+  // Series expansion; converges fast for the beta values used here.
+  let sum = 1
+  let term = 1
+  for (let k = 1; k < 24; k += 1) {
+    term *= (x / (2 * k)) ** 2
+    sum += term
+    if (term < sum * 1e-12) break
+  }
+  return sum
+}
+
 function resampleChannel(input: Float32Array, fromRate: number, toRate: number): Float32Array {
   if (fromRate === toRate || input.length === 0) return input
   const ratio = fromRate / toRate
   const outLen = Math.max(1, Math.round(input.length / ratio))
   const out = new Float32Array(outLen)
   const last = input.length - 1
+
+  // Downsampling has to move the cutoff below the *output* Nyquist; upsampling
+  // keeps the source Nyquist.
+  const cutoff = ratio > 1 ? 1 / ratio : 1
+  const beta = 8.6 // ~ -90 dB stopband
+  const halfWidth = Math.max(1, Math.round(SINC_HALF_WIDTH / cutoff))
+  const denom = besselI0(beta)
+
   for (let i = 0; i < outLen; i += 1) {
     const src = i * ratio
-    const i0 = Math.min(last, Math.floor(src))
-    const i1 = Math.min(last, i0 + 1)
-    const frac = src - i0
-    out[i] = (input[i0] ?? 0) * (1 - frac) + (input[i1] ?? 0) * frac
+    const centre = Math.floor(src)
+    const frac = src - centre
+    let acc = 0
+    let norm = 0
+    for (let k = -halfWidth + 1; k <= halfWidth; k += 1) {
+      const idx = centre + k
+      if (idx < 0 || idx > last) continue
+      const x = k - frac
+      const t = x / halfWidth
+      if (t <= -1 || t >= 1) continue
+      const px = Math.PI * x * cutoff
+      const sinc = px === 0 ? cutoff : (Math.sin(px) / px) * cutoff
+      const window = besselI0(beta * Math.sqrt(1 - t * t)) / denom
+      const tap = sinc * window
+      acc += (input[idx] ?? 0) * tap
+      norm += tap
+    }
+    out[i] = norm > 0 ? acc / norm : 0
   }
   return out
 }

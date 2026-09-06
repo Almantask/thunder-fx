@@ -1,5 +1,11 @@
 import { clampGenerateSeconds } from '@/lib/duration'
 import { resolveSeed } from '@/lib/seed'
+import {
+  DEFAULT_PRESET,
+  presetUnavailableMessage,
+  resolvePresetPlan,
+  resolveQualityPreset,
+} from '@/lib/qualityPreset'
 import { loopOverlapSeconds, makeSeamlessLoop } from '@/lib/seamlessLoop'
 import { generateMockMusicWav, generateMockSfxWav, tagWav, wavDurationSeconds } from '@/lib/wav'
 import { modeSupportsSeamlessLoop, resolveGenerateMode } from '@/lib/generateMode'
@@ -17,7 +23,6 @@ import {
   inferClipIntensity,
   inferClipSubcategory,
 } from '@/lib/promptCatalog'
-import { TOTAL_RITES } from '@/lib/types'
 
 export type GenerateHandlers = {
   onProgress?: (progress: WeaveProgress) => void
@@ -60,7 +65,21 @@ export async function mockGenerate(
 ): Promise<GenerateResult> {
   const started = Date.now()
   const seed = resolveSeed(request.seed)
-  const total = request.steps ?? TOTAL_RITES
+  // A caller that pins steps without naming a preset means Custom -- the same
+  // thing the Advanced slider does in the UI.
+  const preset = request.preset ?? (request.steps == null ? DEFAULT_PRESET : 'custom')
+  const plan = resolvePresetPlan(resolveQualityPreset(preset), {
+    steps: request.steps,
+    sampler: request.sampler,
+    mode: resolveGenerateMode(request.mode),
+    // The browser build has no checkpoints at all, so an unavailable preset
+    // refuses here exactly as the real engine does -- never substitutes.
+    baseAvailable: false,
+  })
+  if (plan.unavailable) {
+    throw new Error(presetUnavailableMessage(plan.preset))
+  }
+  const total = plan.steps
   for (let step = 1; step <= total; step += 1) {
     if (handlers.signal?.aborted) {
       throw new DOMException('Generation cancelled', 'AbortError')
@@ -94,6 +113,8 @@ export async function mockGenerate(
     createdAt: new Date().toISOString(),
     cfg: request.cfg,
     steps: total,
+    preset: plan.preset,
+    sampler: plan.sampler,
     negative: request.negative,
     mode,
   }

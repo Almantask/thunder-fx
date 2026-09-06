@@ -15,8 +15,16 @@ Start with `TrackType: SFX` so Medium stays on sound effects instead of music. T
 Example:
 
 ```
-TrackType: SFX, steel shortsword leaving a leather scabbard, close mic, dry studio, fast decay
+TrackType: SFX, steel shortsword leaving a leather scabbard, close mic, dry studio, fast decay. Length: 2 seconds
 ```
+
+Every prompt ends with `Length: N seconds`, matching the duration on the line
+above it. That is the shape Stability's own prompt rewriter emits, and it is what
+the model was trained on. Thunder FX re-derives this tag at generation time from
+the duration you actually pick, so moving the slider rewrites it rather than
+leaving a stale number. Keep prompts under **45 words** -- Stability's rewriter
+rejects its own output past that length.
+
 
 Names stay generic. Do not use other people's trademarks.
 
@@ -46,6 +54,15 @@ Paste one of these onto the end of a prompt when you want a different texture:
 | Cartoon | `exaggerated, cartoon, dry studio, very fast decay` |
 
 ## Negative prompts
+
+> [!IMPORTANT]
+> **Negative prompts do nothing on the Max speed and Balanced presets.** Stable
+> Audio 3 Medium is post-trained at CFG 1, and the model's guidance branch only
+> runs when `cfg_scale != 1.0` -- so the negative text is never read. The
+> `Negative:` lines below are kept because the **Max quality** preset runs the
+> un-distilled `medium-base` checkpoint at CFG 7, where they do take effect.
+> On the fast presets, steer with the positive prompt instead: `TrackType` and
+> `VocalType` are trained control tags and work at CFG 1.
 
 Paste into Advanced → Negative prompt. A useful default for one-shots:
 

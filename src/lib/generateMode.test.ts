@@ -16,6 +16,9 @@ import {
   modeFromCatalog,
   modeSupportsSeamlessLoop,
   promptLooksLoopable,
+  normalizePrompt,
+  promptWordCount,
+  PROMPT_WORD_LIMIT,
 } from '@/lib/generateMode'
 
 describe('GENERATE_MODES.ambience', () => {
@@ -195,5 +198,54 @@ describe('ensureLoopNegative', () => {
   it('does not duplicate fade cues', () => {
     const once = ensureLoopNegative('vocals')
     expect(ensureLoopNegative(once)).toBe(once)
+  })
+})
+describe('normalizePrompt', () => {
+  it('appends the canonical length tag', () => {
+    expect(normalizePrompt('oak door opening, close mic', 'sfx', 2)).toBe(
+      'TrackType: SFX, oak door opening, close mic. Length: 2 seconds',
+    )
+  })
+
+  it('rounds a sub-second duration up to a singular second', () => {
+    expect(normalizePrompt('UI click', 'sfx', 0.5)).toMatch(/Length: 1 second$/)
+  })
+
+  it('gives music the trained VocalType tag and lifts an inline BPM', () => {
+    const out = normalizePrompt(
+      'TrackType: Music, instrumental, dark orchestral tension, 60 BPM, looping-friendly',
+      'music',
+      90,
+    )
+    expect(out.startsWith('TrackType: Music, VocalType: Instrumental, ')).toBe(true)
+    expect(out).not.toContain('60 BPM,')
+    expect(out).toContain('. BPM: 60.')
+    expect(out.endsWith('Length: 90 seconds')).toBe(true)
+  })
+
+  it('does not invent a BPM', () => {
+    const out = normalizePrompt('TrackType: Music, canopy rain, no perceivable tempo', 'music', 120)
+    expect(out).not.toContain('BPM:')
+    expect(out).toContain('no perceivable tempo')
+  })
+
+  it('is idempotent and retargets the length instead of stacking tags', () => {
+    const once = normalizePrompt('forest birdsong, steady bed', 'ambience', 90)
+    expect(normalizePrompt(once, 'ambience', 90)).toBe(once)
+    const retimed = normalizePrompt(once, 'ambience', 30)
+    expect(retimed.match(/Length:/g)).toHaveLength(1)
+    expect(retimed.endsWith('Length: 30 seconds')).toBe(true)
+  })
+
+  it('rewrites a track type that does not match the mode', () => {
+    const out = normalizePrompt('TrackType: Music, a door slam', 'sfx', 2)
+    expect(out.startsWith('TrackType: SFX, ')).toBe(true)
+    expect(out).not.toContain('Music')
+  })
+
+  it('counts words against Stability own 45-word threshold', () => {
+    expect(PROMPT_WORD_LIMIT).toBe(45)
+    expect(promptWordCount('one two three')).toBe(3)
+    expect(promptWordCount('   ')).toBe(0)
   })
 })

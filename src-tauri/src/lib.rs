@@ -730,6 +730,19 @@ fn generate_timeout_secs(seconds: f32, steps: u32) -> u64 {
     budget.clamp(600.0, 7200.0) as u64
 }
 
+/// Steps the worker will actually run for a preset, used only to size the
+/// timeout. The worker owns the real decision; this just has to not undercut
+/// it, so the slowest preset is assumed when steps are not pinned.
+fn preset_steps(preset: Option<&str>, steps: Option<u32>) -> u32 {
+    match preset {
+        Some("speed") => 8,
+        Some("balanced") => 20,
+        // Max quality runs 50 steps on medium-base, or 32 on the fallback.
+        Some("quality") => 50,
+        _ => steps.unwrap_or(20),
+    }
+}
+
 #[tauri::command]
 #[allow(clippy::too_many_arguments)] // one parameter per IPC field
 async fn engine_generate(
@@ -750,13 +763,18 @@ async fn engine_generate(
     subcategory: Option<String>,
     intensity: Option<String>,
     seamless_loop: Option<bool>,
+    preset: Option<String>,
+    sampler: Option<String>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
     // The worker writes the WAV under this folder, so the app has to be able to
     // read it straight back; adopting it here keeps scope and output in step
     // even for a folder that was typed in rather than picked in a dialog.
     scope.set_library(library_dir.as_deref());
-    let timeout = generate_timeout_secs(seconds, steps.unwrap_or(20));
+    // Max quality swaps to medium-base, which means an unload + load before the
+    // run even starts, so give it the extra headroom on top of its step count.
+    let timeout = generate_timeout_secs(seconds, preset_steps(preset.as_deref(), steps))
+        + if preset.as_deref() == Some("quality") { 600 } else { 0 };
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
         "cmd": "generate",
@@ -769,7 +787,10 @@ async fn engine_generate(
         "library_dir": library_dir,
         "mode": mode,
         "instruments": instruments,
-        "steps": steps.unwrap_or(20),
+        // Null lets the preset own the step count; only the custom preset pins it.
+        "steps": steps,
+        "preset": preset,
+        "sampler": sampler,
         "category": category,
         "subcategory": subcategory,
         "intensity": intensity,
@@ -826,15 +847,24 @@ async fn engine_warmup(
     state: State<'_, Engine>,
     hf_token: Option<String>,
     precision: Option<String>,
+    preset: Option<String>,
+    model: Option<String>,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine(&app, &state)?;
+    // Preloading medium-base means a multi-GB download on first use, so it gets
+    // a far longer budget than a warm local load of Medium.
+    let downloading = model.as_deref() == Some("medium-base")
+        || (model.is_none() && preset.as_deref() == Some("quality"));
+    let timeout = if downloading { 7200 } else { 600 };
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
         "cmd": "warmup",
         "hf_token": hf_token,
-        "precision": precision
+        "precision": precision,
+        "preset": preset,
+        "model": model
     });
-    run_blocking(move || send_and_receive(&proc, payload, 600)).await
+    run_blocking(move || send_and_receive(&proc, payload, timeout)).await
 }
 
 #[tauri::command]

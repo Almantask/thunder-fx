@@ -10,7 +10,7 @@ Suno wants a short Style line plus lyric-field tags. Medium wants a `TrackType: 
 
 | Suno | Stable Audio 3 here |
 |---|---|
-| Style field only | `TrackType: Music, instrumental, …` |
+| Style field only | `TrackType: Music, VocalType: Instrumental, …` |
 | `[Instrumental] [No Vocals]` in lyrics | omitted (not a lyric model) |
 | Trailing `no vocals, no drums` in the style | moved to **Negative** |
 | Exclude styles (pop, EDM, …) | in **Negative** (`speech, pop, EDM, trap, hip hop, rap`) |
@@ -42,10 +42,31 @@ A calm category’s III is still calm. Boss III is huge; Night III is still nigh
 ## Formula
 
 ```
-TrackType: Music, instrumental, <scene/genre>, <1–2 moods>, <2–3 instruments>, <tempo>, <place cue>, looping-friendly
+TrackType: Music, VocalType: Instrumental, <scene/genre>, <1-2 moods>, <2-3 instruments>, <place cue>, looping-friendly. BPM: N. Length: N seconds
 ```
 
+`VocalType: Instrumental` is a trained control tag, so unlike the negative prompt it
+suppresses vocals at CFG 1 -- which is every preset except Max quality. Tempo moves to a
+trailing `BPM: N.` tag; cues with no pulse simply omit it rather than inventing one.
+
+Every prompt ends with `Length: N seconds`, matching the duration on the line
+above it. That is the shape Stability's own prompt rewriter emits, and it is what
+the model was trained on. Thunder FX re-derives this tag at generation time from
+the duration you actually pick, so moving the slider rewrites it rather than
+leaving a stale number. Keep prompts under **45 words** -- Stability's rewriter
+rejects its own output past that length.
+
+
 Names stay generic. Do not use other people’s trademarks.
+
+> [!IMPORTANT]
+> **Negative prompts do nothing on the Max speed and Balanced presets.** Stable
+> Audio 3 Medium is post-trained at CFG 1, and the model's guidance branch only
+> runs when `cfg_scale != 1.0` -- so the negative text is never read. The
+> `Negative:` lines below are kept because the **Max quality** preset runs the
+> un-distilled `medium-base` checkpoint at CFG 7, where they do take effect.
+> On the fast presets, steer with the positive prompt instead: `TrackType` and
+> `VocalType` are trained control tags and work at CFG 1.
 
 Negative (paste into Advanced if you generate by hand):
 

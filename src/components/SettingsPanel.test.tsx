@@ -18,10 +18,13 @@ vi.mock('@/lib/engine', () => ({
   pickDirectory: vi.fn(async () => null),
 }))
 
-function renderPanel(initial: KeepSettings = DEFAULT_SETTINGS) {
+function renderPanel(
+  initial: KeepSettings = DEFAULT_SETTINGS,
+  props: { baseModelReady?: boolean } = {},
+) {
   function Harness() {
     const [settings, setSettings] = useState(initial)
-    return <SettingsPanel settings={settings} onChange={setSettings} />
+    return <SettingsPanel settings={settings} onChange={setSettings} {...props} />
   }
   return render(
     <TooltipProvider>
@@ -67,12 +70,39 @@ describe('SettingsPanel', () => {
     expect(screen.getByText(/needs the desktop app/i)).toBeInTheDocument()
   })
 
-  it('lets you pick a low-VRAM precision profile', async () => {
+  it('defaults to fp16 and lets you switch to full precision', async () => {
     const user = userEvent.setup()
     renderPanel()
+    // fp16 is what the worker, the Stable Audio library and the README all use.
+    // fp32 also turns off chunked decode in the worker, roughly doubling VRAM.
     const low = screen.getByRole('radio', { name: /fp16 \/ bf16/i })
-    expect(screen.getByRole('radio', { name: /fp32/i })).toHaveAttribute('aria-checked', 'true')
-    await user.click(low)
+    const full = screen.getByRole('radio', { name: /fp32/i })
     expect(low).toHaveAttribute('aria-checked', 'true')
+    await user.click(full)
+    expect(full).toHaveAttribute('aria-checked', 'true')
+  })
+
+  it('defaults the quality preset to Balanced and lets you change it', async () => {
+    const user = userEvent.setup()
+    renderPanel()
+    const balanced = screen.getByRole('radio', { name: /balanced/i })
+    expect(balanced).toHaveAttribute('aria-checked', 'true')
+    const fast = screen.getByRole('radio', { name: /max speed/i })
+    await user.click(fast)
+    expect(fast).toHaveAttribute('aria-checked', 'true')
+  })
+
+  it('offers the Medium-Base download when Max quality cannot use it yet', () => {
+    renderPanel(undefined, { baseModelReady: false })
+    expect(screen.getByRole('button', { name: /download medium-base/i })).toBeInTheDocument()
+    // Until it is installed Max quality must refuse, not quietly run something
+    // else. Substituting is what made earlier takes sound muffled and flat.
+    expect(screen.getByText(/refuses\s+to\s+generate/i)).toBeInTheDocument()
+  })
+
+  it('says Max quality is fully enabled once Medium-Base is installed', () => {
+    renderPanel(undefined, { baseModelReady: true })
+    expect(screen.queryByRole('button', { name: /download medium-base/i })).toBeNull()
+    expect(screen.getByText(/un-distilled checkpoint with real guidance/i)).toBeInTheDocument()
   })
 })

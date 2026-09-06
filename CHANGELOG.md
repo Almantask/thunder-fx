@@ -6,6 +6,41 @@ All notable Thunder FX changes are listed here.
 
 ### Added
 
+- **Quality presets — Max speed, Balanced, Max quality.** Steps were never the quality dial on
+  this model: Medium is ARC-distilled and sampled with `pingpong`, which re-injects fresh noise on
+  every step, so a higher step count buys invented detail rather than fidelity. A preset now
+  chooses the *checkpoint* instead, and is tuned per content type. Max quality runs the
+  un-distilled `medium-base` with the deterministic `euler` sampler — the only configuration
+  where extra steps converge and where negative prompts do anything at all — at CFG 4 for sound
+  effects and CFG 2 for ambience, because more guidance sharpens a one-shot and dulls a bed.
+  Instrumental keeps Balanced: sweeping CFG 1/2/4/7, `medium-base` measured darker and less
+  varied at every setting, so the preset does not pretend otherwise. A deterministic sampler is never allowed on Medium:
+  distillation trains the model *for* pingpong's per-step re-noising, so stepping through it
+  deterministically averages the texture away and sounds muffled, flat and uniform. On Medium
+  alone, Balanced is the ceiling. Set the default in
+  **Settings → Default quality**, override it per clip on Generate, and force a whole queue run
+  with **Run queue at**; queued items otherwise keep the preset they were added with.
+- **Medium-Base download** in Settings (~9 GB; shares Medium's text encoder, so Medium must be
+  installed first). Until it is installed,
+  the Max quality button reads "needs download", Generate is disabled with the reason shown, and
+  the engine refuses the request with advice — it never substitutes another configuration. There
+  is no fallback anywhere in the preset system by design: an earlier version substituted a
+  deterministic sampler on Medium, which sounds muffled and flat, and the substitution is exactly
+  what made that hard to trace. `THUNDER_FX_BASE_MODEL_READY=0` forces the state for testing.
+- **Two guards against a "higher quality" setting that sounds worse.**
+  `engine/test_quality.py` asserts no preset — including Custom, and including an explicit
+  sampler override over IPC — can put a deterministic sampler on the distilled checkpoint.
+  `engine/test_generation_quality.py` generates at each preset on the GPU and fails if a higher
+  preset loses dynamics, brightness or variety, using the measures in `engine/audio_metrics.py`
+  (crest factor, block-level spread, spectral centroid, high-band share, spectral flux).
+- **Per-mode loudness.** Sound effects peak-normalize to −1.0 dBFS in both directions; ambience
+  targets −20 LUFS and instrumental −18 LUFS, both peak-limited to −1.0 dBFS. Loudness uses a full
+  ITU-R BS.1770-4 implementation verified against the EBU Tech 3341 reference tone. Near-silent
+  clips are left alone instead of being amplified into noise.
+- **TPDF dither** on the 16-bit master, applied without disturbing true digital silence.
+- `scripts/bench_sampler.py` sweeps sampler × steps × content type into `bench/`, with objective
+  metrics and a blind A/B player, so the preset table can be settled by ear and by measurement.
+- `scripts/rewrite_prompts.py` normalises the shipped catalog to the trained prompt format.
 - **Default audio format** in Settings. The export panel and the sound-pack dialog start on the
   chosen format instead of always on WAV, and the Export button names it. Generation still masters
   to WAV; the default is the format that master is written out as. In the browser build, a
@@ -18,13 +53,41 @@ All notable Thunder FX changes are listed here.
 
 ### Fixed
 
+- **Long clips were silently capped at 120 seconds.** The worker never passed `sample_size` to
+  `model.generate`, so Stable Audio 3's own 5292032-sample default (120.0s) clamped every longer
+  request — while the model was still conditioned on the full `seconds_total` and paced an
+  arrangement it never got to finish. A 380s ambience bed returned 120s of audio. Most of the
+  shipped ambience and instrumental catalog runs 90–380s, so most of it was affected.
+- **Negative prompts are no longer silently ignored.** The model's CFG branch only runs when
+  `cfg_scale != 1.0`, and the worker pinned CFG to 1, so every negative prompt in the app and all
+  ~18,000 in the catalog did nothing. They now work on Max quality, and the field is marked
+  inactive on the presets where they cannot.
+- **Quiet clips are no longer left quiet.** Peak normalization only ever attenuated, so takes of
+  the same sound landed as much as 12 dB apart.
+- **Cancel really does stop the GPU.** The per-step hook was chosen by probing `generate`'s
+  signature for a callback parameter it does not declare — the probe always came up empty, so
+  cancellation only took effect once the run had finished. `callback` is now passed straight
+  through to the sampler, where it was accepted all along.
+- **The loop crossfade no longer clips.** It ran *after* peak normalization, so an equal-power sum
+  of two correlated windows could push the file back over the ceiling. Crossfade now happens
+  before mastering, and joins snap to the nearest zero crossing as the browser build already did.
+- **Export resampling no longer aliases.** 44.1 → 48 kHz used bare linear interpolation with no
+  anti-alias filter (`soxr` is not installed, so that path was always the fallback), and the
+  frontend resampled a second time before handing the file over. Resampling now happens once,
+  through torchaudio's windowed-sinc resampler.
+- **Precision defaults to FP16**, matching the worker, the Stable Audio library and the README.
+  FP32 also disabled chunked decode, roughly doubling peak VRAM for anyone who never changed it.
+- Prompts are normalised to the format Stable Audio 3 was trained on before they reach the model:
+  `TrackType:` / `VocalType:` control tags, a trailing `BPM:` for music, and a `Length: N seconds`
+  tag re-derived from the duration actually chosen. `VocalType: Instrumental` is a positive control
+  tag, so it suppresses vocals at CFG 1 where the negative prompt cannot. Prompts past 45 words —
+  the threshold Stability's own rewriter enforces — now raise a non-blocking warning.
+- The shipped catalog (~18,000 prompts across 227 files) was rewritten into that same format.
 - **The engine restarts itself.** A crashed Python worker previously bricked the session until the
   app was relaunched; every command now checks the worker is alive and respawns it if not.
 - **Generation no longer times out on long clips.** The 600s cap could fire on a legitimate long,
   high-step run — reporting a failure while the worker went on to write the clip. The budget now
   scales with `seconds × steps`.
-- **Cancel stops the GPU.** Cancellation is wired into the sampler's per-step hook where the model
-  exposes one, instead of only taking effect after the run finished.
 - **Unload is refused during a generation** rather than reporting freed VRAM the running job still
   holds.
 - Seamless-loop crossfades clamp to the 16-bit range; an equal-power sum of two loud samples could

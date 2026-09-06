@@ -15,6 +15,7 @@ Three tabs: **Library**, **Generate**, and **Settings**.
 - Type a prompt and click **Generate**.
 - **Sound effects** (default) or **Instrumental**. Same model either way. Instrumental uses a music-style prompt and a negative prompt that tries to avoid vocals.
 - Clips can be **0.5 seconds to 6 minutes 20 seconds**. Instrumental defaults to 20 seconds.
+- **Max speed / Balanced / Max quality** picks how the clip is generated. See [Quality presets](#quality-presets).
 - **Load model** puts the model into GPU memory. Do that once after you open the app. **Generate** only makes a clip.
 - **Browse prompts** opens bundled lists. Filter **FX** (`prompts/fx`) or **Ambience** (`prompts/ambience`, tabletop-style beds such as forest or tavern). **Preview** shows the full prompt. **Use** fills the current prompt. Check items — or a whole category — to add them to a queue.
 - **Generate queue** runs queued prompts one after another and saves each clip. **Cancel** stops the clip in progress; the rest stay queued.
@@ -94,7 +95,123 @@ engine\.venv\Scripts\python.exe -u engine\worker.py
 
 The CUDA venv is about 4 GB; Medium + T5Gemma weights are several more GB. If `C:` is full, set `UV_CACHE_DIR` and `HF_HUB_CACHE` to a larger drive and junction `engine/.venv` / `engine/.hf-cache` there. Setup downloads weights into `HF_HUB_CACHE`. You need a Hugging Face login that has accepted the Stability Community License and Gemma Terms.
 
-Quality settings default to FP16 (with optional FP32 in Settings), configurable diffusion steps (4–100, default 20), and chunked decode.
+Quality is chosen with a **preset** rather than a step count — see [Quality presets](#quality-presets).
+Precision defaults to FP16 (optional FP32 in Settings; FP32 also turns off chunked decode and
+roughly doubles peak VRAM).
+
+## Quality presets
+
+Steps are not the quality dial on this model, and turning them up makes output worse.
+Medium is **ARC-distilled** and sampled with `pingpong`, which re-injects fresh noise on
+*every* step — so each extra step is another chance for the model to invent detail rather
+than refine it. Stability's own default for this checkpoint is 8 steps at CFG 1.
+
+A preset therefore changes the **checkpoint**, not just the step count. Deterministic
+samplers (`euler`, `dpmpp`) are the only ones where extra steps converge — but they must
+never run on Medium. Distillation trains the model *for* pingpong's per-step re-noising, so
+stepping through it deterministically averages the texture away: the result is muffled, flat,
+and the same from end to end. Deterministic sampling belongs on Medium-Base, which was never
+distilled.
+
+**On Medium alone, Balanced is as good as it gets.** That is why Max quality needs the
+Medium-Base download rather than a different sampler.
+
+| Preset | Checkpoint | Sampler | Steps | CFG | Negative prompt |
+| :--- | :--- | :--- | ---: | ---: | :--- |
+| **Max speed** | `medium` | pingpong | 8 | 1.0 | ignored |
+| **Balanced** (default) | `medium` | pingpong | 20 | 1.0 | ignored |
+| **Max quality** — sound effects | `medium-base` | euler | 50 | 4.0 | **active** |
+| **Max quality** — ambience | `medium-base` | euler | 50 | 2.0 | **active** |
+| **Max quality** — instrumental | `medium` | pingpong | 20 | 1.0 | ignored |
+
+**Max quality is tuned per content type, because guidance strength has to be.**
+Sweeping CFG 1/2/4/7 on `medium-base`: a door slam was brightest at CFG 4–7 (+3% to +17%
+spectral centroid vs Balanced), while a rain bed went the *other* way — +24% brightness and
++84% high-band energy at CFG 2, but by CFG 7 it had lost 9% brightness and most of its level
+movement. More guidance sharpens a one-shot and dulls a bed.
+
+Instrumental is the honest exception: **no CFG tested beat Balanced.** `medium-base` came out
+consistently darker (−38% to −51% centroid) and less varied at every setting, so Max quality
+keeps instrumental on Medium rather than promising an upgrade it does not deliver. That is a
+stated per-mode decision, not a silent substitution — and it means Max quality for instrumental
+needs no download and never refuses.
+
+Set the default in **Settings → Default quality**. Override it per clip on Generate, and per
+run with the **Run queue at** control next to Generate queue; each queued item otherwise keeps
+the preset it was added with.
+
+**Negative prompts only work on Max quality.** The model's guidance branch is skipped entirely
+at CFG 1, so on the fast presets the negative field is never read — the UI marks it inactive.
+Vocal suppression on those presets comes from the positive `VocalType: Instrumental` tag instead.
+
+Max quality needs `medium-base`, a separate **~9 GB** download (**Settings → Download
+Medium-Base**). Unlike Medium it is not a gated repo, but it shares Medium's T5Gemma text
+encoder, so Medium has to be installed first. It is the un-distilled checkpoint —
+`diffusion_objective: rectified_flow`, no ARC post-training — and Stability's own demo settings
+for it are 50 steps at CFG 2–7, which is what this preset uses.
+
+> [!NOTE]
+> Medium-Base is a much heavier model than Medium and needs **noticeably more VRAM**. The
+> checkpoint is loaded in fp32 and converted to fp16 afterwards, so the peak during loading is
+> higher again. The 6 GB floor quoted above covers Medium; Max quality wants more headroom than
+> that. Switching presets across the Medium / Medium-Base boundary is a real unload and reload,
+> so it is a Settings-level choice rather than something to toggle per clip. Until it is installed, selecting Max quality **refuses to
+generate** and says exactly what to do about it — it never quietly runs something else. There is
+no fallback anywhere in the preset system, by design: an earlier version substituted a
+deterministic sampler on Medium, the takes came out muffled and flat, and the substitution is
+what made that hard to trace.
+
+`THUNDER_FX_BASE_MODEL_READY=0` forces the "not installed" state, so the refusal path can be
+checked without deleting the weights.
+
+Moving the **Steps** slider in Advanced switches the preset to *Custom* and warns if you push
+steps high on `pingpong` — that exact combination is what degrades output. A deterministic
+sampler can never be selected for Medium; `engine/worker.py` coerces it back to pingpong.
+
+Two tests guard this. `engine/test_quality.py` asserts no preset can put a deterministic
+sampler on the distilled checkpoint, and `engine/test_generation_quality.py` actually generates
+at each preset on the GPU and fails if a higher preset loses dynamics, brightness or variety:
+
+```bash
+engine\.venv\Scripts\python.exe -m unittest engine.test_generation_quality -v
+```
+
+To pick sampler and step counts from evidence rather than assertion:
+
+```bash
+engine\.venv\Scripts\python.exe scripts/bench_sampler.py
+```
+
+It sweeps sampler × steps × content type into `bench/`, with a `metrics.csv` and a blind A/B
+player at `bench/index.html`.
+
+## Prompt format
+
+Prompts are normalised into the shape Stable Audio 3 was trained on before they reach the
+model — `TrackType:` and `VocalType:` control tags, a trailing `BPM: N.` for music, and a
+`Length: N seconds` tag re-derived from the duration you actually picked. The shipped catalog
+is stored in that same form. Keep prompts under 45 words; Stability's own prompt rewriter
+rejects its output past that length, and Thunder FX warns when you cross it.
+
+```bash
+python scripts/rewrite_prompts.py --check
+```
+
+## Loudness
+
+Generated clips used to land anywhere from −16 to −28 dBFS RMS, because peak normalization only
+ever attenuated. Mastering is now per content type:
+
+| Mode | Target | Why |
+| :--- | :--- | :--- |
+| Sound effects | −1.0 dBFS peak, both directions | a game engine triggers one-shots at unity, so a predictable peak is what matters |
+| Ambience | −20 LUFS integrated, peak-limited to −1.0 dBFS | beds sit under dialogue the same way every time |
+| Instrumental | −18 LUFS integrated, peak-limited to −1.0 dBFS | matches game-music delivery convention |
+
+Loudness is measured with a full ITU-R BS.1770-4 implementation (K-weighting, 400 ms blocks,
+−70 LUFS absolute and −10 LU relative gates), verified against the EBU Tech 3341 reference tone.
+Near-silent clips are left alone rather than amplified into noise, and 16-bit quantization is
+TPDF-dithered without disturbing true digital silence.
 
 ## Performance benchmarks & estimates
 
@@ -152,7 +269,7 @@ npm test src/lib/perfBenchmarks.test.ts
 ```mermaid
 flowchart TD
     subgraph UI["Frontend UI (React + TypeScript)"]
-        A["User Input\n(Prompt, FX / Instrumental, Duration, Queue)"]
+        A["User Input\n(Prompt, FX / Instrumental, Duration, Preset, Queue)"]
         B["Studio Interface\n(Library, Generate, Settings)"]
         C["Waveform Player & Trimmer\n(In/Out markers, Playback)"]
     end
@@ -165,7 +282,7 @@ flowchart TD
 
     subgraph Engine["Inference Engine (Python / PyTorch)"]
         G["Keep-Alive Worker\n(engine/worker.py)"]
-        H["Stable Audio 3 Medium\n(CUDA + Flash Attention 2)"]
+        H["Stable Audio 3 Medium / Medium-Base\n(CUDA + Flash Attention 2)"]
         I[("Hugging Face Cache\nHF_HUB_CACHE")]
     end
 
@@ -183,7 +300,7 @@ flowchart TD
 
     %% Model Inference
     I -->|"Load Weights into VRAM"| H
-    G -->|"8-step diffusion inference"| H
+    G -->|"preset: sampler + steps + checkpoint"| H
     H -->|"Save 44.1kHz Stereo WAV"| J
     G -->|"Progress stream (stdout)"| E
     E -->|"Emit weave-progress events"| B

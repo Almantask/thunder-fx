@@ -8,181 +8,181 @@ Submerged reef beds — dampened, pressure-filtered acoustic space, rising bubbl
 - Duration: 90s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, shallow reef top, dampened submerged acoustic space, faint rising bubbles, minimal current, looping-friendly
+TrackType: SFX, shallow reef top, dampened submerged acoustic space, faint rising bubbles, minimal current, looping-friendly. Length: 90 seconds
 
 ### Sandy Reef Flat Hush (I)
 - Duration: 100s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, sandy reef flat, filtered underwater hush, occasional soft bubble, distant water pressure hum, steady bed
+TrackType: SFX, sandy reef flat, filtered underwater hush, occasional soft bubble, distant water pressure hum, steady bed. Length: 100 seconds
 
 ### Coral Crevice Stillness (I)
 - Duration: 110s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, narrow coral crevice, close dampened acoustic space, rare small bubble release, looping-friendly
+TrackType: SFX, narrow coral crevice, close dampened acoustic space, rare small bubble release, looping-friendly. Length: 110 seconds
 
 ### Deep Reef Wall Silence (I)
 - Duration: 120s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep reef wall drop-off, muted submerged tone, faint distant current, heavy water pressure, looping-friendly
+TrackType: SFX, deep reef wall drop-off, muted submerged tone, faint distant current, heavy water pressure, looping-friendly. Length: 120 seconds
 
 ### Anemone Garden Drift (I)
 - Duration: 130s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, anemone garden, gentle submerged drift, sparse bubble trickle, dampened reef acoustic, steady bed
+TrackType: SFX, anemone garden, gentle submerged drift, sparse bubble trickle, dampened reef acoustic, steady bed. Length: 130 seconds
 
 ### Open Blue Water Above The Reef (I)
 - Duration: 140s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, open blue water above a reef, filtered light-water tone, faint distant current, looping-friendly
+TrackType: SFX, open blue water above a reef, filtered light-water tone, faint distant current, looping-friendly. Length: 140 seconds
 
 ### Night Reef In Deep Quiet (I)
 - Duration: 150s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, night reef in deep quiet, dampened submerged hush, faint occasional bubble, looping-friendly
+TrackType: SFX, night reef in deep quiet, dampened submerged hush, faint occasional bubble, looping-friendly. Length: 150 seconds
 
 ### Reef Ledge At Slack Tide (I)
 - Duration: 160s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef ledge at slack tide, minimal current, submerged pressure hum, filtered acoustic space, steady bed
+TrackType: SFX, reef ledge at slack tide, minimal current, submerged pressure hum, filtered acoustic space, steady bed. Length: 160 seconds
 
 ### Sunken Sea Cave Entrance (I)
 - Duration: 170s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, sunken sea cave entrance, dampened stone-and-water acoustic, faint dripping bubble, looping-friendly
+TrackType: SFX, sunken sea cave entrance, dampened stone-and-water acoustic, faint dripping bubble, looping-friendly. Length: 170 seconds
 
 ### Coral Head Cluster Quiet (I)
 - Duration: 180s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, cluster of coral heads, still submerged air, sparse fine bubbles, dampened tone, looping-friendly
+TrackType: SFX, cluster of coral heads, still submerged air, sparse fine bubbles, dampened tone, looping-friendly. Length: 180 seconds
 
 ### Deep Sand Channel Hush (I)
 - Duration: 190s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep sand channel between reef walls, filtered submerged hush, faint distant current, steady bed
+TrackType: SFX, deep sand channel between reef walls, filtered submerged hush, faint distant current, steady bed. Length: 190 seconds
 
 ### Reef Drop-Off At Dusk (I)
 - Duration: 200s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef drop-off into deep blue at dusk, dampened underwater tone, minimal bubble, looping-friendly
+TrackType: SFX, reef drop-off into deep blue at dusk, dampened underwater tone, minimal bubble, looping-friendly. Length: 200 seconds
 
 ### Motionless Lagoon Floor (I)
 - Duration: 210s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, motionless lagoon floor, filtered still water, faint pressure hum, submerged acoustic space, looping-friendly
+TrackType: SFX, motionless lagoon floor, filtered still water, faint pressure hum, submerged acoustic space, looping-friendly. Length: 210 seconds
 
 ### Quiet Coral Overhang (I)
 - Duration: 220s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, quiet coral overhang, dampened close acoustic, occasional small bubble release, steady bed
+TrackType: SFX, quiet coral overhang, dampened close acoustic, occasional small bubble release, steady bed. Length: 220 seconds
 
 ### Reef Wall Just Below The Surface (I)
 - Duration: 230s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef wall just below the surface, filtered light-tinted water tone, faint ripple pressure, looping-friendly
+TrackType: SFX, reef wall just below the surface, filtered light-tinted water tone, faint ripple pressure, looping-friendly. Length: 230 seconds
 
 ### Deep Blue Beyond The Reef Edge (I)
 - Duration: 240s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep open blue beyond the reef edge, muted vast submerged space, sparse distant current, looping-friendly
+TrackType: SFX, deep open blue beyond the reef edge, muted vast submerged space, sparse distant current, looping-friendly. Length: 240 seconds
 
 ### Still Water Between Coral Fingers (I)
 - Duration: 250s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, still water threading between coral fingers, dampened close reef tone, rare bubble, steady bed
+TrackType: SFX, still water threading between coral fingers, dampened close reef tone, rare bubble, steady bed. Length: 250 seconds
 
 ### Submerged Grotto Quiet (I)
 - Duration: 260s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, submerged grotto beneath the reef, dampened enclosed acoustic, faint drip-bubble, looping-friendly
+TrackType: SFX, submerged grotto beneath the reef, dampened enclosed acoustic, faint drip-bubble, looping-friendly. Length: 260 seconds
 
 ### Reef Flat Under Midday Light (I)
 - Duration: 270s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef flat under midday filtered light, minimal water movement, faint pressure hum, looping-friendly
+TrackType: SFX, reef flat under midday filtered light, minimal water movement, faint pressure hum, looping-friendly. Length: 270 seconds
 
 ### Barely Stirring Current Over Sand (I)
 - Duration: 280s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, barely stirring current over open sand, dampened submerged tone, sparse bubble, steady bed
+TrackType: SFX, barely stirring current over open sand, dampened submerged tone, sparse bubble, steady bed. Length: 280 seconds
 
 ### Coral Wall Alcove Hush (I)
 - Duration: 290s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, small alcove in a coral wall, close dampened acoustic, faint water pressure, looping-friendly
+TrackType: SFX, small alcove in a coral wall, close dampened acoustic, faint water pressure, looping-friendly. Length: 290 seconds
 
 ### Quiet Depths Near The Reef Base (I)
 - Duration: 300s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, quiet depths near the reef base, muted heavy water tone, faint distant current, looping-friendly
+TrackType: SFX, quiet depths near the reef base, muted heavy water tone, faint distant current, looping-friendly. Length: 300 seconds
 
 ### Reef Channel At Slack Water (I)
 - Duration: 310s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef channel at slack water, filtered submerged hush, minimal bubble activity, steady bed
+TrackType: SFX, reef channel at slack water, filtered submerged hush, minimal bubble activity, steady bed. Length: 310 seconds
 
 ### Suspended Silence Mid-Water (I)
 - Duration: 320s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, suspended stillness mid-water above the reef, dampened open acoustic, faint pressure hum, looping-friendly
+TrackType: SFX, suspended stillness mid-water above the reef, dampened open acoustic, faint pressure hum, looping-friendly. Length: 320 seconds
 
 ### Coral Terrace At Rest (I)
 - Duration: 330s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, quiet coral terrace, filtered dampened tone, sparse fine bubbles rising, looping-friendly
+TrackType: SFX, quiet coral terrace, filtered dampened tone, sparse fine bubbles rising, looping-friendly. Length: 330 seconds
 
 ### Reef Base In Deep Shadow (I)
 - Duration: 340s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef base in deep shadow, muted heavy submerged tone, minimal current, steady bed
+TrackType: SFX, reef base in deep shadow, muted heavy submerged tone, minimal current, steady bed. Length: 340 seconds
 
 ### Glasslike Water Over The Shallows (I)
 - Duration: 350s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, glasslike still water over reef shallows, dampened submerged hush, rare bubble, looping-friendly
+TrackType: SFX, glasslike still water over reef shallows, dampened submerged hush, rare bubble, looping-friendly. Length: 350 seconds
 
 ### Faint Pulse Of Distant Current (I)
 - Duration: 360s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, faint pulse of a distant current felt through the reef, filtered underwater tone, looping-friendly
+TrackType: SFX, faint pulse of a distant current felt through the reef, filtered underwater tone, looping-friendly. Length: 360 seconds
 
 ### Deep Coral Silence Before Dawn (I)
 - Duration: 370s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep coral silence before dawn light reaches the reef, dampened acoustic, faint pressure hum, looping-friendly
+TrackType: SFX, deep coral silence before dawn light reaches the reef, dampened acoustic, faint pressure hum, looping-friendly. Length: 370 seconds
 
 ### Resting Reef Before The Tide Turns (I)
 - Duration: 380s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, resting reef before the tide turns, filtered dampened submerged tone, steady texture with no ending, looping-friendly
+TrackType: SFX, resting reef before the tide turns, filtered dampened submerged tone, steady texture with no ending, looping-friendly. Length: 380 seconds
 
 ## II — the scene in full motion
 
@@ -190,181 +190,181 @@ TrackType: SFX, resting reef before the tide turns, filtered dampened submerged 
 - Duration: 45s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, steady current threading through coral heads, dampened submerged tone, regular bubble streams, looping-friendly
+TrackType: SFX, steady current threading through coral heads, dampened submerged tone, regular bubble streams, looping-friendly. Length: 45 seconds
 
 ### School Movement Over The Reef (II)
 - Duration: 55s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, steady school movement stirring water over the reef, filtered acoustic, moderate current, looping-friendly
+TrackType: SFX, steady school movement stirring water over the reef, filtered acoustic, moderate current, looping-friendly. Length: 55 seconds
 
 ### Reef Wall Water Pressure Hum (II)
 - Duration: 65s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef wall with steady water pressure hum, dampened acoustic space, moderate flow, steady bed
+TrackType: SFX, reef wall with steady water pressure hum, dampened acoustic space, moderate flow, steady bed. Length: 65 seconds
 
 ### Bubble Stream From A Coral Vent (II)
 - Duration: 75s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, steady bubble stream rising from a coral vent, filtered submerged tone, moderate current, looping-friendly
+TrackType: SFX, steady bubble stream rising from a coral vent, filtered submerged tone, moderate current, looping-friendly. Length: 75 seconds
 
 ### Reef Channel Flow At Midday (II)
 - Duration: 85s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef channel flow at midday, dampened acoustic, steady moderate current, looping-friendly
+TrackType: SFX, reef channel flow at midday, dampened acoustic, steady moderate current, looping-friendly. Length: 85 seconds
 
 ### Coral Canyon Current (II)
 - Duration: 95s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, coral canyon with a steady current running through, filtered close reef tone, looping-friendly
+TrackType: SFX, coral canyon with a steady current running through, filtered close reef tone, looping-friendly. Length: 95 seconds
 
 ### Reef Drop-Off Flow (II)
 - Duration: 105s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef drop-off with steady deep current pulling past, dampened vast submerged tone, looping-friendly
+TrackType: SFX, reef drop-off with steady deep current pulling past, dampened vast submerged tone, looping-friendly. Length: 105 seconds
 
 ### Active Reef Flat With Moving Water (II)
 - Duration: 115s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, active reef flat with steady moving water, filtered acoustic, moderate bubble activity, steady bed
+TrackType: SFX, active reef flat with steady moving water, filtered acoustic, moderate bubble activity, steady bed. Length: 115 seconds
 
 ### Tide Pushing Through The Lagoon (II)
 - Duration: 125s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, incoming tide pushing steadily through the lagoon, dampened submerged tone, moderate current, looping-friendly
+TrackType: SFX, incoming tide pushing steadily through the lagoon, dampened submerged tone, moderate current, looping-friendly. Length: 125 seconds
 
 ### Reef Ledge In A Working Current (II)
 - Duration: 135s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef ledge in a steady working current, filtered pressure hum, moderate flow, looping-friendly
+TrackType: SFX, reef ledge in a steady working current, filtered pressure hum, moderate flow, looping-friendly. Length: 135 seconds
 
 ### Coral Wall Alive With Movement (II)
 - Duration: 145s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, coral wall alive with steady movement, dampened reef acoustic, regular bubble releases, steady bed
+TrackType: SFX, coral wall alive with steady movement, dampened reef acoustic, regular bubble releases, steady bed. Length: 145 seconds
 
 ### Deep Reef Current Between Pinnacles (II)
 - Duration: 155s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep current running between reef pinnacles, filtered dampened tone, moderate flow, looping-friendly
+TrackType: SFX, deep current running between reef pinnacles, filtered dampened tone, moderate flow, looping-friendly. Length: 155 seconds
 
 ### Reef Top Churn At Midday (II)
 - Duration: 165s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef top churn at midday, steady bubble and current mix, dampened submerged tone, looping-friendly
+TrackType: SFX, reef top churn at midday, steady bubble and current mix, dampened submerged tone, looping-friendly. Length: 165 seconds
 
 ### Sand Channel Flow Between Reefs (II)
 - Duration: 175s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, sand channel with steady flow between reef walls, filtered acoustic space, looping-friendly
+TrackType: SFX, sand channel with steady flow between reef walls, filtered acoustic space, looping-friendly. Length: 175 seconds
 
 ### Reef Wall Current Sweep (II)
 - Duration: 185s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, steady current sweeping along a reef wall, dampened deep tone, moderate pressure hum, steady bed
+TrackType: SFX, steady current sweeping along a reef wall, dampened deep tone, moderate pressure hum, steady bed. Length: 185 seconds
 
 ### Open Water Current Above The Reef (II)
 - Duration: 195s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, open water current above the reef, filtered light-tinted tone, moderate flow, looping-friendly
+TrackType: SFX, open water current above the reef, filtered light-tinted tone, moderate flow, looping-friendly. Length: 195 seconds
 
 ### Coral Garden In Full Flow (II)
 - Duration: 205s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, coral garden in full steady flow, dampened close acoustic, regular bubble streams, looping-friendly
+TrackType: SFX, coral garden in full steady flow, dampened close acoustic, regular bubble streams, looping-friendly. Length: 205 seconds
 
 ### Reef Overhang With Steady Surge (II)
 - Duration: 215s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef overhang with steady surging current, filtered submerged tone, moderate pressure, looping-friendly
+TrackType: SFX, reef overhang with steady surging current, filtered submerged tone, moderate pressure, looping-friendly. Length: 215 seconds
 
 ### Fish Movement Stirring The Shallows (II)
 - Duration: 225s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, steady fish movement stirring shallow reef water, dampened acoustic, moderate current, steady bed
+TrackType: SFX, steady fish movement stirring shallow reef water, dampened acoustic, moderate current, steady bed. Length: 225 seconds
 
 ### Reef Pass Current At Tide Change (II)
 - Duration: 235s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef pass current picking up at tide change, filtered dampened tone, moderate flow, looping-friendly
+TrackType: SFX, reef pass current picking up at tide change, filtered dampened tone, moderate flow, looping-friendly. Length: 235 seconds
 
 ### Deep Wall Bubble And Flow (II)
 - Duration: 245s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep reef wall with steady bubble and flow mix, dampened vast tone, moderate current, looping-friendly
+TrackType: SFX, deep reef wall with steady bubble and flow mix, dampened vast tone, moderate current, looping-friendly. Length: 245 seconds
 
 ### Coral Ridge Current Sweep (II)
 - Duration: 255s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, coral ridge with steady current sweeping across it, filtered acoustic, moderate pressure hum, looping-friendly
+TrackType: SFX, coral ridge with steady current sweeping across it, filtered acoustic, moderate pressure hum, looping-friendly. Length: 255 seconds
 
 ### Reef Flat Alive At Midday (II)
 - Duration: 265s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef flat alive with steady movement at midday, dampened submerged tone, moderate bubble activity, steady bed
+TrackType: SFX, reef flat alive with steady movement at midday, dampened submerged tone, moderate bubble activity, steady bed. Length: 265 seconds
 
 ### Channel Flow Between Coral Towers (II)
 - Duration: 275s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, channel flow between tall coral towers, filtered dampened tone, moderate current, looping-friendly
+TrackType: SFX, channel flow between tall coral towers, filtered dampened tone, moderate current, looping-friendly. Length: 275 seconds
 
 ### Reef Base Current Working Steadily (II)
 - Duration: 285s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef base with a steady working current, dampened deep acoustic, moderate flow, looping-friendly
+TrackType: SFX, reef base with a steady working current, dampened deep acoustic, moderate flow, looping-friendly. Length: 285 seconds
 
 ### Lagoon Current Pushing Through Coral (II)
 - Duration: 295s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, lagoon current pushing steadily through coral formations, filtered submerged tone, steady bed
+TrackType: SFX, lagoon current pushing steadily through coral formations, filtered submerged tone, steady bed. Length: 295 seconds
 
 ### Reef Wall Pinnacle Surge (II)
 - Duration: 305s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef wall pinnacle with steady surging current, dampened deep tone, moderate pressure, looping-friendly
+TrackType: SFX, reef wall pinnacle with steady surging current, dampened deep tone, moderate pressure, looping-friendly. Length: 305 seconds
 
 ### Steady Bubble Field Over The Reef (II)
 - Duration: 315s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, steady bubble field rising over the reef, filtered dampened acoustic, moderate current, looping-friendly
+TrackType: SFX, steady bubble field rising over the reef, filtered dampened acoustic, moderate current, looping-friendly. Length: 315 seconds
 
 ### Full Reef Flow Under Midday Light (II)
 - Duration: 325s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, full steady reef flow under midday light, dampened submerged tone, moderate bubble and current, steady bed
+TrackType: SFX, full steady reef flow under midday light, dampened submerged tone, moderate bubble and current, steady bed. Length: 325 seconds
 
 ### Deep Current Wrapping The Reef Wall (II)
 - Duration: 335s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep current wrapping steadily around the reef wall, filtered heavy submerged tone, looping-friendly
+TrackType: SFX, deep current wrapping steadily around the reef wall, filtered heavy submerged tone, looping-friendly. Length: 335 seconds
 
 ## III — underwater reef's busiest bed
 
@@ -372,178 +372,178 @@ TrackType: SFX, deep current wrapping steadily around the reef wall, filtered he
 - Duration: 40s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, strong current ripping through the reef pass, dense dampened acoustic, heavy bubble turbulence, looping-friendly
+TrackType: SFX, strong current ripping through the reef pass, dense dampened acoustic, heavy bubble turbulence, looping-friendly. Length: 40 seconds
 
 ### Dense Bubble Turbulence Over The Wall (III)
 - Duration: 52s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, dense bubble turbulence over the reef wall, filtered heavy submerged tone, strong current, steady bed
+TrackType: SFX, dense bubble turbulence over the reef wall, filtered heavy submerged tone, strong current, steady bed. Length: 52 seconds
 
 ### Heavy Surge Crashing The Coral Ridge (III)
 - Duration: 63s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, heavy surge crashing through the coral ridge, dampened dense underwater roar, looping-friendly
+TrackType: SFX, heavy surge crashing through the coral ridge, dampened dense underwater roar, looping-friendly. Length: 63 seconds
 
 ### Storm Surge Felt Through The Deep Wall (III)
 - Duration: 75s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, storm surge felt through the deep reef wall, filtered heavy pressure roar, dense bubble activity, looping-friendly
+TrackType: SFX, storm surge felt through the deep reef wall, filtered heavy pressure roar, dense bubble activity, looping-friendly. Length: 75 seconds
 
 ### Roaring Current Through The Coral Canyon (III)
 - Duration: 87s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, roaring current tearing through the coral canyon, dampened dense submerged tone, steady bed
+TrackType: SFX, roaring current tearing through the coral canyon, dampened dense submerged tone, steady bed. Length: 87 seconds
 
 ### Turbulent Reef Pass At Peak Tide (III)
 - Duration: 99s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, turbulent reef pass at peak tide, heavy dampened roar, dense bubble streams, looping-friendly
+TrackType: SFX, turbulent reef pass at peak tide, heavy dampened roar, dense bubble streams, looping-friendly. Length: 99 seconds
 
 ### Violent Surge Over The Reef Flat (III)
 - Duration: 110s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, violent surge sweeping over the reef flat, filtered dense pressure roar, heavy current, looping-friendly
+TrackType: SFX, violent surge sweeping over the reef flat, filtered dense pressure roar, heavy current, looping-friendly. Length: 110 seconds
 
 ### Deep Wall Current Roar (III)
 - Duration: 122s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep reef wall current roar, dampened heavy submerged tone, dense bubble turbulence, steady bed
+TrackType: SFX, deep reef wall current roar, dampened heavy submerged tone, dense bubble turbulence, steady bed. Length: 122 seconds
 
 ### Coral Canyon Flooded With Force (III)
 - Duration: 134s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, coral canyon flooded with forceful current, filtered dense underwater roar, heavy turbulence, looping-friendly
+TrackType: SFX, coral canyon flooded with forceful current, filtered dense underwater roar, heavy turbulence, looping-friendly. Length: 134 seconds
 
 ### Reef Pinnacle Battered By Strong Flow (III)
 - Duration: 146s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef pinnacle battered by strong sustained flow, dampened heavy tone, dense bubbling, looping-friendly
+TrackType: SFX, reef pinnacle battered by strong sustained flow, dampened heavy tone, dense bubbling, looping-friendly. Length: 146 seconds
 
 ### Massive Bubble Field In Full Turbulence (III)
 - Duration: 157s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, massive bubble field in full turbulence over the reef, filtered dense submerged roar, steady bed
+TrackType: SFX, massive bubble field in full turbulence over the reef, filtered dense submerged roar, steady bed. Length: 157 seconds
 
 ### Deep Pass Current At Full Force (III)
 - Duration: 169s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep reef pass current at full force, dampened dense pressure roar, heavy flow, looping-friendly
+TrackType: SFX, deep reef pass current at full force, dampened dense pressure roar, heavy flow, looping-friendly. Length: 169 seconds
 
 ### Reef Wall Pounded By Deep Surge (III)
 - Duration: 181s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef wall pounded by deep surging current, filtered heavy dampened tone, dense turbulence, looping-friendly
+TrackType: SFX, reef wall pounded by deep surging current, filtered heavy dampened tone, dense turbulence, looping-friendly. Length: 181 seconds
 
 ### Chaotic Bubble Churn Over Coral Heads (III)
 - Duration: 192s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, chaotic bubble churn over dense coral heads, dampened heavy submerged tone, strong current, steady bed
+TrackType: SFX, chaotic bubble churn over dense coral heads, dampened heavy submerged tone, strong current, steady bed. Length: 192 seconds
 
 ### Reef Channel Roaring At Peak Flow (III)
 - Duration: 204s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef channel roaring at peak flow, filtered dense pressure tone, heavy turbulence, looping-friendly
+TrackType: SFX, reef channel roaring at peak flow, filtered dense pressure tone, heavy turbulence, looping-friendly. Length: 204 seconds
 
 ### Deep Trench Current Battering The Wall (III)
 - Duration: 216s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep trench current battering the reef wall, dampened dense underwater roar, looping-friendly
+TrackType: SFX, deep trench current battering the reef wall, dampened dense underwater roar, looping-friendly. Length: 216 seconds
 
 ### Surging Current Through The Coral Maze (III)
 - Duration: 228s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, surging current tearing through the coral maze, filtered dense submerged tone, steady bed
+TrackType: SFX, surging current tearing through the coral maze, filtered dense submerged tone, steady bed. Length: 228 seconds
 
 ### Full Turbulence At The Reef Drop-Off (III)
 - Duration: 239s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, full turbulence at the deep reef drop-off, dampened heavy pressure roar, dense bubbling, looping-friendly
+TrackType: SFX, full turbulence at the deep reef drop-off, dampened heavy pressure roar, dense bubbling, looping-friendly. Length: 239 seconds
 
 ### Heavy Bubbling Vent Under Pressure (III)
 - Duration: 251s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, heavy bubbling reef vent under deep pressure, filtered dense submerged tone, strong current, looping-friendly
+TrackType: SFX, heavy bubbling reef vent under deep pressure, filtered dense submerged tone, strong current, looping-friendly. Length: 251 seconds
 
 ### Deep Roar Beneath The Coral Ridge (III)
 - Duration: 263s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deep roar beneath a battered coral ridge, dampened heavy tone, dense turbulent flow, steady bed
+TrackType: SFX, deep roar beneath a battered coral ridge, dampened heavy tone, dense turbulent flow, steady bed. Length: 263 seconds
 
 ### Reef Wall Shaking Under Heavy Surge (III)
 - Duration: 274s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef wall shaking under heavy sustained surge, filtered dense pressure roar, looping-friendly
+TrackType: SFX, reef wall shaking under heavy sustained surge, filtered dense pressure roar, looping-friendly. Length: 274 seconds
 
 ### Coral Pass Choked With Current (III)
 - Duration: 286s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, coral pass choked with forceful current, dampened dense underwater roar, heavy bubbling, looping-friendly
+TrackType: SFX, coral pass choked with forceful current, dampened dense underwater roar, heavy bubbling, looping-friendly. Length: 286 seconds
 
 ### Deepest Wall Current At Maximum Flow (III)
 - Duration: 298s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, deepest reef wall current at maximum flow, filtered heavy pressure tone, dense turbulence, steady bed
+TrackType: SFX, deepest reef wall current at maximum flow, filtered heavy pressure tone, dense turbulence, steady bed. Length: 298 seconds
 
 ### Relentless Surge Across The Whole Reef (III)
 - Duration: 310s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, relentless surge sweeping across the whole reef, dampened dense submerged roar, looping-friendly
+TrackType: SFX, relentless surge sweeping across the whole reef, dampened dense submerged roar, looping-friendly. Length: 310 seconds
 
 ### Turbulent Depths Below The Coral Towers (III)
 - Duration: 321s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, turbulent depths below towering coral formations, filtered dense heavy tone, steady bed
+TrackType: SFX, turbulent depths below towering coral formations, filtered dense heavy tone, steady bed. Length: 321 seconds
 
 ### Storm-Driven Current Through The Reef Maze (III)
 - Duration: 333s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, storm-driven current tearing through the reef maze, dampened dense underwater roar, looping-friendly
+TrackType: SFX, storm-driven current tearing through the reef maze, dampened dense underwater roar, looping-friendly. Length: 333 seconds
 
 ### Maximum Bubble Density Over The Wall (III)
 - Duration: 345s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, maximum bubble density over the deep reef wall, filtered heavy submerged tone, strong current, steady bed
+TrackType: SFX, maximum bubble density over the deep reef wall, filtered heavy submerged tone, strong current, steady bed. Length: 345 seconds
 
 ### Full Pressure Roar Through The Coral Pass (III)
 - Duration: 357s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, full pressure roar through the coral pass, dampened dense turbulent tone, looping-friendly
+TrackType: SFX, full pressure roar through the coral pass, dampened dense turbulent tone, looping-friendly. Length: 357 seconds
 
 ### Reef At Absolute Peak Turbulence (III)
 - Duration: 368s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, reef at absolute peak turbulence, filtered dense heavy submerged roar, strong sustained current, looping-friendly
+TrackType: SFX, reef at absolute peak turbulence, filtered dense heavy submerged roar, strong sustained current, looping-friendly. Length: 368 seconds
 
 ### Full Depth Reef Roar Bed (III)
 - Duration: 380s
 - Negative: music, melody, instrumental, soundtrack, vocals, singing, lyrics, choir, humming, speech, voices, distortion, clipping, muffled, low quality
 
-TrackType: SFX, full depth reef roar bed, dampened dense submerged pressure tone, relentless bubbling current, steady texture with no ending, looping-friendly
+TrackType: SFX, full depth reef roar bed, dampened dense submerged pressure tone, relentless bubbling current, steady texture with no ending, looping-friendly. Length: 380 seconds

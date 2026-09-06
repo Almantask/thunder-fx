@@ -1,6 +1,7 @@
 import { clampGenerateSeconds } from '@/lib/duration'
 import { clipMode } from '@/lib/generateMode'
 import { extractInstruments, parseInstrumentKeywords } from '@/lib/instruments'
+import type { QualityPreset } from '@/lib/qualityPreset'
 import { randomSeed } from '@/lib/seed'
 import type { Clip } from '@/lib/types'
 
@@ -29,6 +30,8 @@ export type CatalogEffect = {
   instruments?: string[]
   /** Explicit seed for this queue entry. Set when queueing more than one take so each take is a distinct variation, regardless of the Generate console's seed field. */
   seed?: number
+  /** Quality preset captured when the item was queued, so a queue can mix presets. The Generate queue control can override it for one run. */
+  preset?: QualityPreset
 }
 
 export type PromptCategory = {

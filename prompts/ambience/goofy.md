@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, quirky light ambient, mischievous and soft, plucked pizzicato strings, muted bassoon, music box accents, 70 BPM, sneaky harmless mischief afoot, playful background, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, quirky light ambient, mischievous and soft, plucked pizzicato strings, muted bassoon, music box accents, sneaky harmless mischief afoot, playful background, looping-friendly, steady texture with no ending. BPM: 70. Length: 90 seconds
 
 ### Tiptoe comedy piece (I)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, tiptoe comedy piece, sly and gentle, creeping pizzicato, low clarinet smirks, tiny celesta, 74 BPM, borrowing the cook's pie from the sill, giggling quiet, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, tiptoe comedy piece, sly and gentle, creeping pizzicato, low clarinet smirks, tiny celesta, borrowing the cook's pie from the sill, giggling quiet, looping-friendly, steady texture with no ending. BPM: 74. Length: 120 seconds
 
 ### Naptime mischief (I)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, naptime mischief, drowsy and silly, slow bassoon waddle, soft xylophone taps, muted plucks, 66 BPM, drawing a mustache on the sleeping guard, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, naptime mischief, drowsy and silly, slow bassoon waddle, soft xylophone taps, muted plucks, drawing a mustache on the sleeping guard, looping-friendly, steady texture with no ending. BPM: 66. Length: 150 seconds
 
 ### Curious critter piece (I)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, curious critter piece, small and funny, bouncing plucked bass, recorder squiggles, light strings, 78 BPM, a familiar opening every latch in the pantry, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, curious critter piece, small and funny, bouncing plucked bass, recorder squiggles, light strings, a familiar opening every latch in the pantry, looping-friendly, steady texture with no ending. BPM: 78. Length: 180 seconds
 
 ### Fumbled magic ambient (I)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, fumbled magic ambient, sheepish and light, wobbling clarinet, sparkle accents gone slightly wrong, soft plucks, 72 BPM, the cantrip that only mostly worked, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, fumbled magic ambient, sheepish and light, wobbling clarinet, sparkle accents gone slightly wrong, soft plucks, the cantrip that only mostly worked, looping-friendly, steady texture with no ending. BPM: 72. Length: 210 seconds
 
 ### Board game standoff (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, board game standoff, mock-serious and soft, ticking pizzicato, low bassoon frowns, celesta glints, 76 BPM, the halfling contemplates an illegal move, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, board game standoff, mock-serious and soft, ticking pizzicato, low bassoon frowns, celesta glints, the halfling contemplates an illegal move, looping-friendly, steady texture with no ending. BPM: 76. Length: 240 seconds
 
 ### Sock-footed heist (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, sock-footed heist, hushed and grinning, muted plucked patterns, padded xylophone steps, quiet bass clarinet, 70 BPM, three feet of hallway and one creaky board, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, sock-footed heist, hushed and grinning, muted plucked patterns, padded xylophone steps, quiet bass clarinet, three feet of hallway and one creaky board, looping-friendly, steady texture with no ending. BPM: 70. Length: 270 seconds
 
 ### Pantomime piece (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, pantomime piece, wide-eyed and soft, exaggerated pauses between pizzicato phrases, muted trumpet blinks, 68 BPM, explaining the dragon with only hand gestures, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, pantomime piece, wide-eyed and soft, exaggerated pauses between pizzicato phrases, muted trumpet blinks, explaining the dragon with only hand gestures, looping-friendly, steady texture with no ending. BPM: 68. Length: 300 seconds
 
 ### Puppy chaos piece (I)
 - Duration: 340s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, puppy chaos piece, waggly and warm, skipping plucks, bright recorder, soft string smiles, 80 BPM, the mastiff puppy versus the wizard's hat, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, puppy chaos piece, waggly and warm, skipping plucks, bright recorder, soft string smiles, the mastiff puppy versus the wizard's hat, looping-friendly, steady texture with no ending. BPM: 80. Length: 340 seconds
 
 ### Whistle-innocent piece (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, whistle-innocent piece, guilty and light, strolling pizzicato bass, nonchalant clarinet tune, tiny chimes, 75 BPM, standing beside the broken vase very casually, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, whistle-innocent piece, guilty and light, strolling pizzicato bass, nonchalant clarinet tune, tiny chimes, standing beside the broken vase very casually, looping-friendly, steady texture with no ending. BPM: 75. Length: 380 seconds
 
 ### Silent Goofy sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the goofy at twilight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the goofy at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
 
 ### Goofy twilight mist ambient (I)
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
 
 ### Ancient Goofy vault ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the goofy, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the goofy, steady texture with no ending, looping-friendly. Length: 125 seconds
 
 ### Goofy starlight expanse ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
 
 ### Hushed Goofy shelter ambient (I)
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene goofy, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene goofy, steady texture with no ending, looping-friendly. Length: 155 seconds
 
 ### Goofy whispering wind ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
 
 ### Secluded Goofy hollow ambient (I)
 - Duration: 185s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
 
 ### Goofy crystal reflections ambient (I)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
 
 ### Forgotten Goofy path ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
 
 ### Goofy midnight calm ambient (I)
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
 
 ### Golden Goofy dawn ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
 
 ### Goofy stone monument ambient (I)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
 
 ### Deep Goofy peace ambient (I)
 - Duration: 275s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
 
 ### Goofy watchtower solitude ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
 
 ### Shimmering Goofy grove ambient (I)
 - Duration: 305s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
 
 ### Goofy hearth warmth ambient (I)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
 
 ### Sacred Goofy spring ambient (I)
 - Duration: 335s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
 
 ### Goofy shadow contours ambient (I)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
 
 ### Timeless Goofy horizon ambient (I)
 - Duration: 365s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
 
 ### Eternal Goofy rest ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, goofy ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
 
 ## II — the mood in motion
 
@@ -192,181 +192,181 @@ TrackType: Music, instrumental, goofy ambient, serene and timeless, bowed waterp
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, comedic orchestral, silly and bouncy, pizzicato strings, waddling bassoon, muted trumpet wah, 105 BPM, a clumsy goblin heist goes wrong, cartoonish fun
+TrackType: Music, VocalType: Instrumental, comedic orchestral, silly and bouncy, pizzicato strings, waddling bassoon, muted trumpet wah, a clumsy goblin heist goes wrong, cartoonish fun. BPM: 105. Length: 45 seconds
 
 ### Scamper comedy (II)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, scamper comedy, quick and daft, rapid pizzicato runs, xylophone tumbles, clarinet yelps, 112 BPM, the chicken has the spell scroll and knows it
+TrackType: Music, VocalType: Instrumental, scamper comedy, quick and daft, rapid pizzicato runs, xylophone tumbles, clarinet yelps, the chicken has the spell scroll and knows it. BPM: 112. Length: 60 seconds
 
 ### Bumbling guards piece (II)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, bumbling guards piece, pompous and clumsy, self-important tuba march, piccolo mockery, snare taps, 100 BPM, saluting each other into the same doorway
+TrackType: Music, VocalType: Instrumental, bumbling guards piece, pompous and clumsy, self-important tuba march, piccolo mockery, snare taps, saluting each other into the same doorway. BPM: 100. Length: 75 seconds
 
 ### Potion mishap orchestral (II)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, potion mishap orchestral, fizzy and wonky, bubbling woodwind runs, springy pizzicato, slide whistle hints, 108 BPM, the alchemist hiccups sparks in three colors
+TrackType: Music, VocalType: Instrumental, potion mishap orchestral, fizzy and wonky, bubbling woodwind runs, springy pizzicato, slide whistle hints, the alchemist hiccups sparks in three colors. BPM: 108. Length: 90 seconds
 
 ### Market mayhem piece (II)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, market mayhem piece, bustling and daffy, busy xylophone patterns, honking bassoon, quick strings, 110 BPM, one loose piglet and forty market stalls
+TrackType: Music, VocalType: Instrumental, market mayhem piece, bustling and daffy, busy xylophone patterns, honking bassoon, quick strings, one loose piglet and forty market stalls. BPM: 110. Length: 120 seconds
 
 ### Dance lesson comedy (II)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, dance lesson comedy, lopsided and sweet, a waltz that keeps tripping, bassoon counting wrong, celesta corrections, 96 BPM waltz, the barbarian learns the minuet
+TrackType: Music, VocalType: Instrumental, dance lesson comedy, lopsided and sweet, a waltz that keeps tripping, bassoon counting wrong, celesta corrections waltz, the barbarian learns the minuet. BPM: 96. Length: 150 seconds
 
 ### Mimic misunderstanding piece (II)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mimic misunderstanding piece, deadpan and absurd, stealthy pizzicato meets sudden trombone gulp, xylophone alarm, 104 BPM, the chest politely declines to be opened
+TrackType: Music, VocalType: Instrumental, mimic misunderstanding piece, deadpan and absurd, stealthy pizzicato meets sudden trombone gulp, xylophone alarm, the chest politely declines to be opened. BPM: 104. Length: 180 seconds
 
 ### Gnome invention demo (II)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, gnome invention demo, rickety and eager, clockwork woodblock ticking, buzzing reed lead, springy strings, 114 BPM, the machine works perfectly except for the flying apart
+TrackType: Music, VocalType: Instrumental, gnome invention demo, rickety and eager, clockwork woodblock ticking, buzzing reed lead, springy strings, the machine works perfectly except for the flying apart. BPM: 114. Length: 210 seconds
 
 ### Disguise shuffle comedy (II)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, disguise shuffle comedy, shifty and jaunty, sneaky-then-casual phrasing, muted trumpet innocence, walking bass plucks, 102 BPM, two kobolds in one very tall coat
+TrackType: Music, VocalType: Instrumental, disguise shuffle comedy, shifty and jaunty, sneaky-then-casual phrasing, muted trumpet innocence, walking bass plucks, two kobolds in one very tall coat. BPM: 102. Length: 270 seconds
 
 ### Food fight overture (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, food fight overture, splattery and gleeful, popping percussion accents, swooping strings, trombone smears, 116 BPM, the first pie is already airborne
+TrackType: Music, VocalType: Instrumental, food fight overture, splattery and gleeful, popping percussion accents, swooping strings, trombone smears, the first pie is already airborne. BPM: 116. Length: 330 seconds
 
 ### Goofy caravan journey (II)
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 70 BPM, travelers making steady progress along winding trails
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Goofy perimeter (II)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 72 BPM, scouts charting unexplored routes through the goofy
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the goofy. BPM: 72. Length: 65 seconds
 
 ### Goofy traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 74 BPM, gathering around the evening fire sharing stories and warmth
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Goofy passage (II)
 - Duration: 80s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 76 BPM, navigating treacherous switchbacks with focused determination
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Goofy hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 78 BPM, merchants guiding pack animals through historic passes
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Goofy (II)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 80 BPM, exploring hidden chambers and uncovering mysterious artifacts
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Goofy festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 82 BPM, village festival celebrating ancient traditions and good harvest
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Goofy patrol (II)
 - Duration: 130s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 84 BPM, patrolling border outposts with watchful vigilance
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Goofy artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 86 BPM, descending into shadowy depths with raised lanterns
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Goofy ridge (II)
 - Duration: 160s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 88 BPM, riding sure-footed mounts across expansive terrain
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Goofy bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 90 BPM, crossing wooden bridges spanning misty canyon depths
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Goofy tracker footsteps (II)
 - Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 92 BPM, tracking faint footprints across rugged earth
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Goofy trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 94 BPM, caravan rolling steadily along cobblestone trade routes
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Goofy runes (II)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 96 BPM, scholars deciphering worn runes etched into stone arches
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Goofy ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 98 BPM, hunters stalking elusive quarry through shifting cover
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Goofy stairs (II)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 100 BPM, climbing ancient stone stairways leading to forgotten vistas
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Goofy tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 102 BPM, meeting mysterious contacts in secluded taverns and alcoves
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Goofy waterways voyage (II)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 104 BPM, sailing swift vessels through challenging waters
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Goofy (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 106 BPM, forging new alliances over hearty food and drink
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Goofy panoramic overlook (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, goofy movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 108 BPM, reaching high overlooks revealing vast breathtaking horizons
+TrackType: Music, VocalType: Instrumental, goofy movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -374,178 +374,178 @@ TrackType: Music, instrumental, goofy movement, adventurous and melodic, nyckelh
 - Duration: 40s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, zany circus orchestral, chaotic and hilarious, galloping tuba, frantic pizzicato, slide whistle, clattering percussion, 140 BPM, absolute slapstick mayhem in a fantasy market
+TrackType: Music, VocalType: Instrumental, zany circus orchestral, chaotic and hilarious, galloping tuba, frantic pizzicato, slide whistle, clattering percussion, absolute slapstick mayhem in a fantasy market. BPM: 140. Length: 40 seconds
 
 ### Full farce finale (III)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, full farce finale, breakneck and ridiculous, sprinting xylophone, honking brass, tumbling snare fills, 148 BPM, everyone chasing everyone through five doors
+TrackType: Music, VocalType: Instrumental, full farce finale, breakneck and ridiculous, sprinting xylophone, honking brass, tumbling snare fills, everyone chasing everyone through five doors. BPM: 148. Length: 60 seconds
 
 ### Runaway cart orchestral (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, runaway cart orchestral, careening and giddy, accelerating strings, panicked piccolo, oompah bass gone wild, 144 BPM, downhill with no brake and the goat steering
+TrackType: Music, VocalType: Instrumental, runaway cart orchestral, careening and giddy, accelerating strings, panicked piccolo, oompah bass gone wild, downhill with no brake and the goat steering. BPM: 144. Length: 90 seconds
 
 ### Polymorph panic (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, polymorph panic, boinging and surreal, rubbery trombone glisses, popping plucks, swirling runs, 136 BPM, the wizard cycles species mid-argument
+TrackType: Music, VocalType: Instrumental, polymorph panic, boinging and surreal, rubbery trombone glisses, popping plucks, swirling runs, the wizard cycles species mid-argument. BPM: 136. Length: 120 seconds
 
 ### Tavern brawl comedy (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, tavern brawl comedy, swinging and chaotic, chair-crash percussion, brass haymakers, scrambling strings, 132 BPM, a brawl where everyone forgot why
+TrackType: Music, VocalType: Instrumental, tavern brawl comedy, swinging and chaotic, chair-crash percussion, brass haymakers, scrambling strings, a brawl where everyone forgot why. BPM: 132. Length: 150 seconds
 
 ### Kobold contraption catastrophe (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, kobold contraption catastrophe, clanking and joyful, runaway clockwork percussion, springing strings, tuba gallop, 142 BPM, the doomsday machine makes pancakes at lethal speed
+TrackType: Music, VocalType: Instrumental, kobold contraption catastrophe, clanking and joyful, runaway clockwork percussion, springing strings, tuba gallop, the doomsday machine makes pancakes at lethal speed. BPM: 142. Length: 180 seconds
 
 ### Grand pie battle (III)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, grand pie battle, splattering and epic, mock-heroic fanfares, popping accents, swooping glisses, 138 BPM, catapults loaded with custard, war has changed
+TrackType: Music, VocalType: Instrumental, grand pie battle, splattering and epic, mock-heroic fanfares, popping accents, swooping glisses, catapults loaded with custard, war has changed. BPM: 138. Length: 210 seconds
 
 ### Chicken stampede finale (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, chicken stampede finale, flapping and unstoppable, frantic fiddle and piccolo, thundering light drums, 150 BPM, ten thousand chickens and one open gate
+TrackType: Music, VocalType: Instrumental, chicken stampede finale, flapping and unstoppable, frantic fiddle and piccolo, thundering light drums, ten thousand chickens and one open gate. BPM: 150. Length: 240 seconds
 
 ### Wizard duel farce (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, wizard duel farce, sparkly and daft, dueling slide whistles and glisses, dramatic stabs undercut by plinks, 134 BPM, two archmages fighting over whose turn it is
+TrackType: Music, VocalType: Instrumental, wizard duel farce, sparkly and daft, dueling slide whistles and glisses, dramatic stabs undercut by plinks, two archmages fighting over whose turn it is. BPM: 134. Length: 300 seconds
 
 ### Encore collapse (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, encore collapse, triumphant and shambolic, whole orchestra slightly too fast, on-purpose cymbal mishaps, tuba lead, 146 BPM, the bow that knocks over the set
+TrackType: Music, VocalType: Instrumental, encore collapse, triumphant and shambolic, whole orchestra slightly too fast, on-purpose cymbal mishaps, tuba lead, the bow that knocks over the set. BPM: 146. Length: 380 seconds
 
 ### Fury of the Goofy titan (III)
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 105 BPM, colossal clash of armies shaking the foundations of the goofy
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the goofy. BPM: 105. Length: 45 seconds
 
 ### The great Goofy cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 107 BPM, apocalyptic manifestation of ancient primordial power
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Goofy citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 109 BPM, heroic charge breaking through fortified enemy lines
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Goofy dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 111 BPM, terrifying monster lunging from dark storm clouds and shadows
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Goofy sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 113 BPM, cataclysmic collapse of towering stone citadels and monuments
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Goofy gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 115 BPM, desperate last stand defending the sacred sanctuary gate
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Goofy champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 117 BPM, epic duel of champions with flashing blades and soaring spells
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Goofy elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 119 BPM, colossal dragon unleashing devastating elemental fury
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Goofy collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 121 BPM, breathless escape through collapsing subterranean vaults
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Goofy divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 123 BPM, divine avatar descending in blinding glorious light
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Goofy vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 125 BPM, furious counterattack driving back the overwhelming horde
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Goofy curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 127 BPM, shattering ancient curses to restore freedom to the realm
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Goofy arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 129 BPM, unleashing forbidden magical forces in decisive battle
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Goofy ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 131 BPM, heroic rescue amidst blazing fires and falling debris
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Goofy stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 133 BPM, monumental siege engines battering high fortress walls
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Goofy primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 135 BPM, titanic elemental awakening to reclaim its ancient domain
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Goofy shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 137 BPM, legendary paladin strike banishing dark demonic entities
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Goofy cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 139 BPM, armored cavalry storming across the battlefield to victory
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Goofy tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 141 BPM, shattering the tyrant throne in explosive final triumph
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Goofy victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, goofy climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 143 BPM, triumphant dawn illuminating a liberated and radiant realm
+TrackType: Music, VocalType: Instrumental, goofy climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

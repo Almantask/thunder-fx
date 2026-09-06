@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, eerie and playful, faint music box, hollow wind-like pads, distant harpsichord notes, no perceivable tempo, cobwebbed halls of a haunted manor, gently unsettling with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, eerie and playful, faint music box, hollow wind-like pads, distant harpsichord notes, no perceivable tempo, cobwebbed halls of a haunted manor, gently unsettling with no ending, looping-friendly. Length: 90 seconds
 
 ### Graveyard tiptoe ambient (I)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, graveyard tiptoe ambient, mock-scary and soft, plinking celesta, lurking low bassoon, thin shimmer, 45 BPM, reading headstones by jack-o-lantern light, fun shivers, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, graveyard tiptoe ambient, mock-scary and soft, plinking celesta, lurking low bassoon, thin shimmer, reading headstones by jack-o-lantern light, fun shivers, looping-friendly, steady texture with no ending. BPM: 45. Length: 120 seconds
 
 ### Attic ambient (I)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, attic ambient, dusty and giggle-nervous, creak textures, tiny music box, muted plucks, no perceivable tempo, the dress form that seems to turn, playful unease, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, attic ambient, dusty and giggle-nervous, creak textures, tiny music box, muted plucks, no perceivable tempo, the dress form that seems to turn, playful unease, looping-friendly, steady texture with no ending. Length: 150 seconds
 
 ### Will-o-wisp ambient (I)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, will-o-wisp ambient, glimmering and coy, floating glassy tones, soft pads, sparse harp, 42 BPM, lights that want to be followed, mischievous glow, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, will-o-wisp ambient, glimmering and coy, floating glassy tones, soft pads, sparse harp, lights that want to be followed, mischievous glow, looping-friendly, steady texture with no ending. BPM: 42. Length: 180 seconds
 
 ### Witch's kitchen ambient (I)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, witch's kitchen ambient, herbal and odd, bubbling textures, plucked odd intervals, low clarinet, 48 BPM, something in the pot winks back, cozy-creepy, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, witch's kitchen ambient, herbal and odd, bubbling textures, plucked odd intervals, low clarinet, something in the pot winks back, cozy-creepy, looping-friendly, steady texture with no ending. BPM: 48. Length: 210 seconds
 
 ### Phantom hallway ambient (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, phantom hallway ambient, drafty and light, airy swells, distant single harpsichord notes, chimes, no perceivable tempo, doors that were closed are now ajar, tingly calm, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, phantom hallway ambient, drafty and light, airy swells, distant single harpsichord notes, chimes, no perceivable tempo, doors that were closed are now ajar, tingly calm, looping-friendly, steady texture with no ending. Length: 240 seconds
 
 ### Pumpkin field ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, pumpkin field ambient, moonlit and plump, low warm drone, sly celesta, soft wind, 45 BPM, a thousand orange faces waiting for carving, harvest-spooky, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, pumpkin field ambient, moonlit and plump, low warm drone, sly celesta, soft wind, a thousand orange faces waiting for carving, harvest-spooky, looping-friendly, steady texture with no ending. BPM: 45. Length: 270 seconds
 
 ### Seance parlor ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, seance parlor ambient, velvet and expectant, hushed glass tones, faint table-knock textures, low pads, no perceivable tempo, the planchette twitching politely, parlor thrills, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, seance parlor ambient, velvet and expectant, hushed glass tones, faint table-knock textures, low pads, no perceivable tempo, the planchette twitching politely, parlor thrills, looping-friendly, steady texture with no ending. Length: 300 seconds
 
 ### Scarecrow ambient (I)
 - Duration: 340s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, scarecrow ambient, stitched and still, dry-straw textures, sparse detuned plucks, thin drone, no perceivable tempo, it faced the other way this morning, wry chill, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, scarecrow ambient, stitched and still, dry-straw textures, sparse detuned plucks, thin drone, no perceivable tempo, it faced the other way this morning, wry chill, looping-friendly, steady texture with no ending. Length: 340 seconds
 
 ### Lullaby-for-ghosts ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, lullaby-for-ghosts ambient, faded and sweet, slow music box waltz fragments, breathy pads, no perceivable tempo, a nursery tune the house still hums, tender haunt, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, lullaby-for-ghosts ambient, faded and sweet, slow music box waltz fragments, breathy pads, no perceivable tempo, a nursery tune the house still hums, tender haunt, looping-friendly, steady texture with no ending. Length: 380 seconds
 
 ### Silent Spooky sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the spooky at twilight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the spooky at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
 
 ### Spooky twilight mist ambient (I)
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
 
 ### Ancient Spooky vault ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the spooky, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the spooky, steady texture with no ending, looping-friendly. Length: 125 seconds
 
 ### Spooky starlight expanse ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
 
 ### Hushed Spooky shelter ambient (I)
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene spooky, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene spooky, steady texture with no ending, looping-friendly. Length: 155 seconds
 
 ### Spooky whispering wind ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
 
 ### Secluded Spooky hollow ambient (I)
 - Duration: 185s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
 
 ### Spooky crystal reflections ambient (I)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
 
 ### Forgotten Spooky path ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
 
 ### Spooky midnight calm ambient (I)
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
 
 ### Golden Spooky dawn ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
 
 ### Spooky stone monument ambient (I)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
 
 ### Deep Spooky peace ambient (I)
 - Duration: 275s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
 
 ### Spooky watchtower solitude ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
 
 ### Shimmering Spooky grove ambient (I)
 - Duration: 305s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
 
 ### Spooky hearth warmth ambient (I)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
 
 ### Sacred Spooky spring ambient (I)
 - Duration: 335s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
 
 ### Spooky shadow contours ambient (I)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
 
 ### Timeless Spooky horizon ambient (I)
 - Duration: 365s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
 
 ### Eternal Spooky rest ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, spooky ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
 
 ## II — the mood in motion
 
@@ -192,181 +192,181 @@ TrackType: Music, instrumental, spooky ambient, serene and timeless, bowed water
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, halloween waltz, macabre and mischievous, harpsichord melody, pizzicato strings, theremin-like lead, 90 BPM waltz, ghosts dance in the abandoned ballroom, spooky fun
+TrackType: Music, VocalType: Instrumental, halloween waltz, macabre and mischievous, harpsichord melody, pizzicato strings, theremin-like lead waltz, ghosts dance in the abandoned ballroom, spooky fun. BPM: 90. Length: 45 seconds
 
 ### Skeleton stroll (II)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, skeleton stroll, rattly and jaunty, xylophone bones, plucked bass strut, muted brass grins, 96 BPM, out for a moonlit constitutional
+TrackType: Music, VocalType: Instrumental, skeleton stroll, rattly and jaunty, xylophone bones, plucked bass strut, muted brass grins, out for a moonlit constitutional. BPM: 96. Length: 60 seconds
 
 ### Witch's errand piece (II)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, witch's errand piece, bustling and sly, brisk harpsichord patterns, clarinet cackle-lines, light percussion, 100 BPM, eye of newt is out of stock again
+TrackType: Music, VocalType: Instrumental, witch's errand piece, bustling and sly, brisk harpsichord patterns, clarinet cackle-lines, light percussion, eye of newt is out of stock again. BPM: 100. Length: 75 seconds
 
 ### Phantom carriage piece (II)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, phantom carriage piece, rolling and eerie, trotting rhythm, minor-key fiddle, hollow accents, 94 BPM, no driver, no horses, right on time
+TrackType: Music, VocalType: Instrumental, phantom carriage piece, rolling and eerie, trotting rhythm, minor-key fiddle, hollow accents, no driver, no horses, right on time. BPM: 94. Length: 90 seconds
 
 ### Cursed carousel waltz (II)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, cursed carousel waltz, tinny and wrong-sweet, warped fairground organ tones, celesta, slow spin feel, 88 BPM waltz, the painted horses remember being real
+TrackType: Music, VocalType: Instrumental, cursed carousel waltz, tinny and wrong-sweet, warped fairground organ tones, celesta, slow spin feel waltz, the painted horses remember being real. BPM: 88. Length: 120 seconds
 
 ### Ghost ball gavotte (II)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, ghost ball gavotte, courtly and cold, harpsichord and strings in stately step, faint shimmer, 92 BPM, dancers visible only in the mirrors
+TrackType: Music, VocalType: Instrumental, ghost ball gavotte, courtly and cold, harpsichord and strings in stately step, faint shimmer, dancers visible only in the mirrors. BPM: 92. Length: 150 seconds
 
 ### Haunted toy shop piece (II)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, haunted toy shop piece, plinky and uncanny, music box ensemble, pizzicato, tiny cymbal glints, 98 BPM, everything wound itself at midnight
+TrackType: Music, VocalType: Instrumental, haunted toy shop piece, plinky and uncanny, music box ensemble, pizzicato, tiny cymbal glints, everything wound itself at midnight. BPM: 98. Length: 180 seconds
 
 ### Crypt promenade (II)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, crypt promenade, dusty and droll, low bassoon lead, shuffling soft percussion, minor harp, 90 BPM, the honored dead taking their evening walk
+TrackType: Music, VocalType: Instrumental, crypt promenade, dusty and droll, low bassoon lead, shuffling soft percussion, minor harp, the honored dead taking their evening walk. BPM: 90. Length: 210 seconds
 
 ### Raven's court piece (II)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, raven's court piece, glossy and dark-funny, strutting strings, harpsichord commentary, woodwind caws, 102 BPM, the birds holding parliament on the old gate
+TrackType: Music, VocalType: Instrumental, raven's court piece, glossy and dark-funny, strutting strings, harpsichord commentary, woodwind caws, the birds holding parliament on the old gate. BPM: 102. Length: 270 seconds
 
 ### Poltergeist romp (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, poltergeist romp, tumbling and impish, quick reedy squeezebox, popping plucks, clattery accents, 108 BPM, the crockery learning to fly
+TrackType: Music, VocalType: Instrumental, poltergeist romp, tumbling and impish, quick reedy squeezebox, popping plucks, clattery accents, the crockery learning to fly. BPM: 108. Length: 330 seconds
 
 ### Spooky caravan journey (II)
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 70 BPM, travelers making steady progress along winding trails
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Spooky perimeter (II)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 72 BPM, scouts charting unexplored routes through the spooky
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the spooky. BPM: 72. Length: 65 seconds
 
 ### Spooky traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 74 BPM, gathering around the evening fire sharing stories and warmth
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Spooky passage (II)
 - Duration: 80s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 76 BPM, navigating treacherous switchbacks with focused determination
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Spooky hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 78 BPM, merchants guiding pack animals through historic passes
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Spooky (II)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 80 BPM, exploring hidden chambers and uncovering mysterious artifacts
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Spooky festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 82 BPM, village festival celebrating ancient traditions and good harvest
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Spooky patrol (II)
 - Duration: 130s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 84 BPM, patrolling border outposts with watchful vigilance
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Spooky artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 86 BPM, descending into shadowy depths with raised lanterns
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Spooky ridge (II)
 - Duration: 160s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 88 BPM, riding sure-footed mounts across expansive terrain
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Spooky bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 90 BPM, crossing wooden bridges spanning misty canyon depths
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Spooky tracker footsteps (II)
 - Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 92 BPM, tracking faint footprints across rugged earth
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Spooky trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 94 BPM, caravan rolling steadily along cobblestone trade routes
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Spooky runes (II)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 96 BPM, scholars deciphering worn runes etched into stone arches
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Spooky ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 98 BPM, hunters stalking elusive quarry through shifting cover
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Spooky stairs (II)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 100 BPM, climbing ancient stone stairways leading to forgotten vistas
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Spooky tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 102 BPM, meeting mysterious contacts in secluded taverns and alcoves
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Spooky waterways voyage (II)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 104 BPM, sailing swift vessels through challenging waters
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Spooky (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 106 BPM, forging new alliances over hearty food and drink
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Spooky panoramic overlook (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, spooky movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 108 BPM, reaching high overlooks revealing vast breathtaking horizons
+TrackType: Music, VocalType: Instrumental, spooky movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -374,178 +374,178 @@ TrackType: Music, instrumental, spooky movement, adventurous and melodic, nyckel
 - Duration: 40s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, wild macabre orchestral dance, frantic and ghoulish, racing harpsichord, stabbing strings, cackling woodwinds, pounding toms, 130 BPM, the haunted carnival comes alive at midnight
+TrackType: Music, VocalType: Instrumental, wild macabre orchestral dance, frantic and ghoulish, racing harpsichord, stabbing strings, cackling woodwinds, pounding toms, the haunted carnival comes alive at midnight. BPM: 130. Length: 40 seconds
 
 ### Danse macabre riot (III)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, danse macabre riot, whirling and gleeful, demonic fiddle lead, full dark waltz into gallop, heavy accents, 138 BPM, the graveyard empties onto the dance floor
+TrackType: Music, VocalType: Instrumental, danse macabre riot, whirling and gleeful, demonic fiddle lead, full dark waltz into gallop, heavy accents, the graveyard empties onto the dance floor. BPM: 138. Length: 60 seconds
 
 ### Pumpkin king procession (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, pumpkin king procession, grand and grinning, mock-majestic brass, rattling percussion, swirling strings, 124 BPM, the harvest court parades by torchlight
+TrackType: Music, VocalType: Instrumental, pumpkin king procession, grand and grinning, mock-majestic brass, rattling percussion, swirling strings, the harvest court parades by torchlight. BPM: 124. Length: 90 seconds
 
 ### Ghost storm gallop (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, ghost storm gallop, howling and fast, rushing strings, organ stabs, thunder toms, 134 BPM, every ghost out at once in the gale
+TrackType: Music, VocalType: Instrumental, ghost storm gallop, howling and fast, rushing strings, organ stabs, thunder toms, every ghost out at once in the gale. BPM: 134. Length: 120 seconds
 
 ### Witches' sabbath orchestral (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, witches' sabbath orchestral, cackling and huge, spiraling woodwinds, pounding ritual rhythm, brass shrieks, 128 BPM, the bonfire on the bald mountain
+TrackType: Music, VocalType: Instrumental, witches' sabbath orchestral, cackling and huge, spiraling woodwinds, pounding ritual rhythm, brass shrieks, the bonfire on the bald mountain. BPM: 128. Length: 150 seconds
 
 ### Skeleton orchestra finale (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, skeleton orchestra finale, clattering and virtuosic, xylophone cadenzas, frantic pizzicato, grinning brass, 140 BPM, the bone band takes requests at speed
+TrackType: Music, VocalType: Instrumental, skeleton orchestra finale, clattering and virtuosic, xylophone cadenzas, frantic pizzicato, grinning brass, the bone band takes requests at speed. BPM: 140. Length: 180 seconds
 
 ### Vampire masquerade orchestral (III)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, vampire masquerade orchestral, opulent and sharp-toothed, sweeping dark waltz at full tilt, harpsichord glitter, 126 BPM, the last dance before dawn matters
+TrackType: Music, VocalType: Instrumental, vampire masquerade orchestral, opulent and sharp-toothed, sweeping dark waltz at full tilt, harpsichord glitter, the last dance before dawn matters. BPM: 126. Length: 210 seconds
 
 ### Headless ride (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, headless ride, thundering and wicked-fun, galloping low strings, horn laughter, whip-crack accents, 136 BPM, hooves and no rider's head to duck the branch
+TrackType: Music, VocalType: Instrumental, headless ride, thundering and wicked-fun, galloping low strings, horn laughter, whip-crack accents, hooves and no rider's head to duck the branch. BPM: 136. Length: 240 seconds
 
 ### Cursed toybox eruption (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, cursed toybox eruption, manic and tinny-huge, music box themes at orchestra scale, clockwork percussion, 132 BPM, every toy at once and none of them tired
+TrackType: Music, VocalType: Instrumental, cursed toybox eruption, manic and tinny-huge, music box themes at orchestra scale, clockwork percussion, every toy at once and none of them tired. BPM: 132. Length: 300 seconds
 
 ### Midnight carnival finale (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, midnight carnival finale, dizzy and enormous, fairground themes gone feral, full orchestra romp, 142 BPM, the big wheel turning with no hand at the crank
+TrackType: Music, VocalType: Instrumental, midnight carnival finale, dizzy and enormous, fairground themes gone feral, full orchestra romp, the big wheel turning with no hand at the crank. BPM: 142. Length: 380 seconds
 
 ### Fury of the Spooky titan (III)
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 105 BPM, colossal clash of armies shaking the foundations of the spooky
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the spooky. BPM: 105. Length: 45 seconds
 
 ### The great Spooky cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 107 BPM, apocalyptic manifestation of ancient primordial power
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Spooky citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 109 BPM, heroic charge breaking through fortified enemy lines
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Spooky dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 111 BPM, terrifying monster lunging from dark storm clouds and shadows
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Spooky sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 113 BPM, cataclysmic collapse of towering stone citadels and monuments
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Spooky gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 115 BPM, desperate last stand defending the sacred sanctuary gate
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Spooky champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 117 BPM, epic duel of champions with flashing blades and soaring spells
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Spooky elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 119 BPM, colossal dragon unleashing devastating elemental fury
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Spooky collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 121 BPM, breathless escape through collapsing subterranean vaults
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Spooky divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 123 BPM, divine avatar descending in blinding glorious light
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Spooky vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 125 BPM, furious counterattack driving back the overwhelming horde
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Spooky curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 127 BPM, shattering ancient curses to restore freedom to the realm
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Spooky arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 129 BPM, unleashing forbidden magical forces in decisive battle
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Spooky ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 131 BPM, heroic rescue amidst blazing fires and falling debris
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Spooky stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 133 BPM, monumental siege engines battering high fortress walls
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Spooky primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 135 BPM, titanic elemental awakening to reclaim its ancient domain
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Spooky shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 137 BPM, legendary paladin strike banishing dark demonic entities
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Spooky cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 139 BPM, armored cavalry storming across the battlefield to victory
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Spooky tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 141 BPM, shattering the tyrant throne in explosive final triumph
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Spooky victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, spooky climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 143 BPM, triumphant dawn illuminating a liberated and radiant realm
+TrackType: Music, VocalType: Instrumental, spooky climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

@@ -19,15 +19,26 @@ import {
   revealLibrary,
 } from '@/lib/engine'
 import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from '@/lib/duration'
+import { PRESET_ORDER, QUALITY_PRESETS } from '@/lib/qualityPreset'
 import { DEFAULT_LIBRARY_PLACEHOLDER, type KeepSettings } from '@/lib/types'
 import { cn, isTauri } from '@/lib/utils'
 
 type SettingsPanelProps = {
   settings: KeepSettings
   onChange: (settings: KeepSettings) => void
+  /** Whether the medium-base weights Max quality needs are already on disk. */
+  baseModelReady?: boolean
+  onInstallBaseModel?: () => void
+  installingBaseModel?: boolean
 }
 
-export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
+export function SettingsPanel({
+  settings,
+  onChange,
+  baseModelReady,
+  onInstallBaseModel,
+  installingBaseModel = false,
+}: SettingsPanelProps) {
   const [logPath, setLogPath] = useState<string | null>(null)
   const [resolvedLibrary, setResolvedLibrary] = useState<string | null>(null)
 
@@ -50,7 +61,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
       <ScrollArea className="min-h-0 flex-1">
         <div className="mx-auto w-full max-w-3xl space-y-8 px-6 py-6">
           <div>
-            <Hint label="Local settings. Thunder FX does not add sliders that lower Medium quality.">
+            <Hint label="Local settings. Quality is picked with a preset, which chooses the sampler and checkpoint rather than just a step count.">
               <h2 className="font-display text-xl text-cream">Settings</h2>
             </Hint>
             <p className="mt-1 text-sm text-muted">
@@ -184,7 +195,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
             </Hint>
             <Hint
               className="w-full flex-col"
-              label="Default diffusion sampling steps for new clips. 8 = Draft, 20 = Balanced (Recommended), 32 = High Fidelity."
+              label="Starting step count for the Advanced slider, which only takes effect on the Custom preset. The three presets above choose their own step count together with a sampler that suits it."
             >
               <div className="w-full">
                 <Label htmlFor="default-quality-steps">Default quality steps</Label>
@@ -208,6 +219,73 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
           </div>
 
           <div className="space-y-3">
+            <Hint label="Which preset new generations start on. You can still switch per clip or per queue run on Generate.">
+              <h3 className="font-display text-sm tracking-[0.16em] text-muted">DEFAULT QUALITY</h3>
+            </Hint>
+            <div
+              role="radiogroup"
+              aria-label="Default quality preset"
+              className="inline-flex h-8 items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
+            >
+              {PRESET_ORDER.map((id) => {
+                const spec = id === 'custom' ? null : QUALITY_PRESETS[id]
+                if (!spec) return null
+                const selected = settings.defaultPreset === id
+                return (
+                  <Hint key={id} label={spec.hint}>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={selected}
+                      className={cn(
+                        'inline-flex h-7 items-center justify-center rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors hover:text-cream',
+                        selected &&
+                          'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] font-medium text-cream',
+                      )}
+                      onClick={() => onChange({ ...settings, defaultPreset: id })}
+                    >
+                      {spec.label}
+                    </button>
+                  </Hint>
+                )
+              })}
+            </div>
+            <p className="text-xs text-muted">
+              Steps alone are not the quality dial. Medium is a distilled checkpoint sampled with pingpong,
+              which re-noises on every step, so a higher step count there adds invented detail rather than
+              detail that was there — and a deterministic sampler averages its texture away, which sounds
+              muffled and flat. Real headroom comes from the un-distilled Medium-Base checkpoint, which Max
+              quality uses; it is also the only mode where the negative prompt does anything.
+            </p>
+            {baseModelReady === false ? (
+              <div className="rounded-book border border-[color-mix(in_srgb,var(--color-gold)_28%,transparent)] bg-leather-2 p-3">
+                <p className="text-xs text-muted">
+                  Max quality needs <span className="font-mono">medium-base</span>, which is not downloaded
+                  yet (about 9 GB; it shares Medium's text encoder, so Medium must already be
+                  installed). Until it is, selecting Max quality for sound effects or ambience refuses
+                  to generate rather than quietly running something else — substituting is what made
+                  earlier takes sound muffled and flat. Instrumental is unaffected: it measured better on
+                  Medium anyway, so Max quality keeps it there and needs no download.
+                </p>
+                <Button
+                  type="button"
+                  className="mt-2"
+                  size="sm"
+                  disabled={installingBaseModel}
+                  onClick={() => onInstallBaseModel?.()}
+                >
+                  {installingBaseModel ? 'Downloading…' : 'Download Medium-Base'}
+                </Button>
+              </div>
+            ) : baseModelReady ? (
+              <p className="text-xs text-muted">
+                <span className="font-mono">medium-base</span> is installed, so Max quality runs the
+                un-distilled checkpoint with real guidance.
+              </p>
+            ) : null}
+          </div>
+
+          <div className="space-y-3">
             <Hint label="FP32 is full quality. FP16 cuts the model footprint roughly in half for 4–6 GB GPUs. Unload and Load model after changing this.">
               <h3 className="font-display text-sm tracking-[0.16em] text-muted">PRECISION</h3>
             </Hint>
@@ -216,7 +294,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
               aria-label="Precision mode"
               className="inline-flex h-8 items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
             >
-              <Hint label="Full float32 weights. Best quality. Default.">
+              <Hint label="Full float32 weights. Roughly double the VRAM, and the worker turns off chunked decode, so long clips need far more headroom.">
                 <button
                   type="button"
                   role="radio"
@@ -231,7 +309,7 @@ export function SettingsPanel({ settings, onChange }: SettingsPanelProps) {
                   FP32
                 </button>
               </Hint>
-              <Hint label="Half precision (fp16/bf16). About 2.8 GB of weights. Unload, then Load model to apply.">
+              <Hint label="Half precision (fp16/bf16). About 2.8 GB of weights, and what Stable Audio 3 ships as its own default. Unload, then Load model to apply.">
                 <button
                   type="button"
                   role="radio"

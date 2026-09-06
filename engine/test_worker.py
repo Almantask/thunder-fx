@@ -738,7 +738,10 @@ class SaveGeneratedWavTests(unittest.TestCase):
                 self.assertEqual(wav.getframerate(), SAMPLE_RATE)
                 self.assertEqual(wav.getnframes(), 441)
                 pcm = memoryview(wav.readframes(wav.getnframes())).cast("h")
-            self.assertIn(pcm[20], (16383, 16384))
+            # SFX mastering peak-normalises in both directions now, so the lone
+            # 0.5 impulse is lifted to the -1.0 dBFS ceiling (0.89125).
+            self.assertAlmostEqual(pcm[20], round(0.89125 * 32767), delta=2)
+            # Dither must not disturb true digital silence.
             self.assertEqual(pcm[21], 0)
 
     def test_python_float_unwraps_size_one_array(self) -> None:

@@ -214,3 +214,79 @@ export function ensureLoopNegative(negative: string): string {
   if (!trimmed) return LOOP_NEGATIVE_CUE
   return `${trimmed}, ${LOOP_NEGATIVE_CUE}`
 }
+
+/**
+ * Prompt normalization — twin of normalize_prompt() in engine/worker.py.
+ *
+ * Stable Audio 3 was trained on AudioSparx metadata tags, and Stability's own
+ * prompt rewriter (stable_audio_3/interface/reprompt.py) always emits:
+ *   TrackType: SFX, <description>. Length: N seconds
+ *   TrackType: Music, VocalType: Instrumental, <description>. BPM: N. Length: N seconds
+ * It then rejects its own output when the Length suffix is missing or the
+ * prompt runs past 45 words. VocalType is a positive control tag, so unlike the
+ * negative prompt it still works at cfg 1 — which is the only way to suppress
+ * vocals on the distilled checkpoint.
+ */
+const MODE_TRACK_TYPES: Record<GenerateMode, string> = {
+  sfx: 'SFX',
+  ambience: 'SFX',
+  music: 'Music',
+}
+
+export const PROMPT_WORD_LIMIT = 45
+
+const TRACK_TYPE_TAG = /^\s*TrackType:\s*[A-Za-z]+\s*,?\s*/i
+const VOCAL_TYPE_TAG = /\s*VocalType:\s*[A-Za-z]+\s*,?\s*/gi
+const LENGTH_TAG = /[.,;]?\s*Length:\s*\d+(?:\.\d+)?\s*seconds?\.?/gi
+const BPM_TAG = /[.,;]?\s*BPM:\s*(\d{1,3})\s*\.?/i
+const INLINE_BPM = /,?\s*\b(\d{2,3})\s*BPM\b/i
+const BARE_INSTRUMENTAL = /(?:^|,)\s*instrumental\s*(?=,|$)/gi
+
+function lengthPhrase(seconds: number): string {
+  const n = Math.max(1, Math.round(Number.isFinite(seconds) ? seconds : 1))
+  return `Length: ${n} second${n === 1 ? '' : 's'}`
+}
+
+export function promptWordCount(prompt: string): number {
+  return prompt.trim() ? prompt.trim().split(/\s+/).length : 0
+}
+
+export function normalizePrompt(prompt: string, mode: GenerateMode, seconds: number): string {
+  const track = MODE_TRACK_TYPES[mode] ?? 'SFX'
+  const music = track === 'Music'
+
+  // Strip the tags that get re-emitted canonically below.
+  let text = (prompt ?? '').trim().replace(TRACK_TYPE_TAG, '')
+  text = text.replace(VOCAL_TYPE_TAG, ' ').replace(LENGTH_TAG, '')
+
+  let bpm: string | null = null
+  if (music) {
+    // Lift a BPM out of either form so it lands in the trailing tag slot.
+    const tagged = text.match(BPM_TAG)
+    if (tagged) {
+      bpm = tagged[1] ?? null
+      text = text.replace(BPM_TAG, '')
+    }
+    const inline = text.match(INLINE_BPM)
+    if (inline) {
+      bpm = bpm ?? inline[1] ?? null
+      text = text.replace(INLINE_BPM, '')
+    }
+    // "instrumental" as a bare term is superseded by the VocalType tag.
+    text = text.replace(BARE_INSTRUMENTAL, '')
+  } else {
+    text = text.replace(BPM_TAG, '')
+  }
+
+  const body = text
+    .replace(/\s*,(?:\s*,)+/g, ',')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim()
+    .replace(/^,+|[,.;]+$/g, '')
+    .trim()
+
+  const head = `TrackType: ${track}, ${music ? 'VocalType: Instrumental, ' : ''}`
+  let out = body ? head + body : head.replace(/,\s*$/, '')
+  if (music && bpm) out = `${out}. BPM: ${bpm}`
+  return `${out}. ${lengthPhrase(seconds)}`
+}

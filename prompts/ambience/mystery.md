@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mysterious ambient, curious and hushed, sparse piano motif, faint tremolo strings, soft celesta, no perceivable tempo, unanswered questions in the dark, unresolved harmonies with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mysterious ambient, curious and hushed, sparse piano motif, faint tremolo strings, soft celesta, no perceivable tempo, unanswered questions in the dark, unresolved harmonies with no ending, looping-friendly. Length: 90 seconds
 
 ### Sealed room ambient (I)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, sealed room ambient, still and puzzling, muted piano intervals, thin high strings, clock-tick textures, 45 BPM, locked from the inside with no one there, quiet wrongness, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, sealed room ambient, still and puzzling, muted piano intervals, thin high strings, clock-tick textures, locked from the inside with no one there, quiet wrongness, looping-friendly, steady texture with no ending. BPM: 45. Length: 120 seconds
 
 ### Coded letter ambient (I)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, coded letter ambient, close and thoughtful, soft harp patterns, low clarinet breaths, faint celesta, no perceivable tempo, every third word means something else, patient puzzle, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, coded letter ambient, close and thoughtful, soft harp patterns, low clarinet breaths, faint celesta, no perceivable tempo, every third word means something else, patient puzzle, looping-friendly, steady texture with no ending. Length: 150 seconds
 
 ### Fog street ambient (I)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, fog street ambient, dim and watchful, low string bed, distant piano tolls, hushed shimmer, 42 BPM, footsteps that stop when yours do, thin suspense, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, fog street ambient, dim and watchful, low string bed, distant piano tolls, hushed shimmer, footsteps that stop when yours do, thin suspense, looping-friendly, steady texture with no ending. BPM: 42. Length: 180 seconds
 
 ### Archive ambient (I)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, archive ambient, dusty and intent, page-turn textures, sparse vibraphone tones, low drones, no perceivable tempo, the record everyone forgot to burn, slow discovery, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, archive ambient, dusty and intent, page-turn textures, sparse vibraphone tones, low drones, no perceivable tempo, the record everyone forgot to burn, slow discovery, looping-friendly, steady texture with no ending. Length: 210 seconds
 
 ### Whispering gallery ambient (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, whispering gallery ambient, curved and strange, long reverb tails, soft harmonic strings, rare piano notes, no perceivable tempo, words arriving from across the dome, displaced and calm, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, whispering gallery ambient, curved and strange, long reverb tails, soft harmonic strings, rare piano notes, no perceivable tempo, words arriving from across the dome, displaced and calm, looping-friendly, steady texture with no ending. Length: 240 seconds
 
 ### Masked stranger ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, masked stranger ambient, poised and unreadable, cool celesta motif, low sustained cello, hush pads, 45 BPM, an invitation with no name on it, elegant suspicion, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, masked stranger ambient, poised and unreadable, cool celesta motif, low sustained cello, hush pads, an invitation with no name on it, elegant suspicion, looping-friendly, steady texture with no ending. BPM: 45. Length: 270 seconds
 
 ### Cold trail ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, cold trail ambient, sparse and stubborn, single piano questions, grey pads, faint tremolo, no perceivable tempo, the trail ends at a wall that is too clean, quiet persistence, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, cold trail ambient, sparse and stubborn, single piano questions, grey pads, faint tremolo, no perceivable tempo, the trail ends at a wall that is too clean, quiet persistence, looping-friendly, steady texture with no ending. Length: 300 seconds
 
 ### Midnight study ambient (I)
 - Duration: 340s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, midnight study ambient, absorbed and dim, soft harp and celesta exchanges, low warm drone, 48 BPM, threads and pins across the case map, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, midnight study ambient, absorbed and dim, soft harp and celesta exchanges, low warm drone, threads and pins across the case map, looping-friendly, steady texture with no ending. BPM: 48. Length: 340 seconds
 
 ### Threshold ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, threshold ambient, expectant and hushed, held string harmonics, sparse piano, air-moving textures, no perceivable tempo, the door is ajar and it never is, careful curiosity, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, threshold ambient, expectant and hushed, held string harmonics, sparse piano, air-moving textures, no perceivable tempo, the door is ajar and it never is, careful curiosity, looping-friendly, steady texture with no ending. Length: 380 seconds
 
 ### Silent Mystery sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the mystery at twilight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the mystery at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
 
 ### Mystery twilight mist ambient (I)
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
 
 ### Ancient Mystery vault ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the mystery, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the mystery, steady texture with no ending, looping-friendly. Length: 125 seconds
 
 ### Mystery starlight expanse ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
 
 ### Hushed Mystery shelter ambient (I)
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene mystery, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene mystery, steady texture with no ending, looping-friendly. Length: 155 seconds
 
 ### Mystery whispering wind ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
 
 ### Secluded Mystery hollow ambient (I)
 - Duration: 185s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
 
 ### Mystery crystal reflections ambient (I)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
 
 ### Forgotten Mystery path ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
 
 ### Mystery midnight calm ambient (I)
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
 
 ### Golden Mystery dawn ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
 
 ### Mystery stone monument ambient (I)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
 
 ### Deep Mystery peace ambient (I)
 - Duration: 275s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
 
 ### Mystery watchtower solitude ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
 
 ### Shimmering Mystery grove ambient (I)
 - Duration: 305s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
 
 ### Mystery hearth warmth ambient (I)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
 
 ### Sacred Mystery spring ambient (I)
 - Duration: 335s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
 
 ### Mystery shadow contours ambient (I)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
 
 ### Timeless Mystery horizon ambient (I)
 - Duration: 365s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
 
 ### Eternal Mystery rest ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, mystery ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
 
 ## II — the mood in motion
 
@@ -192,181 +192,181 @@ TrackType: Music, instrumental, mystery ambient, serene and timeless, bowed wate
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, noir-tinged mystery orchestral, intriguing and tense, creeping pizzicato, celesta motif, low clarinet, tremolo strings, 80 BPM, following clues through lantern-lit streets, quietly unfolding
+TrackType: Music, VocalType: Instrumental, noir-tinged mystery orchestral, intriguing and tense, creeping pizzicato, celesta motif, low clarinet, tremolo strings, following clues through lantern-lit streets, quietly unfolding. BPM: 80. Length: 45 seconds
 
 ### Investigation piece (II)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, investigation piece, methodical and curious, walking pizzicato bass, vibraphone glints, muted strings, 84 BPM, three witnesses and three different stories, sifting truth
+TrackType: Music, VocalType: Instrumental, investigation piece, methodical and curious, walking pizzicato bass, vibraphone glints, muted strings, three witnesses and three different stories, sifting truth. BPM: 84. Length: 60 seconds
 
 ### Manor inquiry orchestral (II)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, manor inquiry orchestral, polite and suspicious, harpsichord motifs, hushed strings, low woodwind asides, 76 BPM, everyone at dinner had a reason
+TrackType: Music, VocalType: Instrumental, manor inquiry orchestral, polite and suspicious, harpsichord motifs, hushed strings, low woodwind asides, everyone at dinner had a reason. BPM: 76. Length: 75 seconds
 
 ### Tail-the-courier piece (II)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, tail-the-courier piece, light-footed and alert, quick soft pizzicato, brushed textures, clarinet shadows, 88 BPM, keeping half a street between you and the satchel
+TrackType: Music, VocalType: Instrumental, tail-the-courier piece, light-footed and alert, quick soft pizzicato, brushed textures, clarinet shadows, keeping half a street between you and the satchel. BPM: 88. Length: 90 seconds
 
 ### Cipher orchestral (II)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, cipher orchestral, ticking and clever, interlocking celesta and harp patterns, tense sustained strings, 82 BPM, the code wants a key you have not found
+TrackType: Music, VocalType: Instrumental, cipher orchestral, ticking and clever, interlocking celesta and harp patterns, tense sustained strings, the code wants a key you have not found. BPM: 82. Length: 120 seconds
 
 ### Missing heir orchestral (II)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, missing heir orchestral, wistful and probing, oboe questions over pizzicato, soft swells, 78 BPM, a portrait, a locket, and one face scratched out
+TrackType: Music, VocalType: Instrumental, missing heir orchestral, wistful and probing, oboe questions over pizzicato, soft swells, a portrait, a locket, and one face scratched out. BPM: 78. Length: 150 seconds
 
 ### Docklands lead piece (II)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, docklands lead piece, damp and wary, low walking bass, muted trumpet far off, tremolo shivers, 80 BPM, the warehouse that unloads at midnight only
+TrackType: Music, VocalType: Instrumental, docklands lead piece, damp and wary, low walking bass, muted trumpet far off, tremolo shivers, the warehouse that unloads at midnight only. BPM: 80. Length: 180 seconds
 
 ### Fortune-teller orchestral (II)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, fortune-teller orchestral, veiled and lilting, exotic plucked patterns, dark clarinet, shimmer accents, 74 BPM, she knew your name before you said it
+TrackType: Music, VocalType: Instrumental, fortune-teller orchestral, veiled and lilting, exotic plucked patterns, dark clarinet, shimmer accents, she knew your name before you said it. BPM: 74. Length: 210 seconds
 
 ### Double agent piece (II)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, double agent piece, poised and sliding, smooth cello line over uneasy pizzicato, celesta glints, 86 BPM, the ally whose alibi fits too well
+TrackType: Music, VocalType: Instrumental, double agent piece, poised and sliding, smooth cello line over uneasy pizzicato, celesta glints, the ally whose alibi fits too well. BPM: 86. Length: 270 seconds
 
 ### Almost-there orchestral (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, almost-there orchestral, quickening and taut, accelerating pizzicato, rising tremolo, insistent piano motif, 90 BPM, one thread left and it is fraying
+TrackType: Music, VocalType: Instrumental, almost-there orchestral, quickening and taut, accelerating pizzicato, rising tremolo, insistent piano motif, one thread left and it is fraying. BPM: 90. Length: 330 seconds
 
 ### Mystery caravan journey (II)
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 70 BPM, travelers making steady progress along winding trails
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Mystery perimeter (II)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 72 BPM, scouts charting unexplored routes through the mystery
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the mystery. BPM: 72. Length: 65 seconds
 
 ### Mystery traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 74 BPM, gathering around the evening fire sharing stories and warmth
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Mystery passage (II)
 - Duration: 80s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 76 BPM, navigating treacherous switchbacks with focused determination
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Mystery hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 78 BPM, merchants guiding pack animals through historic passes
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Mystery (II)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 80 BPM, exploring hidden chambers and uncovering mysterious artifacts
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Mystery festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 82 BPM, village festival celebrating ancient traditions and good harvest
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Mystery patrol (II)
 - Duration: 130s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 84 BPM, patrolling border outposts with watchful vigilance
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Mystery artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 86 BPM, descending into shadowy depths with raised lanterns
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Mystery ridge (II)
 - Duration: 160s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 88 BPM, riding sure-footed mounts across expansive terrain
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Mystery bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 90 BPM, crossing wooden bridges spanning misty canyon depths
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Mystery tracker footsteps (II)
 - Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 92 BPM, tracking faint footprints across rugged earth
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Mystery trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 94 BPM, caravan rolling steadily along cobblestone trade routes
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Mystery runes (II)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 96 BPM, scholars deciphering worn runes etched into stone arches
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Mystery ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 98 BPM, hunters stalking elusive quarry through shifting cover
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Mystery stairs (II)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 100 BPM, climbing ancient stone stairways leading to forgotten vistas
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Mystery tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 102 BPM, meeting mysterious contacts in secluded taverns and alcoves
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Mystery waterways voyage (II)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 104 BPM, sailing swift vessels through challenging waters
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Mystery (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 106 BPM, forging new alliances over hearty food and drink
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Mystery panoramic overlook (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mystery movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 108 BPM, reaching high overlooks revealing vast breathtaking horizons
+TrackType: Music, VocalType: Instrumental, mystery movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -374,178 +374,178 @@ TrackType: Music, instrumental, mystery movement, adventurous and melodic, nycke
 - Duration: 40s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, urgent mystery orchestral, gripping and ominous, driving low strings, insistent piano ostinato, dark brass swells, ticking percussion, 110 BPM, the conspiracy unravels at midnight, cinematic tension
+TrackType: Music, VocalType: Instrumental, urgent mystery orchestral, gripping and ominous, driving low strings, insistent piano ostinato, dark brass swells, ticking percussion, the conspiracy unravels at midnight, cinematic tension. BPM: 110. Length: 40 seconds
 
 ### Chase-for-truth orchestral (III)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, chase-for-truth orchestral, breathless and sharp, sprinting pizzicato into arco, stabbing accents, urgent celesta, 120 BPM, grab the ledger before the fire does
+TrackType: Music, VocalType: Instrumental, chase-for-truth orchestral, breathless and sharp, sprinting pizzicato into arco, stabbing accents, urgent celesta, grab the ledger before the fire does. BPM: 120. Length: 60 seconds
 
 ### Unmasking orchestral (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, unmasking orchestral, thunderous and precise, hammering ostinato, brass declarations, whirling strings, 112 BPM, the room turns as the name is spoken
+TrackType: Music, VocalType: Instrumental, unmasking orchestral, thunderous and precise, hammering ostinato, brass declarations, whirling strings, the room turns as the name is spoken. BPM: 112. Length: 90 seconds
 
 ### Ticking-clock orchestral (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, ticking-clock orchestral, relentless and coiled, clockwork percussion, climbing strings, dark piano drive, 116 BPM, the exchange happens at the twelfth bell
+TrackType: Music, VocalType: Instrumental, ticking-clock orchestral, relentless and coiled, clockwork percussion, climbing strings, dark piano drive, the exchange happens at the twelfth bell. BPM: 116. Length: 120 seconds
 
 ### Rooftop pursuit orchestral (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, rooftop pursuit orchestral, slick and fast, leaping string figures, punchy low brass, quick snare work, 124 BPM, tiles loose and the gap wider than it looked
+TrackType: Music, VocalType: Instrumental, rooftop pursuit orchestral, slick and fast, leaping string figures, punchy low brass, quick snare work, tiles loose and the gap wider than it looked. BPM: 124. Length: 150 seconds
 
 ### Grand reveal orchestral (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, grand reveal orchestral, huge and inevitable, tutti swells resolving the motif at last, timpani, 105 BPM, every clue was the same clue, cinematic epiphany
+TrackType: Music, VocalType: Instrumental, grand reveal orchestral, huge and inevitable, tutti swells resolving the motif at last, timpani, every clue was the same clue, cinematic epiphany. BPM: 105. Length: 180 seconds
 
 ### Cult of the cipher orchestral (III)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, cult of the cipher orchestral, dark and driving, ritualistic string ostinato, deep drums, brass warnings, 108 BPM, the code was a summons all along
+TrackType: Music, VocalType: Instrumental, cult of the cipher orchestral, dark and driving, ritualistic string ostinato, deep drums, brass warnings, the code was a summons all along. BPM: 108. Length: 210 seconds
 
 ### Double-cross orchestral (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, double-cross orchestral, snarling and quick, clashing motifs, sharp accents, racing lows, 118 BPM, both sides sold the meeting to a third, knives out
+TrackType: Music, VocalType: Instrumental, double-cross orchestral, snarling and quick, clashing motifs, sharp accents, racing lows, both sides sold the meeting to a third, knives out. BPM: 118. Length: 240 seconds
 
 ### Vanishing caravan orchestral (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, vanishing caravan orchestral, eerie momentum, galloping muted ostinato, hollow brass, ticking accents, 114 BPM, wagon tracks that stop mid-field
+TrackType: Music, VocalType: Instrumental, vanishing caravan orchestral, eerie momentum, galloping muted ostinato, hollow brass, ticking accents, wagon tracks that stop mid-field. BPM: 114. Length: 300 seconds
 
 ### Midnight verdict orchestral (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, midnight verdict orchestral, grave and driving, tolling low bells over urgent strings, dark brass chorale, 106 BPM, the truth is out and someone must answer tonight
+TrackType: Music, VocalType: Instrumental, midnight verdict orchestral, grave and driving, tolling low bells over urgent strings, dark brass chorale, the truth is out and someone must answer tonight. BPM: 106. Length: 380 seconds
 
 ### Fury of the Mystery titan (III)
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 105 BPM, colossal clash of armies shaking the foundations of the mystery
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the mystery. BPM: 105. Length: 45 seconds
 
 ### The great Mystery cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 107 BPM, apocalyptic manifestation of ancient primordial power
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Mystery citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 109 BPM, heroic charge breaking through fortified enemy lines
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Mystery dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 111 BPM, terrifying monster lunging from dark storm clouds and shadows
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Mystery sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 113 BPM, cataclysmic collapse of towering stone citadels and monuments
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Mystery gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 115 BPM, desperate last stand defending the sacred sanctuary gate
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Mystery champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 117 BPM, epic duel of champions with flashing blades and soaring spells
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Mystery elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 119 BPM, colossal dragon unleashing devastating elemental fury
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Mystery collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 121 BPM, breathless escape through collapsing subterranean vaults
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Mystery divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 123 BPM, divine avatar descending in blinding glorious light
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Mystery vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 125 BPM, furious counterattack driving back the overwhelming horde
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Mystery curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 127 BPM, shattering ancient curses to restore freedom to the realm
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Mystery arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 129 BPM, unleashing forbidden magical forces in decisive battle
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Mystery ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 131 BPM, heroic rescue amidst blazing fires and falling debris
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Mystery stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 133 BPM, monumental siege engines battering high fortress walls
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Mystery primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 135 BPM, titanic elemental awakening to reclaim its ancient domain
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Mystery shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 137 BPM, legendary paladin strike banishing dark demonic entities
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Mystery cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 139 BPM, armored cavalry storming across the battlefield to victory
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Mystery tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 141 BPM, shattering the tyrant throne in explosive final triumph
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Mystery victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, mystery climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 143 BPM, triumphant dawn illuminating a liberated and radiant realm
+TrackType: Music, VocalType: Instrumental, mystery climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

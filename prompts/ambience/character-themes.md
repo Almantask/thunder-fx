@@ -10,178 +10,178 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, noble knight leitmotif, steadfast and warm, French horn theme over marching strings, light snare, 100 BPM, the paladin's melody stated boldly then gently, memorable and repeatable
+TrackType: Music, VocalType: Instrumental, noble knight leitmotif, steadfast and warm, French horn theme over marching strings, light snare, the paladin's melody stated boldly then gently, memorable and repeatable. BPM: 100. Length: 60 seconds
 
 ### Cunning rogue leitmotif
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, cunning rogue leitmotif, sly and nimble, pizzicato theme with muted guitar and sneaky clarinet, brushed percussion, 108 BPM, the thief's tune that always lands on its feet
+TrackType: Music, VocalType: Instrumental, cunning rogue leitmotif, sly and nimble, pizzicato theme with muted guitar and sneaky clarinet, brushed percussion, the thief's tune that always lands on its feet. BPM: 108. Length: 90 seconds
 
 ### Arcane wizard leitmotif
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, arcane wizard leitmotif, curious and grand, celesta and harp theme blooming into strings, subtle bells, 92 BPM, the scholar's melody spiraling like a formula
+TrackType: Music, VocalType: Instrumental, arcane wizard leitmotif, curious and grand, celesta and harp theme blooming into strings, subtle bells, the scholar's melody spiraling like a formula. BPM: 92. Length: 120 seconds
 
 ### Devout cleric leitmotif
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, devout cleric leitmotif, serene and firm, warm brass chorale theme with soft organ and bells, 84 BPM, the healer's hymn-like melody rising in blessing
+TrackType: Music, VocalType: Instrumental, devout cleric leitmotif, serene and firm, warm brass chorale theme with soft organ and bells, the healer's hymn-like melody rising in blessing. BPM: 84. Length: 150 seconds
 
 ### Wild barbarian leitmotif
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, wild barbarian leitmotif, primal and proud, driving low strings and pounding drums under a defiant horn theme, 112 BPM, the northerner's melody like a war cry
+TrackType: Music, VocalType: Instrumental, wild barbarian leitmotif, primal and proud, driving low strings and pounding drums under a defiant horn theme, the northerner's melody like a war cry. BPM: 112. Length: 180 seconds
 
 ### Charming bard leitmotif
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, charming bard leitmotif, playful and warm, lute-led singable melody with fiddle answers, light taps, 104 BPM, the storyteller's tune everyone hums later
+TrackType: Music, VocalType: Instrumental, charming bard leitmotif, playful and warm, lute-led singable melody with fiddle answers, light taps, the storyteller's tune everyone hums later. BPM: 104. Length: 210 seconds
 
 ### Lone ranger leitmotif
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, lone ranger leitmotif, weathered and free, wooden flute theme over open-string drones, soft hand drum, 88 BPM, the tracker's melody like a far horizon
+TrackType: Music, VocalType: Instrumental, lone ranger leitmotif, weathered and free, wooden flute theme over open-string drones, soft hand drum, the tracker's melody like a far horizon. BPM: 88. Length: 240 seconds
 
 ### Haunted warlock leitmotif
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, haunted warlock leitmotif, elegant and shadowed, cello theme over dark harp and a faint detuned shimmer, 80 BPM, the pact-bearer's melody beautiful and wrong
+TrackType: Music, VocalType: Instrumental, haunted warlock leitmotif, elegant and shadowed, cello theme over dark harp and a faint detuned shimmer, the pact-bearer's melody beautiful and wrong. BPM: 80. Length: 270 seconds
 
 ### Storm sorcerer leitmotif
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, storm sorcerer leitmotif, volatile and bright, surging string theme with crackling celesta bursts, rising swells, 116 BPM, the wildblood's melody that never sits still
+TrackType: Music, VocalType: Instrumental, storm sorcerer leitmotif, volatile and bright, surging string theme with crackling celesta bursts, rising swells, the wildblood's melody that never sits still. BPM: 116. Length: 320 seconds
 
 ### Disciplined monk leitmotif
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, disciplined monk leitmotif, poised and clear, solo bamboo flute theme over sparse plucked koto-like tones, single drum accents, 96 BPM, the wanderer's melody balanced like a stance
+TrackType: Music, VocalType: Instrumental, disciplined monk leitmotif, poised and clear, solo bamboo flute theme over sparse plucked koto-like tones, single drum accents, the wanderer's melody balanced like a stance. BPM: 96. Length: 380 seconds
 
 ### Character Themes opening theme
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 65 BPM, travelers making steady progress along winding trails
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 65. Length: 50 seconds
 
 ### Character Themes traveler ballad
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, 68 BPM, scouts charting unexplored routes through the character themes
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the character themes. BPM: 68. Length: 65 seconds
 
 ### Character Themes hearth song
 - Duration: 80s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, 71 BPM, gathering around the evening fire sharing stories and warmth
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 71. Length: 80 seconds
 
 ### Character Themes quiet reflections
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, 74 BPM, navigating treacherous switchbacks with focused determination
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 74. Length: 95 seconds
 
 ### Character Themes road rhythm
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 77 BPM, merchants guiding pack animals through historic passes
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 77. Length: 110 seconds
 
 ### Character Themes ancient mystery
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 80 BPM, exploring hidden chambers and uncovering mysterious artifacts
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 125 seconds
 
 ### Character Themes festival celebration
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, 83 BPM, village festival celebrating ancient traditions and good harvest
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 83. Length: 140 seconds
 
 ### Character Themes twilight melody
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 86 BPM, patrolling border outposts with watchful vigilance
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 86. Length: 155 seconds
 
 ### Character Themes noble fanfare
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, 89 BPM, descending into shadowy depths with raised lanterns
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 89. Length: 170 seconds
 
 ### Character Themes solitary wanderer
 - Duration: 185s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 92 BPM, riding sure-footed mounts across expansive terrain
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 92. Length: 185 seconds
 
 ### Character Themes starlight suite
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 95 BPM, crossing wooden bridges spanning misty canyon depths
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 95. Length: 200 seconds
 
 ### Character Themes courageous march
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, 98 BPM, tracking faint footprints across rugged earth
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 98. Length: 215 seconds
 
 ### Character Themes lyrical meditation
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, 101 BPM, caravan rolling steadily along cobblestone trade routes
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 101. Length: 230 seconds
 
 ### Character Themes energetic reel
 - Duration: 250s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, 104 BPM, scholars deciphering worn runes etched into stone arches
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 104. Length: 250 seconds
 
 ### Character Themes emotional reunion
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 107 BPM, hunters stalking elusive quarry through shifting cover
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 107. Length: 270 seconds
 
 ### Character Themes solemn anthem
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 110 BPM, climbing ancient stone stairways leading to forgotten vistas
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 110. Length: 290 seconds
 
 ### Character Themes heroic ascent
 - Duration: 310s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, 113 BPM, meeting mysterious contacts in secluded taverns and alcoves
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 113. Length: 310 seconds
 
 ### Character Themes joyful chorus
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 116 BPM, sailing swift vessels through challenging waters
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 116. Length: 330 seconds
 
 ### Character Themes grand panorama
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, 119 BPM, forging new alliances over hearty food and drink
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 119. Length: 350 seconds
 
 ### Character Themes lasting legacy
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, instrumental, character themes theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 122 BPM, reaching high overlooks revealing vast breathtaking horizons
+TrackType: Music, VocalType: Instrumental, character themes theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 122. Length: 380 seconds

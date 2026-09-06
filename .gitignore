@@ -39,3 +39,7 @@ coverage
 .claude/settings.local.json
 models
 *.tsbuildinfo
+
+# Listening artifacts from scripts/bench_sampler.py and
+# scripts/compare_presets.py -- generated WAVs, metrics and A/B pages.
+bench/

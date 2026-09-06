@@ -15,6 +15,11 @@ import type {
   WeaveProgress,
 } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
+import {
+  resolveQualityPreset,
+  type QualityPreset,
+  type SamplerType,
+} from '@/lib/qualityPreset'
 import type {
   AudioFormat,
   BitDepthOption,
@@ -70,6 +75,13 @@ type EngineMsg = {
   gpuName?: string
   gpuTempC?: number
   precision?: PrecisionMode
+  model?: string
+  baseModelReady?: boolean
+  preset?: QualityPreset
+  sampler?: SamplerType
+  presetUnavailable?: boolean
+  steps?: number
+  warnings?: string[]
 }
 
 function throwIfEngineError(msg: EngineMsg): void {
@@ -213,6 +225,9 @@ export async function engineStatus(): Promise<EngineStatus> {
     gpuName: result.gpuName,
     gpuTempC: typeof result.gpuTempC === 'number' ? result.gpuTempC : undefined,
     precision: result.precision === 'fp16' ? 'fp16' : result.precision === 'fp32' ? 'fp32' : undefined,
+    model: result.model,
+    baseModelReady:
+      typeof result.baseModelReady === 'boolean' ? result.baseModelReady : undefined,
   }
 }
 
@@ -227,7 +242,13 @@ export async function generate(
   handlers: GenerateHandlers = {},
 ): Promise<GenerateResult> {
   request = { ...request, seconds: clampGenerateSeconds(request.seconds), cfg: FIXED_CFG }
-  if (!isTauri()) return mockGenerate(request, handlers)
+  const preset = resolveQualityPreset(request.preset ?? loadSettings().defaultPreset)
+  // Only the custom preset lets the caller pin a step count; a named preset owns
+  // sampler, steps and checkpoint together.
+  const presetSteps = preset === 'custom' ? request.steps : undefined
+  if (!isTauri()) {
+    return mockGenerate({ ...request, preset, steps: presetSteps }, handlers)
+  }
   const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
   const unlisten = await listen<WeaveProgress>('weave-progress', (ev) => {
@@ -274,7 +295,9 @@ export async function generate(
       seconds: request.seconds,
       seed: request.seed,
       cfg: request.cfg,
-      steps: request.steps ?? 20,
+      preset,
+      sampler: request.sampler ?? null,
+      steps: preset === 'custom' ? (request.steps ?? null) : null,
       negative: request.negative,
       hfToken: hfToken(),
       libraryDir: request.libraryDir?.trim() || loadSettings().libraryDir.trim() || null,
@@ -299,16 +322,18 @@ export async function generate(
       seed: result.seed ?? request.seed,
       createdAt: new Date().toISOString(),
       cfg: request.cfg,
-      steps: request.steps ?? 20,
+      steps: result.steps ?? request.steps,
       negative: request.negative,
       mode,
+      preset: result.preset ?? preset,
+      sampler: result.sampler,
       instruments: topInstruments.length ? topInstruments : undefined,
       category: resolvedCategory,
       subcategory: resolvedSubcategory,
       intensity: resolvedIntensity,
     }
 
-    return { clip, wav }
+    return { clip, wav, warnings: result.warnings }
   } finally {
     handlers.signal?.removeEventListener('abort', onAbort)
     unlisten()
@@ -317,14 +342,14 @@ export async function generate(
 
 export async function loadModel(
   onProgress?: (ratio: number) => void,
-  options?: { signal?: AbortSignal; precision?: PrecisionMode },
+  options?: { signal?: AbortSignal; precision?: PrecisionMode; model?: string },
 ): Promise<void> {
   await scribeWeights(onProgress ?? (() => {}), options)
 }
 
 export async function scribeWeights(
   onProgress: (ratio: number) => void,
-  options?: { signal?: AbortSignal; precision?: PrecisionMode },
+  options?: { signal?: AbortSignal; precision?: PrecisionMode; model?: string },
 ): Promise<void> {
   if (!isTauri()) return mockDownloadProgress(onProgress, 40, options?.signal)
   const status = await engineStatus()
@@ -354,7 +379,9 @@ export async function scribeWeights(
   try {
     const result = await invoke<EngineMsg>('engine_warmup', {
       hfToken: hfToken(),
-      precision: options?.precision ?? loadSettings().precision ?? 'fp32',
+      precision: options?.precision ?? loadSettings().precision ?? 'fp16',
+      model: options?.model ?? null,
+      preset: options?.model ? null : loadSettings().defaultPreset,
     })
     throwIfEngineError(result)
     onProgress(1)

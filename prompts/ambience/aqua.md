@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, underwater ambient, weightless and serene, soft watery synth pads, slow harp glissandi, muffled glass bells, no perceivable tempo, drifting beneath a calm fantasy sea, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, underwater ambient, weightless and serene, soft watery synth pads, slow harp glissandi, muffled glass bells, no perceivable tempo, drifting beneath a calm fantasy sea, steady texture with no ending, looping-friendly. Length: 90 seconds
 
 ### Deep water ambient (I)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, deep water ambient, hushed and fluid, slow-motion pads, bowed glass tones, distant bubble textures, no perceivable tempo, sunlight rippling far overhead, endless gentle drift, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, deep water ambient, hushed and fluid, slow-motion pads, bowed glass tones, distant bubble textures, no perceivable tempo, sunlight rippling far overhead, endless gentle drift, looping-friendly, steady texture with no ending. Length: 120 seconds
 
 ### Lagoon ambient (I)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, lagoon ambient, calm and glassy, warm pad wash, sparse kalimba drips, soft harp harmonics, 45 BPM, moonlight on a still lagoon, unhurried with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, lagoon ambient, calm and glassy, warm pad wash, sparse kalimba drips, soft harp harmonics, moonlight on a still lagoon, unhurried with no ending, looping-friendly. BPM: 45. Length: 150 seconds
 
 ### Coral ambient (I)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, coral ambient, dreamy and weightless, shimmering pads, glass marimba touches, slow string swells, no perceivable tempo, colors breathing over a coral garden, floating texture, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, coral ambient, dreamy and weightless, shimmering pads, glass marimba touches, slow string swells, no perceivable tempo, colors breathing over a coral garden, floating texture, looping-friendly, steady texture with no ending. Length: 180 seconds
 
 ### Tidal ambient (I)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, tidal ambient, patient and vast, low watery drone, harp glissandi like currents, faint chimes, 40 BPM, the tide moving through a sea cave, slow rise and fall with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, tidal ambient, patient and vast, low watery drone, harp glissandi like currents, faint chimes, the tide moving through a sea cave, slow rise and fall with no ending, looping-friendly. BPM: 40. Length: 210 seconds
 
 ### Kelp forest ambient (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, kelp forest ambient, cool and swaying, underwater pads, muted celesta, soft cello undertow, no perceivable tempo, light shafts swaying through the kelp, drifting bed, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, kelp forest ambient, cool and swaying, underwater pads, muted celesta, soft cello undertow, no perceivable tempo, light shafts swaying through the kelp, drifting bed, looping-friendly, steady texture with no ending. Length: 240 seconds
 
 ### Pearl cave ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, pearl cave ambient, secret and luminous, glassy shimmer pads, single harp notes, watery echoes, 50 BPM, pearls glowing in a hidden grotto, delicate and endless, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, pearl cave ambient, secret and luminous, glassy shimmer pads, single harp notes, watery echoes, pearls glowing in a hidden grotto, delicate and endless, looping-friendly, steady texture with no ending. BPM: 50. Length: 270 seconds
 
 ### Abyssal ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, abyssal ambient, deep and still, sub-low drone, rare glass bell tones, slow dark swells, no perceivable tempo, the trench where light gives up, heavy calm with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, abyssal ambient, deep and still, sub-low drone, rare glass bell tones, slow dark swells, no perceivable tempo, the trench where light gives up, heavy calm with no ending, looping-friendly. Length: 300 seconds
 
 ### Icemelt ambient (I)
 - Duration: 340s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, icemelt ambient, crisp and serene, cold airy pads, crystalline chimes, soft harp trickles, 48 BPM, meltwater threading through a glacial fjord, clean steady texture, looping-friendly
+TrackType: Music, VocalType: Instrumental, icemelt ambient, crisp and serene, cold airy pads, crystalline chimes, soft harp trickles, meltwater threading through a glacial fjord, clean steady texture, looping-friendly. BPM: 48. Length: 340 seconds
 
 ### Riverbed ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, riverbed ambient, gentle and clear, flowing pad layers, plucked harp ripples, faint glass tones, no perceivable tempo, watching the current from a sunlit riverbed, seamless and calm, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, riverbed ambient, gentle and clear, flowing pad layers, plucked harp ripples, faint glass tones, no perceivable tempo, watching the current from a sunlit riverbed, seamless and calm, looping-friendly, steady texture with no ending. Length: 380 seconds
 
 ### Silent Aqua sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the aqua at twilight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the aqua at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
 
 ### Aqua twilight mist ambient (I)
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
 
 ### Ancient Aqua vault ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the aqua, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the aqua, steady texture with no ending, looping-friendly. Length: 125 seconds
 
 ### Aqua starlight expanse ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
 
 ### Hushed Aqua shelter ambient (I)
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene aqua, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene aqua, steady texture with no ending, looping-friendly. Length: 155 seconds
 
 ### Aqua whispering wind ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
 
 ### Secluded Aqua hollow ambient (I)
 - Duration: 185s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
 
 ### Aqua crystal reflections ambient (I)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
 
 ### Forgotten Aqua path ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
 
 ### Aqua midnight calm ambient (I)
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
 
 ### Golden Aqua dawn ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
 
 ### Aqua stone monument ambient (I)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
 
 ### Deep Aqua peace ambient (I)
 - Duration: 275s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
 
 ### Aqua watchtower solitude ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
 
 ### Shimmering Aqua grove ambient (I)
 - Duration: 305s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
 
 ### Aqua hearth warmth ambient (I)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
 
 ### Sacred Aqua spring ambient (I)
 - Duration: 335s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
 
 ### Aqua shadow contours ambient (I)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
 
 ### Timeless Aqua horizon ambient (I)
 - Duration: 365s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
 
 ### Eternal Aqua rest ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, aqua ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
 
 ## II — the mood in motion
 
@@ -192,181 +192,181 @@ TrackType: Music, instrumental, aqua ambient, serene and timeless, bowed waterph
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aquatic cinematic ambient, curious and fluid, flowing harp, warm strings, glass marimba, 75 BPM, exploring a sunken temple, gently evolving
+TrackType: Music, VocalType: Instrumental, aquatic cinematic ambient, curious and fluid, flowing harp, warm strings, glass marimba, exploring a sunken temple, gently evolving. BPM: 75. Length: 45 seconds
 
 ### Underwater orchestral (II)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, underwater orchestral, wondrous and buoyant, harp arpeggios, soft flute, string swells, 70 BPM, gliding beside a sea turtle through the shallows, easy grace
+TrackType: Music, VocalType: Instrumental, underwater orchestral, wondrous and buoyant, harp arpeggios, soft flute, string swells, gliding beside a sea turtle through the shallows, easy grace. BPM: 70. Length: 60 seconds
 
 ### Merfolk chamber piece (II)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, merfolk chamber piece, graceful and mysterious, celesta melody, watery pads, low cello, 65 BPM, lantern-fish lighting a merfolk avenue, softly unfolding
+TrackType: Music, VocalType: Instrumental, merfolk chamber piece, graceful and mysterious, celesta melody, watery pads, low cello, lantern-fish lighting a merfolk avenue, softly unfolding. BPM: 65. Length: 75 seconds
 
 ### Ocean voyage ambient (II)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, ocean voyage ambient, hopeful and rolling, warm string waves, harp glissandi, glockenspiel spray, 80 BPM, a calm crossing under fair wind, gentle motion
+TrackType: Music, VocalType: Instrumental, ocean voyage ambient, hopeful and rolling, warm string waves, harp glissandi, glockenspiel spray, a calm crossing under fair wind, gentle motion. BPM: 80. Length: 90 seconds
 
 ### Grotto orchestral (II)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, grotto orchestral, secret and shimmering, glass marimba patterns, hushed strings, soft bass pulse, 72 BPM, a waterfall curtain hiding a blue cave, quietly sparkling
+TrackType: Music, VocalType: Instrumental, grotto orchestral, secret and shimmering, glass marimba patterns, hushed strings, soft bass pulse, a waterfall curtain hiding a blue cave, quietly sparkling. BPM: 72. Length: 120 seconds
 
 ### Tidepool piece (II)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, tidepool piece, playful and delicate, plucked harp, celesta glints, light flute, 85 BPM, small creatures busy in a sunlit tide pool, bright and curious
+TrackType: Music, VocalType: Instrumental, tidepool piece, playful and delicate, plucked harp, celesta glints, light flute, small creatures busy in a sunlit tide pool, bright and curious. BPM: 85. Length: 150 seconds
 
 ### Sunken ruin ambient (II)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, sunken ruin ambient, solemn and fluid, low string swells, harp echoes, muffled bell tones, 60 BPM, statues of a drowned court, slow reverent drift
+TrackType: Music, VocalType: Instrumental, sunken ruin ambient, solemn and fluid, low string swells, harp echoes, muffled bell tones, statues of a drowned court, slow reverent drift. BPM: 60. Length: 180 seconds
 
 ### Coral reef orchestral (II)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, coral reef orchestral, colorful and calm, flute melody over string bed, glass bells, soft harp, 78 BPM, drifting the length of a living reef, easy wonder
+TrackType: Music, VocalType: Instrumental, coral reef orchestral, colorful and calm, flute melody over string bed, glass bells, soft harp, drifting the length of a living reef, easy wonder. BPM: 78. Length: 210 seconds
 
 ### Deep current orchestral (II)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, deep current orchestral, vast and steady, cello undertow, slow harp cascades, airy pads, 68 BPM, riding a warm current into open blue, expansive and smooth
+TrackType: Music, VocalType: Instrumental, deep current orchestral, vast and steady, cello undertow, slow harp cascades, airy pads, riding a warm current into open blue, expansive and smooth. BPM: 68. Length: 270 seconds
 
 ### Rain on water chamber ambient (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, rain on water chamber ambient, tender and clear, felt piano droplets, soft strings, glass chimes, 62 BPM, rain dimpling a mountain lake, hushed and even
+TrackType: Music, VocalType: Instrumental, rain on water chamber ambient, tender and clear, felt piano droplets, soft strings, glass chimes, rain dimpling a mountain lake, hushed and even. BPM: 62. Length: 330 seconds
 
 ### Aqua caravan journey (II)
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 70 BPM, travelers making steady progress along winding trails
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Aqua perimeter (II)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 72 BPM, scouts charting unexplored routes through the aqua
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the aqua. BPM: 72. Length: 65 seconds
 
 ### Aqua traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 74 BPM, gathering around the evening fire sharing stories and warmth
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Aqua passage (II)
 - Duration: 80s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 76 BPM, navigating treacherous switchbacks with focused determination
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Aqua hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 78 BPM, merchants guiding pack animals through historic passes
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Aqua (II)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 80 BPM, exploring hidden chambers and uncovering mysterious artifacts
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Aqua festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 82 BPM, village festival celebrating ancient traditions and good harvest
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Aqua patrol (II)
 - Duration: 130s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 84 BPM, patrolling border outposts with watchful vigilance
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Aqua artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 86 BPM, descending into shadowy depths with raised lanterns
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Aqua ridge (II)
 - Duration: 160s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 88 BPM, riding sure-footed mounts across expansive terrain
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Aqua bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 90 BPM, crossing wooden bridges spanning misty canyon depths
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Aqua tracker footsteps (II)
 - Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 92 BPM, tracking faint footprints across rugged earth
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Aqua trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 94 BPM, caravan rolling steadily along cobblestone trade routes
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Aqua runes (II)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 96 BPM, scholars deciphering worn runes etched into stone arches
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Aqua ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 98 BPM, hunters stalking elusive quarry through shifting cover
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Aqua stairs (II)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 100 BPM, climbing ancient stone stairways leading to forgotten vistas
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Aqua tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 102 BPM, meeting mysterious contacts in secluded taverns and alcoves
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Aqua waterways voyage (II)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 104 BPM, sailing swift vessels through challenging waters
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Aqua (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 106 BPM, forging new alliances over hearty food and drink
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Aqua panoramic overlook (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, aqua movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 108 BPM, reaching high overlooks revealing vast breathtaking horizons
+TrackType: Music, VocalType: Instrumental, aqua movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -374,178 +374,178 @@ TrackType: Music, instrumental, aqua movement, adventurous and melodic, nyckelha
 - Duration: 40s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, dramatic aquatic orchestral, surging and vast, powerful string swells, deep brass, cascading harp runs, rolling timpani, 110 BPM, storm above a raging fantasy ocean
+TrackType: Music, VocalType: Instrumental, dramatic aquatic orchestral, surging and vast, powerful string swells, deep brass, cascading harp runs, rolling timpani, storm above a raging fantasy ocean. BPM: 110. Length: 40 seconds
 
 ### Maelstrom orchestral (III)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, maelstrom orchestral, ferocious and churning, racing strings, thunderous percussion, brass walls, 130 BPM, the whirlpool takes the ship, cinematic peril
+TrackType: Music, VocalType: Instrumental, maelstrom orchestral, ferocious and churning, racing strings, thunderous percussion, brass walls, the whirlpool takes the ship, cinematic peril. BPM: 130. Length: 60 seconds
 
 ### Leviathan orchestral (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, leviathan orchestral, immense and ominous, sub brass swells, pounding taiko, dark string surges, 100 BPM, a shadow the size of an island passes beneath, dreadful majesty
+TrackType: Music, VocalType: Instrumental, leviathan orchestral, immense and ominous, sub brass swells, pounding taiko, dark string surges, a shadow the size of an island passes beneath, dreadful majesty. BPM: 100. Length: 90 seconds
 
 ### Tidal wave orchestral (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, tidal wave orchestral, desperate and towering, climbing string runs, crashing cymbal swells, heavy horns, 120 BPM, outrunning the wave to high ground, relentless motion
+TrackType: Music, VocalType: Instrumental, tidal wave orchestral, desperate and towering, climbing string runs, crashing cymbal swells, heavy horns, outrunning the wave to high ground, relentless motion. BPM: 120. Length: 120 seconds
 
 ### Sea battle orchestral (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, sea battle orchestral, bold and storm-tossed, heroic brass, driving war drums, slashing strings, 125 BPM, broadsides traded in heaving swells, cinematic naval combat
+TrackType: Music, VocalType: Instrumental, sea battle orchestral, bold and storm-tossed, heroic brass, driving war drums, slashing strings, broadsides traded in heaving swells, cinematic naval combat. BPM: 125. Length: 150 seconds
 
 ### Undersea awakening orchestral (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, undersea awakening orchestral, vast and luminous, full string swells, wordless choir, deep percussion, harp torrents, 95 BPM, the drowned god opens one eye, overwhelming scale
+TrackType: Music, VocalType: Instrumental, undersea awakening orchestral, vast and luminous, full string swells, wordless choir, deep percussion, harp torrents, the drowned god opens one eye, overwhelming scale. BPM: 95. Length: 180 seconds
 
 ### Storm surge orchestral (III)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, storm surge orchestral, wild and exhilarating, galloping low strings, brass stabs, rolling toms, 128 BPM, riding the storm current through the reef gap, dangerous thrill
+TrackType: Music, VocalType: Instrumental, storm surge orchestral, wild and exhilarating, galloping low strings, brass stabs, rolling toms, riding the storm current through the reef gap, dangerous thrill. BPM: 128. Length: 210 seconds
 
 ### Frozen sea orchestral (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, frozen sea orchestral, glacial and mighty, icy high strings, huge brass chorale, cracking percussion hits, 105 BPM, the ship splits a frozen strait, stark grandeur
+TrackType: Music, VocalType: Instrumental, frozen sea orchestral, glacial and mighty, icy high strings, huge brass chorale, cracking percussion hits, the ship splits a frozen strait, stark grandeur. BPM: 105. Length: 240 seconds
 
 ### Kraken orchestral (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, kraken orchestral, thrashing and monstrous, dissonant brass, hammering drums, shrieking strings, 135 BPM, arms rising on every side of the hull, cinematic terror
+TrackType: Music, VocalType: Instrumental, kraken orchestral, thrashing and monstrous, dissonant brass, hammering drums, shrieking strings, arms rising on every side of the hull, cinematic terror. BPM: 135. Length: 300 seconds
 
 ### Waterfall descent orchestral (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, waterfall descent orchestral, breathless and gleaming, cascading strings and harp, bright horns, tumbling percussion, 118 BPM, the river throws the raft over the falls, plunging momentum
+TrackType: Music, VocalType: Instrumental, waterfall descent orchestral, breathless and gleaming, cascading strings and harp, bright horns, tumbling percussion, the river throws the raft over the falls, plunging momentum. BPM: 118. Length: 380 seconds
 
 ### Fury of the Aqua titan (III)
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 105 BPM, colossal clash of armies shaking the foundations of the aqua
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the aqua. BPM: 105. Length: 45 seconds
 
 ### The great Aqua cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 107 BPM, apocalyptic manifestation of ancient primordial power
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Aqua citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 109 BPM, heroic charge breaking through fortified enemy lines
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Aqua dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 111 BPM, terrifying monster lunging from dark storm clouds and shadows
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Aqua sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 113 BPM, cataclysmic collapse of towering stone citadels and monuments
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Aqua gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 115 BPM, desperate last stand defending the sacred sanctuary gate
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Aqua champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 117 BPM, epic duel of champions with flashing blades and soaring spells
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Aqua elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 119 BPM, colossal dragon unleashing devastating elemental fury
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Aqua collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 121 BPM, breathless escape through collapsing subterranean vaults
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Aqua divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 123 BPM, divine avatar descending in blinding glorious light
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Aqua vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 125 BPM, furious counterattack driving back the overwhelming horde
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Aqua curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 127 BPM, shattering ancient curses to restore freedom to the realm
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Aqua arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 129 BPM, unleashing forbidden magical forces in decisive battle
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Aqua ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 131 BPM, heroic rescue amidst blazing fires and falling debris
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Aqua stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 133 BPM, monumental siege engines battering high fortress walls
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Aqua primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 135 BPM, titanic elemental awakening to reclaim its ancient domain
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Aqua shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 137 BPM, legendary paladin strike banishing dark demonic entities
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Aqua cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 139 BPM, armored cavalry storming across the battlefield to victory
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Aqua tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 141 BPM, shattering the tyrant throne in explosive final triumph
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Aqua victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, aqua climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 143 BPM, triumphant dawn illuminating a liberated and radiant realm
+TrackType: Music, VocalType: Instrumental, aqua climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

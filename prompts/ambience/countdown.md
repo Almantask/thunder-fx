@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, quiet and inevitable, steady tick pattern, low pulsing drone, sparse piano notes, 70 BPM, the fuse is lit and everyone knows the length, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, countdown ambient, quiet and inevitable, steady tick pattern, low pulsing drone, sparse piano notes, the fuse is lit and everyone knows the length, looping-friendly, steady texture with no ending. BPM: 70. Length: 90 seconds
 
 ### Hourglass ambient (I)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, hourglass ambient, dry and patient, soft granular textures, slow ostinato, thin high tone, 66 BPM, sand you can hear if the room is quiet enough, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, hourglass ambient, dry and patient, soft granular textures, slow ostinato, thin high tone, sand you can hear if the room is quiet enough, looping-friendly, steady texture with no ending. BPM: 66. Length: 120 seconds
 
 ### Ransom-deadline ambient (I)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, ransom-deadline ambient, cold and measured, clock ticks, muted low strings, single bell every phrase, 68 BPM, sundown was the agreement, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, ransom-deadline ambient, cold and measured, clock ticks, muted low strings, single bell every phrase, sundown was the agreement, looping-friendly, steady texture with no ending. BPM: 68. Length: 150 seconds
 
 ### Slow-poison ambient (I)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, slow-poison ambient, creeping and calm, soft pulse under wandering dark piano, faint whine, 64 BPM, the antidote is two days away and the poison is not, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, slow-poison ambient, creeping and calm, soft pulse under wandering dark piano, faint whine, the antidote is two days away and the poison is not, looping-friendly, steady texture with no ending. BPM: 64. Length: 180 seconds
 
 ### Water-rising ambient (I)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, water-rising ambient, patient dread, lapping textures over a steady tick, low swells inching up, 66 BPM, the tide chart on the cell wall, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, water-rising ambient, patient dread, lapping textures over a steady tick, low swells inching up, the tide chart on the cell wall, looping-friendly, steady texture with no ending. BPM: 66. Length: 210 seconds
 
 ### Candle-mark ambient (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, candle-mark ambient, dim and steady, warm flicker pads, quiet ostinato, wax-drip accents, 62 BPM, when the flame reaches the third ring, it begins, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, candle-mark ambient, dim and steady, warm flicker pads, quiet ostinato, wax-drip accents, when the flame reaches the third ring, it begins, looping-friendly, steady texture with no ending. BPM: 62. Length: 240 seconds
 
 ### Signal-awaited ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, signal-awaited ambient, taut and still, held tones over a soft tick, rare plucked notes, 68 BPM, watching the hilltop for the beacon, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, signal-awaited ambient, taut and still, held tones over a soft tick, rare plucked notes, watching the hilltop for the beacon, looping-friendly, steady texture with no ending. BPM: 68. Length: 270 seconds
 
 ### Mechanism-armed ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, mechanism-armed ambient, precise and cold, clockwork ticks, low mechanical hum, sparse metallic accents, 70 BPM, the device counts in a language of clicks, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, mechanism-armed ambient, precise and cold, clockwork ticks, low mechanical hum, sparse metallic accents, the device counts in a language of clicks, looping-friendly, steady texture with no ending. BPM: 70. Length: 300 seconds
 
 ### Dawn-execution ambient (I)
 - Duration: 340s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, dawn-execution ambient, grave and quiet, slow bell tolls, low drone, thin strings, 60 BPM, the paperwork is done and the sky is greying, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, dawn-execution ambient, grave and quiet, slow bell tolls, low drone, thin strings, the paperwork is done and the sky is greying, looping-friendly, steady texture with no ending. BPM: 60. Length: 340 seconds
 
 ### Truce-expiring ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, truce-expiring ambient, brittle and level, steady pulse, two alternating dark notes, hush textures, 66 BPM, both armies watching the same sun, looping-friendly, steady texture with no ending
+TrackType: Music, VocalType: Instrumental, truce-expiring ambient, brittle and level, steady pulse, two alternating dark notes, hush textures, both armies watching the same sun, looping-friendly, steady texture with no ending. BPM: 66. Length: 380 seconds
 
 ### Silent Countdown sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the countdown at twilight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the countdown at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
 
 ### Countdown twilight mist ambient (I)
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
 
 ### Ancient Countdown vault ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the countdown, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the countdown, steady texture with no ending, looping-friendly. Length: 125 seconds
 
 ### Countdown starlight expanse ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
 
 ### Hushed Countdown shelter ambient (I)
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene countdown, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene countdown, steady texture with no ending, looping-friendly. Length: 155 seconds
 
 ### Countdown whispering wind ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
 
 ### Secluded Countdown hollow ambient (I)
 - Duration: 185s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
 
 ### Countdown crystal reflections ambient (I)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
 
 ### Forgotten Countdown path ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
 
 ### Countdown midnight calm ambient (I)
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
 
 ### Golden Countdown dawn ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
 
 ### Countdown stone monument ambient (I)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
 
 ### Deep Countdown peace ambient (I)
 - Duration: 275s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
 
 ### Countdown watchtower solitude ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
 
 ### Shimmering Countdown grove ambient (I)
 - Duration: 305s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
 
 ### Countdown hearth warmth ambient (I)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
 
 ### Sacred Countdown spring ambient (I)
 - Duration: 335s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
 
 ### Countdown shadow contours ambient (I)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
 
 ### Timeless Countdown horizon ambient (I)
 - Duration: 365s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
 
 ### Eternal Countdown rest ambient (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, countdown ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
 
 ## II — the mood in motion
 
@@ -192,181 +192,181 @@ TrackType: Music, instrumental, countdown ambient, serene and timeless, bowed wa
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown orchestral, urgent and tightening, insistent tick battery, driving string ostinato, low brass pulses, 115 BPM, halfway gone and moving faster
+TrackType: Music, VocalType: Instrumental, countdown orchestral, urgent and tightening, insistent tick battery, driving string ostinato, low brass pulses, halfway gone and moving faster. BPM: 115. Length: 45 seconds
 
 ### Bomb-defusal piece (II)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, bomb-defusal piece, sweating and precise, quick ticking layers, staccato strings, muted stabs, 112 BPM, three wires and one guess left
+TrackType: Music, VocalType: Instrumental, bomb-defusal piece, sweating and precise, quick ticking layers, staccato strings, muted stabs, three wires and one guess left. BPM: 112. Length: 60 seconds
 
 ### Ritual-interruption countdown (II)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, ritual-interruption countdown, racing and dark, accelerating drums, chanting-like string pattern, bells counting, 118 BPM, the circle is nearly closed
+TrackType: Music, VocalType: Instrumental, ritual-interruption countdown, racing and dark, accelerating drums, chanting-like string pattern, bells counting, the circle is nearly closed. BPM: 118. Length: 75 seconds
 
 ### Evacuation piece (II)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, evacuation piece, ordered urgency, marching pulse quickening, horn signals, rising strings, 116 BPM, everyone out before the third bell
+TrackType: Music, VocalType: Instrumental, evacuation piece, ordered urgency, marching pulse quickening, horn signals, rising strings, everyone out before the third bell. BPM: 116. Length: 90 seconds
 
 ### Sinking-ship countdown (II)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, sinking-ship countdown, tilting and driving, surging ostinato, groaning low brass, splash accents, 114 BPM, the pumps are losing politely
+TrackType: Music, VocalType: Instrumental, sinking-ship countdown, tilting and driving, surging ostinato, groaning low brass, splash accents, the pumps are losing politely. BPM: 114. Length: 120 seconds
 
 ### Trap-room piece (II)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, trap-room piece, grinding and quick, mechanical rhythm closing in, string spirals, metallic hits, 110 BPM, the walls have opinions about your timeline
+TrackType: Music, VocalType: Instrumental, trap-room piece, grinding and quick, mechanical rhythm closing in, string spirals, metallic hits, the walls have opinions about your timeline. BPM: 110. Length: 150 seconds
 
 ### Hostage-exchange countdown (II)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, hostage-exchange countdown, knife-edge and steady, compressed pulse, cold piano repeating, snare pressure, 108 BPM, both sides counting the same steps
+TrackType: Music, VocalType: Instrumental, hostage-exchange countdown, knife-edge and steady, compressed pulse, cold piano repeating, snare pressure, both sides counting the same steps. BPM: 108. Length: 180 seconds
 
 ### Storm-window piece (II)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, storm-window piece, hurried and bright, galloping figures, urgent winds, cymbal swells, 120 BPM, the pass closes when the snow starts
+TrackType: Music, VocalType: Instrumental, storm-window piece, hurried and bright, galloping figures, urgent winds, cymbal swells, the pass closes when the snow starts. BPM: 120. Length: 210 seconds
 
 ### Alchemical-instability piece (II)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, alchemical-instability piece, bubbling urgency, jittery ostinato, rising glissandi, tick underlay, 116 BPM, the mixture dislikes being carried at a run
+TrackType: Music, VocalType: Instrumental, alchemical-instability piece, bubbling urgency, jittery ostinato, rising glissandi, tick underlay, the mixture dislikes being carried at a run. BPM: 116. Length: 270 seconds
 
 ### Gate-closing piece (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, gate-closing piece, pounding and pressing, heavy pulse accelerating, brass counting down, strings sprinting, 118 BPM, the portcullis chain is already moving
+TrackType: Music, VocalType: Instrumental, gate-closing piece, pounding and pressing, heavy pulse accelerating, brass counting down, strings sprinting, the portcullis chain is already moving. BPM: 118. Length: 330 seconds
 
 ### Countdown caravan journey (II)
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 70 BPM, travelers making steady progress along winding trails
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Countdown perimeter (II)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 72 BPM, scouts charting unexplored routes through the countdown
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the countdown. BPM: 72. Length: 65 seconds
 
 ### Countdown traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 74 BPM, gathering around the evening fire sharing stories and warmth
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Countdown passage (II)
 - Duration: 80s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 76 BPM, navigating treacherous switchbacks with focused determination
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Countdown hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 78 BPM, merchants guiding pack animals through historic passes
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Countdown (II)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 80 BPM, exploring hidden chambers and uncovering mysterious artifacts
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Countdown festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 82 BPM, village festival celebrating ancient traditions and good harvest
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Countdown patrol (II)
 - Duration: 130s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 84 BPM, patrolling border outposts with watchful vigilance
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Countdown artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 86 BPM, descending into shadowy depths with raised lanterns
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Countdown ridge (II)
 - Duration: 160s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 88 BPM, riding sure-footed mounts across expansive terrain
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Countdown bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, 90 BPM, crossing wooden bridges spanning misty canyon depths
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Countdown tracker footsteps (II)
 - Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, 92 BPM, tracking faint footprints across rugged earth
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Countdown trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, 94 BPM, caravan rolling steadily along cobblestone trade routes
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Countdown runes (II)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, 96 BPM, scholars deciphering worn runes etched into stone arches
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Countdown ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, 98 BPM, hunters stalking elusive quarry through shifting cover
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Countdown stairs (II)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, 100 BPM, climbing ancient stone stairways leading to forgotten vistas
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Countdown tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, 102 BPM, meeting mysterious contacts in secluded taverns and alcoves
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Countdown waterways voyage (II)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, 104 BPM, sailing swift vessels through challenging waters
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Countdown (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, 106 BPM, forging new alliances over hearty food and drink
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Countdown panoramic overlook (II)
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, countdown movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, 108 BPM, reaching high overlooks revealing vast breathtaking horizons
+TrackType: Music, VocalType: Instrumental, countdown movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -374,178 +374,178 @@ TrackType: Music, instrumental, countdown movement, adventurous and melodic, nyc
 - Duration: 40s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, final seconds orchestral, frantic and huge, maximum-speed tick battery, sprinting ostinato, brass alarms, strobing hits, 150 BPM, single digits on the fuse
+TrackType: Music, VocalType: Instrumental, final seconds orchestral, frantic and huge, maximum-speed tick battery, sprinting ostinato, brass alarms, strobing hits, single digits on the fuse. BPM: 150. Length: 40 seconds
 
 ### Detonation-averted finale (III)
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, detonation-averted finale, screaming and sharp, full orchestra accelerating to a knife-edge cut, 152 BPM, the blade through the last wire at zero
+TrackType: Music, VocalType: Instrumental, detonation-averted finale, screaming and sharp, full orchestra accelerating to a knife-edge cut, the blade through the last wire at zero. BPM: 152. Length: 60 seconds
 
 ### Ritual-climax countdown (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, ritual-climax countdown, apocalyptic drive, pounding drums, wailing string runs, wordless choir surging, 144 BPM, the incantation reaches its final syllable
+TrackType: Music, VocalType: Instrumental, ritual-climax countdown, apocalyptic drive, pounding drums, wailing string runs, wordless choir surging, the incantation reaches its final syllable. BPM: 144. Length: 90 seconds
 
 ### Tower-collapse sprint (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, tower-collapse sprint, crumbling and wild, cascading runs, colossal impacts accelerating, brass roars, 148 BPM, the stairs are leaving faster than you are
+TrackType: Music, VocalType: Instrumental, tower-collapse sprint, crumbling and wild, cascading runs, colossal impacts accelerating, brass roars, the stairs are leaving faster than you are. BPM: 148. Length: 120 seconds
 
 ### Zero-hour assault (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, zero-hour assault, thunderous and exact, war battery locked to the countdown, stabbing unisons, 146 BPM, when the bell strikes, everything moves
+TrackType: Music, VocalType: Instrumental, zero-hour assault, thunderous and exact, war battery locked to the countdown, stabbing unisons, when the bell strikes, everything moves. BPM: 146. Length: 150 seconds
 
 ### Last-breath rescue (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, last-breath rescue, desperate and soaring, racing theme against plunging clock hits, high strings screaming, 150 BPM, pulled out as the count ends
+TrackType: Music, VocalType: Instrumental, last-breath rescue, desperate and soaring, racing theme against plunging clock hits, high strings screaming, pulled out as the count ends. BPM: 150. Length: 180 seconds
 
 ### Overload finale (III)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, overload finale, shrieking machinery, runaway ostinato, steam-burst accents, brass klaxons, 154 BPM, the gauges have run out of red
+TrackType: Music, VocalType: Instrumental, overload finale, shrieking machinery, runaway ostinato, steam-burst accents, brass klaxons, the gauges have run out of red. BPM: 154. Length: 210 seconds
 
 ### Eclipse-alignment countdown (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing, drums, percussion
 
-TrackType: Music, eclipse-alignment countdown, cosmic and massive, huge slow bells against frantic orchestra, choir swell, 140 BPM, the shadow touches the altar
+TrackType: Music, VocalType: Instrumental, eclipse-alignment countdown, cosmic and massive, huge slow bells against frantic orchestra, choir swell, the shadow touches the altar. BPM: 140. Length: 240 seconds
 
 ### Chain-reaction piece (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, chain-reaction piece, tumbling catastrophe, stacking accelerating motifs, detonation hits in sequence, 148 BPM, each blast lights the next fuse
+TrackType: Music, VocalType: Instrumental, chain-reaction piece, tumbling catastrophe, stacking accelerating motifs, detonation hits in sequence, each blast lights the next fuse. BPM: 148. Length: 300 seconds
 
 ### Time-stops coda (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, instrumental, time-stops coda, overwhelming then void, full sprint cut to a single held tone, one final tick, 150 BPM, zero
+TrackType: Music, VocalType: Instrumental, time-stops coda, overwhelming then void, full sprint cut to a single held tone, one final tick, zero. BPM: 150. Length: 380 seconds
 
 ### Fury of the Countdown titan (III)
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 105 BPM, colossal clash of armies shaking the foundations of the countdown
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the countdown. BPM: 105. Length: 45 seconds
 
 ### The great Countdown cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 107 BPM, apocalyptic manifestation of ancient primordial power
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Countdown citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 109 BPM, heroic charge breaking through fortified enemy lines
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Countdown dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 111 BPM, terrifying monster lunging from dark storm clouds and shadows
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Countdown sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 113 BPM, cataclysmic collapse of towering stone citadels and monuments
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Countdown gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 115 BPM, desperate last stand defending the sacred sanctuary gate
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Countdown champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 117 BPM, epic duel of champions with flashing blades and soaring spells
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Countdown elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 119 BPM, colossal dragon unleashing devastating elemental fury
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Countdown collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 121 BPM, breathless escape through collapsing subterranean vaults
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Countdown divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 123 BPM, divine avatar descending in blinding glorious light
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Countdown vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, 125 BPM, furious counterattack driving back the overwhelming horde
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Countdown curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, 127 BPM, shattering ancient curses to restore freedom to the realm
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Countdown arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, 129 BPM, unleashing forbidden magical forces in decisive battle
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Countdown ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, 131 BPM, heroic rescue amidst blazing fires and falling debris
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Countdown stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, 133 BPM, monumental siege engines battering high fortress walls
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Countdown primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, 135 BPM, titanic elemental awakening to reclaim its ancient domain
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Countdown shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, 137 BPM, legendary paladin strike banishing dark demonic entities
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Countdown cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, 139 BPM, armored cavalry storming across the battlefield to victory
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Countdown tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, 141 BPM, shattering the tyrant throne in explosive final triumph
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Countdown victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, countdown climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, 143 BPM, triumphant dawn illuminating a liberated and radiant realm
+TrackType: Music, VocalType: Instrumental, countdown climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

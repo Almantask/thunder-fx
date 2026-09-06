@@ -14,6 +14,16 @@ import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from
 import { GENERATE_MODES, modeSupportsSeamlessLoop } from '@/lib/generateMode'
 import { canCast } from '@/lib/prompt'
 import type { CatalogEffect } from '@/lib/promptCatalog'
+import {
+  PRESET_ORDER,
+  QUALITY_PRESETS,
+  presetLabel,
+  presetUnavailableMessage,
+  presetUsesNegativePrompt,
+  resolvePresetPlan,
+  stepsWarning,
+  type QualityPreset,
+} from '@/lib/qualityPreset'
 import { formatEstimateMs } from '@/lib/timing'
 import type { GenerateMode } from '@/lib/types'
 import { cn } from '@/lib/utils'
@@ -59,6 +69,13 @@ type IncantationConsoleProps = {
   clipEstimateMs?: (seconds: number) => number | undefined
   generateSeamlessLoop?: boolean
   onGenerateSeamlessLoop?: (value: boolean) => void
+  preset?: QualityPreset
+  onPreset?: (value: QualityPreset) => void
+  /** Whether the medium-base weights Max quality wants are already on disk. */
+  baseModelReady?: boolean
+  /** Preset forced onto every queued item for one run; null runs them as queued. */
+  queuePreset?: QualityPreset | null
+  onQueuePreset?: (value: QualityPreset | null) => void
 }
 
 export function IncantationConsole({
@@ -103,15 +120,34 @@ export function IncantationConsole({
   clipEstimateMs,
   generateSeamlessLoop = false,
   onGenerateSeamlessLoop,
+  preset = 'balanced',
+  onPreset,
+  baseModelReady,
+  queuePreset = null,
+  onQueuePreset,
 }: IncantationConsoleProps) {
   const spec = GENERATE_MODES[mode]
+  const plan = resolvePresetPlan(preset, { steps, mode, baseAvailable: baseModelReady })
+  // An unavailable preset is never substituted for; generation refuses instead,
+  // so the buttons that would start one are disabled with the reason attached.
+  const presetBlocked = plan.unavailable
+  // A queue can carry a different preset per item, and the run override can
+  // force one, so the queue button needs its own check.
+  const blockedQueuePreset = [queuePreset, ...queue.map((item) => item.preset)].find(
+    (candidate) =>
+      candidate != null &&
+      resolvePresetPlan(candidate, { mode, baseAvailable: baseModelReady }).unavailable,
+  )
+  const queueBlocked = Boolean(blockedQueuePreset)
+  const negativeActive = presetUsesNegativePrompt(plan) && !presetBlocked
+  const stepsHint = stepsWarning(plan.steps, plan.sampler)
   const ready = canCast(prompt)
   const busy = weaving || loadingModel
-  const canGenerate = ready && modelLoaded && !busy
-  const canQueueMore = ready && modelLoaded && !loadingModel
+  const canGenerate = ready && modelLoaded && !busy && !presetBlocked
+  const canQueueMore = ready && modelLoaded && !loadingModel && !presetBlocked
   const canLoad = engineReady && !modelLoaded && !busy
   const canUnload = engineReady && modelLoaded && !busy
-  const canGenerateQueue = queue.length > 0 && modelLoaded && !busy
+  const canGenerateQueue = queue.length > 0 && modelLoaded && !busy && !queueBlocked
   const loadEta = formatEstimateMs(loadEstimateMs)
   const castEta = formatEstimateMs(castEstimateMs)
   const queueEta = formatEstimateMs(queueEstimateMs)
@@ -170,6 +206,62 @@ export function IncantationConsole({
             )
           })}
         </div>
+        <div
+          role="radiogroup"
+          aria-label="Quality preset"
+          className="inline-flex h-8 items-center rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 p-0.5"
+        >
+          {PRESET_ORDER.map((id) => {
+            // Named `presetSpec` so it does not shadow the mode spec above.
+            const presetSpec = id === 'custom' ? null : QUALITY_PRESETS[id]
+            if (!presetSpec) return null
+            const selected = preset === id
+            // Max quality is per-mode, so whether it needs the download depends
+            // on the material: instrumental stays on Medium and never does.
+            const willFallBack = resolvePresetPlan(id, {
+              mode,
+              baseAvailable: baseModelReady,
+            }).unavailable
+            return (
+              <Hint
+                key={id}
+                asChild
+                label={
+                  willFallBack
+                    ? `Needs the Medium-Base checkpoint, which is not downloaded yet. Until it is, this generates exactly the same as Balanced -- on the distilled Medium checkpoint there is no setting that beats it. Download Medium-Base in Settings to enable it.`
+                    : presetSpec.hint
+                }
+              >
+                <button
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  disabled={busy}
+                  className={cn(
+                    'inline-flex h-7 items-center justify-center rounded-[calc(var(--radius-book)-2px)] px-3 font-display text-xs tracking-[0.12em] text-muted transition-colors',
+                    'hover:text-cream disabled:opacity-50',
+                    selected &&
+                      'bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] text-cream',
+                  )}
+                  onClick={() => onPreset?.(id)}
+                >
+                  {presetSpec.label}
+                  {willFallBack ? ' · needs download' : ''}
+                </button>
+              </Hint>
+            )
+          })}
+          {preset === 'custom' ? (
+            <Hint
+              asChild
+              label="Steps were set by hand in Advanced. Pick a preset above to go back to a tuned combination."
+            >
+              <span className="inline-flex h-7 items-center rounded-[calc(var(--radius-book)-2px)] bg-[color-mix(in_srgb,var(--color-gold)_22%,var(--color-leather))] px-3 font-display text-xs tracking-[0.12em] text-cream">
+                Custom
+              </span>
+            </Hint>
+          ) : null}
+        </div>
         <Hint label="Open the shipped sound-effect, ambience, and instrumental prompt packs. Check items and add them to a generate queue.">
           <Button type="button" size="lg" onClick={() => onOpenCatalog?.()}>
             <BookOpen />
@@ -212,7 +304,37 @@ export function IncantationConsole({
             </Button>
           </Hint>
         )}
+        {queue.length > 0 ? (
+          <Hint label="Each queued item remembers the preset it was added with. Pick one here to force the whole run onto it instead.">
+            <label className="flex items-center gap-1.5 text-xs text-muted">
+              Run queue at
+              <select
+                aria-label="Queue quality preset"
+                className="h-8 rounded-book border border-[color-mix(in_srgb,var(--color-gold)_35%,transparent)] bg-leather-2 px-2 font-display text-xs tracking-[0.12em] text-cream"
+                disabled={busy}
+                value={queuePreset ?? ''}
+                onChange={(e) =>
+                  onQueuePreset?.((e.target.value || null) as QualityPreset | null)
+                }
+              >
+                <option value="">As queued</option>
+                {PRESET_ORDER.map((id) =>
+                  id === 'custom' ? null : (
+                    <option key={id} value={id}>
+                      {presetLabel(id)}
+                    </option>
+                  ),
+                )}
+              </select>
+            </label>
+          </Hint>
+        ) : null}
       </div>
+      {presetBlocked || blockedQueuePreset ? (
+        <p className="mb-2 shrink-0 rounded-book border border-danger/50 bg-danger/10 px-3 py-2 text-xs leading-snug text-danger">
+          {presetUnavailableMessage(presetBlocked ? preset : blockedQueuePreset!)}
+        </p>
+      ) : null}
       <div className="flex min-h-[144px] flex-1 items-stretch gap-3">
         {queue.length > 0 ? (
           <div className="flex min-h-0 flex-1 flex-col rounded-book border border-[color-mix(in_srgb,var(--color-gold)_28%,transparent)] bg-leather-2 p-3">
@@ -247,6 +369,7 @@ export function IncantationConsole({
                     <span className="shrink-0 font-mono text-[11px] text-muted">
                       {item.duration}s{itemEta ? ` ${itemEta}` : ''}
                       {typeof item.seed === 'number' ? ` · seed ${item.seed}` : ''}
+                      {item.preset ? ` · ${presetLabel(queuePreset ?? item.preset)}` : ''}
                     </span>
                     <Hint label={`Remove ${item.title} from the queue.`}>
                       <Button
@@ -448,13 +571,17 @@ export function IncantationConsole({
         <CollapsibleContent className="mt-2 grid gap-3 md:grid-cols-3">
           <Hint
             className="w-full flex-col"
-            label="Diffusion sampling steps. 8 = Draft, 20 = Balanced (Recommended), 32 = High Fidelity."
+            label={
+              'Diffusion steps for the ' +
+              plan.sampler +
+              ' sampler. Steps are not the quality dial on their own: pingpong re-noises every step, so raising it there adds invented detail rather than fidelity. Moving this switches the preset to Custom.'
+            }
           >
             <div className="w-full">
               <div className="flex items-center justify-between">
-                <Label htmlFor="steps">Steps {steps}</Label>
+                <Label htmlFor="steps">Steps {plan.steps}</Label>
                 <span className="text-[10px] uppercase tracking-wider text-muted font-display">
-                  {steps <= 10 ? 'Draft' : steps <= 24 ? 'Balanced' : 'Hi-Fi'}
+                  {plan.sampler}
                 </span>
               </div>
               <Slider
@@ -463,18 +590,40 @@ export function IncantationConsole({
                 min={4}
                 max={50}
                 step={1}
-                value={[steps]}
-                onValueChange={(v) => onSteps?.(v[0] ?? steps)}
+                value={[plan.steps]}
+                onValueChange={(v) => {
+                  onSteps?.(v[0] ?? plan.steps)
+                  if (preset !== 'custom') onPreset?.('custom')
+                }}
                 aria-label="Quality steps"
               />
+              {stepsHint ? (
+                <p className="mt-1.5 text-[11px] leading-snug text-danger">{stepsHint}</p>
+              ) : null}
             </div>
           </Hint>
-          <Hint className="w-full flex-col" label={spec.negativeHint}>
+          <Hint
+            className="w-full flex-col"
+            label={
+              negativeActive
+                ? spec.negativeHint
+                : presetBlocked
+                  ? 'Max quality would use this, but its checkpoint is not downloaded yet, so nothing can run.'
+                  : 'Inactive on this preset. Negative prompts only reach the model through classifier-free guidance, and this checkpoint runs at CFG 1, where there is no guidance branch at all. Max quality turns it on.'
+            }
+          >
             <div className="w-full">
-              <Label htmlFor="negative">Negative prompt</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="negative">Negative prompt</Label>
+                {negativeActive ? null : (
+                  <span className="text-[10px] uppercase tracking-wider text-muted font-display">
+                    Inactive at CFG 1
+                  </span>
+                )}
+              </div>
               <Input
                 id="negative"
-                className="mt-1"
+                className={cn('mt-1', negativeActive ? '' : 'opacity-60')}
                 value={negative}
                 onChange={(e) => onNegative(e.target.value)}
               />

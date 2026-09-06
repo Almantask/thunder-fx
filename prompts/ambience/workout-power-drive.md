@@ -10,37 +10,37 @@ Instrumental music for Stable Audio 3 Medium fit for focus. Each cue starts with
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, power workout warmup bed, tense and focused, gritty sustained 80s electric guitar chords, low analog synth rumble, tense solo violin sustain, subtle metal wind chimes, 90 BPM, chalking hands and mentally rehearsing the heavy lift in iron silence, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, power workout warmup bed, tense and focused, gritty sustained 80s electric guitar chords, low analog synth rumble, tense solo violin sustain, subtle metal wind chimes, chalking hands and mentally rehearsing the heavy lift in iron silence, steady texture with no ending, looping-friendly. BPM: 90. Length: 120 seconds
 
 ### The iron temple contemplation (I)
 - Duration: 160s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, weightlifting focus bed, dark and resolute, deep synthwave bass drone, distorted guitar volume swells, muted violin harmonics, 94 BPM, approaching the loaded barbell with absolute concentration, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, weightlifting focus bed, dark and resolute, deep synthwave bass drone, distorted guitar volume swells, muted violin harmonics, approaching the loaded barbell with absolute concentration, steady texture with no ending, looping-friendly. BPM: 94. Length: 160 seconds
 
 ### Pre-lift adrenaline calibration (I)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, strength training ambient, purposeful and brooding, repetitive electric guitar motif, warm analog synth pad, low cello drone, 96 BPM, channeling nervous energy into unshakeable lifting determination, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, strength training ambient, purposeful and brooding, repetitive electric guitar motif, warm analog synth pad, low cello drone, channeling nervous energy into unshakeable lifting determination, steady texture with no ending, looping-friendly. BPM: 96. Length: 210 seconds
 
 ### Heavy resistance equilibrium (I)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, resistance training bed, steady and menacing, pulsating synth bass, singing rock guitar notes with feedback sustain, subtle chime resonance, 95 BPM, locked into the zone between warm-up and working sets, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, resistance training bed, steady and menacing, pulsating synth bass, singing rock guitar notes with feedback sustain, subtle chime resonance, locked into the zone between warm-up and working sets, steady texture with no ending, looping-friendly. BPM: 95. Length: 260 seconds
 
 ### Rest interval recovery (I)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, lifting rest interval bed, deep and calm, sweeping analog synthesizer chords, ambient electric guitar arpeggios, gentle violin pad, 92 BPM, catching breath and preparing central nervous system for the next heavy set, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, lifting rest interval bed, deep and calm, sweeping analog synthesizer chords, ambient electric guitar arpeggios, gentle violin pad, catching breath and preparing central nervous system for the next heavy set, steady texture with no ending, looping-friendly. BPM: 92. Length: 320 seconds
 
 ### Undefeated mindset (I)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, strength mindset ambient, timeless and fierce, continuous analog synth power drone, singing guitar sustain, crystalline chimes, 90 BPM, cultivating unshakeable mental fortitude under heavy loads, steady texture with no ending, looping-friendly
+TrackType: Music, VocalType: Instrumental, strength mindset ambient, timeless and fierce, continuous analog synth power drone, singing guitar sustain, crystalline chimes, cultivating unshakeable mental fortitude under heavy loads, steady texture with no ending, looping-friendly. BPM: 90. Length: 380 seconds
 
 ## II — the mood in motion
 
@@ -48,37 +48,37 @@ TrackType: Music, instrumental, strength mindset ambient, timeless and fierce, c
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, 80s rock workout movement, driving and heavy, chugging 80s rock melodic guitar riffs, pulsing synthwave bass, aggressive bowed violin accents, bright wind chimes, 114 BPM, powering through heavy working sets with explosive concentric power, non-percussive momentum
+TrackType: Music, VocalType: Instrumental, 80s rock workout movement, driving and heavy, chugging 80s rock melodic guitar riffs, pulsing synthwave bass, aggressive bowed violin accents, bright wind chimes, powering through heavy working sets with explosive concentric power, non-percussive momentum. BPM: 114. Length: 75 seconds
 
 ### Working set intensity (II)
 - Duration: 100s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, powerlifting theme, motivating and gritty, singing electric guitar leads, driving analog synth sequences, rhythmic violin ostinato, 118 BPM, locking out rep after rep with flawless technical execution
+TrackType: Music, VocalType: Instrumental, powerlifting theme, motivating and gritty, singing electric guitar leads, driving analog synth sequences, rhythmic violin ostinato, locking out rep after rep with flawless technical execution. BPM: 118. Length: 100 seconds
 
 ### Hypertrophy drive (II)
 - Duration: 130s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, bodybuilding focus piece, powerful and rhythmic, dual melodic guitar harmonies, rich synthesizer chords, aggressive bass pulse, 116 BPM, chasing the muscle pump through controlled eccentric repetitions
+TrackType: Music, VocalType: Instrumental, bodybuilding focus piece, powerful and rhythmic, dual melodic guitar harmonies, rich synthesizer chords, aggressive bass pulse, chasing the muscle pump through controlled eccentric repetitions. BPM: 116. Length: 130 seconds
 
 ### The iron discipline (II)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, strength discipline theme, relentless and noble, soaring electric guitar melodies, dramatic violin swells, deep analog bass, 120 BPM, refusing to surrender on the final repetitions of the set
+TrackType: Music, VocalType: Instrumental, strength discipline theme, relentless and noble, soaring electric guitar melodies, dramatic violin swells, deep analog bass, refusing to surrender on the final repetitions of the set. BPM: 120. Length: 170 seconds
 
 ### Circuit training surge (II)
 - Duration: 210s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, conditioning power piece, agile and electric, rapid synthesizer arpeggios, melodic rock guitar riffs, singing violin, 118 BPM, moving through high-intensity strength stations with relentless grit
+TrackType: Music, VocalType: Instrumental, conditioning power piece, agile and electric, rapid synthesizer arpeggios, melodic rock guitar riffs, singing violin, moving through high-intensity strength stations with relentless grit. BPM: 118. Length: 210 seconds
 
 ### The titan's work ethic (II)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, weight room anthem, triumphant and commanding, massive 80s rock guitar chords, rich synth brass, fiery violin counter-melody, 116 BPM, putting in the quiet work that builds legendary physical strength
+TrackType: Music, VocalType: Instrumental, weight room anthem, triumphant and commanding, massive 80s rock guitar chords, rich synth brass, fiery violin counter-melody, putting in the quiet work that builds legendary physical strength. BPM: 116. Length: 260 seconds
 
 ## III — full intensity of this category
 
@@ -86,22 +86,22 @@ TrackType: Music, instrumental, weight room anthem, triumphant and commanding, m
 - Duration: 60s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, PR lifting climax, monumental and heroic, soaring 80s rock guitar solo and dual harmony leads, surging synthwave power bass, fiery violin arpeggios, shimmering wind chimes, 130 BPM, stepping onto the platform and shattering an all-time personal record
+TrackType: Music, VocalType: Instrumental, PR lifting climax, monumental and heroic, soaring 80s rock guitar solo and dual harmony leads, surging synthwave power bass, fiery violin arpeggios, shimmering wind chimes, stepping onto the platform and shattering an all-time personal record. BPM: 130. Length: 60 seconds
 
 ### The unstoppable lifter (III)
 - Duration: 85s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, strength peak suite, electrifying and ferocious, screaming melodic guitar leads, virtuosic electric violin runs, thunderous synth bassline, 134 BPM, grinding through the sticking point with pure ferocious determination
+TrackType: Music, VocalType: Instrumental, strength peak suite, electrifying and ferocious, screaming melodic guitar leads, virtuosic electric violin runs, thunderous synth bassline, grinding through the sticking point with pure ferocious determination. BPM: 134. Length: 85 seconds
 
 ### Arena of champions (III)
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, power workout anthem, grand and victorious, anthemic 80s rock guitar riffs, soaring violin section, colossal analog synthesizer chords, bell wind chimes, 132 BPM, celebrating a monumental triumph over the heaviest weights
+TrackType: Music, VocalType: Instrumental, power workout anthem, grand and victorious, anthemic 80s rock guitar riffs, soaring violin section, colossal analog synthesizer chords, bell wind chimes, celebrating a monumental triumph over the heaviest weights. BPM: 132. Length: 110 seconds
 
 ### Colossus of iron (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, drum kit, snare, acoustic drums, heavy beats
 
-TrackType: Music, instrumental, strength training finale, majestic and invincible, soaring dual electric guitars, rich synth brass swells, dramatic violin melodies, 128 BPM, walking out of the gym with the supreme satisfaction of having conquered every lift
+TrackType: Music, VocalType: Instrumental, strength training finale, majestic and invincible, soaring dual electric guitars, rich synth brass swells, dramatic violin melodies, walking out of the gym with the supreme satisfaction of having conquered every lift. BPM: 128. Length: 150 seconds

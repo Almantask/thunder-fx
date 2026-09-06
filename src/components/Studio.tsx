@@ -36,6 +36,12 @@ import {
 } from '@/lib/engine'
 import { copyFile, joinPath, tempDir, writeFileBytes, writeTextFile } from '@/lib/tauriFs'
 import { randomSeed } from '@/lib/seed'
+import {
+  BASE_MODEL,
+  resolvePresetPlan,
+  resolveQualityPreset,
+  type QualityPreset,
+} from '@/lib/qualityPreset'
 import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
 import { formatNeedsDesktop, prepareExportWav, resolveDefaultFormat } from '@/lib/audioExport'
 import { clipFilename, isUuidOrSymbol, promptName } from '@/lib/filename'
@@ -125,6 +131,12 @@ export function Studio() {
   // Off by default: looping is a deliberate choice, not something a mode
   // switch turns on behind the user's back.
   const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(false)
+  const [preset, setPreset] = useState<QualityPreset>(() =>
+    resolveQualityPreset(settings.defaultPreset),
+  )
+  // Forces one queue run onto a single preset; null runs each item as queued.
+  const [queuePreset, setQueuePreset] = useState<QualityPreset | null>(null)
+  const [installingBase, setInstallingBase] = useState(false)
   const [takes, setTakes] = useState<TakeCandidate[]>([])
   const [takesOpen, setTakesOpen] = useState(false)
   const [playhead, setPlayhead] = useState(0)
@@ -187,6 +199,14 @@ export function Studio() {
   engineMockRef.current = engine.mock
   const clipDuration = wav ? wavDurationSeconds(wav) : duration
   const activeClip = selectedId ? clipsById.get(selectedId) : undefined
+
+  // The steps slider no longer drives generation on its own, so time estimates
+  // have to read the preset's effective step count instead.
+  const effectiveSteps = resolvePresetPlan(preset, {
+    steps,
+    mode,
+    baseAvailable: engine.baseModelReady,
+  }).steps
 
   function rememberTiming(next: TimingLog) {
     timingRef.current = next
@@ -464,6 +484,40 @@ export function Studio() {
     }
   }
 
+  /**
+   * Pull down the un-distilled medium-base checkpoint that Max quality wants.
+   * It is a separate multi-GB download, so it is opt-in from Settings rather
+   * than something a first Max quality generation silently starts.
+   */
+  async function installBaseModel() {
+    if (installingBase || loadingModel || weaving) return
+    setInstallingBase(true)
+    const started = Date.now()
+    try {
+      await loadModel(
+        (ratio) => {
+          setElapsedMs(Date.now() - started)
+          setWeaveRatio(ratio)
+          setWeavePhase('loading')
+        },
+        { precision: settings.precision, model: BASE_MODEL },
+      )
+      await refreshEngine()
+      setEngine((current) => ({ ...current, loaded: true, baseModelReady: true }))
+      toast.success('Medium-Base installed.', {
+        description: 'Max quality now runs the un-distilled checkpoint, so negative prompts work.',
+      })
+    } catch (err) {
+      const message = reportError(err, 'Medium-Base download failed')
+      setError(message)
+      toast.error('Medium-Base download failed.', {
+        description: `${message} Saved to the error log.`,
+      })
+    } finally {
+      setInstallingBase(false)
+    }
+  }
+
   async function unloadWeights() {
     if (loadingModel || weaving || !engine.loaded) return
     try {
@@ -491,6 +545,7 @@ export function Studio() {
       subcategory?: string
       intensity?: string
       seamlessLoop?: boolean
+      preset?: QualityPreset
     },
     options: {
       manageBusy?: boolean
@@ -528,6 +583,7 @@ export function Studio() {
           subcategory: request.subcategory,
           intensity: request.intensity,
           seamlessLoop: Boolean(request.seamlessLoop),
+          preset: request.preset ?? preset,
         },
         {
           signal: controller.signal,
@@ -543,6 +599,11 @@ export function Studio() {
       )
       let finalClip = result.clip
       let finalWav = result.wav
+      // Non-blocking notices from the worker, such as a prompt past the length
+      // Stable Audio 3 was tuned on, or a negative prompt the preset ignores.
+      for (const warning of result.warnings ?? []) {
+        toast('Heads up', { description: warning })
+      }
       if (finalClip.mode === 'music' && !finalClip.instruments?.length) {
         const detected = extractInstruments(finalClip.prompt)
         if (detected.length) {
@@ -613,6 +674,7 @@ export function Studio() {
         negative: requestNegative,
         mode,
         steps,
+        preset,
         seamlessLoop: modeSupportsSeamlessLoop(mode) && generateSeamlessLoop,
       },
       { setActiveClip: true },
@@ -642,6 +704,7 @@ export function Studio() {
       prompt: requestPrompt,
       duration,
       negative: requestNegative,
+      preset,
     }
     queuedDuringRunRef.current = true
     updateQueue([...queueRef.current, item])
@@ -668,6 +731,7 @@ export function Studio() {
             negative: requestNegative,
             mode,
             steps,
+            preset,
             seamlessLoop: modeSupportsSeamlessLoop(mode) && generateSeamlessLoop,
           },
           {
@@ -712,6 +776,7 @@ export function Studio() {
             negative: item.negative.trim() || GENERATE_MODES[nextMode].defaultNegative,
             mode: nextMode,
             steps,
+            preset: queuePreset ?? item.preset ?? preset,
             category: item.category,
             subcategory: item.subcategory,
             intensity: item.intensity,
@@ -1107,7 +1172,7 @@ export function Studio() {
             onRemoveQueued={(id) => updateQueue(removeFromQueue(queueRef.current, id))}
             loadEstimateMs={estimateLoadMs(timing, { precision: settings.precision, isMock: engine.mock })}
             castEstimateMs={estimateGenerateMs(timing, duration, {
-              steps,
+              steps: effectiveSteps,
               precision: settings.precision,
               isMock: engine.mock,
             })}
@@ -1117,25 +1182,39 @@ export function Studio() {
             })}
             clipEstimateMs={(seconds) =>
               estimateGenerateMs(timing, seconds, {
-                steps,
+                steps: effectiveSteps,
                 precision: settings.precision,
                 isMock: engine.mock,
               })
             }
             generateSeamlessLoop={generateSeamlessLoop}
             onGenerateSeamlessLoop={setGenerateSeamlessLoop}
+            preset={preset}
+            onPreset={setPreset}
+            baseModelReady={engine.baseModelReady}
+            queuePreset={queuePreset}
+            onQueuePreset={setQueuePreset}
           />
         </div>
       ) : null}
       {tab === 'settings' ? (
-        <SettingsPanel settings={settings} onChange={applySettings} />
+        <SettingsPanel
+          settings={settings}
+          onChange={applySettings}
+          baseModelReady={engine.baseModelReady}
+          installingBaseModel={installingBase}
+          onInstallBaseModel={installBaseModel}
+        />
       ) : null}
       <PromptCatalogDialog
         open={catalogOpen}
         catalog={catalog}
         onOpenChange={setCatalogOpen}
         onEnqueue={(effects) => {
-          const next = mergeQueue(queueRef.current, effects)
+          // Stamp the preset in force now, so a queue can mix presets and each
+          // item still runs the way it was added.
+          const stamped = effects.map((effect) => ({ ...effect, preset }))
+          const next = mergeQueue(queueRef.current, stamped)
           updateQueue(next)
         }}
         onUse={(effect) => {

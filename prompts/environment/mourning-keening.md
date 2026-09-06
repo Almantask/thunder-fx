@@ -8,181 +8,181 @@ Grief bed: wordless keening and mourning murmur for funeral and vigil scenes, ne
 - Duration: 90s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, empty vigil room, single candle, one mourner, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly
+TrackType: SFX, empty vigil room, single candle, one mourner, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly. Length: 90 seconds
 
 ### Empty Vigil Room Low Keening Tone (I)
 - Duration: 100s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, empty vigil room, single candle, one mourner, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly
+TrackType: SFX, empty vigil room, single candle, one mourner, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly. Length: 100 seconds
 
 ### Empty Vigil Room Quiet Weeping Texture (I)
 - Duration: 110s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, empty vigil room, single candle, one mourner, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly
+TrackType: SFX, empty vigil room, single candle, one mourner, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly. Length: 110 seconds
 
 ### Empty Vigil Room Muted Grief Murmur (I)
 - Duration: 120s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, empty vigil room, single candle, one mourner, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly
+TrackType: SFX, empty vigil room, single candle, one mourner, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly. Length: 120 seconds
 
 ### Empty Vigil Room Solitary Mourning Hum (I)
 - Duration: 130s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, empty vigil room, single candle, one mourner, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly
+TrackType: SFX, empty vigil room, single candle, one mourner, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly. Length: 130 seconds
 
 ### Graveside Hush Held Sob Breath (I)
 - Duration: 140s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet graveside at dawn, single mourner, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet graveside at dawn, single mourner, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly. Length: 140 seconds
 
 ### Graveside Hush Low Keening Tone (I)
 - Duration: 150s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet graveside at dawn, single mourner, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet graveside at dawn, single mourner, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly. Length: 150 seconds
 
 ### Graveside Hush Quiet Weeping Texture (I)
 - Duration: 160s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet graveside at dawn, single mourner, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet graveside at dawn, single mourner, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly. Length: 160 seconds
 
 ### Graveside Hush Muted Grief Murmur (I)
 - Duration: 170s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet graveside at dawn, single mourner, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet graveside at dawn, single mourner, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly. Length: 170 seconds
 
 ### Graveside Hush Solitary Mourning Hum (I)
 - Duration: 180s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet graveside at dawn, single mourner, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet graveside at dawn, single mourner, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly. Length: 180 seconds
 
 ### Widows Chamber Held Sob Breath (I)
 - Duration: 190s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, widow's chamber, low light, single grieving breath, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly
+TrackType: SFX, widow's chamber, low light, single grieving breath, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly. Length: 190 seconds
 
 ### Widows Chamber Low Keening Tone (I)
 - Duration: 200s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, widow's chamber, low light, single grieving breath, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly
+TrackType: SFX, widow's chamber, low light, single grieving breath, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly. Length: 200 seconds
 
 ### Widows Chamber Quiet Weeping Texture (I)
 - Duration: 210s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, widow's chamber, low light, single grieving breath, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly
+TrackType: SFX, widow's chamber, low light, single grieving breath, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly. Length: 210 seconds
 
 ### Widows Chamber Muted Grief Murmur (I)
 - Duration: 220s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, widow's chamber, low light, single grieving breath, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly
+TrackType: SFX, widow's chamber, low light, single grieving breath, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly. Length: 220 seconds
 
 ### Widows Chamber Solitary Mourning Hum (I)
 - Duration: 230s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, widow's chamber, low light, single grieving breath, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly
+TrackType: SFX, widow's chamber, low light, single grieving breath, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly. Length: 230 seconds
 
 ### Chapel Of Rest Held Sob Breath (I)
 - Duration: 240s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, small chapel of rest, one still figure, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly
+TrackType: SFX, small chapel of rest, one still figure, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly. Length: 240 seconds
 
 ### Chapel Of Rest Low Keening Tone (I)
 - Duration: 250s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, small chapel of rest, one still figure, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly
+TrackType: SFX, small chapel of rest, one still figure, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly. Length: 250 seconds
 
 ### Chapel Of Rest Quiet Weeping Texture (I)
 - Duration: 260s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, small chapel of rest, one still figure, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly
+TrackType: SFX, small chapel of rest, one still figure, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly. Length: 260 seconds
 
 ### Chapel Of Rest Muted Grief Murmur (I)
 - Duration: 270s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, small chapel of rest, one still figure, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly
+TrackType: SFX, small chapel of rest, one still figure, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly. Length: 270 seconds
 
 ### Chapel Of Rest Solitary Mourning Hum (I)
 - Duration: 280s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, small chapel of rest, one still figure, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly
+TrackType: SFX, small chapel of rest, one still figure, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly. Length: 280 seconds
 
 ### Riverside Farewell Held Sob Breath (I)
 - Duration: 290s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet riverside farewell spot, single low voice, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet riverside farewell spot, single low voice, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly. Length: 290 seconds
 
 ### Riverside Farewell Low Keening Tone (I)
 - Duration: 300s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet riverside farewell spot, single low voice, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet riverside farewell spot, single low voice, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly. Length: 300 seconds
 
 ### Riverside Farewell Quiet Weeping Texture (I)
 - Duration: 310s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet riverside farewell spot, single low voice, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet riverside farewell spot, single low voice, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly. Length: 310 seconds
 
 ### Riverside Farewell Muted Grief Murmur (I)
 - Duration: 320s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet riverside farewell spot, single low voice, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet riverside farewell spot, single low voice, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly. Length: 320 seconds
 
 ### Riverside Farewell Solitary Mourning Hum (I)
 - Duration: 330s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, quiet riverside farewell spot, single low voice, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly
+TrackType: SFX, quiet riverside farewell spot, single low voice, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly. Length: 330 seconds
 
 ### Family Shrine Room Held Sob Breath (I)
 - Duration: 340s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, family shrine room, incense and one hushed mourner, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly
+TrackType: SFX, family shrine room, incense and one hushed mourner, one held breath before a quiet sob, near silence, steady texture with no ending, looping-friendly. Length: 340 seconds
 
 ### Family Shrine Room Low Keening Tone (I)
 - Duration: 350s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, family shrine room, incense and one hushed mourner, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly
+TrackType: SFX, family shrine room, incense and one hushed mourner, single low wordless keening tone, restrained, steady texture with no ending, looping-friendly. Length: 350 seconds
 
 ### Family Shrine Room Quiet Weeping Texture (I)
 - Duration: 360s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, family shrine room, incense and one hushed mourner, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly
+TrackType: SFX, family shrine room, incense and one hushed mourner, quiet wordless weeping texture, breath-led, steady texture with no ending, looping-friendly. Length: 360 seconds
 
 ### Family Shrine Room Muted Grief Murmur (I)
 - Duration: 370s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, family shrine room, incense and one hushed mourner, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly
+TrackType: SFX, family shrine room, incense and one hushed mourner, muted low grief murmur, barely voiced, steady texture with no ending, looping-friendly. Length: 370 seconds
 
 ### Family Shrine Room Solitary Mourning Hum (I)
 - Duration: 380s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, family shrine room, incense and one hushed mourner, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly
+TrackType: SFX, family shrine room, incense and one hushed mourner, solitary low mourning hum, unhurried, steady texture with no ending, looping-friendly. Length: 380 seconds
 
 ## II — the scene in full motion
 
@@ -190,181 +190,181 @@ TrackType: SFX, family shrine room, incense and one hushed mourner, solitary low
 - Duration: 45s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, funeral gathering hall, mourners seated close, group wordless keening tone, rising and falling, steady bed, looping-friendly
+TrackType: SFX, funeral gathering hall, mourners seated close, group wordless keening tone, rising and falling, steady bed, looping-friendly. Length: 45 seconds
 
 ### Funeral Gathering Shared Grief Murmur (II)
 - Duration: 55s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, funeral gathering hall, mourners seated close, shared low grief murmur, several voices together, steady bed, looping-friendly
+TrackType: SFX, funeral gathering hall, mourners seated close, shared low grief murmur, several voices together, steady bed, looping-friendly. Length: 55 seconds
 
 ### Funeral Gathering Wave Of Weeping (II)
 - Duration: 65s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, funeral gathering hall, mourners seated close, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly
+TrackType: SFX, funeral gathering hall, mourners seated close, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly. Length: 65 seconds
 
 ### Funeral Gathering Layered Mourning Hum (II)
 - Duration: 75s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, funeral gathering hall, mourners seated close, layered low mourning hum, steady and full, steady bed, looping-friendly
+TrackType: SFX, funeral gathering hall, mourners seated close, layered low mourning hum, steady and full, steady bed, looping-friendly. Length: 75 seconds
 
 ### Funeral Gathering Vigil Murmur (II)
 - Duration: 85s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, funeral gathering hall, mourners seated close, steady vigil murmur, hushed group grief, steady bed, looping-friendly
+TrackType: SFX, funeral gathering hall, mourners seated close, steady vigil murmur, hushed group grief, steady bed, looping-friendly. Length: 85 seconds
 
 ### Wake Room Group Keening (II)
 - Duration: 95s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, crowded wake room, low murmured grief, group wordless keening tone, rising and falling, steady bed, looping-friendly
+TrackType: SFX, crowded wake room, low murmured grief, group wordless keening tone, rising and falling, steady bed, looping-friendly. Length: 95 seconds
 
 ### Wake Room Shared Grief Murmur (II)
 - Duration: 105s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, crowded wake room, low murmured grief, shared low grief murmur, several voices together, steady bed, looping-friendly
+TrackType: SFX, crowded wake room, low murmured grief, shared low grief murmur, several voices together, steady bed, looping-friendly. Length: 105 seconds
 
 ### Wake Room Wave Of Weeping (II)
 - Duration: 115s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, crowded wake room, low murmured grief, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly
+TrackType: SFX, crowded wake room, low murmured grief, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly. Length: 115 seconds
 
 ### Wake Room Layered Mourning Hum (II)
 - Duration: 125s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, crowded wake room, low murmured grief, layered low mourning hum, steady and full, steady bed, looping-friendly
+TrackType: SFX, crowded wake room, low murmured grief, layered low mourning hum, steady and full, steady bed, looping-friendly. Length: 125 seconds
 
 ### Wake Room Vigil Murmur (II)
 - Duration: 135s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, crowded wake room, low murmured grief, steady vigil murmur, hushed group grief, steady bed, looping-friendly
+TrackType: SFX, crowded wake room, low murmured grief, steady vigil murmur, hushed group grief, steady bed, looping-friendly. Length: 135 seconds
 
 ### Graveyard Procession Pause Group Keening (II)
 - Duration: 145s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, graveyard gathering paused at the grave, group murmur, group wordless keening tone, rising and falling, steady bed, looping-friendly
+TrackType: SFX, graveyard gathering paused at the grave, group murmur, group wordless keening tone, rising and falling, steady bed, looping-friendly. Length: 145 seconds
 
 ### Graveyard Procession Pause Shared Grief Murmur (II)
 - Duration: 155s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, graveyard gathering paused at the grave, group murmur, shared low grief murmur, several voices together, steady bed, looping-friendly
+TrackType: SFX, graveyard gathering paused at the grave, group murmur, shared low grief murmur, several voices together, steady bed, looping-friendly. Length: 155 seconds
 
 ### Graveyard Procession Pause Wave Of Weeping (II)
 - Duration: 165s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, graveyard gathering paused at the grave, group murmur, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly
+TrackType: SFX, graveyard gathering paused at the grave, group murmur, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly. Length: 165 seconds
 
 ### Graveyard Procession Pause Layered Mourning Hum (II)
 - Duration: 175s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, graveyard gathering paused at the grave, group murmur, layered low mourning hum, steady and full, steady bed, looping-friendly
+TrackType: SFX, graveyard gathering paused at the grave, group murmur, layered low mourning hum, steady and full, steady bed, looping-friendly. Length: 175 seconds
 
 ### Graveyard Procession Pause Vigil Murmur (II)
 - Duration: 185s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, graveyard gathering paused at the grave, group murmur, steady vigil murmur, hushed group grief, steady bed, looping-friendly
+TrackType: SFX, graveyard gathering paused at the grave, group murmur, steady vigil murmur, hushed group grief, steady bed, looping-friendly. Length: 185 seconds
 
 ### Village Vigil Group Keening (II)
 - Duration: 190s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, village vigil courtyard, group of mourners, group wordless keening tone, rising and falling, steady bed, looping-friendly
+TrackType: SFX, village vigil courtyard, group of mourners, group wordless keening tone, rising and falling, steady bed, looping-friendly. Length: 190 seconds
 
 ### Village Vigil Shared Grief Murmur (II)
 - Duration: 200s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, village vigil courtyard, group of mourners, shared low grief murmur, several voices together, steady bed, looping-friendly
+TrackType: SFX, village vigil courtyard, group of mourners, shared low grief murmur, several voices together, steady bed, looping-friendly. Length: 200 seconds
 
 ### Village Vigil Wave Of Weeping (II)
 - Duration: 210s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, village vigil courtyard, group of mourners, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly
+TrackType: SFX, village vigil courtyard, group of mourners, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly. Length: 210 seconds
 
 ### Village Vigil Layered Mourning Hum (II)
 - Duration: 220s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, village vigil courtyard, group of mourners, layered low mourning hum, steady and full, steady bed, looping-friendly
+TrackType: SFX, village vigil courtyard, group of mourners, layered low mourning hum, steady and full, steady bed, looping-friendly. Length: 220 seconds
 
 ### Village Vigil Vigil Murmur (II)
 - Duration: 230s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, village vigil courtyard, group of mourners, steady vigil murmur, hushed group grief, steady bed, looping-friendly
+TrackType: SFX, village vigil courtyard, group of mourners, steady vigil murmur, hushed group grief, steady bed, looping-friendly. Length: 230 seconds
 
 ### Temple Mourning Hall Group Keening (II)
 - Duration: 240s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, temple mourning hall, rows of grieving voices, group wordless keening tone, rising and falling, steady bed, looping-friendly
+TrackType: SFX, temple mourning hall, rows of grieving voices, group wordless keening tone, rising and falling, steady bed, looping-friendly. Length: 240 seconds
 
 ### Temple Mourning Hall Shared Grief Murmur (II)
 - Duration: 250s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, temple mourning hall, rows of grieving voices, shared low grief murmur, several voices together, steady bed, looping-friendly
+TrackType: SFX, temple mourning hall, rows of grieving voices, shared low grief murmur, several voices together, steady bed, looping-friendly. Length: 250 seconds
 
 ### Temple Mourning Hall Wave Of Weeping (II)
 - Duration: 260s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, temple mourning hall, rows of grieving voices, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly
+TrackType: SFX, temple mourning hall, rows of grieving voices, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly. Length: 260 seconds
 
 ### Temple Mourning Hall Layered Mourning Hum (II)
 - Duration: 270s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, temple mourning hall, rows of grieving voices, layered low mourning hum, steady and full, steady bed, looping-friendly
+TrackType: SFX, temple mourning hall, rows of grieving voices, layered low mourning hum, steady and full, steady bed, looping-friendly. Length: 270 seconds
 
 ### Temple Mourning Hall Vigil Murmur (II)
 - Duration: 280s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, temple mourning hall, rows of grieving voices, steady vigil murmur, hushed group grief, steady bed, looping-friendly
+TrackType: SFX, temple mourning hall, rows of grieving voices, steady vigil murmur, hushed group grief, steady bed, looping-friendly. Length: 280 seconds
 
 ### Battlefield Aftermath Camp Group Keening (II)
 - Duration: 290s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, group wordless keening tone, rising and falling, steady bed, looping-friendly
+TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, group wordless keening tone, rising and falling, steady bed, looping-friendly. Length: 290 seconds
 
 ### Battlefield Aftermath Camp Shared Grief Murmur (II)
 - Duration: 300s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, shared low grief murmur, several voices together, steady bed, looping-friendly
+TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, shared low grief murmur, several voices together, steady bed, looping-friendly. Length: 300 seconds
 
 ### Battlefield Aftermath Camp Wave Of Weeping (II)
 - Duration: 310s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly
+TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, a wave of wordless weeping texture moving through the group, steady bed, looping-friendly. Length: 310 seconds
 
 ### Battlefield Aftermath Camp Layered Mourning Hum (II)
 - Duration: 320s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, layered low mourning hum, steady and full, steady bed, looping-friendly
+TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, layered low mourning hum, steady and full, steady bed, looping-friendly. Length: 320 seconds
 
 ### Battlefield Aftermath Camp Vigil Murmur (II)
 - Duration: 330s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, steady vigil murmur, hushed group grief, steady bed, looping-friendly
+TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors, steady vigil murmur, hushed group grief, steady bed, looping-friendly. Length: 330 seconds
 
 ## III — Mourning & Keening's busiest bed
 
@@ -372,178 +372,178 @@ TrackType: SFX, battlefield aftermath camp, low mourning murmur among survivors,
 - Duration: 40s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, mass funeral ground, dense crowd of mourners, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly
+TrackType: SFX, mass funeral ground, dense crowd of mourners, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly. Length: 40 seconds
 
 ### Mass Funeral Ground Wailing Crowd Texture (III)
 - Duration: 50s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, mass funeral ground, dense crowd of mourners, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly
+TrackType: SFX, mass funeral ground, dense crowd of mourners, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly. Length: 50 seconds
 
 ### Mass Funeral Ground Overwhelming Grief Murmur (III)
 - Duration: 65s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, mass funeral ground, dense crowd of mourners, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly
+TrackType: SFX, mass funeral ground, dense crowd of mourners, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly. Length: 65 seconds
 
 ### Mass Funeral Ground Rising Lament (III)
 - Duration: 75s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, mass funeral ground, dense crowd of mourners, rising wordless lament texture, full crowd, dense steady bed, looping-friendly
+TrackType: SFX, mass funeral ground, dense crowd of mourners, rising wordless lament texture, full crowd, dense steady bed, looping-friendly. Length: 75 seconds
 
 ### Mass Funeral Ground Full Mourning Roar (III)
 - Duration: 85s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, mass funeral ground, dense crowd of mourners, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly
+TrackType: SFX, mass funeral ground, dense crowd of mourners, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly. Length: 85 seconds
 
 ### City Mourning Square Dense Keening Wall (III)
 - Duration: 100s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, city square in mourning, dense crowd murmur, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly
+TrackType: SFX, city square in mourning, dense crowd murmur, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly. Length: 100 seconds
 
 ### City Mourning Square Wailing Crowd Texture (III)
 - Duration: 110s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, city square in mourning, dense crowd murmur, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly
+TrackType: SFX, city square in mourning, dense crowd murmur, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly. Length: 110 seconds
 
 ### City Mourning Square Overwhelming Grief Murmur (III)
 - Duration: 120s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, city square in mourning, dense crowd murmur, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly
+TrackType: SFX, city square in mourning, dense crowd murmur, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly. Length: 120 seconds
 
 ### City Mourning Square Rising Lament (III)
 - Duration: 135s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, city square in mourning, dense crowd murmur, rising wordless lament texture, full crowd, dense steady bed, looping-friendly
+TrackType: SFX, city square in mourning, dense crowd murmur, rising wordless lament texture, full crowd, dense steady bed, looping-friendly. Length: 135 seconds
 
 ### City Mourning Square Full Mourning Roar (III)
 - Duration: 145s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, city square in mourning, dense crowd murmur, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly
+TrackType: SFX, city square in mourning, dense crowd murmur, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly. Length: 145 seconds
 
 ### War Dead Vigil Dense Keening Wall (III)
 - Duration: 155s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, war-dead vigil ground, dense low keening crowd, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly
+TrackType: SFX, war-dead vigil ground, dense low keening crowd, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly. Length: 155 seconds
 
 ### War Dead Vigil Wailing Crowd Texture (III)
 - Duration: 170s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, war-dead vigil ground, dense low keening crowd, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly
+TrackType: SFX, war-dead vigil ground, dense low keening crowd, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly. Length: 170 seconds
 
 ### War Dead Vigil Overwhelming Grief Murmur (III)
 - Duration: 180s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, war-dead vigil ground, dense low keening crowd, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly
+TrackType: SFX, war-dead vigil ground, dense low keening crowd, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly. Length: 180 seconds
 
 ### War Dead Vigil Rising Lament (III)
 - Duration: 190s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, war-dead vigil ground, dense low keening crowd, rising wordless lament texture, full crowd, dense steady bed, looping-friendly
+TrackType: SFX, war-dead vigil ground, dense low keening crowd, rising wordless lament texture, full crowd, dense steady bed, looping-friendly. Length: 190 seconds
 
 ### War Dead Vigil Full Mourning Roar (III)
 - Duration: 205s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, war-dead vigil ground, dense low keening crowd, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly
+TrackType: SFX, war-dead vigil ground, dense low keening crowd, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly. Length: 205 seconds
 
 ### Plague Vigil Crowd Dense Keening Wall (III)
 - Duration: 215s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, plague vigil crowd, dense wordless grief murmur, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly
+TrackType: SFX, plague vigil crowd, dense wordless grief murmur, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly. Length: 215 seconds
 
 ### Plague Vigil Crowd Wailing Crowd Texture (III)
 - Duration: 230s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, plague vigil crowd, dense wordless grief murmur, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly
+TrackType: SFX, plague vigil crowd, dense wordless grief murmur, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly. Length: 230 seconds
 
 ### Plague Vigil Crowd Overwhelming Grief Murmur (III)
 - Duration: 240s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, plague vigil crowd, dense wordless grief murmur, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly
+TrackType: SFX, plague vigil crowd, dense wordless grief murmur, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly. Length: 240 seconds
 
 ### Plague Vigil Crowd Rising Lament (III)
 - Duration: 250s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, plague vigil crowd, dense wordless grief murmur, rising wordless lament texture, full crowd, dense steady bed, looping-friendly
+TrackType: SFX, plague vigil crowd, dense wordless grief murmur, rising wordless lament texture, full crowd, dense steady bed, looping-friendly. Length: 250 seconds
 
 ### Plague Vigil Crowd Full Mourning Roar (III)
 - Duration: 265s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, plague vigil crowd, dense wordless grief murmur, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly
+TrackType: SFX, plague vigil crowd, dense wordless grief murmur, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly. Length: 265 seconds
 
 ### Fallen Hero Procession Dense Keening Wall (III)
 - Duration: 275s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, fallen hero's procession ground, dense mourning crowd, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly
+TrackType: SFX, fallen hero's procession ground, dense mourning crowd, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly. Length: 275 seconds
 
 ### Fallen Hero Procession Wailing Crowd Texture (III)
 - Duration: 285s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, fallen hero's procession ground, dense mourning crowd, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly
+TrackType: SFX, fallen hero's procession ground, dense mourning crowd, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly. Length: 285 seconds
 
 ### Fallen Hero Procession Overwhelming Grief Murmur (III)
 - Duration: 300s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, fallen hero's procession ground, dense mourning crowd, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly
+TrackType: SFX, fallen hero's procession ground, dense mourning crowd, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly. Length: 300 seconds
 
 ### Fallen Hero Procession Rising Lament (III)
 - Duration: 310s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, fallen hero's procession ground, dense mourning crowd, rising wordless lament texture, full crowd, dense steady bed, looping-friendly
+TrackType: SFX, fallen hero's procession ground, dense mourning crowd, rising wordless lament texture, full crowd, dense steady bed, looping-friendly. Length: 310 seconds
 
 ### Fallen Hero Procession Full Mourning Roar (III)
 - Duration: 320s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, fallen hero's procession ground, dense mourning crowd, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly
+TrackType: SFX, fallen hero's procession ground, dense mourning crowd, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly. Length: 320 seconds
 
 ### Great Hall Lament Dense Keening Wall (III)
 - Duration: 335s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, great hall filled with a dense lament murmur, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly
+TrackType: SFX, great hall filled with a dense lament murmur, dense wall of wordless keening, layered and rising, dense steady bed, looping-friendly. Length: 335 seconds
 
 ### Great Hall Lament Wailing Crowd Texture (III)
 - Duration: 345s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, great hall filled with a dense lament murmur, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly
+TrackType: SFX, great hall filled with a dense lament murmur, wordless wailing crowd texture, thick and overlapping, dense steady bed, looping-friendly. Length: 345 seconds
 
 ### Great Hall Lament Overwhelming Grief Murmur (III)
 - Duration: 355s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, great hall filled with a dense lament murmur, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly
+TrackType: SFX, great hall filled with a dense lament murmur, overwhelming layered grief murmur, dense and steady, dense steady bed, looping-friendly. Length: 355 seconds
 
 ### Great Hall Lament Rising Lament (III)
 - Duration: 370s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, great hall filled with a dense lament murmur, rising wordless lament texture, full crowd, dense steady bed, looping-friendly
+TrackType: SFX, great hall filled with a dense lament murmur, rising wordless lament texture, full crowd, dense steady bed, looping-friendly. Length: 370 seconds
 
 ### Great Hall Lament Full Mourning Roar (III)
 - Duration: 380s
 - Negative: music, melody, instrumental, soundtrack, singing, lyrics, choir, distortion, clipping, muffled, low quality, intelligible dialogue, distinct words
 
-TrackType: SFX, great hall filled with a dense lament murmur, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly
+TrackType: SFX, great hall filled with a dense lament murmur, full mourning murmur roar, dense unbroken texture, dense steady bed, looping-friendly. Length: 380 seconds

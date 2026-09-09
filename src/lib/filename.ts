@@ -76,6 +76,11 @@ function isGenericCategory(name?: string): boolean {
   return (
     lower === 'custom' ||
     lower === 'general' ||
+    // Intensity numerals stand in as the music subcategory, and 'level i' is
+    // what older clips stored before they were shortened to the numeral.
+    lower === 'i' ||
+    lower === 'ii' ||
+    lower === 'iii' ||
     lower === 'level i' ||
     lower === 'music-and-fx-generated-library' ||
     isUuidOrSymbol(name)

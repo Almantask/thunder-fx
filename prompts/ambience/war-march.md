@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war-camp-dawn ambient, disciplined and grey, distant snare taps, low horn warmups, cold pads, the army waking by rote before the sun, looping-friendly, steady texture with no ending. BPM: 60. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, war-camp-dawn ambient, disciplined and grey, distant snare taps, low horn warmups, cold pads, the army waking by rote before the sun, sustained with no build and no final cadence. BPM: 60. Length: 90 seconds
 
 ### Armor-donned ambient (I)
-- Duration: 120s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, armor-donned ambient, methodical and close, buckle-and-strap textures, quiet resolve drones, each piece in the same order as always, looping-friendly, steady texture with no ending. BPM: 58. Length: 120 seconds
-
-### Standards-raised ambient (I)
-- Duration: 150s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, standards-raised ambient, stirring and slow, fabric textures, first horn intervals, low strings, the eagles up before the mist burns off, looping-friendly, steady texture with no ending. BPM: 56. Length: 150 seconds
-
-### Muster-lines ambient (I)
-- Duration: 180s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, muster-lines ambient, orderly and quiet, roll-call rhythm far off, boot-shuffle textures, ranks forming with sleep still in them, looping-friendly, steady texture with no ending. BPM: 60. Length: 180 seconds
-
-### Chaplain's-round ambient (I)
-- Duration: 210s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, chaplain's-round ambient, solemn and warm, gentle blessing motif moving down the line, bells, a word for each company, looping-friendly, steady texture with no ending. BPM: 54. Length: 210 seconds
-
-### Last-letters ambient (I)
-- Duration: 240s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, last-letters ambient, tender and hushed, soft piano fragments, paper textures, cold morning pads, short notes entrusted to the quartermaster, looping-friendly, steady texture with no ending. BPM: 52. Length: 240 seconds
-
-### Officers-confer ambient (I)
-- Duration: 270s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, officers-confer ambient, low and clipped, terse motif exchanges over a map-table drone, the route argued one last time, looping-friendly, steady texture with no ending. BPM: 58. Length: 270 seconds
-
-### Horses-saddled ambient (I)
-- Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, horses-saddled ambient, restless and warm, shifting animal textures, tack accents, low pulse, the cavalry line breathing steam, looping-friendly, steady texture with no ending. BPM: 56. Length: 300 seconds
-
-### First-drum ambient (I)
-- Duration: 340s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
-
-TrackType: Music, VocalType: Instrumental, first-drum ambient, gathering and grave, a single snare establishing the day's heartbeat, the sound that means today it begins, looping-friendly, steady texture with no ending. BPM: 60. Length: 340 seconds
-
-### Camp-struck ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, camp-struck ambient, efficient and final, folding-and-loading rhythm textures, low resolve, the field bare where a town of tents stood, looping-friendly, steady texture with no ending. BPM: 58. Length: 380 seconds
-
-### Silent War March sanctuary ambient (I)
-- Duration: 95s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the war march at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
-
-### War March twilight mist ambient (I)
 - Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
+TrackType: Music, VocalType: Instrumental, armor-donned ambient, methodical and close, buckle-and-strap textures, quiet resolve drones, each piece in the same order as always, sustained with no build and no final cadence. BPM: 58. Length: 110 seconds
 
-### Ancient War March vault ambient (I)
-- Duration: 125s
+### Standards-raised ambient (I)
+- Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the war march, steady texture with no ending, looping-friendly. Length: 125 seconds
+TrackType: Music, VocalType: Instrumental, standards-raised ambient, stirring and slow, fabric textures, first horn intervals, low strings, the eagles up before the mist burns off, sustained with no build and no final cadence. BPM: 56. Length: 135 seconds
 
-### War March starlight expanse ambient (I)
-- Duration: 140s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
-
-### Hushed War March shelter ambient (I)
+### Muster-lines ambient (I)
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene war march, steady texture with no ending, looping-friendly. Length: 155 seconds
+TrackType: Music, VocalType: Instrumental, muster-lines ambient, orderly and quiet, roll-call rhythm far off, boot-shuffle textures, ranks forming with sleep still in them, sustained with no build and no final cadence. BPM: 60. Length: 155 seconds
 
-### War March whispering wind ambient (I)
-- Duration: 170s
+### Chaplain's-round ambient (I)
+- Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
+TrackType: Music, VocalType: Instrumental, chaplain's-round ambient, solemn and warm, gentle blessing motif moving down the line, bells, a word for each company, sustained with no build and no final cadence. BPM: 54. Length: 175 seconds
 
-### Secluded War March hollow ambient (I)
-- Duration: 185s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
-
-### War March crystal reflections ambient (I)
+### Last-letters ambient (I)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, last-letters ambient, tender and hushed, soft piano fragments, paper textures, cold morning pads, short notes entrusted to the quartermaster, sustained with no build and no final cadence. BPM: 52. Length: 200 seconds
+
+### Officers-confer ambient (I)
+- Duration: 220s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, officers-confer ambient, low and clipped, terse motif exchanges over a map-table drone, the route argued one last time, sustained with no build and no final cadence. BPM: 58. Length: 220 seconds
+
+### Horses-saddled ambient (I)
+- Duration: 240s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horses-saddled ambient, restless and warm, shifting animal textures, tack accents, low pulse, the cavalry line breathing steam, sustained with no build and no final cadence. BPM: 56. Length: 240 seconds
+
+### First-drum ambient (I)
+- Duration: 270s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, first-drum ambient, gathering and grave, a single snare establishing the day's heartbeat, the sound that means today it begins, sustained with no build and no final cadence. BPM: 60. Length: 270 seconds
+
+### Camp-struck ambient (I)
+- Duration: 300s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, camp-struck ambient, efficient and final, folding-and-loading rhythm textures, low resolve, the field bare where a town of tents stood, sustained with no build and no final cadence. BPM: 58. Length: 300 seconds
+
+### Silent War March sanctuary ambient (I)
+- Duration: 95s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, contrabass pedal, trumpet calls, anvil hits, settled and unhurried with long decays, sustained with no build and no final cadence. BPM: 45. Length: 95 seconds
+
+### War March twilight mist ambient (I)
+- Duration: 105s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, low brass drone, low brass line, bell tolls, ancient stone landmarks standing silent under moonlight, sustained with no build and no final cadence. BPM: 45. Length: 105 seconds
+
+### Ancient War March vault ambient (I)
+- Duration: 115s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, organ tone, massed string melody, tambourine glints, wide reverb tail with slow air-like swells, sustained with no build and no final cadence. BPM: 45. Length: 115 seconds
+
+### War March starlight expanse ambient (I)
+- Duration: 125s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, wide string bed, piccolo counter-line, cymbal accents, deep shadows stretching across ancient ruins and forgotten paths, sustained with no build and no final cadence. BPM: 45. Length: 125 seconds
+
+### Hushed War March shelter ambient (I)
+- Duration: 140s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, sub-bass rumble, horn march theme, sleigh-bell shimmer, slow warm swell rising out of near-silence, sustained with no build and no final cadence. BPM: 45. Length: 140 seconds
+
+### War March whispering wind ambient (I)
+- Duration: 150s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, contrabass pedal, low brass line, tambourine glints, lantern light flickering against weathered walls and timeless ground, sustained with no build and no final cadence. BPM: 45. Length: 150 seconds
+
+### Secluded War March hollow ambient (I)
+- Duration: 160s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, low brass drone, massed string melody, cymbal accents, hushed tranquility settled over the vast landscape, sustained with no build and no final cadence. BPM: 45. Length: 160 seconds
+
+### War March crystal reflections ambient (I)
+- Duration: 170s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, organ tone, piccolo counter-line, sleigh-bell shimmer, solitary watchman gazing across the silent expanse, sustained with no build and no final cadence. BPM: 45. Length: 170 seconds
 
 ### Forgotten War March path ambient (I)
-- Duration: 215s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Duration: 180s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, wide string bed, horn march theme, anvil hits, hidden sanctuary undisturbed by the outside world, sustained with no build and no final cadence. BPM: 45. Length: 180 seconds
 
 ### War March midnight calm ambient (I)
-- Duration: 230s
+- Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, sub-bass rumble, trumpet calls, bell tolls, gentle embers glowing softly in the quiet night, sustained with no build and no final cadence. BPM: 45. Length: 190 seconds
 
 ### Golden War March dawn ambient (I)
-- Duration: 245s
+- Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, contrabass pedal, massed string melody, sleigh-bell shimmer, starlit reflections gleaming in clear undisturbed pools, sustained with no build and no final cadence. BPM: 45. Length: 205 seconds
 
 ### War March stone monument ambient (I)
-- Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Duration: 215s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, low brass drone, piccolo counter-line, anvil hits, whispering winds through arches and ancient trees, sustained with no build and no final cadence. BPM: 45. Length: 215 seconds
 
 ### Deep War March peace ambient (I)
-- Duration: 275s
+- Duration: 225s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, organ tone, horn march theme, bell tolls, deep calm before travelers begin their long journey, sustained with no build and no final cadence. BPM: 45. Length: 225 seconds
 
 ### War March watchtower solitude ambient (I)
+- Duration: 235s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, wide string bed, trumpet calls, tambourine glints, secluded alcove protected from cold gales and harsh weather, sustained with no build and no final cadence. BPM: 45. Length: 235 seconds
+
+### Shimmering War March grove ambient (I)
+- Duration: 245s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, sub-bass rumble, low brass line, cymbal accents, patient silence of stone and earth enduring centuries, sustained with no build and no final cadence. BPM: 45. Length: 245 seconds
+
+### War March hearth warmth ambient (I)
+- Duration: 255s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, contrabass pedal, piccolo counter-line, bell tolls, crystal-clear air filled with serene quietude, sustained with no build and no final cadence. BPM: 45. Length: 255 seconds
+
+### Sacred War March spring ambient (I)
+- Duration: 265s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, low brass drone, horn march theme, tambourine glints, shadowy contours fading into dusk and peaceful sleep, sustained with no build and no final cadence. BPM: 45. Length: 265 seconds
+
+### War March shadow contours ambient (I)
+- Duration: 280s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, organ tone, trumpet calls, cymbal accents, timeless echoes reverberating in the quiet atmosphere, sustained with no build and no final cadence. BPM: 45. Length: 280 seconds
+
+### Timeless War March horizon ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
-
-### Shimmering War March grove ambient (I)
-- Duration: 305s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
-
-### War March hearth warmth ambient (I)
-- Duration: 320s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
-
-### Sacred War March spring ambient (I)
-- Duration: 335s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
-
-### War March shadow contours ambient (I)
-- Duration: 350s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
-
-### Timeless War March horizon ambient (I)
-- Duration: 365s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, wide string bed, low brass line, sleigh-bell shimmer, sacred quiet resting upon ancient sanctified ground, sustained with no build and no final cadence. BPM: 45. Length: 290 seconds
 
 ### Eternal War March rest ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Duration: 300s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, distant martial orchestral bed, disciplined and distant, sub-bass rumble, massed string melody, anvil hits, peaceful haven offering safety and restorative rest, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ## II — the mood in motion
 
@@ -252,121 +252,121 @@ TrackType: Music, VocalType: Instrumental, enemy-land piece, harder and colder, 
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, low brass line, wide string bed, cymbal accents, marching bass drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the War March perimeter (II)
 - Duration: 65s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the war march. BPM: 72. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, massed string melody, sub-bass rumble, sleigh-bell shimmer, timpani rolls, light walking pulse with open harmony. BPM: 72. Length: 65 seconds
 
 ### War March traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, piccolo counter-line, contrabass pedal, anvil hits, field-drum rudiments, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the War March passage (II)
 - Duration: 80s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, horn march theme, low brass drone, bell tolls, cymbal crashes, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### War March hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, trumpet calls, organ tone, tambourine glints, military snare cadence, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through War March (II)
 - Duration: 105s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, low brass line, sub-bass rumble, anvil hits, cymbal crashes, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### War March festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, massed string melody, contrabass pedal, bell tolls, military snare cadence, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant War March patrol (II)
 - Duration: 130s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, piccolo counter-line, low brass drone, tambourine glints, marching bass drum, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### War March artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, horn march theme, organ tone, cymbal accents, timpani rolls, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the War March ridge (II)
 - Duration: 160s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, trumpet calls, wide string bed, sleigh-bell shimmer, field-drum rudiments, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the War March bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, low brass line, contrabass pedal, tambourine glints, timpani rolls, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### War March tracker footsteps (II)
 - Duration: 190s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, massed string melody, low brass drone, cymbal accents, field-drum rudiments, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### War March trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, piccolo counter-line, organ tone, sleigh-bell shimmer, cymbal crashes, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering War March runes (II)
 - Duration: 220s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, horn march theme, wide string bed, anvil hits, military snare cadence, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### War March ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, trumpet calls, sub-bass rumble, bell tolls, marching bass drum, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the War March stairs (II)
 - Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, low brass line, low brass drone, sleigh-bell shimmer, military snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### War March tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, massed string melody, organ tone, anvil hits, marching bass drum, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### War March waterways voyage (II)
 - Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, piccolo counter-line, wide string bed, bell tolls, timpani rolls, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the War March (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, horn march theme, sub-bass rumble, tambourine glints, field-drum rudiments, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### War March panoramic overlook (II)
 - Duration: 330s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, war march movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, steady and advancing, trumpet calls, contrabass pedal, cymbal accents, cymbal crashes, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -398,13 +398,13 @@ TrackType: Music, VocalType: Instrumental, cavalry-screens-out piece, galloping 
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, artillery-train piece, groaning colossal, deep wheeled rhythms inside the full battery, the big voices brought forward politely. BPM: 112. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, artillery-train piece, groaning colossal, deep wheeled rhythms inside the full battery, the big guns brought forward politely. BPM: 112. Length: 150 seconds
 
 ### Banners-of-all-houses piece (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, banners-of-all-houses piece, sweeping and proud, every allied motif marching in one theme, the quarrelsome kingdoms in one column at last. BPM: 118. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, banners-of-all-houses piece, sweeping and proud, every allied motif marching in one theme, the quarrelsome kingdoms in one column at last. BPM: 118. Length: 180 seconds
 
 ### Enemy-in-sight piece (III)
 - Duration: 210s
@@ -422,7 +422,7 @@ TrackType: Music, VocalType: Instrumental, king-rides-the-line piece, soaring an
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, final-approach piece, inexorable and vast, the full battery slowing into dreadful deliberate stride, the last mile walked in step and silence between drums. BPM: 110. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral, final-approach piece, inexorable and vast, the full battery slowing into dreadful deliberate stride, the last mile walked in step and silence between drums. BPM: 110. Length: 300 seconds
 
 ### Halt-and-dress-ranks coda (III)
 - Duration: 380s
@@ -434,118 +434,118 @@ TrackType: Music, VocalType: Instrumental, halt-and-dress-ranks coda, colossal d
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the war march. BPM: 105. Length: 45 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, cymbal crashes, horn march theme, wide string bed, anvil hits, full ensemble at maximum weight. BPM: 105. Length: 45 seconds
 
 ### The great War March cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, military snare cadence, trumpet calls, sub-bass rumble, bell tolls, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the War March citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, marching bass drum, low brass line, contrabass pedal, tambourine glints, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### War March dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, timpani rolls, massed string melody, low brass drone, cymbal accents, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the War March sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, field-drum rudiments, piccolo counter-line, organ tone, sleigh-bell shimmer, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the War March gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, cymbal crashes, trumpet calls, contrabass pedal, cymbal accents, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### War March champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, military snare cadence, low brass line, low brass drone, sleigh-bell shimmer, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### War March elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, marching bass drum, massed string melody, organ tone, anvil hits, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the War March collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, timpani rolls, piccolo counter-line, wide string bed, bell tolls, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### War March divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, field-drum rudiments, horn march theme, sub-bass rumble, tambourine glints, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the War March vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, cymbal crashes, low brass line, organ tone, bell tolls, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the War March curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, military snare cadence, massed string melody, wide string bed, tambourine glints, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### War March arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, marching bass drum, piccolo counter-line, sub-bass rumble, cymbal accents, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst War March ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, timpani rolls, horn march theme, contrabass pedal, sleigh-bell shimmer, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the War March stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, field-drum rudiments, trumpet calls, low brass drone, anvil hits, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### War March primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, cymbal crashes, massed string melody, sub-bass rumble, sleigh-bell shimmer, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of War March shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, military snare cadence, piccolo counter-line, contrabass pedal, anvil hits, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### War March cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, marching bass drum, horn march theme, low brass drone, bell tolls, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the War March tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, timpani rolls, trumpet calls, organ tone, tambourine glints, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the War March victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, war march climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, martial march orchestral climax, thunderous and unstoppable, field-drum rudiments, low brass line, wide string bed, cymbal accents, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

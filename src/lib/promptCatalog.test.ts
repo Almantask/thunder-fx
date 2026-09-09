@@ -409,9 +409,26 @@ describe('inferClipCategory', () => {
 
 describe('inferClipIntensity', () => {
   it('formats intensity codes correctly', () => {
-    expect(formatIntensityLabel('I')).toBe('Level I — Quiet looping bed')
-    expect(formatIntensityLabel('II')).toBe('Level II — Mood in motion')
-    expect(formatIntensityLabel('III')).toBe('Level III — Full intensity')
+    expect(formatIntensityLabel('I')).toBe('I')
+    expect(formatIntensityLabel('II')).toBe('II')
+    expect(formatIntensityLabel('III')).toBe('III')
+    expect(formatIntensityLabel('1')).toBe('I')
+    expect(formatIntensityLabel('2')).toBe('II')
+    expect(formatIntensityLabel('3')).toBe('III')
+  })
+
+  it('re-normalizes the older decorated labels stored on existing clips', () => {
+    // Clips persist whatever this returned when they were generated, so the
+    // label has to survive a second pass instead of growing another prefix.
+    expect(formatIntensityLabel('Level I — Quiet looping bed')).toBe('I')
+    expect(formatIntensityLabel('Level II — Mood in motion')).toBe('II')
+    expect(formatIntensityLabel('Level III — Full intensity')).toBe('III')
+    expect(formatIntensityLabel(formatIntensityLabel('II'))).toBe('II')
+  })
+
+  it('leaves an intensity it cannot read alone', () => {
+    expect(formatIntensityLabel('Custom')).toBe('Custom')
+    expect(formatIntensityLabel('')).toBe('')
   })
 
   it('infers explicit clip.intensity when present', () => {
@@ -425,7 +442,7 @@ describe('inferClipIntensity', () => {
       negative: '',
       intensity: 'II',
     }
-    expect(inferClipIntensity(clip)).toBe('Level II — Mood in motion')
+    expect(inferClipIntensity(clip)).toBe('II')
   })
 
   it('detects intensity Roman numerals from prompt', () => {
@@ -447,8 +464,8 @@ describe('inferClipIntensity', () => {
       cfg: 1,
       negative: '',
     }
-    expect(inferClipIntensity(clip1)).toBe('Level I — Quiet looping bed')
-    expect(inferClipIntensity(clip3)).toBe('Level III — Full intensity')
+    expect(inferClipIntensity(clip1)).toBe('I')
+    expect(inferClipIntensity(clip3)).toBe('III')
   })
 
   it('infers Level I for quiet looping cues and Level III for epic battle cues', () => {
@@ -470,8 +487,8 @@ describe('inferClipIntensity', () => {
       cfg: 1,
       negative: '',
     }
-    expect(inferClipIntensity(quietClip)).toBe('Level I — Quiet looping bed')
-    expect(inferClipIntensity(epicClip)).toBe('Level III — Full intensity')
+    expect(inferClipIntensity(quietClip)).toBe('I')
+    expect(inferClipIntensity(epicClip)).toBe('III')
   })
 })
 

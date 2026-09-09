@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, sombre ambient, hollow and numb, lone felt piano notes, faint string pad, no perceivable tempo, the battlefield falls silent after a loss, sparse and heavy, looping-friendly, steady texture with no ending. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, sombre ambient, hollow and numb, lone felt piano notes, faint string pad, the battlefield falls silent after a loss, sparse and heavy, sustained with no build and no final cadence. BPM: 45. Length: 90 seconds
 
 ### Grief ambient (I)
-- Duration: 120s
+- Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, grief ambient, grey and still, low cello held tones, distant piano echoes, cold air pads, no perceivable tempo, smoke drifting over the abandoned line, numb quiet, looping-friendly, steady texture with no ending. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, grief ambient, grey and still, low cello held tones, distant piano echoes, cold air pads, smoke drifting over the abandoned line, numb quiet, sustained with no build and no final cadence. BPM: 45. Length: 110 seconds
 
 ### Aftermath ambient (I)
-- Duration: 150s
+- Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, aftermath ambient, exhausted and soft, muted string swells, sparse harp notes, hush textures, sitting down in the mud at last, nothing left to give, looping-friendly, steady texture with no ending. BPM: 40. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, aftermath ambient, exhausted and soft, muted string swells, sparse harp notes, hush textures, sitting down in the mud at last, nothing left to give, sustained with no build and no final cadence. BPM: 40. Length: 135 seconds
 
 ### Mourning ambient (I)
-- Duration: 180s
+- Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, mourning ambient, tender and empty, felt piano fragments, breath-like pads, single viola lines, no perceivable tempo, the mead hall with every bench empty, slow ache with no ending, looping-friendly. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, mourning ambient, tender and empty, felt piano fragments, breath-like pads, single viola lines, the mead hall with every bench empty, slow ache with no ending, sustained with no build and no final cadence. BPM: 45. Length: 155 seconds
 
 ### Ashes ambient (I)
-- Duration: 210s
+- Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ashes ambient, bitter and quiet, low drones, charred-silence textures, rare piano tolls, no perceivable tempo, embers where the granary stood, hollow loss, looping-friendly, steady texture with no ending. Length: 210 seconds
+TrackType: Music, VocalType: Instrumental, ashes ambient, bitter and quiet, low drones, charred-silence textures, rare piano tolls, embers where the granary stood, hollow loss, sustained with no build and no final cadence. BPM: 45. Length: 175 seconds
 
 ### Broken banner ambient (I)
+- Duration: 200s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, broken banner ambient, heavy and slow, dark string bed, lone horn far away, soft piano, the standard lies face-down in the field, weight of failure, sustained with no build and no final cadence. BPM: 45. Length: 200 seconds
+
+### Vigil ambient (I)
+- Duration: 220s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, vigil ambient, hushed and sorrowful, candlelit pads, sparse harp, low cello breaths, keeping watch over the wounded till dawn, patient sorrow, sustained with no build and no final cadence. BPM: 45. Length: 220 seconds
+
+### Surrender ambient (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, broken banner ambient, heavy and slow, dark string bed, lone horn far away, soft piano, the standard lies face-down in the field, weight of failure, looping-friendly, steady texture with no ending. BPM: 45. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, surrender ambient, resigned and dim, descending piano intervals, grey string swells, hollow room tone, the gates open because they must, quiet shame, sustained with no build and no final cadence. BPM: 42. Length: 240 seconds
 
-### Vigil ambient (I)
+### Long road ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, vigil ambient, hushed and sorrowful, candlelit pads, sparse harp, low cello breaths, no perceivable tempo, keeping watch over the wounded till dawn, patient sorrow, looping-friendly, steady texture with no ending. Length: 270 seconds
+TrackType: Music, VocalType: Instrumental, long road ambient, weary and slow, trudging low strings, thin flute far off, soft pads, carrying what is left of the company home, endless road, sustained with no build and no final cadence. BPM: 48. Length: 270 seconds
 
-### Surrender ambient (I)
+### Fallen keep ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, surrender ambient, resigned and dim, descending piano intervals, grey string swells, hollow room tone, the gates open because they must, quiet shame, looping-friendly, steady texture with no ending. BPM: 42. Length: 300 seconds
-
-### Long road ambient (I)
-- Duration: 340s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, long road ambient, weary and slow, trudging low strings, thin flute far off, soft pads, carrying what is left of the company home, endless road, looping-friendly, steady texture with no ending. BPM: 48. Length: 340 seconds
-
-### Fallen keep ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, fallen keep ambient, desolate and cold, wind-through-arrowslits textures, deep string drone, single bell toll, no perceivable tempo, crows own the courtyard now, still and lost, looping-friendly, steady texture with no ending. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, fallen keep ambient, desolate and cold, wind-through-arrowslits textures, deep string drone, single bell toll, crows own the courtyard now, still and lost, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ### Silent Defeat sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the defeat at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, warm low string bed, muted horn line, single piano note, settled and unhurried with long decays, sustained with no build and no final cadence. BPM: 45. Length: 95 seconds
 
 ### Defeat twilight mist ambient (I)
-- Duration: 110s
+- Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, sub-bass drone, English horn melody, glass shimmer, ancient stone landmarks standing silent under moonlight, sustained with no build and no final cadence. BPM: 45. Length: 105 seconds
 
 ### Ancient Defeat vault ambient (I)
+- Duration: 115s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, organ pedal tone, viola lament, brushed cymbal, wide reverb tail with slow air-like swells, sustained with no build and no final cadence. BPM: 45. Length: 115 seconds
+
+### Defeat starlight expanse ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the defeat, steady texture with no ending, looping-friendly. Length: 125 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, hollow pad, low piano theme, distant bell toll, deep shadows stretching across ancient ruins and forgotten paths, sustained with no build and no final cadence. BPM: 45. Length: 125 seconds
 
-### Defeat starlight expanse ambient (I)
+### Hushed Defeat shelter ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
-
-### Hushed Defeat shelter ambient (I)
-- Duration: 155s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene defeat, steady texture with no ending, looping-friendly. Length: 155 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, contrabass sustain, solo cello elegy, sparse harp, slow warm swell rising out of near-silence, sustained with no build and no final cadence. BPM: 45. Length: 140 seconds
 
 ### Defeat whispering wind ambient (I)
+- Duration: 150s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, warm low string bed, English horn melody, brushed cymbal, lantern light flickering against weathered walls and timeless ground, sustained with no build and no final cadence. BPM: 45. Length: 150 seconds
+
+### Secluded Defeat hollow ambient (I)
+- Duration: 160s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, sub-bass drone, viola lament, distant bell toll, hushed tranquility settled over the vast landscape, sustained with no build and no final cadence. BPM: 45. Length: 160 seconds
+
+### Defeat crystal reflections ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
-
-### Secluded Defeat hollow ambient (I)
-- Duration: 185s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
-
-### Defeat crystal reflections ambient (I)
-- Duration: 200s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, organ pedal tone, low piano theme, sparse harp, solitary watchman gazing across the silent expanse, sustained with no build and no final cadence. BPM: 45. Length: 170 seconds
 
 ### Forgotten Defeat path ambient (I)
+- Duration: 180s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, hollow pad, solo cello elegy, single piano note, hidden sanctuary undisturbed by the outside world, sustained with no build and no final cadence. BPM: 45. Length: 180 seconds
+
+### Defeat midnight calm ambient (I)
+- Duration: 190s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, contrabass sustain, muted horn line, glass shimmer, gentle embers glowing softly in the quiet night, sustained with no build and no final cadence. BPM: 45. Length: 190 seconds
+
+### Golden Defeat dawn ambient (I)
+- Duration: 205s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, warm low string bed, viola lament, sparse harp, starlit reflections gleaming in clear undisturbed pools, sustained with no build and no final cadence. BPM: 45. Length: 205 seconds
+
+### Defeat stone monument ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, sub-bass drone, low piano theme, single piano note, whispering winds through arches and ancient trees, sustained with no build and no final cadence. BPM: 45. Length: 215 seconds
 
-### Defeat midnight calm ambient (I)
-- Duration: 230s
+### Deep Defeat peace ambient (I)
+- Duration: 225s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, organ pedal tone, solo cello elegy, glass shimmer, deep calm before travelers begin their long journey, sustained with no build and no final cadence. BPM: 45. Length: 225 seconds
 
-### Golden Defeat dawn ambient (I)
+### Defeat watchtower solitude ambient (I)
+- Duration: 235s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, hollow pad, muted horn line, brushed cymbal, secluded alcove protected from cold gales and harsh weather, sustained with no build and no final cadence. BPM: 45. Length: 235 seconds
+
+### Shimmering Defeat grove ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, contrabass sustain, English horn melody, distant bell toll, patient silence of stone and earth enduring centuries, sustained with no build and no final cadence. BPM: 45. Length: 245 seconds
 
-### Defeat stone monument ambient (I)
-- Duration: 260s
+### Defeat hearth warmth ambient (I)
+- Duration: 255s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, warm low string bed, low piano theme, glass shimmer, crystal-clear air filled with serene quietude, sustained with no build and no final cadence. BPM: 45. Length: 255 seconds
 
-### Deep Defeat peace ambient (I)
-- Duration: 275s
+### Sacred Defeat spring ambient (I)
+- Duration: 265s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, sub-bass drone, solo cello elegy, brushed cymbal, shadowy contours fading into dusk and peaceful sleep, sustained with no build and no final cadence. BPM: 45. Length: 265 seconds
+
+### Defeat shadow contours ambient (I)
+- Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, organ pedal tone, muted horn line, distant bell toll, timeless echoes reverberating in the quiet atmosphere, sustained with no build and no final cadence. BPM: 45. Length: 280 seconds
 
-### Defeat watchtower solitude ambient (I)
+### Timeless Defeat horizon ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
-
-### Shimmering Defeat grove ambient (I)
-- Duration: 305s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
-
-### Defeat hearth warmth ambient (I)
-- Duration: 320s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
-
-### Sacred Defeat spring ambient (I)
-- Duration: 335s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
-
-### Defeat shadow contours ambient (I)
-- Duration: 350s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
-
-### Timeless Defeat horizon ambient (I)
-- Duration: 365s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, hollow pad, English horn melody, sparse harp, sacred quiet resting upon ancient sanctified ground, sustained with no build and no final cadence. BPM: 45. Length: 290 seconds
 
 ### Eternal Defeat rest ambient (I)
-- Duration: 380s
+- Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, defeat ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral bed, emptied and slow, contrabass sustain, viola lament, single piano note, peaceful haven offering safety and restorative rest, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ## II — the mood in motion
 
@@ -252,121 +252,121 @@ TrackType: Music, VocalType: Instrumental, winter defeat orchestral, numb and va
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, English horn melody, hollow pad, distant bell toll, muffled timpani, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Defeat perimeter (II)
 - Duration: 65s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the defeat. BPM: 72. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, viola lament, contrabass sustain, sparse harp, dragging tom pulse, light walking pulse with open harmony. BPM: 72. Length: 65 seconds
 
 ### Defeat traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, low piano theme, warm low string bed, single piano note, sparse snare roll, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Defeat passage (II)
 - Duration: 80s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, solo cello elegy, sub-bass drone, glass shimmer, low gong strikes, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Defeat hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, muted horn line, organ pedal tone, brushed cymbal, slow funeral drum, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Defeat (II)
 - Duration: 105s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, English horn melody, contrabass sustain, single piano note, low gong strikes, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Defeat festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, viola lament, warm low string bed, glass shimmer, slow funeral drum, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Defeat patrol (II)
 - Duration: 130s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, low piano theme, sub-bass drone, brushed cymbal, muffled timpani, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Defeat artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, solo cello elegy, organ pedal tone, distant bell toll, dragging tom pulse, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Defeat ridge (II)
 - Duration: 160s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, muted horn line, hollow pad, sparse harp, sparse snare roll, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Defeat bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, English horn melody, warm low string bed, brushed cymbal, dragging tom pulse, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Defeat tracker footsteps (II)
 - Duration: 190s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, viola lament, sub-bass drone, distant bell toll, sparse snare roll, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Defeat trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, low piano theme, organ pedal tone, sparse harp, low gong strikes, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Defeat runes (II)
 - Duration: 220s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, solo cello elegy, hollow pad, single piano note, slow funeral drum, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Defeat ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, muted horn line, contrabass sustain, glass shimmer, muffled timpani, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Defeat stairs (II)
 - Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, English horn melody, sub-bass drone, sparse harp, slow funeral drum, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Defeat tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, viola lament, organ pedal tone, single piano note, muffled timpani, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Defeat waterways voyage (II)
 - Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, low piano theme, hollow pad, glass shimmer, dragging tom pulse, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Defeat (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, solo cello elegy, contrabass sustain, brushed cymbal, sparse snare roll, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Defeat panoramic overlook (II)
 - Duration: 330s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, defeat movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral, mournful and heavy, muted horn line, warm low string bed, distant bell toll, low gong strikes, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -408,7 +408,7 @@ TrackType: Music, VocalType: Instrumental, shattered order orchestral, solemn ru
 
 ### Drowned fleet orchestral (III)
 - Duration: 210s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
 TrackType: Music, VocalType: Instrumental, drowned fleet orchestral, vast and hollow, cold string swells, deep brass groans, sparse cymbal washes, wreckage where the armada sailed at dawn. BPM: 58. Length: 210 seconds
 
@@ -434,118 +434,118 @@ TrackType: Music, VocalType: Instrumental, last light orchestral, tragic and ten
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the defeat. BPM: 105. Length: 45 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, low gong strikes, solo cello elegy, hollow pad, single piano note, full ensemble at maximum weight. BPM: 105. Length: 45 seconds
 
 ### The great Defeat cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, slow funeral drum, muted horn line, contrabass sustain, glass shimmer, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Defeat citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, muffled timpani, English horn melody, warm low string bed, brushed cymbal, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Defeat dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, dragging tom pulse, viola lament, sub-bass drone, distant bell toll, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Defeat sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, sparse snare roll, low piano theme, organ pedal tone, sparse harp, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Defeat gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, low gong strikes, muted horn line, warm low string bed, distant bell toll, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Defeat champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, slow funeral drum, English horn melody, sub-bass drone, sparse harp, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Defeat elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, muffled timpani, viola lament, organ pedal tone, single piano note, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Defeat collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, dragging tom pulse, low piano theme, hollow pad, glass shimmer, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Defeat divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, sparse snare roll, solo cello elegy, contrabass sustain, brushed cymbal, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Defeat vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, low gong strikes, English horn melody, organ pedal tone, glass shimmer, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Defeat curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, slow funeral drum, viola lament, hollow pad, brushed cymbal, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Defeat arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, muffled timpani, low piano theme, contrabass sustain, distant bell toll, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Defeat ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, dragging tom pulse, solo cello elegy, warm low string bed, sparse harp, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Defeat stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, sparse snare roll, muted horn line, sub-bass drone, single piano note, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Defeat primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, low gong strikes, viola lament, contrabass sustain, sparse harp, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Defeat shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, slow funeral drum, low piano theme, warm low string bed, single piano note, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Defeat cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, muffled timpani, solo cello elegy, sub-bass drone, glass shimmer, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Defeat tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, dragging tom pulse, muted horn line, organ pedal tone, brushed cymbal, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Defeat victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, defeat climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, elegiac orchestral climax, devastating and vast, sparse snare roll, English horn melody, hollow pad, distant bell toll, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

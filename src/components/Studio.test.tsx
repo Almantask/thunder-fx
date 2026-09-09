@@ -88,7 +88,7 @@ describe('Studio', () => {
     ).toBeInTheDocument()
     await user.click(screen.getByRole('tab', { name: 'Library' }))
     await user.click(screen.getByRole('button', { name: /main theme/i }))
-    await user.click(screen.getByRole('button', { name: /level/i }))
+    await user.click(screen.getByRole('button', { name: /^I{1,3} instrumentals?$/ }))
     expect(screen.getByText(/lute tavern theme/i)).toBeInTheDocument()
     expect(screen.queryByLabelText('Music clip')).not.toBeInTheDocument()
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()

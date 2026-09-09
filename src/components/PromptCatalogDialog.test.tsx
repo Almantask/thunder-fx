@@ -185,7 +185,7 @@ TrackType: Music, instrumental, forest ambient, looping-friendly
     expect(screen.getByRole('radio', { name: 'Instrumental' })).toHaveAttribute('aria-checked', 'false')
     expect(screen.getByRole('checkbox', { name: /steel sword draw/i })).toBeInTheDocument()
     await user.click(screen.getByRole('radio', { name: 'Instrumental' }))
-    const level1Btn = screen.getByRole('button', { name: /level i/i })
+    const level1Btn = screen.getByRole('button', { name: /^I \d+ prompts?$/ })
     expect(level1Btn).toHaveAttribute('aria-expanded', 'false')
     await user.click(level1Btn)
     expect(screen.getByRole('checkbox', { name: /forest ambient/i })).toBeInTheDocument()
@@ -245,9 +245,9 @@ TrackType: Music, instrumental, epic forest tempest orchestra
     renderDialog({ catalog: ambienceCatalog })
     expect(screen.getByRole('radio', { name: 'Instrumental' })).toHaveAttribute('aria-checked', 'true')
 
-    const level1Btn = screen.getByRole('button', { name: /level i — quiet looping bed/i })
-    const level2Btn = screen.getByRole('button', { name: /level ii — mood in motion/i })
-    const level3Btn = screen.getByRole('button', { name: /level iii — full intensity/i })
+    const level1Btn = screen.getByRole('button', { name: /^I \d+ prompts?$/ })
+    const level2Btn = screen.getByRole('button', { name: /^II \d+ prompts?$/ })
+    const level3Btn = screen.getByRole('button', { name: /^III \d+ prompts?$/ })
 
     // All 3 intensity levels are collapsed by default
     expect(level1Btn).toHaveAttribute('aria-expanded', 'false')
@@ -255,18 +255,18 @@ TrackType: Music, instrumental, epic forest tempest orchestra
     expect(level3Btn).toHaveAttribute('aria-expanded', 'false')
     expect(screen.queryByRole('checkbox', { name: /forest ambient/i })).not.toBeInTheDocument()
 
-    // Expand Level I -> shows Level I prompt only
+    // Expand level I -> shows level I prompt only
     await user.click(level1Btn)
     expect(level1Btn).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByRole('checkbox', { name: /forest ambient/i })).toBeInTheDocument()
     expect(screen.queryByRole('checkbox', { name: /forest mystery/i })).not.toBeInTheDocument()
 
-    // Expand Level II -> shows Level II prompt
+    // Expand level II -> shows level II prompt
     await user.click(level2Btn)
     expect(level2Btn).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByRole('checkbox', { name: /forest mystery/i })).toBeInTheDocument()
 
-    // Expand Level III -> shows Level III prompt
+    // Expand level III -> shows level III prompt
     await user.click(level3Btn)
     expect(level3Btn).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByRole('checkbox', { name: /forest storm/i })).toBeInTheDocument()
@@ -363,7 +363,7 @@ TrackType: Music, instrumental, forest ambient with Celtic harp and soft cello
 `,
     })
     renderDialog({ catalog: ambienceCatalog })
-    await user.click(screen.getByRole('button', { name: /level i — quiet looping bed/i }))
+    await user.click(screen.getByRole('button', { name: /^I \d+ prompts?$/ }))
 
     const instContainer = screen.getByLabelText('Instruments: harp, cello')
     expect(instContainer).toBeInTheDocument()
@@ -411,7 +411,7 @@ TrackType: Music, peaceful grove with solo cello
 `,
     })
     renderDialog({ catalog: ambienceCatalog })
-    const level1Btn = screen.getByRole('button', { name: /level i — quiet looping bed/i })
+    const level1Btn = screen.getByRole('button', { name: /^I \d+ prompts?$/ })
     await user.click(level1Btn)
 
     // All 4 are visible initially

@@ -105,7 +105,7 @@ describe('GrimoireRail', () => {
     )
     expect(screen.getByRole('button', { name: /main theme/i })).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: /main theme/i }))
-    const levelBtn = screen.getByRole('button', { name: /level/i })
+    const levelBtn = screen.getByRole('button', { name: /^I{1,3} instrumentals?$/ })
     expect(levelBtn).toBeInTheDocument()
     await user.click(levelBtn)
     expect(screen.getByLabelText('Instruments: lute')).toBeInTheDocument()
@@ -142,7 +142,7 @@ describe('GrimoireRail', () => {
       </TooltipProvider>,
     )
     await user.click(screen.getByRole('button', { name: /main theme/i }))
-    const levelBtn = screen.getByRole('button', { name: /level/i })
+    const levelBtn = screen.getByRole('button', { name: /^I{1,3} instrumentals?$/ })
     await user.click(levelBtn)
     expect(screen.getByLabelText('Instruments: french horn, cello, harp')).toBeInTheDocument()
     expect(screen.getByText(/110 BPM/)).toBeInTheDocument()
@@ -589,14 +589,14 @@ describe('GrimoireRail', () => {
     // Category accordion exists and is collapsed by default
     const catBtn = screen.getByRole('button', { name: /ancient discovery/i })
     expect(catBtn).toHaveAttribute('aria-expanded', 'false')
-    expect(screen.queryByRole('button', { name: /level i/i })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: /^I instrumentals?$/ })).not.toBeInTheDocument()
 
     // Expand category -> intensity level accordions appear
     await user.click(catBtn)
     expect(catBtn).toHaveAttribute('aria-expanded', 'true')
-    const level1Btn = screen.getByRole('button', { name: /level i —/i })
-    const level2Btn = screen.getByRole('button', { name: /level ii —/i })
-    const level3Btn = screen.getByRole('button', { name: /level iii —/i })
+    const level1Btn = screen.getByRole('button', { name: /^I instrumentals?$/ })
+    const level2Btn = screen.getByRole('button', { name: /^II instrumentals?$/ })
+    const level3Btn = screen.getByRole('button', { name: /^III instrumentals?$/ })
     expect(level1Btn).toHaveAttribute('aria-expanded', 'false')
     expect(level2Btn).toHaveAttribute('aria-expanded', 'false')
     expect(level3Btn).toHaveAttribute('aria-expanded', 'false')
@@ -604,13 +604,13 @@ describe('GrimoireRail', () => {
     // Track cards are not visible yet
     expect(screen.queryByText(/Ancient ruins ambient/i)).not.toBeInTheDocument()
 
-    // Expand Level I -> Level I track appears
+    // Expand level I -> level I track appears
     await user.click(level1Btn)
     expect(level1Btn).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText(/Ancient ruins ambient/i)).toBeInTheDocument()
     expect(screen.queryByText(/Ancient discovery theme/i)).not.toBeInTheDocument()
 
-    // Expand Level II -> Level II track appears
+    // Expand level II -> level II track appears
     await user.click(level2Btn)
     expect(level2Btn).toHaveAttribute('aria-expanded', 'true')
     expect(screen.getByText(/Ancient discovery theme/i)).toBeInTheDocument()

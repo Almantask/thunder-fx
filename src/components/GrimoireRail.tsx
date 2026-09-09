@@ -862,7 +862,7 @@ export function GrimoireRail({
                               onOpenChange={() => toggleIntensity(group.name, intGroup.name)}
                               className="overflow-hidden rounded-book border border-[color-mix(in_srgb,var(--color-gold)_18%,transparent)] bg-leather/50"
                             >
-                              <Hint label={`Click to ${isIntOpen ? 'collapse' : 'expand'} ${intGroup.name}.`}>
+                              <Hint label={`Click to ${isIntOpen ? 'collapse' : 'expand'} level ${intGroup.name}.`}>
                                 <CollapsibleTrigger asChild>
                                   <button
                                     type="button"

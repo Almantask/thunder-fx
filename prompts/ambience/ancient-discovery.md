@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient ambient, awe and stillness, deep sustained strings, low duduk, sparse harp notes, no perceivable tempo, forgotten ruins untouched for millennia, steady evolving texture with no ending, looping-friendly. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, ancient ambient, awe and stillness, deep sustained strings, low duduk, sparse harp notes, forgotten ruins untouched for millennia, sustained with no build and no final cadence. BPM: 45. Length: 90 seconds
 
 ### Timeworn ambient (I)
-- Duration: 120s
+- Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, timeworn ambient, hushed reverence, bowed low cellos, distant glass chimes, faint stone-room reverb, no perceivable tempo, dust drifting through a buried ziggurat, endless and unhurried, looping-friendly, steady texture with no ending. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, timeworn ambient, hushed reverence, bowed low cellos, distant glass chimes, faint stone-room reverb, dust drifting through a buried ziggurat, endless and unhurried, sustained with no build and no final cadence. BPM: 45. Length: 110 seconds
 
 ### Ancient drone ambient (I)
-- Duration: 150s
+- Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient drone ambient, solemn and vast, deep string drone, lone bass flute, soft harp harmonics, star maps carved into a cold stone ceiling, slow texture that never resolves, looping-friendly, steady texture with no ending. BPM: 45. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, ancient drone ambient, solemn and vast, deep string drone, lone bass flute, soft harp harmonics, star maps carved into a cold stone ceiling, slow texture that never resolves, sustained with no build and no final cadence. BPM: 45. Length: 135 seconds
 
 ### Meditative ancient ambient (I)
-- Duration: 180s
+- Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, meditative ancient ambient, humbled and quiet, warm low strings, duduk long tones, sparse bowed dulcimer, no perceivable tempo, colossus statues asleep in the sand, steady with no ending, looping-friendly. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, meditative ancient ambient, humbled and quiet, warm low strings, duduk long tones, sparse bowed dulcimer, colossus statues asleep in the sand, steady with no ending, sustained with no build and no final cadence. BPM: 45. Length: 155 seconds
 
 ### Ruins ambient (I)
-- Duration: 210s
+- Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ruins ambient, grave and wondering, hollow wind-like pads, deep cello swells, occasional harp note, a sealed vault exhales after a thousand years, sparse and patient, looping-friendly, steady texture with no ending. BPM: 40. Length: 210 seconds
+TrackType: Music, VocalType: Instrumental, ruins ambient, grave and wondering, hollow wind-like pads, deep cello swells, occasional harp note, a sealed vault exhales after a thousand years, sparse and patient, sustained with no build and no final cadence. BPM: 40. Length: 175 seconds
 
 ### Ancient temple ambient (I)
+- Duration: 200s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, ancient temple ambient, reverent stillness, low string pad, distant duduk phrases, glassy shimmer, murals glowing faintly in torchlight, sustained with no build and no final cadence. BPM: 45. Length: 200 seconds
+
+### Desert ruins ambient (I)
+- Duration: 220s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, desert ruins ambient, austere and calm, sustained double basses, airy bamboo flute, soft chime accents, the first city sleeping under the dunes, level and endless, sustained with no build and no final cadence. BPM: 50. Length: 220 seconds
+
+### Sunken library ambient (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient temple ambient, reverent stillness, low string pad, distant duduk phrases, glassy shimmer, no perceivable tempo, murals glowing faintly in torchlight, unhurried texture with no ending, looping-friendly. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, sunken library ambient, muted awe, dark string swells, watery harp glissandi, low duduk breaths, drowned shelves of forgotten knowledge, slow drifting bed, sustained with no build and no final cadence. BPM: 45. Length: 240 seconds
 
-### Desert ruins ambient (I)
+### Megalith ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, desert ruins ambient, austere and calm, sustained double basses, airy bamboo flute, soft chime accents, the first city sleeping under the dunes, level and endless, looping-friendly, steady texture with no ending. BPM: 50. Length: 270 seconds
+TrackType: Music, VocalType: Instrumental, megalith ambient, ancient and cold, granite-deep drones, faint bowed metal shimmer, single harp tones, standing stones counting forgotten centuries, steady dark wonder with no ending, sustained with no build and no final cadence. BPM: 42. Length: 270 seconds
 
-### Sunken library ambient (I)
+### Dwarven gate ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, sunken library ambient, muted awe, dark string swells, watery harp glissandi, low duduk breaths, no perceivable tempo, drowned shelves of forgotten knowledge, slow drifting bed, looping-friendly, steady texture with no ending. Length: 300 seconds
-
-### Megalith ambient (I)
-- Duration: 340s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, megalith ambient, ancient and cold, granite-deep drones, faint bowed metal shimmer, single harp tones, standing stones counting forgotten centuries, steady dark wonder with no ending, looping-friendly. BPM: 42. Length: 340 seconds
-
-### Dwarven gate ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dwarven gate ambient, weighty and still, subterranean string drone, low horn long tones, sparse hammered dulcimer, no perceivable tempo, runes over a door no living hand has opened, patient and unresolved, looping-friendly, steady texture with no ending. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, dwarven gate ambient, weighty and still, subterranean string drone, low horn long tones, sparse hammered dulcimer, runes over a door no living hand has opened, patient and unresolved, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ### Silent Ancient Discovery sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the ancient discovery at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, wide string bed, alto flute melody, celesta drops, settled and unhurried with long decays, sustained with no build and no final cadence. BPM: 45. Length: 95 seconds
 
 ### Ancient Discovery twilight mist ambient (I)
-- Duration: 110s
+- Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, sub-bass drone, cello phrase, glass tones, ancient stone landmarks standing silent under moonlight, sustained with no build and no final cadence. BPM: 45. Length: 105 seconds
 
 ### Ancient Ancient Discovery vault ambient (I)
+- Duration: 115s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, organ pedal, muted horn tone, distant bells, wide reverb tail with slow air-like swells, sustained with no build and no final cadence. BPM: 45. Length: 115 seconds
+
+### Ancient Discovery starlight expanse ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the ancient discovery, steady texture with no ending, looping-friendly. Length: 125 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, contrabass sustain, violin theme, stone-like knocks, deep shadows stretching across ancient ruins and forgotten paths, sustained with no build and no final cadence. BPM: 45. Length: 125 seconds
 
-### Ancient Discovery starlight expanse ambient (I)
+### Hushed Ancient Discovery shelter ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
-
-### Hushed Ancient Discovery shelter ambient (I)
-- Duration: 155s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene ancient discovery, steady texture with no ending, looping-friendly. Length: 155 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, low pad, solo oboe line, harp harmonics, slow warm swell rising out of near-silence, sustained with no build and no final cadence. BPM: 45. Length: 140 seconds
 
 ### Ancient Discovery whispering wind ambient (I)
+- Duration: 150s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, wide string bed, cello phrase, distant bells, lantern light flickering against weathered walls and timeless ground, sustained with no build and no final cadence. BPM: 45. Length: 150 seconds
+
+### Secluded Ancient Discovery hollow ambient (I)
+- Duration: 160s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, sub-bass drone, muted horn tone, stone-like knocks, hushed tranquility settled over the vast landscape, sustained with no build and no final cadence. BPM: 45. Length: 160 seconds
+
+### Ancient Discovery crystal reflections ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
-
-### Secluded Ancient Discovery hollow ambient (I)
-- Duration: 185s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
-
-### Ancient Discovery crystal reflections ambient (I)
-- Duration: 200s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, organ pedal, violin theme, harp harmonics, solitary watchman gazing across the silent expanse, sustained with no build and no final cadence. BPM: 45. Length: 170 seconds
 
 ### Forgotten Ancient Discovery path ambient (I)
+- Duration: 180s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, contrabass sustain, solo oboe line, celesta drops, hidden sanctuary undisturbed by the outside world, sustained with no build and no final cadence. BPM: 45. Length: 180 seconds
+
+### Ancient Discovery midnight calm ambient (I)
+- Duration: 190s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, low pad, alto flute melody, glass tones, gentle embers glowing softly in the quiet night, sustained with no build and no final cadence. BPM: 45. Length: 190 seconds
+
+### Golden Ancient Discovery dawn ambient (I)
+- Duration: 205s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, wide string bed, muted horn tone, harp harmonics, starlit reflections gleaming in clear undisturbed pools, sustained with no build and no final cadence. BPM: 45. Length: 205 seconds
+
+### Ancient Discovery stone monument ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, sub-bass drone, violin theme, celesta drops, whispering winds through arches and ancient trees, sustained with no build and no final cadence. BPM: 45. Length: 215 seconds
 
-### Ancient Discovery midnight calm ambient (I)
-- Duration: 230s
+### Deep Ancient Discovery peace ambient (I)
+- Duration: 225s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, organ pedal, solo oboe line, glass tones, deep calm before travelers begin their long journey, sustained with no build and no final cadence. BPM: 45. Length: 225 seconds
 
-### Golden Ancient Discovery dawn ambient (I)
+### Ancient Discovery watchtower solitude ambient (I)
+- Duration: 235s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, contrabass sustain, alto flute melody, distant bells, secluded alcove protected from cold gales and harsh weather, sustained with no build and no final cadence. BPM: 45. Length: 235 seconds
+
+### Shimmering Ancient Discovery grove ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, low pad, cello phrase, stone-like knocks, patient silence of stone and earth enduring centuries, sustained with no build and no final cadence. BPM: 45. Length: 245 seconds
 
-### Ancient Discovery stone monument ambient (I)
-- Duration: 260s
+### Ancient Discovery hearth warmth ambient (I)
+- Duration: 255s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, wide string bed, violin theme, glass tones, crystal-clear air filled with serene quietude, sustained with no build and no final cadence. BPM: 45. Length: 255 seconds
 
-### Deep Ancient Discovery peace ambient (I)
-- Duration: 275s
+### Sacred Ancient Discovery spring ambient (I)
+- Duration: 265s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, sub-bass drone, solo oboe line, distant bells, shadowy contours fading into dusk and peaceful sleep, sustained with no build and no final cadence. BPM: 45. Length: 265 seconds
 
-### Ancient Discovery watchtower solitude ambient (I)
+### Ancient Discovery shadow contours ambient (I)
+- Duration: 280s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, organ pedal, alto flute melody, stone-like knocks, timeless echoes reverberating in the quiet atmosphere, sustained with no build and no final cadence. BPM: 45. Length: 280 seconds
+
+### Timeless Ancient Discovery horizon ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
-
-### Shimmering Ancient Discovery grove ambient (I)
-- Duration: 305s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
-
-### Ancient Discovery hearth warmth ambient (I)
-- Duration: 320s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
-
-### Sacred Ancient Discovery spring ambient (I)
-- Duration: 335s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
-
-### Ancient Discovery shadow contours ambient (I)
-- Duration: 350s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
-
-### Timeless Ancient Discovery horizon ambient (I)
-- Duration: 365s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, contrabass sustain, cello phrase, harp harmonics, sacred quiet resting upon ancient sanctified ground, sustained with no build and no final cadence. BPM: 45. Length: 290 seconds
 
 ### Eternal Ancient Discovery rest ambient (I)
-- Duration: 380s
+- Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral bed, hushed and wondering, low pad, muted horn tone, celesta drops, peaceful haven offering safety and restorative rest, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ## II — the mood in motion
 
@@ -216,7 +216,7 @@ TrackType: Music, VocalType: Instrumental, lost temple orchestral, wonder and un
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ancient discovery theme, reverent and warm, solo cello melody, glass chimes, soft string bed, translating the elder script by candlelight, tender gravity. BPM: 68. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, ancient discovery theme, reverent and warm, solo cello melody, glass chimes, soft string bed, translating the elder script by candlelight, tender gravity. BPM: 68. Length: 120 seconds
 
 ### Ruined city orchestral (II)
 - Duration: 150s
@@ -252,121 +252,121 @@ TrackType: Music, VocalType: Instrumental, buried colossus orchestral, awe with 
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, cello phrase, contrabass sustain, stone-like knocks, timpani swells, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Ancient Discovery perimeter (II)
 - Duration: 65s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the ancient discovery. BPM: 72. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, muted horn tone, low pad, harp harmonics, sparse frame drum, light walking pulse with open harmony. BPM: 72. Length: 65 seconds
 
 ### Ancient Discovery traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, violin theme, wide string bed, celesta drops, gong strikes, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Ancient Discovery passage (II)
 - Duration: 80s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, solo oboe line, sub-bass drone, glass tones, rising snare roll, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Ancient Discovery hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, alto flute melody, organ pedal, distant bells, slow deep drum, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Ancient Discovery (II)
 - Duration: 105s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, cello phrase, low pad, celesta drops, rising snare roll, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Ancient Discovery festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, muted horn tone, wide string bed, glass tones, slow deep drum, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Ancient Discovery patrol (II)
 - Duration: 130s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, violin theme, sub-bass drone, distant bells, timpani swells, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Ancient Discovery artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, solo oboe line, organ pedal, stone-like knocks, sparse frame drum, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Ancient Discovery ridge (II)
 - Duration: 160s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, alto flute melody, contrabass sustain, harp harmonics, gong strikes, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Ancient Discovery bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, cello phrase, wide string bed, distant bells, sparse frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Ancient Discovery tracker footsteps (II)
 - Duration: 190s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, muted horn tone, sub-bass drone, stone-like knocks, gong strikes, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Ancient Discovery trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, violin theme, organ pedal, harp harmonics, rising snare roll, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Ancient Discovery runes (II)
 - Duration: 220s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, solo oboe line, contrabass sustain, celesta drops, slow deep drum, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Ancient Discovery ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, alto flute melody, low pad, glass tones, timpani swells, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Ancient Discovery stairs (II)
 - Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, cello phrase, sub-bass drone, harp harmonics, slow deep drum, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Ancient Discovery tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, muted horn tone, organ pedal, celesta drops, timpani swells, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Ancient Discovery waterways voyage (II)
 - Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, violin theme, contrabass sustain, glass tones, sparse frame drum, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Ancient Discovery (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, solo oboe line, low pad, distant bells, gong strikes, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Ancient Discovery panoramic overlook (II)
 - Duration: 330s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, ancient discovery movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
+TrackType: Music, VocalType: Instrumental, cinematic orchestral, unfolding and curious, alto flute melody, wide string bed, stone-like knocks, rising snare roll, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -434,118 +434,118 @@ TrackType: Music, VocalType: Instrumental, relic revelation orchestral, ecstatic
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the ancient discovery. BPM: 105. Length: 45 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, rising snare roll, solo oboe line, contrabass sustain, celesta drops, full ensemble at maximum weight. BPM: 105. Length: 45 seconds
 
 ### The great Ancient Discovery cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, slow deep drum, alto flute melody, low pad, glass tones, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Ancient Discovery citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, timpani swells, cello phrase, wide string bed, distant bells, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Ancient Discovery dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, sparse frame drum, muted horn tone, sub-bass drone, stone-like knocks, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Ancient Discovery sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, gong strikes, violin theme, organ pedal, harp harmonics, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Ancient Discovery gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, rising snare roll, alto flute melody, wide string bed, stone-like knocks, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Ancient Discovery champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, slow deep drum, cello phrase, sub-bass drone, harp harmonics, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Ancient Discovery elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, timpani swells, muted horn tone, organ pedal, celesta drops, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Ancient Discovery collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, sparse frame drum, violin theme, contrabass sustain, glass tones, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Ancient Discovery divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, gong strikes, solo oboe line, low pad, distant bells, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Ancient Discovery vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, rising snare roll, cello phrase, organ pedal, glass tones, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Ancient Discovery curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, slow deep drum, muted horn tone, contrabass sustain, distant bells, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Ancient Discovery arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, timpani swells, violin theme, low pad, stone-like knocks, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Ancient Discovery ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, sparse frame drum, solo oboe line, wide string bed, harp harmonics, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Ancient Discovery stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, gong strikes, alto flute melody, sub-bass drone, celesta drops, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Ancient Discovery primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, rising snare roll, muted horn tone, low pad, harp harmonics, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Ancient Discovery shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, slow deep drum, violin theme, wide string bed, celesta drops, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Ancient Discovery cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, timpani swells, solo oboe line, sub-bass drone, glass tones, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Ancient Discovery tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, sparse frame drum, alto flute melody, organ pedal, distant bells, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Ancient Discovery victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, ancient discovery climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, epic cinematic orchestral climax, revelatory and vast, gong strikes, cello phrase, contrabass sustain, stone-like knocks, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

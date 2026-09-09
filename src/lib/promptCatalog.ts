@@ -409,12 +409,26 @@ export function inferClipCategory(clip: Clip, catalog?: PromptCategory[]): strin
   return cacheCategory(cacheKey, bestScore >= 50 ? bestCat : 'Custom')
 }
 
+const ROMAN_BY_DIGIT: Record<string, string> = {
+  '1': 'I',
+  '2': 'II',
+  '3': 'III',
+  '4': 'IV',
+  '5': 'V',
+}
+
+/**
+ * Collapses an intensity to the bare roman numeral the prompt library uses in
+ * its own headings (`## I — quietest looping bed`, `### Cue title (II)`).
+ * Input can be a numeral, a digit, or a whole label read back off a stored clip
+ * — running this on its own output has to be a no-op, since clips persist
+ * whatever it returned when they were generated.
+ */
 export function formatIntensityLabel(code: string): string {
-  const norm = code.toUpperCase().trim()
-  if (norm === 'I' || norm === '1') return 'Level I — Quiet looping bed'
-  if (norm === 'II' || norm === '2') return 'Level II — Mood in motion'
-  if (norm === 'III' || norm === '3') return 'Level III — Full intensity'
-  return `Level ${norm}`
+  const trimmed = code.trim()
+  const match = trimmed.toUpperCase().match(/\b(I{1,3}|IV|V|[1-5])\b/)
+  if (!match) return trimmed
+  return ROMAN_BY_DIGIT[match[1]] ?? match[1]
 }
 
 export function inferEffectIntensity(effect: CatalogEffect): string {

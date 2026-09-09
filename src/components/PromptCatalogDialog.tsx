@@ -29,11 +29,7 @@ import {
 } from '@/lib/promptCatalog'
 import { cn } from '@/lib/utils'
 
-const INTENSITY_ORDER = [
-  'Level I — Quiet looping bed',
-  'Level II — Mood in motion',
-  'Level III — Full intensity',
-]
+const INTENSITY_ORDER = ['I', 'II', 'III']
 
 type PromptCatalogDialogProps = {
   open: boolean

@@ -8,7 +8,7 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 
 ### Dwarven hall ambient
 - Duration: 60s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
 TrackType: Music, VocalType: Instrumental, dwarven hall ambient, vast and stony, deep brass drones, cavernous echo pads, faint anvil rings far below, pillars carved like ancestors in the torchlight. BPM: 55. Length: 60 seconds
 
@@ -22,7 +22,7 @@ TrackType: Music, VocalType: Instrumental, deep-forge folk, hearty and rhythmic,
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, mountain-throne piece, solemn and proud, slow processional brass, deep drum hits, stone-hall reverb, the king under the mountain receives the delegation. BPM: 80. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, mountain-throne piece, solemn and proud, slow processional brass, deep drum hits, stone-hall reverb, the king under the mountain receives the delegation. BPM: 80. Length: 120 seconds
 
 ### Mine-cart-run folk
 - Duration: 150s
@@ -50,138 +50,138 @@ TrackType: Music, VocalType: Instrumental, gem-gallery ambient, glittering and h
 
 ### Stone-song piece
 - Duration: 270s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, stone-song piece, patient and mighty, slow layered low strings, anvil bells, growing brass, the mountain's pulse heard through boot soles. BPM: 70. Length: 270 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stone-song piece, patient and mighty, slow layered low strings, anvil bells, growing brass, the mountain's pulse heard through boot soles. BPM: 70. Length: 270 seconds
 
 ### Gate-of-the-deep piece
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, gate-of-the-deep piece, ceremonial and huge, horn calls in cavern echo, deep drum answers, the great doors open for the returning company. BPM: 85. Length: 320 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, gate-of-the-deep piece, ceremonial and huge, horn calls in cavern echo, deep drum answers, the great doors open for the returning company. BPM: 85. Length: 320 seconds
 
 ### Closing-of-the-day folk
 - Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
 TrackType: Music, VocalType: Instrumental, closing-of-the-day folk, tired and content, easy fiddle over low warm brass, soft anvil taps fading, the forge banked and the long tables filling. BPM: 75. Length: 380 seconds
 
 ### Dwarven Halls opening theme
 - Duration: 50s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 65. Length: 50 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, bass trombone line, low string bed, deep gong, stamping foot pulse, travelers making steady progress along winding trails. BPM: 65. Length: 50 seconds
 
 ### Dwarven Halls traveler ballad
 - Duration: 65s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the dwarven halls. BPM: 68. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, hurdy-gurdy melody, organ pedal, anvil strikes, heavy war drums, light walking pulse with open harmony. BPM: 68. Length: 65 seconds
 
 ### Dwarven Halls hearth song
 - Duration: 80s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 71. Length: 80 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, horn calls, bagpipe drone, iron bell tolls, hammer-blow percussion, gathering around the evening fire sharing stories and warmth. BPM: 71. Length: 80 seconds
 
 ### Dwarven Halls quiet reflections
 - Duration: 95s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 74. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, baritone horn phrase, tuba bass, hammer taps, timpani rolls, navigating treacherous switchbacks with focused determination. BPM: 74. Length: 95 seconds
 
 ### Dwarven Halls road rhythm
 - Duration: 110s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 77. Length: 110 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, low brass theme, contrabass drone, chain rattles, marching toms, merchants guiding pack animals through historic passes. BPM: 77. Length: 110 seconds
 
 ### Dwarven Halls ancient mystery
 - Duration: 125s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 125 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, bass trombone line, organ pedal, iron bell tolls, timpani rolls, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 125 seconds
 
 ### Dwarven Halls festival celebration
 - Duration: 140s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 83. Length: 140 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, hurdy-gurdy melody, bagpipe drone, hammer taps, marching toms, village festival celebrating ancient traditions and good harvest. BPM: 83. Length: 140 seconds
 
 ### Dwarven Halls twilight melody
 - Duration: 155s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 86. Length: 155 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, horn calls, tuba bass, chain rattles, stamping foot pulse, patrolling border outposts with watchful vigilance. BPM: 86. Length: 155 seconds
 
 ### Dwarven Halls noble fanfare
 - Duration: 170s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 89. Length: 170 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, baritone horn phrase, contrabass drone, deep gong, heavy war drums, descending into shadowy depths with raised lanterns. BPM: 89. Length: 170 seconds
 
 ### Dwarven Halls solitary wanderer
 - Duration: 185s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 92. Length: 185 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, low brass theme, low string bed, anvil strikes, hammer-blow percussion, riding sure-footed mounts across expansive terrain. BPM: 92. Length: 185 seconds
 
 ### Dwarven Halls starlight suite
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 95. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, bass trombone line, bagpipe drone, chain rattles, heavy war drums, crossing wooden bridges spanning misty canyon depths. BPM: 95. Length: 200 seconds
 
 ### Dwarven Halls courageous march
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 98. Length: 215 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, hurdy-gurdy melody, tuba bass, deep gong, hammer-blow percussion, tracking faint footprints across rugged earth. BPM: 98. Length: 215 seconds
 
 ### Dwarven Halls lyrical meditation
 - Duration: 230s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 101. Length: 230 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, horn calls, contrabass drone, anvil strikes, timpani rolls, caravan rolling steadily along cobblestone trade routes. BPM: 101. Length: 230 seconds
 
 ### Dwarven Halls energetic reel
 - Duration: 250s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 104. Length: 250 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, baritone horn phrase, low string bed, iron bell tolls, marching toms, scholars deciphering worn runes etched into stone arches. BPM: 104. Length: 250 seconds
 
 ### Dwarven Halls emotional reunion
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 107. Length: 270 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, low brass theme, organ pedal, hammer taps, stamping foot pulse, hunters stalking elusive quarry through shifting cover. BPM: 107. Length: 270 seconds
 
 ### Dwarven Halls solemn anthem
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 110. Length: 290 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, bass trombone line, tuba bass, anvil strikes, marching toms, climbing ancient stone stairways leading to forgotten vistas. BPM: 110. Length: 290 seconds
 
 ### Dwarven Halls heroic ascent
 - Duration: 310s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 113. Length: 310 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, hurdy-gurdy melody, contrabass drone, iron bell tolls, stamping foot pulse, meeting mysterious contacts in secluded taverns and alcoves. BPM: 113. Length: 310 seconds
 
-### Dwarven Halls joyful chorus
+### Dwarven Halls joyful refrain
 - Duration: 330s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 116. Length: 330 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, horn calls, low string bed, hammer taps, heavy war drums, sailing swift vessels through challenging waters. BPM: 116. Length: 330 seconds
 
 ### Dwarven Halls grand panorama
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 119. Length: 350 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, baritone horn phrase, organ pedal, chain rattles, hammer-blow percussion, forging new alliances over hearty food and drink. BPM: 119. Length: 350 seconds
 
 ### Dwarven Halls lasting legacy
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dwarven halls theme, expressive and evocative, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 122. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, heavy folk brass, stamping and proud, low brass theme, bagpipe drone, deep gong, timpani rolls, reaching high overlooks revealing vast breathtaking horizons. BPM: 122. Length: 380 seconds

@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, hunt tracking ambient, patient and keen, low string pulse, sparse hand drum taps, breathy low flute, fresh prints filling with dawn mist, reading the ground, looping-friendly, steady texture with no ending. BPM: 70. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, hunt tracking ambient, patient and keen, low string pulse, sparse hand drum taps, breathy low flute, fresh prints filling with dawn mist, reading the ground, sustained with no build and no final cadence. BPM: 70. Length: 90 seconds
 
 ### Spoor ambient (I)
-- Duration: 120s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Duration: 110s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, spoor ambient, quiet and grim, prowling bass line, soft rattle accents, thin high drone, claw marks higher than a man can reach, sober measuring, looping-friendly, steady texture with no ending. BPM: 66. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, spoor ambient, quiet and grim, prowling bass line, soft rattle accents, thin high drone, claw marks higher than a man can reach, sober measuring, sustained with no build and no final cadence. BPM: 66. Length: 110 seconds
 
 ### Blind-and-wait ambient (I)
-- Duration: 150s
+- Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, blind-and-wait ambient, coiled and still, near-static low tones, slow heartbeat drum, hush textures, downwind in the thicket since before light, patient ambush, looping-friendly, steady texture with no ending. BPM: 62. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, blind-and-wait ambient, coiled and still, near-static low tones, slow heartbeat drum, hush textures, downwind in the thicket since before light, patient ambush, sustained with no build and no final cadence. BPM: 62. Length: 135 seconds
 
 ### Broken-branch ambient (I)
-- Duration: 180s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, broken-branch ambient, alert and low, muted cello phrases, wood-knock accents, sparse drone, the trail turns where nothing should turn, careful rethink, looping-friendly, steady texture with no ending. BPM: 68. Length: 180 seconds
-
-### Scent-of-it ambient (I)
-- Duration: 210s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
-
-TrackType: Music, VocalType: Instrumental, scent-of-it ambient, uneasy and taut, low reed drones, slow ticking percussion, string shivers, the horses refuse to go further, dismount and go on, looping-friendly, steady texture with no ending. BPM: 72. Length: 210 seconds
-
-### Old kill site ambient (I)
-- Duration: 240s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, old kill site ambient, grim and hushed, hollow pads, single low horn far off, sparse taps, bones arranged the way no scavenger leaves them, respectful dread, looping-friendly, steady texture with no ending. BPM: 64. Length: 240 seconds
-
-### Ridge-glassing ambient (I)
-- Duration: 270s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
-
-TrackType: Music, VocalType: Instrumental, ridge-glassing ambient, watchful and wide, long string tones, faint drum heartbeat, wind textures, scanning the valley for movement that is not wind, looping-friendly, steady texture with no ending. BPM: 66. Length: 270 seconds
-
-### Night-track ambient (I)
-- Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, night-track ambient, tense and dim, muted plucked pulse, low woodwind breaths, rare shaker whispers, following by torch and toe-touch, looping-friendly, steady texture with no ending. BPM: 70. Length: 300 seconds
-
-### Marsh trail ambient (I)
-- Duration: 340s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
-
-TrackType: Music, VocalType: Instrumental, marsh trail ambient, sucking and slow, damp low drones, sparse log-drum knocks, reed sighs, prints half-drowned but fresh, closing slowly, looping-friendly, steady texture with no ending. BPM: 62. Length: 340 seconds
-
-### First-sighting ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, first-sighting ambient, breath-held and electric, frozen low strings, single soft hit, thin high shimmer, movement between the far trees, do not blink, looping-friendly, steady texture with no ending. BPM: 60. Length: 380 seconds
-
-### Silent Beast Hunt sanctuary ambient (I)
-- Duration: 95s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the beast hunt at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
-
-### Beast Hunt twilight mist ambient (I)
-- Duration: 110s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
-
-### Ancient Beast Hunt vault ambient (I)
-- Duration: 125s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the beast hunt, steady texture with no ending, looping-friendly. Length: 125 seconds
-
-### Beast Hunt starlight expanse ambient (I)
-- Duration: 140s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
-
-### Hushed Beast Hunt shelter ambient (I)
 - Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene beast hunt, steady texture with no ending, looping-friendly. Length: 155 seconds
+TrackType: Music, VocalType: Instrumental, broken-branch ambient, alert and low, muted cello phrases, wood-knock accents, sparse drone, the trail turns where nothing should turn, careful rethink, sustained with no build and no final cadence. BPM: 68. Length: 155 seconds
 
-### Beast Hunt whispering wind ambient (I)
-- Duration: 170s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+### Scent-of-it ambient (I)
+- Duration: 175s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
+TrackType: Music, VocalType: Instrumental, scent-of-it ambient, uneasy and taut, low reed drones, slow ticking percussion, string shivers, the horses refuse to go further, dismount and go on, sustained with no build and no final cadence. BPM: 72. Length: 175 seconds
 
-### Secluded Beast Hunt hollow ambient (I)
-- Duration: 185s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
-
-### Beast Hunt crystal reflections ambient (I)
+### Old kill site ambient (I)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, old kill site ambient, grim and hushed, hollow pads, single low horn far off, sparse taps, bones arranged the way no scavenger leaves them, respectful dread, sustained with no build and no final cadence. BPM: 64. Length: 200 seconds
+
+### Ridge-glassing ambient (I)
+- Duration: 220s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, ridge-glassing ambient, watchful and wide, long string tones, faint drum heartbeat, wind textures, scanning the valley for movement that is not wind, sustained with no build and no final cadence. BPM: 66. Length: 220 seconds
+
+### Night-track ambient (I)
+- Duration: 240s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, night-track ambient, tense and dim, muted plucked pulse, low woodwind breaths, rare shaker whispers, following by torch and toe-touch, sustained with no build and no final cadence. BPM: 70. Length: 240 seconds
+
+### Marsh trail ambient (I)
+- Duration: 270s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, marsh trail ambient, sucking and slow, damp low drones, sparse log-drum knocks, reed sighs, prints half-drowned but fresh, closing slowly, sustained with no build and no final cadence. BPM: 62. Length: 270 seconds
+
+### First-sighting ambient (I)
+- Duration: 300s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, first-sighting ambient, breath-held and electric, frozen low strings, single soft hit, thin high shimmer, movement between the far trees, do not blink, sustained with no build and no final cadence. BPM: 60. Length: 300 seconds
+
+### Silent Beast Hunt sanctuary ambient (I)
+- Duration: 95s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, sub-bass drone, growling cello riff, rattling seed shakers, settled and unhurried with long decays, sustained with no build and no final cadence. BPM: 45. Length: 95 seconds
+
+### Beast Hunt twilight mist ambient (I)
+- Duration: 105s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, forest-dark string bed, muted horn calls, distant horn cries, ancient stone landmarks standing silent under moonlight, sustained with no build and no final cadence. BPM: 45. Length: 105 seconds
+
+### Ancient Beast Hunt vault ambient (I)
+- Duration: 115s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, hollow pad, sul ponticello violins, metal shimmer, wide reverb tail with slow air-like swells, sustained with no build and no final cadence. BPM: 45. Length: 115 seconds
+
+### Beast Hunt starlight expanse ambient (I)
+- Duration: 125s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, contrabass hum, bass clarinet figure, bone clatter, deep shadows stretching across ancient ruins and forgotten paths, sustained with no build and no final cadence. BPM: 45. Length: 125 seconds
+
+### Hushed Beast Hunt shelter ambient (I)
+- Duration: 140s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, low reed drone, low bass flute line, wood knocks, slow warm swell rising out of near-silence, sustained with no build and no final cadence. BPM: 45. Length: 140 seconds
+
+### Beast Hunt whispering wind ambient (I)
+- Duration: 150s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, sub-bass drone, muted horn calls, metal shimmer, lantern light flickering against weathered walls and timeless ground, sustained with no build and no final cadence. BPM: 45. Length: 150 seconds
+
+### Secluded Beast Hunt hollow ambient (I)
+- Duration: 160s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, forest-dark string bed, sul ponticello violins, bone clatter, hushed tranquility settled over the vast landscape, sustained with no build and no final cadence. BPM: 45. Length: 160 seconds
+
+### Beast Hunt crystal reflections ambient (I)
+- Duration: 170s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, hollow pad, bass clarinet figure, wood knocks, solitary watchman gazing across the silent expanse, sustained with no build and no final cadence. BPM: 45. Length: 170 seconds
 
 ### Forgotten Beast Hunt path ambient (I)
-- Duration: 215s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Duration: 180s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, contrabass hum, low bass flute line, rattling seed shakers, hidden sanctuary undisturbed by the outside world, sustained with no build and no final cadence. BPM: 45. Length: 180 seconds
 
 ### Beast Hunt midnight calm ambient (I)
-- Duration: 230s
+- Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, low reed drone, growling cello riff, distant horn cries, gentle embers glowing softly in the quiet night, sustained with no build and no final cadence. BPM: 45. Length: 190 seconds
 
 ### Golden Beast Hunt dawn ambient (I)
-- Duration: 245s
+- Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, sub-bass drone, sul ponticello violins, wood knocks, starlit reflections gleaming in clear undisturbed pools, sustained with no build and no final cadence. BPM: 45. Length: 205 seconds
 
 ### Beast Hunt stone monument ambient (I)
-- Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Duration: 215s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, forest-dark string bed, bass clarinet figure, rattling seed shakers, whispering winds through arches and ancient trees, sustained with no build and no final cadence. BPM: 45. Length: 215 seconds
 
 ### Deep Beast Hunt peace ambient (I)
-- Duration: 275s
+- Duration: 225s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, hollow pad, low bass flute line, distant horn cries, deep calm before travelers begin their long journey, sustained with no build and no final cadence. BPM: 45. Length: 225 seconds
 
 ### Beast Hunt watchtower solitude ambient (I)
+- Duration: 235s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, contrabass hum, growling cello riff, metal shimmer, secluded alcove protected from cold gales and harsh weather, sustained with no build and no final cadence. BPM: 45. Length: 235 seconds
+
+### Shimmering Beast Hunt grove ambient (I)
+- Duration: 245s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, low reed drone, muted horn calls, bone clatter, patient silence of stone and earth enduring centuries, sustained with no build and no final cadence. BPM: 45. Length: 245 seconds
+
+### Beast Hunt hearth warmth ambient (I)
+- Duration: 255s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, sub-bass drone, bass clarinet figure, distant horn cries, crystal-clear air filled with serene quietude, sustained with no build and no final cadence. BPM: 45. Length: 255 seconds
+
+### Sacred Beast Hunt spring ambient (I)
+- Duration: 265s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, forest-dark string bed, low bass flute line, metal shimmer, shadowy contours fading into dusk and peaceful sleep, sustained with no build and no final cadence. BPM: 45. Length: 265 seconds
+
+### Beast Hunt shadow contours ambient (I)
+- Duration: 280s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
+
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, hollow pad, growling cello riff, bone clatter, timeless echoes reverberating in the quiet atmosphere, sustained with no build and no final cadence. BPM: 45. Length: 280 seconds
+
+### Timeless Beast Hunt horizon ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
-
-### Shimmering Beast Hunt grove ambient (I)
-- Duration: 305s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
-
-### Beast Hunt hearth warmth ambient (I)
-- Duration: 320s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
-
-### Sacred Beast Hunt spring ambient (I)
-- Duration: 335s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
-
-### Beast Hunt shadow contours ambient (I)
-- Duration: 350s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
-
-### Timeless Beast Hunt horizon ambient (I)
-- Duration: 365s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, contrabass hum, muted horn calls, wood knocks, sacred quiet resting upon ancient sanctified ground, sustained with no build and no final cadence. BPM: 45. Length: 290 seconds
 
 ### Eternal Beast Hunt rest ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Duration: 300s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral bed, stalking and quiet, low reed drone, sul ponticello violins, rattling seed shakers, peaceful haven offering safety and restorative rest, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ## II — the mood in motion
 
@@ -210,7 +210,7 @@ TrackType: Music, VocalType: Instrumental, wounded-quarry orchestral, wary and d
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, river-crossing pursuit, surging and cold, rolling string figures, splash-accent percussion, horn urging, it swam and so must you. BPM: 112. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, river-crossing pursuit, surging and cold, rolling string figures, splash-accent percussion, horn urging, it swam and so must you. BPM: 112. Length: 90 seconds
 
 ### Cliff-track orchestral (II)
 - Duration: 120s
@@ -252,121 +252,121 @@ TrackType: Music, VocalType: Instrumental, roar-in-the-dark orchestral, jolting 
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, muted horn calls, contrabass hum, bone clatter, running tom pattern, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Beast Hunt perimeter (II)
 - Duration: 65s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the beast hunt. BPM: 72. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, sul ponticello violins, low reed drone, wood knocks, djembe flurry, light walking pulse with open harmony. BPM: 72. Length: 65 seconds
 
 ### Beast Hunt traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, bass clarinet figure, sub-bass drone, rattling seed shakers, log-drum pulse, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Beast Hunt passage (II)
 - Duration: 80s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, low bass flute line, forest-dark string bed, distant horn cries, heavy taiko, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Beast Hunt hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, growling cello riff, hollow pad, metal shimmer, tribal frame drums, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Beast Hunt (II)
 - Duration: 105s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, muted horn calls, low reed drone, rattling seed shakers, heavy taiko, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Beast Hunt festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, sul ponticello violins, sub-bass drone, distant horn cries, tribal frame drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Beast Hunt patrol (II)
 - Duration: 130s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, bass clarinet figure, forest-dark string bed, metal shimmer, running tom pattern, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Beast Hunt artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, low bass flute line, hollow pad, bone clatter, djembe flurry, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Beast Hunt ridge (II)
 - Duration: 160s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, growling cello riff, contrabass hum, wood knocks, log-drum pulse, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Beast Hunt bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, muted horn calls, sub-bass drone, metal shimmer, djembe flurry, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Beast Hunt tracker footsteps (II)
 - Duration: 190s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, sul ponticello violins, forest-dark string bed, bone clatter, log-drum pulse, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Beast Hunt trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, bass clarinet figure, hollow pad, wood knocks, heavy taiko, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Beast Hunt runes (II)
 - Duration: 220s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, low bass flute line, contrabass hum, rattling seed shakers, tribal frame drums, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Beast Hunt ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, growling cello riff, low reed drone, distant horn cries, running tom pattern, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Beast Hunt stairs (II)
 - Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, muted horn calls, forest-dark string bed, wood knocks, tribal frame drums, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Beast Hunt tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, sul ponticello violins, hollow pad, rattling seed shakers, running tom pattern, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Beast Hunt waterways voyage (II)
 - Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, bass clarinet figure, contrabass hum, distant horn cries, djembe flurry, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Beast Hunt (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, low bass flute line, low reed drone, metal shimmer, log-drum pulse, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Beast Hunt panoramic overlook (II)
 - Duration: 330s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, beast hunt movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, prowling and driven, growling cello riff, sub-bass drone, bone clatter, heavy taiko, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -416,13 +416,13 @@ TrackType: Music, VocalType: Instrumental, night-gore orchestral, chaotic and dr
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, cliff-fall finale, plunging and wild, cascading runs, colossal impact hits, brass echoing, over the edge together and one rope holds. BPM: 134. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, cliff-fall finale, plunging and wild, cascading runs, colossal impact hits, brass echoing, over the edge together and one rope holds. BPM: 134. Length: 240 seconds
 
 ### Horn-of-triumph hunt ending (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, horn-of-triumph hunt ending, exhausted and exultant, battle rhythm resolving into victory calls, big swells, the great horn sounds three times over the kill. BPM: 128. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral, horn-of-triumph hunt ending, exhausted and exultant, battle rhythm resolving into victory calls, big swells, the great horn sounds three times over the kill. BPM: 128. Length: 300 seconds
 
 ### Legend-beast finale (III)
 - Duration: 380s
@@ -434,118 +434,118 @@ TrackType: Music, VocalType: Instrumental, legend-beast finale, awed ferocity, m
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the beast hunt. BPM: 105. Length: 45 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, heavy taiko, low bass flute line, contrabass hum, rattling seed shakers, full ensemble at maximum weight. BPM: 105. Length: 45 seconds
 
 ### The great Beast Hunt cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, tribal frame drums, growling cello riff, low reed drone, distant horn cries, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Beast Hunt citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, running tom pattern, muted horn calls, sub-bass drone, metal shimmer, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Beast Hunt dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, djembe flurry, sul ponticello violins, forest-dark string bed, bone clatter, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Beast Hunt sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, log-drum pulse, bass clarinet figure, hollow pad, wood knocks, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Beast Hunt gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, heavy taiko, growling cello riff, sub-bass drone, bone clatter, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Beast Hunt champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, tribal frame drums, muted horn calls, forest-dark string bed, wood knocks, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Beast Hunt elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, running tom pattern, sul ponticello violins, hollow pad, rattling seed shakers, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Beast Hunt collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, djembe flurry, bass clarinet figure, contrabass hum, distant horn cries, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Beast Hunt divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, log-drum pulse, low bass flute line, low reed drone, metal shimmer, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Beast Hunt vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, heavy taiko, muted horn calls, hollow pad, distant horn cries, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Beast Hunt curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, tribal frame drums, sul ponticello violins, contrabass hum, metal shimmer, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Beast Hunt arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, running tom pattern, bass clarinet figure, low reed drone, bone clatter, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Beast Hunt ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, djembe flurry, low bass flute line, sub-bass drone, wood knocks, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Beast Hunt stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, log-drum pulse, growling cello riff, forest-dark string bed, rattling seed shakers, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Beast Hunt primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, heavy taiko, sul ponticello violins, low reed drone, wood knocks, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Beast Hunt shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, tribal frame drums, bass clarinet figure, sub-bass drone, rattling seed shakers, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Beast Hunt cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, running tom pattern, low bass flute line, forest-dark string bed, distant horn cries, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Beast Hunt tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, djembe flurry, growling cello riff, hollow pad, metal shimmer, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Beast Hunt victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, beast hunt climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, percussive hybrid orchestral climax, savage and headlong, log-drum pulse, muted horn calls, contrabass hum, bone clatter, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

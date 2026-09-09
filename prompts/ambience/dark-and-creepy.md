@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, melody
 
-TrackType: Music, VocalType: Instrumental, dark ambient horror, unsettling and hollow, low dissonant drones, faint bowed metal, distant creaks, no perceivable tempo, something watches from the shadows, steady dread with no ending, looping-friendly. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, dark ambient horror, unsettling and hollow, low dissonant drones, faint bowed metal, distant creaks, something watches from the shadows, steady dread with no ending, sustained with no build and no final cadence. BPM: 45. Length: 90 seconds
 
 ### Crypt ambient (I)
-- Duration: 120s
+- Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, crypt ambient, cold and airless, sub drones, stone-scrape textures, rare detuned string swells, no perceivable tempo, breath frosting in the burial dark, unmoving dread, looping-friendly, steady texture with no ending. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, crypt ambient, cold and airless, sub drones, stone-scrape textures, rare detuned string swells, breath frosting in the burial dark, unmoving dread, sustained with no build and no final cadence. BPM: 45. Length: 110 seconds
 
 ### Haunting ambient (I)
-- Duration: 150s
+- Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, haunting ambient, wrong and quiet, waterphone shimmers, hollow pads, far-off knocking textures, no perceivable tempo, a door upstairs that should not open, thin creeping unease, looping-friendly, steady texture with no ending. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, haunting ambient, wrong and quiet, waterphone shimmers, hollow pads, far-off knocking textures, a door upstairs that should not open, thin creeping unease, sustained with no build and no final cadence. BPM: 45. Length: 135 seconds
 
 ### Dead forest ambient (I)
-- Duration: 180s
+- Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dead forest ambient, bleak and watchful, wind-through-branches textures, low cello groans, faint metallic ring, trees that lean in when you stop walking, slow dread with no ending, looping-friendly. BPM: 40. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, dead forest ambient, bleak and watchful, wind-through-branches textures, low cello groans, faint metallic ring, trees that lean in when you stop walking, slow dread with no ending, sustained with no build and no final cadence. BPM: 40. Length: 155 seconds
 
 ### Flooded catacomb ambient (I)
-- Duration: 210s
+- Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, flooded catacomb ambient, dank and claustrophobic, dripping echo textures, sub bass swells, bowed metal moans, no perceivable tempo, ripples that started somewhere else, patient fear, looping-friendly, steady texture with no ending. Length: 210 seconds
+TrackType: Music, VocalType: Instrumental, flooded catacomb ambient, dank and claustrophobic, dripping echo textures, sub bass swells, bowed metal moans, ripples that started somewhere else, patient fear, sustained with no build and no final cadence. BPM: 45. Length: 175 seconds
 
 ### Plague village ambient (I)
+- Duration: 200s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, plague village ambient, hollow and abandoned, detuned music box fragments, grey pads, creaking shutter textures, chalk marks on every silent door, desolate unease, sustained with no build and no final cadence. BPM: 45. Length: 200 seconds
+
+### Mirror room ambient (I)
+- Duration: 220s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, mirror room ambient, uncanny and still, glassy dissonant tones, reversed-feeling swells, faint high whine, your reflection is a half-step late, quiet wrongness, sustained with no build and no final cadence. BPM: 45. Length: 220 seconds
+
+### Ritual remains ambient (I)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, plague village ambient, hollow and abandoned, detuned music box fragments, grey pads, creaking shutter textures, no perceivable tempo, chalk marks on every silent door, desolate unease, looping-friendly, steady texture with no ending. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, ritual remains ambient, stained and heavy, throbbing sub drone, scorched-metal resonance, uneasy string clusters, the circle on the floor is still warm, lingering wrongness, sustained with no build and no final cadence. BPM: 45. Length: 240 seconds
 
-### Mirror room ambient (I)
+### Wall-crawler ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, mirror room ambient, uncanny and still, glassy dissonant tones, reversed-feeling swells, faint high whine, no perceivable tempo, your reflection is a half-step late, quiet wrongness, looping-friendly, steady texture with no ending. Length: 270 seconds
+TrackType: Music, VocalType: Instrumental, wall-crawler ambient, skittering and sparse, dry scratching textures, held dissonant strings, deep silence between swells, the scratching keeps pace inside the walls, patient horror, sustained with no build and no final cadence. BPM: 45. Length: 270 seconds
 
-### Ritual remains ambient (I)
+### Candle-out ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, ritual remains ambient, stained and heavy, throbbing sub drone, scorched-metal resonance, uneasy string clusters, no perceivable tempo, the circle on the floor is still warm, lingering wrongness, looping-friendly, steady texture with no ending. Length: 300 seconds
-
-### Wall-crawler ambient (I)
-- Duration: 340s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, wall-crawler ambient, skittering and sparse, dry scratching textures, held dissonant strings, deep silence between swells, no perceivable tempo, the scratching keeps pace inside the walls, patient horror, looping-friendly, steady texture with no ending. Length: 340 seconds
-
-### Candle-out ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, candle-out ambient, smothering and black, near-silent sub drone, faint bow noise, cold air pads, no perceivable tempo, the last candle gutters and the dark leans in, looping-friendly, steady texture with no ending. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, candle-out ambient, smothering and black, near-silent sub drone, faint bow noise, cold air pads, the last candle gutters and the dark leans in, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ### Silent Dark and Creepy sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the dark and creepy at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, airless string cluster, bass clarinet moan, creaking timber, settled and unhurried with long decays, sustained with no build and no final cadence. BPM: 45. Length: 95 seconds
 
 ### Dark and Creepy twilight mist ambient (I)
-- Duration: 110s
+- Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, sub-bass drone, bowed saw line, glass tones, ancient stone landmarks standing silent under moonlight, sustained with no build and no final cadence. BPM: 45. Length: 105 seconds
 
 ### Ancient Dark and Creepy vault ambient (I)
+- Duration: 115s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, detuned organ pad, muted celesta, breathy flute noise, wide reverb tail with slow air-like swells, sustained with no build and no final cadence. BPM: 45. Length: 115 seconds
+
+### Dark and Creepy starlight expanse ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the dark and creepy, steady texture with no ending, looping-friendly. Length: 125 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, hollow room tone, glissando cello, music-box fragments, deep shadows stretching across ancient ruins and forgotten paths, sustained with no build and no final cadence. BPM: 45. Length: 125 seconds
 
-### Dark and Creepy starlight expanse ambient (I)
+### Hushed Dark and Creepy shelter ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
-
-### Hushed Dark and Creepy shelter ambient (I)
-- Duration: 155s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene dark and creepy, steady texture with no ending, looping-friendly. Length: 155 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, contrabass hum, tremolo high violins, faint bell tings, slow warm swell rising out of near-silence, sustained with no build and no final cadence. BPM: 45. Length: 140 seconds
 
 ### Dark and Creepy whispering wind ambient (I)
+- Duration: 150s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, airless string cluster, bowed saw line, breathy flute noise, lantern light flickering against weathered walls and timeless ground, sustained with no build and no final cadence. BPM: 45. Length: 150 seconds
+
+### Secluded Dark and Creepy hollow ambient (I)
+- Duration: 160s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, sub-bass drone, muted celesta, music-box fragments, hushed tranquility settled over the vast landscape, sustained with no build and no final cadence. BPM: 45. Length: 160 seconds
+
+### Dark and Creepy crystal reflections ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
-
-### Secluded Dark and Creepy hollow ambient (I)
-- Duration: 185s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
-
-### Dark and Creepy crystal reflections ambient (I)
-- Duration: 200s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, detuned organ pad, glissando cello, faint bell tings, solitary watchman gazing across the silent expanse, sustained with no build and no final cadence. BPM: 45. Length: 170 seconds
 
 ### Forgotten Dark and Creepy path ambient (I)
+- Duration: 180s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, hollow room tone, tremolo high violins, creaking timber, hidden sanctuary undisturbed by the outside world, sustained with no build and no final cadence. BPM: 45. Length: 180 seconds
+
+### Dark and Creepy midnight calm ambient (I)
+- Duration: 190s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, contrabass hum, bass clarinet moan, glass tones, gentle embers glowing softly in the quiet night, sustained with no build and no final cadence. BPM: 45. Length: 190 seconds
+
+### Golden Dark and Creepy dawn ambient (I)
+- Duration: 205s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, airless string cluster, muted celesta, faint bell tings, starlit reflections gleaming in clear undisturbed pools, sustained with no build and no final cadence. BPM: 45. Length: 205 seconds
+
+### Dark and Creepy stone monument ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, sub-bass drone, glissando cello, creaking timber, whispering winds through arches and ancient trees, sustained with no build and no final cadence. BPM: 45. Length: 215 seconds
 
-### Dark and Creepy midnight calm ambient (I)
-- Duration: 230s
+### Deep Dark and Creepy peace ambient (I)
+- Duration: 225s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, detuned organ pad, tremolo high violins, glass tones, deep calm before travelers begin their long journey, sustained with no build and no final cadence. BPM: 45. Length: 225 seconds
 
-### Golden Dark and Creepy dawn ambient (I)
+### Dark and Creepy watchtower solitude ambient (I)
+- Duration: 235s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, hollow room tone, bass clarinet moan, breathy flute noise, secluded alcove protected from cold gales and harsh weather, sustained with no build and no final cadence. BPM: 45. Length: 235 seconds
+
+### Shimmering Dark and Creepy grove ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, contrabass hum, bowed saw line, music-box fragments, patient silence of stone and earth enduring centuries, sustained with no build and no final cadence. BPM: 45. Length: 245 seconds
 
-### Dark and Creepy stone monument ambient (I)
-- Duration: 260s
+### Dark and Creepy hearth warmth ambient (I)
+- Duration: 255s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, airless string cluster, glissando cello, glass tones, crystal-clear air filled with serene quietude, sustained with no build and no final cadence. BPM: 45. Length: 255 seconds
 
-### Deep Dark and Creepy peace ambient (I)
-- Duration: 275s
+### Sacred Dark and Creepy spring ambient (I)
+- Duration: 265s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, sub-bass drone, tremolo high violins, breathy flute noise, shadowy contours fading into dusk and peaceful sleep, sustained with no build and no final cadence. BPM: 45. Length: 265 seconds
 
-### Dark and Creepy watchtower solitude ambient (I)
+### Dark and Creepy shadow contours ambient (I)
+- Duration: 280s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, detuned organ pad, bass clarinet moan, music-box fragments, timeless echoes reverberating in the quiet atmosphere, sustained with no build and no final cadence. BPM: 45. Length: 280 seconds
+
+### Timeless Dark and Creepy horizon ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
-
-### Shimmering Dark and Creepy grove ambient (I)
-- Duration: 305s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
-
-### Dark and Creepy hearth warmth ambient (I)
-- Duration: 320s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
-
-### Sacred Dark and Creepy spring ambient (I)
-- Duration: 335s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
-
-### Dark and Creepy shadow contours ambient (I)
-- Duration: 350s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
-
-### Timeless Dark and Creepy horizon ambient (I)
-- Duration: 365s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, hollow room tone, bowed saw line, faint bell tings, sacred quiet resting upon ancient sanctified ground, sustained with no build and no final cadence. BPM: 45. Length: 290 seconds
 
 ### Eternal Dark and Creepy rest ambient (I)
-- Duration: 380s
+- Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral bed, hollow and still, contrabass hum, muted celesta, creaking timber, peaceful haven offering safety and restorative rest, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ## II — the mood in motion
 
@@ -192,7 +192,7 @@ TrackType: Music, VocalType: Instrumental, dark and creepy ambient, serene and t
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, horror ambient, creeping and wrong, detuned string swells, sub bass drone, scraping metallic textures, very slow, abandoned crypt in a fantasy world, gradually thickening dread. Length: 45 seconds
+TrackType: Music, VocalType: Instrumental, horror ambient, creeping and wrong, detuned string swells, sub bass drone, scraping metallic textures, abandoned crypt in a fantasy world, gradually thickening dread. BPM: 45. Length: 45 seconds
 
 ### Stalking horror ambient (II)
 - Duration: 60s
@@ -208,7 +208,7 @@ TrackType: Music, VocalType: Instrumental, haunted manor orchestral, sick and el
 
 ### Ossuary ambient (II)
 - Duration: 90s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
 TrackType: Music, VocalType: Instrumental, ossuary ambient, dry and profane, bone-rattle textures, low organ tones, dissonant string beds, ten thousand skulls arranged too carefully, mounting dread. BPM: 50. Length: 90 seconds
 
@@ -240,7 +240,7 @@ TrackType: Music, VocalType: Instrumental, doll room ambient, brittle and starin
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, cursed shrine ambient, oppressive and profane, low chant-like drones, scorched bell tones, grinding string swells, the idol's smile is wider than yesterday, gathering weight. BPM: 50. Length: 270 seconds
+TrackType: Music, VocalType: Instrumental, cursed shrine ambient, oppressive and profane, low sustained drones, scorched bell tones, grinding string swells, the idol's smile is wider than yesterday, gathering weight. BPM: 50. Length: 270 seconds
 
 ### Ruined asylum ambient (II)
 - Duration: 330s
@@ -252,121 +252,121 @@ TrackType: Music, VocalType: Instrumental, ruined asylum ambient, echoing and fr
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bowed saw line, hollow room tone, music-box fragments, sudden drum stabs, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Dark and Creepy perimeter (II)
 - Duration: 65s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the dark and creepy. BPM: 72. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, muted celesta, contrabass hum, faint bell tings, col legno clatter, light walking pulse with open harmony. BPM: 72. Length: 65 seconds
 
 ### Dark and Creepy traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, glissando cello, airless string cluster, creaking timber, rattling percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Dark and Creepy passage (II)
 - Duration: 80s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, tremolo high violins, sub-bass drone, glass tones, timpani swells, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Dark and Creepy hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bass clarinet moan, detuned organ pad, breathy flute noise, irregular tom thuds, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Dark and Creepy (II)
 - Duration: 105s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bowed saw line, contrabass hum, creaking timber, timpani swells, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Dark and Creepy festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, muted celesta, airless string cluster, glass tones, irregular tom thuds, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Dark and Creepy patrol (II)
 - Duration: 130s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, glissando cello, sub-bass drone, breathy flute noise, sudden drum stabs, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Dark and Creepy artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, tremolo high violins, detuned organ pad, music-box fragments, col legno clatter, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Dark and Creepy ridge (II)
 - Duration: 160s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bass clarinet moan, hollow room tone, faint bell tings, rattling percussion, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Dark and Creepy bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bowed saw line, airless string cluster, breathy flute noise, col legno clatter, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Dark and Creepy tracker footsteps (II)
 - Duration: 190s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, muted celesta, sub-bass drone, music-box fragments, rattling percussion, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Dark and Creepy trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, glissando cello, detuned organ pad, faint bell tings, timpani swells, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Dark and Creepy runes (II)
 - Duration: 220s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, tremolo high violins, hollow room tone, creaking timber, irregular tom thuds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Dark and Creepy ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bass clarinet moan, contrabass hum, glass tones, sudden drum stabs, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Dark and Creepy stairs (II)
 - Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bowed saw line, sub-bass drone, faint bell tings, irregular tom thuds, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Dark and Creepy tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, muted celesta, detuned organ pad, creaking timber, sudden drum stabs, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Dark and Creepy waterways voyage (II)
 - Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, glissando cello, hollow room tone, glass tones, col legno clatter, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Dark and Creepy (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, tremolo high violins, contrabass hum, breathy flute noise, rattling percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Dark and Creepy panoramic overlook (II)
 - Duration: 330s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, dark and creepy movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral, crawling and dread-filled, bass clarinet moan, airless string cluster, music-box fragments, timpani swells, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -434,118 +434,118 @@ TrackType: Music, VocalType: Instrumental, final horror orchestral, apocalyptic 
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the dark and creepy. BPM: 105. Length: 45 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, timpani swells, tremolo high violins, hollow room tone, creaking timber, full ensemble at maximum weight. BPM: 105. Length: 45 seconds
 
 ### The great Dark and Creepy cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, irregular tom thuds, bass clarinet moan, contrabass hum, glass tones, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Dark and Creepy citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, sudden drum stabs, bowed saw line, airless string cluster, breathy flute noise, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Dark and Creepy dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, col legno clatter, muted celesta, sub-bass drone, music-box fragments, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Dark and Creepy sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, rattling percussion, glissando cello, detuned organ pad, faint bell tings, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Dark and Creepy gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, timpani swells, bass clarinet moan, airless string cluster, music-box fragments, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Dark and Creepy champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, irregular tom thuds, bowed saw line, sub-bass drone, faint bell tings, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Dark and Creepy elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, sudden drum stabs, muted celesta, detuned organ pad, creaking timber, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Dark and Creepy collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, col legno clatter, glissando cello, hollow room tone, glass tones, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Dark and Creepy divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, rattling percussion, tremolo high violins, contrabass hum, breathy flute noise, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Dark and Creepy vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, timpani swells, bowed saw line, detuned organ pad, glass tones, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Dark and Creepy curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, irregular tom thuds, muted celesta, hollow room tone, breathy flute noise, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Dark and Creepy arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, sudden drum stabs, glissando cello, contrabass hum, music-box fragments, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Dark and Creepy ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, col legno clatter, tremolo high violins, airless string cluster, faint bell tings, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Dark and Creepy stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, rattling percussion, bass clarinet moan, sub-bass drone, creaking timber, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Dark and Creepy primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, timpani swells, muted celesta, contrabass hum, faint bell tings, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Dark and Creepy shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, irregular tom thuds, glissando cello, airless string cluster, creaking timber, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Dark and Creepy cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, sudden drum stabs, tremolo high violins, sub-bass drone, glass tones, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Dark and Creepy tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, col legno clatter, bass clarinet moan, detuned organ pad, breathy flute noise, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Dark and Creepy victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, dark and creepy climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, horror orchestral climax, screaming and violent, rattling percussion, bowed saw line, hollow room tone, music-box fragments, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

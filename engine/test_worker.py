@@ -3,11 +3,13 @@
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 import wave
@@ -309,7 +311,7 @@ class WorkerTests(unittest.TestCase):
                 "mode": "music",
                 "instruments": ["duduk", "harp"],
                 "category": "Ancient Discovery",
-                "intensity": "Level I — Quiet looping bed",
+                "intensity": "I",
             }
         )
         done = None
@@ -327,10 +329,10 @@ class WorkerTests(unittest.TestCase):
 
         info = read_wav_info(Path(done["path"]))
         self.assertEqual(info.get("ISBJ"), "Ancient Discovery")
-        self.assertEqual(info.get("IART"), "Level I — Quiet looping bed")
+        self.assertEqual(info.get("IART"), "I")
         self.assertEqual(info.get("IKEY"), "duduk;harp")
         self.assertIn("Category: Ancient Discovery", info.get("ICMT", ""))
-        self.assertIn("Intensity: Level I — Quiet looping bed", info.get("ICMT", ""))
+        self.assertIn("Intensity: I", info.get("ICMT", ""))
         self.assertIn("Instruments: duduk, harp", info.get("ICMT", ""))
 
     def test_generate_progress_includes_weaving_phase(self) -> None:
@@ -714,6 +716,180 @@ class WorkerTests(unittest.TestCase):
         self.client.send({"id": "s16", "cmd": "status"})
         status = self.client.read()
         self.assertEqual(status.get("precision"), "fp16")
+
+
+class DispatchLoopTests(unittest.TestCase):
+    """The stdin loop must stay readable while a slow command runs."""
+
+    def setUp(self) -> None:
+        # Mock mode keeps the status path off torch and the HF cache, so the
+        # only slow thing in it is the stall this test installs on purpose.
+        previous = os.environ.get("THUNDER_FX_MOCK_ENGINE")
+        os.environ["THUNDER_FX_MOCK_ENGINE"] = "1"
+
+        def restore_env() -> None:
+            if previous is None:
+                os.environ.pop("THUNDER_FX_MOCK_ENGINE", None)
+            else:
+                os.environ["THUNDER_FX_MOCK_ENGINE"] = previous
+
+        self.addCleanup(restore_env)
+
+    def _run_loop(self, lines: list[str]) -> tuple[threading.Thread, io.StringIO]:
+        import worker
+
+        out = io.StringIO()
+        stdin, stdout = sys.stdin, sys.stdout
+        excepthook, thread_hook = sys.excepthook, threading.excepthook
+        sys.stdin = io.StringIO("\n".join(lines) + "\n")
+        sys.stdout = out
+
+        def restore() -> None:
+            sys.stdin, sys.stdout = stdin, stdout
+            sys.excepthook, threading.excepthook = excepthook, thread_hook
+
+        self.addCleanup(restore)
+        thread = threading.Thread(target=worker.main, daemon=True)
+        thread.start()
+        return thread, out
+
+    def test_cancel_is_read_while_a_status_probe_blocks(self) -> None:
+        """Regression: a stalled GPU probe must not swallow the next cancel.
+
+        `status` polls the CUDA driver every few seconds and those calls
+        serialize against a running generation, so handling one inline stopped
+        the loop reading stdin -- which is where cancel arrives. The generation
+        then never saw the cancel, kept `_gen_lock` for good, and every later
+        request answered "a generation is already in progress" until restart.
+        """
+        import worker
+
+        entered = threading.Event()
+        release = threading.Event()
+
+        def blocking_vram() -> dict:
+            entered.set()
+            release.wait(10)
+            return {}
+
+        original = worker._vram_stats
+        worker._vram_stats = blocking_vram
+        worker._cancel.clear()
+        self.addCleanup(worker._cancel.clear)
+        self.addCleanup(lambda: setattr(worker, "_vram_stats", original))
+        self.addCleanup(release.set)
+
+        self._run_loop(['{"id": "s", "cmd": "status"}', '{"id": "c", "cmd": "cancel"}'])
+
+        self.assertTrue(entered.wait(5), "status probe never started")
+        # The probe is still parked in the driver; cancel has to land anyway.
+        self.assertTrue(
+            worker._cancel.wait(5),
+            "cancel was not read while a status probe was blocked",
+        )
+        release.set()
+
+    def test_status_answers_from_cache_while_a_probe_is_stuck(self) -> None:
+        """A second poll must not stack another call onto a stalled driver."""
+        import worker
+
+        entered = threading.Event()
+        release = threading.Event()
+        calls = []
+
+        def blocking_vram() -> dict:
+            calls.append(1)
+            entered.set()
+            release.wait(10)
+            return {"vramUsedGb": 1.0}
+
+        original = worker._vram_stats
+        worker._vram_stats = blocking_vram
+        with worker._status_cache_lock:
+            worker._status_cache.clear()
+            worker._status_cache.update({"event": "status", "ready": True, "device": "cuda"})
+        self.addCleanup(lambda: setattr(worker, "_vram_stats", original))
+        self.addCleanup(release.set)
+
+        _, out = self._run_loop(
+            ['{"id": "a", "cmd": "status"}', '{"id": "b", "cmd": "status"}']
+        )
+        self.assertTrue(entered.wait(5), "first probe never started")
+
+        deadline = time.time() + 5
+        replies = []
+        while time.time() < deadline:
+            replies = [
+                json.loads(line)
+                for line in out.getvalue().splitlines()
+                if line.strip()
+            ]
+            if any(r.get("id") == "b" for r in replies):
+                break
+            time.sleep(0.05)
+
+        stale = next((r for r in replies if r.get("id") == "b"), None)
+        self.assertIsNotNone(stale, "second status never answered while one was stuck")
+        self.assertTrue(stale.get("stale"))
+        self.assertEqual(stale.get("device"), "cuda")
+        self.assertEqual(len(calls), 1, "a stalled driver was polled twice")
+        release.set()
+
+
+class ColdStartTests(unittest.TestCase):
+    """The first status has to beat the host's 10s budget for that command."""
+
+    def test_first_status_answers_within_the_host_timeout(self) -> None:
+        """Regression: preloading must not push the first reply past 10s.
+
+        The worker preloads its native modules on the main thread so that no
+        dispatch thread ever performs a first-time extension import. That work
+        is the same work the first `status` used to do inline, so it has to stay
+        inside the budget `engine_status` allows -- an eager import added on top
+        of the old cost rather than in place of it took this from 5s to 16s and
+        made the app's opening status call time out.
+        """
+        tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(tmp.cleanup)
+        env = os.environ.copy()
+        env.pop("THUNDER_FX_MOCK_ENGINE", None)
+        env["THUNDER_FX_LIBRARY_DIR"] = tmp.name
+        env["THUNDER_FX_LOG_DIR"] = tmp.name
+        env["PYTHONUNBUFFERED"] = "1"
+        client = WorkerClient(env)
+        self.addCleanup(client.close)
+
+        # WorkerClient.read() blocks in readline(), so a wedged worker would
+        # hang this test instead of failing it. Read on a thread and give up.
+        seen: list[dict] = []
+        answered = threading.Event()
+
+        def pump() -> None:
+            try:
+                while True:
+                    msg = client.read(timeout_s=30)
+                    seen.append(msg)
+                    if msg.get("id") == "s1":
+                        answered.set()
+                        return
+            except Exception:
+                answered.set()
+
+        started = time.time()
+        client.send({"id": "s1", "cmd": "status"})
+        threading.Thread(target=pump, daemon=True).start()
+        self.assertTrue(
+            answered.wait(25), "worker never answered the first status at all"
+        )
+        self.assertTrue(
+            any(m.get("id") == "s1" for m in seen), "no status reply was produced"
+        )
+        elapsed = time.time() - started
+        self.assertLess(
+            elapsed,
+            10.0,
+            f"first status took {elapsed:.1f}s; engine_status gives it 10s",
+        )
 
 
 class SaveGeneratedWavTests(unittest.TestCase):

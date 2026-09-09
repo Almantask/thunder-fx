@@ -60,22 +60,22 @@ describe('wav', () => {
         'TrackType: Music, misty mountains with flute and harp',
         ['flute', 'harp'],
         'Mountain Mist',
-        'Level II — Mood in motion',
+        'II',
       ),
     )
     const parsed = parseWav(tagged)
     expect(parsed.info?.instruments).toEqual(['flute', 'harp'])
     expect(parsed.info?.category).toBe('Mountain Mist')
-    expect(parsed.info?.intensity).toBe('Level II — Mood in motion')
+    expect(parsed.info?.intensity).toBe('II')
     expect(parsed.info?.comment).toBe(
-      'Category: Mountain Mist · Intensity: Level II — Mood in motion · Instruments: flute, harp',
+      'Category: Mountain Mist · Intensity: II · Instruments: flute, harp',
     )
     expect(parsed.info?.genre).toBe('Instrumental')
     expect(parsed.info?.software).toBe('Thunder FX')
 
     const trimmed = parseWav(trimWav(tagged, 0, 0.5))
     expect(trimmed.info?.category).toBe('Mountain Mist')
-    expect(trimmed.info?.intensity).toBe('Level II — Mood in motion')
+    expect(trimmed.info?.intensity).toBe('II')
     expect(trimmed.info?.instruments).toEqual(['flute', 'harp'])
   })
 })

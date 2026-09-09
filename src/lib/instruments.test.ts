@@ -92,13 +92,13 @@ describe('musicWavInfo', () => {
       'TrackType: Music, ancient ruins with duduk and harp',
       ['duduk', 'harp'],
       'Ancient Discovery',
-      'Level I — Quiet looping bed',
+      'I',
     )
     expect(info.instruments).toEqual(['duduk', 'harp'])
     expect(info.category).toBe('Ancient Discovery')
-    expect(info.intensity).toBe('Level I — Quiet looping bed')
+    expect(info.intensity).toBe('I')
     expect(info.comment).toBe(
-      'Category: Ancient Discovery · Intensity: Level I — Quiet looping bed · Instruments: duduk, harp',
+      'Category: Ancient Discovery · Intensity: I · Instruments: duduk, harp',
     )
   })
 })

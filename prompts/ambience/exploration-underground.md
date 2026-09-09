@@ -10,181 +10,181 @@ Instrumental D&D ambience for Stable Audio 3 Medium. Each cue starts with `Track
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion, melody
 
-TrackType: Music, VocalType: Instrumental, dark ambient dungeon atmosphere, cavernous and still, deep sub drones, distant water drips, faint metallic resonance, no perceivable tempo, torchlight in endless tunnels, steady texture with no ending, looping-friendly. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, dark ambient dungeon atmosphere, cavernous and still, deep sub drones, distant water drips, faint metallic resonance, torchlight in endless tunnels, sustained with no build and no final cadence. BPM: 45. Length: 90 seconds
 
 ### Chasm ambient (I)
-- Duration: 120s
+- Duration: 110s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, chasm ambient, hollow and vast, wind-through-depths drone, far rockfall echoes, thin high shimmer, no perceivable tempo, a rope bridge over darkness with no bottom, patient and endless, looping-friendly, steady texture with no ending. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, chasm ambient, hollow and vast, wind-through-depths drone, far rockfall echoes, thin high shimmer, a rope bridge over darkness with no bottom, patient and endless, sustained with no build and no final cadence. BPM: 45. Length: 110 seconds
 
 ### Glowworm ambient (I)
-- Duration: 150s
+- Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, glowworm ambient, cold-lit and calm, soft crystalline shimmer, low cave drone, water drip echoes, a ceiling of pale blue stars underground, still wonder, looping-friendly, steady texture with no ending. BPM: 40. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, glowworm ambient, cold-lit and calm, soft crystalline shimmer, low cave drone, water drip echoes, a ceiling of pale blue stars underground, still wonder, sustained with no build and no final cadence. BPM: 40. Length: 135 seconds
 
 ### Mineshaft ambient (I)
-- Duration: 180s
+- Duration: 155s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, mineshaft ambient, dusty and abandoned, creaking timber textures, low drones, faint pick-ring resonance, no perceivable tempo, carts rusted where they stopped, hollow quiet, looping-friendly, steady texture with no ending. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, mineshaft ambient, dusty and abandoned, creaking timber textures, low drones, faint pick-ring resonance, carts rusted where they stopped, hollow quiet, sustained with no build and no final cadence. BPM: 45. Length: 155 seconds
 
 ### Underground river ambient (I)
-- Duration: 210s
+- Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, underground river ambient, flowing and black, water-rush bed, low string swells, drip accents, no perceivable tempo, the current knows the way out, steady dark flow, looping-friendly, steady texture with no ending. Length: 210 seconds
+TrackType: Music, VocalType: Instrumental, underground river ambient, flowing and black, water-rush bed, low string swells, drip accents, the current knows the way out, steady dark flow, sustained with no build and no final cadence. BPM: 45. Length: 175 seconds
 
 ### Crystal gallery ambient (I)
-- Duration: 240s
+- Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, crystal gallery ambient, glassy and hushed, resonant crystal tones, deep pads, sparse harp harmonics, giant crystals humming almost below hearing, delicate and endless, looping-friendly, steady texture with no ending. BPM: 42. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, crystal gallery ambient, glassy and hushed, resonant crystal tones, deep pads, sparse harp harmonics, giant crystals humming almost below hearing, delicate and endless, sustained with no build and no final cadence. BPM: 42. Length: 200 seconds
 
 ### Dwarf ruin ambient (I)
+- Duration: 220s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dwarf ruin ambient, solemn and deep, low horn-like drones, stone-hall reverb textures, cold forge resonance, the mansion of a delved kingdom gone quiet, sustained with no build and no final cadence. BPM: 45. Length: 220 seconds
+
+### Narrow crawl ambient (I)
+- Duration: 240s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, narrow crawl ambient, close and tense, muffled sub drone, breath-close textures, tiny drip echoes, shoulders touching both walls in the dark, patient claustrophobia, sustained with no build and no final cadence. BPM: 45. Length: 240 seconds
+
+### Fungal cavern ambient (I)
 - Duration: 270s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, dwarf ruin ambient, solemn and deep, low horn-like drones, stone-hall reverb textures, cold forge resonance, no perceivable tempo, the mansion of a delved kingdom gone quiet, looping-friendly, steady texture with no ending. Length: 270 seconds
+TrackType: Music, VocalType: Instrumental, fungal cavern ambient, spore-soft and strange, damp pads, muted plucks like droplets, low drone, glowing caps in ankle-deep mist, muffled and endless, sustained with no build and no final cadence. BPM: 45. Length: 270 seconds
 
-### Narrow crawl ambient (I)
+### Sealed depths ambient (I)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, narrow crawl ambient, close and tense, muffled sub drone, breath-close textures, tiny drip echoes, no perceivable tempo, shoulders touching both walls in the dark, patient claustrophobia, looping-friendly, steady texture with no ending. Length: 300 seconds
-
-### Fungal cavern ambient (I)
-- Duration: 340s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, fungal cavern ambient, spore-soft and strange, damp pads, muted plucks like droplets, low drone, glowing caps in ankle-deep mist, muffled and endless, looping-friendly, steady texture with no ending. BPM: 45. Length: 340 seconds
-
-### Sealed depths ambient (I)
-- Duration: 380s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, sealed depths ambient, forbidding and still, tectonic sub swells, distant metallic groans, cold silence gaps, no perceivable tempo, the door the dwarves locked from this side, heavy dread-calm, looping-friendly, steady texture with no ending. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, sealed depths ambient, forbidding and still, tectonic sub swells, distant metallic groans, cold silence gaps, the door the dwarves locked from this side, heavy dread-calm, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ### Silent Exploration Underground sanctuary ambient (I)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, resting quietly in the exploration underground at twilight, steady texture with no ending, looping-friendly. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, cavern sub-bass drone, muted cello figure, distant metal clangs, settled and unhurried with long decays, sustained with no build and no final cadence. BPM: 45. Length: 95 seconds
 
 ### Exploration Underground twilight mist ambient (I)
-- Duration: 110s
+- Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, ancient stone landmarks standing silent under moonlight, steady texture with no ending, looping-friendly. Length: 110 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, hollow room tone, low horn tone, glass drips, ancient stone landmarks standing silent under moonlight, sustained with no build and no final cadence. BPM: 45. Length: 105 seconds
 
 ### Ancient Exploration Underground vault ambient (I)
+- Duration: 115s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, dark string bed, alto flute phrase, faint bell taps, wide reverb tail with slow air-like swells, sustained with no build and no final cadence. BPM: 45. Length: 115 seconds
+
+### Exploration Underground starlight expanse ambient (I)
 - Duration: 125s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, gentle breeze carrying distant echoes through the exploration underground, steady texture with no ending, looping-friendly. Length: 125 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, contrabass hum, sul tasto violins, stone knocks, deep shadows stretching across ancient ruins and forgotten paths, sustained with no build and no final cadence. BPM: 45. Length: 125 seconds
 
-### Exploration Underground starlight expanse ambient (I)
+### Hushed Exploration Underground shelter ambient (I)
 - Duration: 140s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, deep shadows stretching across ancient ruins and forgotten paths, steady texture with no ending, looping-friendly. Length: 140 seconds
-
-### Hushed Exploration Underground shelter ambient (I)
-- Duration: 155s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, morning mist slowly burning away in the serene exploration underground, steady texture with no ending, looping-friendly. Length: 155 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, organ pedal, bass clarinet line, dripping water tones, slow warm swell rising out of near-silence, sustained with no build and no final cadence. BPM: 45. Length: 140 seconds
 
 ### Exploration Underground whispering wind ambient (I)
+- Duration: 150s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, cavern sub-bass drone, low horn tone, faint bell taps, lantern light flickering against weathered walls and timeless ground, sustained with no build and no final cadence. BPM: 45. Length: 150 seconds
+
+### Secluded Exploration Underground hollow ambient (I)
+- Duration: 160s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, hollow room tone, alto flute phrase, stone knocks, hushed tranquility settled over the vast landscape, sustained with no build and no final cadence. BPM: 45. Length: 160 seconds
+
+### Exploration Underground crystal reflections ambient (I)
 - Duration: 170s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, lantern light flickering against weathered walls and timeless ground, steady texture with no ending, looping-friendly. Length: 170 seconds
-
-### Secluded Exploration Underground hollow ambient (I)
-- Duration: 185s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, hushed tranquility settled over the vast landscape, steady texture with no ending, looping-friendly. Length: 185 seconds
-
-### Exploration Underground crystal reflections ambient (I)
-- Duration: 200s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, solitary watchman gazing across the silent expanse, steady texture with no ending, looping-friendly. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, dark string bed, sul tasto violins, dripping water tones, solitary watchman gazing across the silent expanse, sustained with no build and no final cadence. BPM: 45. Length: 170 seconds
 
 ### Forgotten Exploration Underground path ambient (I)
+- Duration: 180s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, contrabass hum, bass clarinet line, distant metal clangs, hidden sanctuary undisturbed by the outside world, sustained with no build and no final cadence. BPM: 45. Length: 180 seconds
+
+### Exploration Underground midnight calm ambient (I)
+- Duration: 190s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, organ pedal, muted cello figure, glass drips, gentle embers glowing softly in the quiet night, sustained with no build and no final cadence. BPM: 45. Length: 190 seconds
+
+### Golden Exploration Underground dawn ambient (I)
+- Duration: 205s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, cavern sub-bass drone, alto flute phrase, dripping water tones, starlit reflections gleaming in clear undisturbed pools, sustained with no build and no final cadence. BPM: 45. Length: 205 seconds
+
+### Exploration Underground stone monument ambient (I)
 - Duration: 215s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, hidden sanctuary undisturbed by the outside world, steady texture with no ending, looping-friendly. Length: 215 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, hollow room tone, sul tasto violins, distant metal clangs, whispering winds through arches and ancient trees, sustained with no build and no final cadence. BPM: 45. Length: 215 seconds
 
-### Exploration Underground midnight calm ambient (I)
-- Duration: 230s
+### Deep Exploration Underground peace ambient (I)
+- Duration: 225s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, gentle embers glowing softly in the quiet night, steady texture with no ending, looping-friendly. Length: 230 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, dark string bed, bass clarinet line, glass drips, deep calm before travelers begin their long journey, sustained with no build and no final cadence. BPM: 45. Length: 225 seconds
 
-### Golden Exploration Underground dawn ambient (I)
+### Exploration Underground watchtower solitude ambient (I)
+- Duration: 235s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, contrabass hum, muted cello figure, faint bell taps, secluded alcove protected from cold gales and harsh weather, sustained with no build and no final cadence. BPM: 45. Length: 235 seconds
+
+### Shimmering Exploration Underground grove ambient (I)
 - Duration: 245s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, soft felt piano, low cello drone, distant chimes, no perceivable tempo, starlit reflections gleaming in clear undisturbed pools, steady texture with no ending, looping-friendly. Length: 245 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, organ pedal, low horn tone, stone knocks, patient silence of stone and earth enduring centuries, sustained with no build and no final cadence. BPM: 45. Length: 245 seconds
 
-### Exploration Underground stone monument ambient (I)
-- Duration: 260s
+### Exploration Underground hearth warmth ambient (I)
+- Duration: 255s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, nylon acoustic guitar, warm viola pad, airy bamboo flute, no perceivable tempo, whispering winds through arches and ancient trees, steady texture with no ending, looping-friendly. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, cavern sub-bass drone, sul tasto violins, glass drips, crystal-clear air filled with serene quietude, sustained with no build and no final cadence. BPM: 45. Length: 255 seconds
 
-### Deep Exploration Underground peace ambient (I)
-- Duration: 275s
+### Sacred Exploration Underground spring ambient (I)
+- Duration: 265s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, bowed glass harmonica, deep acoustic bass drone, sparse kalimba drops, no perceivable tempo, deep calm before travelers begin their long journey, steady texture with no ending, looping-friendly. Length: 275 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, hollow room tone, bass clarinet line, faint bell taps, shadowy contours fading into dusk and peaceful sleep, sustained with no build and no final cadence. BPM: 45. Length: 265 seconds
 
-### Exploration Underground watchtower solitude ambient (I)
+### Exploration Underground shadow contours ambient (I)
+- Duration: 280s
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, dark string bed, muted cello figure, stone knocks, timeless echoes reverberating in the quiet atmosphere, sustained with no build and no final cadence. BPM: 45. Length: 280 seconds
+
+### Timeless Exploration Underground horizon ambient (I)
 - Duration: 290s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, duduk melody, slow cello swells, subtle chime resonance, no perceivable tempo, secluded alcove protected from cold gales and harsh weather, steady texture with no ending, looping-friendly. Length: 290 seconds
-
-### Shimmering Exploration Underground grove ambient (I)
-- Duration: 305s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, Celtic harp arpeggios, gentle recorder, warm string pad, no perceivable tempo, patient silence of stone and earth enduring centuries, steady texture with no ending, looping-friendly. Length: 305 seconds
-
-### Exploration Underground hearth warmth ambient (I)
-- Duration: 320s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, fingerstyle guitar, soft bass flute, quiet room ambiance, no perceivable tempo, crystal-clear air filled with serene quietude, steady texture with no ending, looping-friendly. Length: 320 seconds
-
-### Sacred Exploration Underground spring ambient (I)
-- Duration: 335s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, tremolo high violins, solitary cello, delicate celesta glints, no perceivable tempo, shadowy contours fading into dusk and peaceful sleep, steady texture with no ending, looping-friendly. Length: 335 seconds
-
-### Exploration Underground shadow contours ambient (I)
-- Duration: 350s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, breathy woodwinds, warm contrabass drone, sparse dulcimer notes, no perceivable tempo, timeless echoes reverberating in the quiet atmosphere, steady texture with no ending, looping-friendly. Length: 350 seconds
-
-### Timeless Exploration Underground horizon ambient (I)
-- Duration: 365s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
-
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, marimba notes, soft viola da gamba, gentle ambient pad, no perceivable tempo, sacred quiet resting upon ancient sanctified ground, steady texture with no ending, looping-friendly. Length: 365 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, contrabass hum, low horn tone, dripping water tones, sacred quiet resting upon ancient sanctified ground, sustained with no build and no final cadence. BPM: 45. Length: 290 seconds
 
 ### Eternal Exploration Underground rest ambient (I)
-- Duration: 380s
+- Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground ambient, serene and timeless, bowed waterphone, deep sub-bass drone, crystalline chime accents, no perceivable tempo, peaceful haven offering safety and restorative rest, steady texture with no ending, looping-friendly. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient bed, close and lightless, organ pedal, alto flute phrase, distant metal clangs, peaceful haven offering safety and restorative rest, sustained with no build and no final cadence. BPM: 45. Length: 300 seconds
 
 ## II — the mood in motion
 
@@ -252,121 +252,121 @@ TrackType: Music, VocalType: Instrumental, rising water ambient, urgent underton
 - Duration: 50s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, low horn tone, contrabass hum, stone knocks, sparse tom hits, travelers making steady progress along winding trails. BPM: 70. Length: 50 seconds
 
 ### Scouting the Exploration Underground perimeter (II)
 - Duration: 65s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, scouts charting unexplored routes through the exploration underground. BPM: 72. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, alto flute phrase, organ pedal, dripping water tones, timpani swells, light walking pulse with open harmony. BPM: 72. Length: 65 seconds
 
 ### Exploration Underground traveler ballad (II)
 - Duration: 70s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, sul tasto violins, cavern sub-bass drone, distant metal clangs, irregular thuds, gathering around the evening fire sharing stories and warmth. BPM: 74. Length: 70 seconds
 
 ### Navigating the Exploration Underground passage (II)
 - Duration: 80s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, bass clarinet line, hollow room tone, glass drips, gong strikes, navigating treacherous switchbacks with focused determination. BPM: 76. Length: 80 seconds
 
 ### Exploration Underground hearth gathering (II)
 - Duration: 95s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, muted cello figure, dark string bed, faint bell taps, slow deep drum, merchants guiding pack animals through historic passes. BPM: 78. Length: 95 seconds
 
 ### Expedition through Exploration Underground (II)
 - Duration: 105s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, low horn tone, organ pedal, distant metal clangs, gong strikes, exploring hidden chambers and uncovering mysterious artifacts. BPM: 80. Length: 105 seconds
 
 ### Exploration Underground festival dance (II)
 - Duration: 115s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, alto flute phrase, cavern sub-bass drone, glass drips, slow deep drum, village festival celebrating ancient traditions and good harvest. BPM: 82. Length: 115 seconds
 
 ### Vigilant Exploration Underground patrol (II)
 - Duration: 130s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, sul tasto violins, hollow room tone, faint bell taps, sparse tom hits, patrolling border outposts with watchful vigilance. BPM: 84. Length: 130 seconds
 
 ### Exploration Underground artifact discovery (II)
 - Duration: 145s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, bass clarinet line, dark string bed, stone knocks, timpani swells, descending into shadowy depths with raised lanterns. BPM: 86. Length: 145 seconds
 
 ### Riding the Exploration Underground ridge (II)
 - Duration: 160s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, muted cello figure, contrabass hum, dripping water tones, irregular thuds, riding sure-footed mounts across expansive terrain. BPM: 88. Length: 160 seconds
 
 ### Crossing the Exploration Underground bridge (II)
 - Duration: 175s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, solo violin, strummed acoustic guitar, soft accordion, light frame drum, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, low horn tone, cavern sub-bass drone, faint bell taps, timpani swells, crossing wooden bridges spanning misty canyon depths. BPM: 90. Length: 175 seconds
 
 ### Exploration Underground tracker footsteps (II)
 - Duration: 190s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, bouzouki chords, tin whistle, upright bass, gentle tambourine, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, alto flute phrase, hollow room tone, stone knocks, irregular thuds, tracking faint footprints across rugged earth. BPM: 92. Length: 190 seconds
 
 ### Exploration Underground trade route march (II)
 - Duration: 205s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, French horn, sweeping string ensemble, Celtic harp, light percussion, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, sul tasto violins, dark string bed, dripping water tones, gong strikes, caravan rolling steadily along cobblestone trade routes. BPM: 94. Length: 205 seconds
 
 ### Deciphering Exploration Underground runes (II)
 - Duration: 220s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, English horn, cello melody, classical guitar, soft woodwinds, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, bass clarinet line, contrabass hum, distant metal clangs, slow deep drum, scholars deciphering worn runes etched into stone arches. BPM: 96. Length: 220 seconds
 
 ### Exploration Underground ranger pursuit (II)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, mandolin lead, acoustic rhythm guitar, wooden recorder, bodhran, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, muted cello figure, organ pedal, glass drips, sparse tom hits, hunters stalking elusive quarry through shifting cover. BPM: 98. Length: 240 seconds
 
 ### Ascent of the Exploration Underground stairs (II)
 - Duration: 260s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, hammer dulcimer, solo oboe, rich viola section, light snare cadence, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, low horn tone, hollow room tone, dripping water tones, slow deep drum, climbing ancient stone stairways leading to forgotten vistas. BPM: 100. Length: 260 seconds
 
 ### Exploration Underground tavern rendezvous (II)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, lute arpeggios, viola, wooden flute, soft hand drums, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, alto flute phrase, dark string bed, distant metal clangs, sparse tom hits, meeting mysterious contacts in secluded taverns and alcoves. BPM: 102. Length: 280 seconds
 
 ### Exploration Underground waterways voyage (II)
 - Duration: 300s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, saz melody, darbuka rhythm, acoustic bass, breathy nay flute, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, sul tasto violins, contrabass hum, glass drips, timpani swells, sailing swift vessels through challenging waters. BPM: 104. Length: 300 seconds
 
 ### Alliance of the Exploration Underground (II)
 - Duration: 315s
 - Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, harpsichord touches, refined string quartet, solo flute, light percussion, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, bass clarinet line, organ pedal, faint bell taps, irregular thuds, forging new alliances over hearty food and drink. BPM: 106. Length: 315 seconds
 
 ### Exploration Underground panoramic overlook (II)
 - Duration: 330s
-- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir, drums, percussion
+- Negative: speech, pop, EDM, trap, hip hop, rap, vocals, singing, lyrics, choir
 
-TrackType: Music, VocalType: Instrumental, exploration underground movement, adventurous and melodic, nyckelharpa, acoustic guitar, cello ostinato, tambourine, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient, feeling forward and tense, muted cello figure, cavern sub-bass drone, stone knocks, gong strikes, reaching high overlooks revealing vast breathtaking horizons. BPM: 108. Length: 330 seconds
 
 ## III — full intensity of this category
 
@@ -434,118 +434,118 @@ TrackType: Music, VocalType: Instrumental, escape ascent orchestral, breathless 
 - Duration: 45s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, colossal clash of armies shaking the foundations of the exploration underground. BPM: 105. Length: 45 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, gong strikes, bass clarinet line, contrabass hum, distant metal clangs, full ensemble at maximum weight. BPM: 105. Length: 45 seconds
 
 ### The great Exploration Underground cataclysm (III)
 - Duration: 55s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, slow deep drum, muted cello figure, organ pedal, glass drips, apocalyptic manifestation of ancient primordial power. BPM: 107. Length: 55 seconds
 
 ### Battle for the Exploration Underground citadel (III)
 - Duration: 65s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, sparse tom hits, low horn tone, cavern sub-bass drone, faint bell taps, heroic charge breaking through fortified enemy lines. BPM: 109. Length: 65 seconds
 
 ### Exploration Underground dragon wrath (III)
 - Duration: 75s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, timpani swells, alto flute phrase, hollow room tone, stone knocks, terrifying monster lunging from dark storm clouds and shadows. BPM: 111. Length: 75 seconds
 
 ### Collapse of the Exploration Underground sanctuary (III)
 - Duration: 90s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, irregular thuds, sul tasto violins, dark string bed, dripping water tones, cataclysmic collapse of towering stone citadels and monuments. BPM: 113. Length: 90 seconds
 
 ### Heroic stand at the Exploration Underground gate (III)
 - Duration: 105s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, gong strikes, muted cello figure, cavern sub-bass drone, stone knocks, desperate last stand defending the sacred sanctuary gate. BPM: 115. Length: 105 seconds
 
 ### Exploration Underground champion duel (III)
 - Duration: 120s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, slow deep drum, low horn tone, hollow room tone, dripping water tones, epic duel of champions with flashing blades and soaring spells. BPM: 117. Length: 120 seconds
 
 ### Exploration Underground elemental awakening (III)
 - Duration: 135s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, sparse tom hits, alto flute phrase, dark string bed, distant metal clangs, colossal dragon unleashing devastating elemental fury. BPM: 119. Length: 135 seconds
 
 ### Escape from the Exploration Underground collapse (III)
 - Duration: 150s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, timpani swells, sul tasto violins, contrabass hum, glass drips, breathless escape through collapsing subterranean vaults. BPM: 121. Length: 150 seconds
 
 ### Exploration Underground divine manifestation (III)
 - Duration: 165s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, irregular thuds, bass clarinet line, organ pedal, faint bell taps, divine avatar descending in blinding glorious light. BPM: 123. Length: 165 seconds
 
 ### Charge of the Exploration Underground vanguard (III)
 - Duration: 180s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, thundering taiko drums, roaring low brass, surging strings, choir roars, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, gong strikes, low horn tone, dark string bed, glass drips, furious counterattack driving back the overwhelming horde. BPM: 125. Length: 180 seconds
 
 ### Breaking the Exploration Underground curse (III)
 - Duration: 200s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, sweeping full orchestra, soaring trumpet fanfares, crashing cymbals, wordless choir, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, slow deep drum, alto flute phrase, contrabass hum, faint bell taps, shattering ancient curses to restore freedom to the realm. BPM: 127. Length: 200 seconds
 
 ### Exploration Underground arcane eruption (III)
 - Duration: 220s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, blaring brass sections, driving cello ostinatos, heavy war drums, full choir, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, sparse tom hits, sul tasto violins, organ pedal, stone knocks, unleashing forbidden magical forces in decisive battle. BPM: 129. Length: 220 seconds
 
 ### Rescue amidst Exploration Underground ruins (III)
 - Duration: 240s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, massive brass chorale, rolling timpani, climbing violins, choir crescendo, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, timpani swells, bass clarinet line, cavern sub-bass drone, dripping water tones, heroic rescue amidst blazing fires and falling debris. BPM: 131. Length: 240 seconds
 
 ### Siege of the Exploration Underground stronghold (III)
 - Duration: 260s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, driving military snare cadence, soaring French horns, aggressive strings, choir, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, irregular thuds, muted cello figure, hollow room tone, distant metal clangs, monumental siege engines battering high fortress walls. BPM: 133. Length: 260 seconds
 
 ### Exploration Underground primordial rage (III)
 - Duration: 280s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, towering brass chords, crushing percussion impacts, frantic violin runs, choir, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, gong strikes, alto flute phrase, organ pedal, dripping water tones, titanic elemental awakening to reclaim its ancient domain. BPM: 135. Length: 280 seconds
 
 ### Banishment of Exploration Underground shadows (III)
 - Duration: 300s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, blaring horns, rapid string arpeggios, pounding drums, chanting choir, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, slow deep drum, sul tasto violins, cavern sub-bass drone, distant metal clangs, legendary paladin strike banishing dark demonic entities. BPM: 137. Length: 300 seconds
 
 ### Exploration Underground cavalry onslaught (III)
 - Duration: 320s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, roaring low brass, soaring solo trumpet, thundering timpani, tragic choir peak, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, sparse tom hits, bass clarinet line, hollow room tone, glass drips, armored cavalry storming across the battlefield to victory. BPM: 139. Length: 320 seconds
 
 ### Triumph over the Exploration Underground tyrant (III)
 - Duration: 350s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, full orchestra crescendo, crashing cymbals, blazing brass fanfares, majestic choir, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, timpani swells, muted cello figure, dark string bed, faint bell taps, shattering the tyrant throne in explosive final triumph. BPM: 141. Length: 350 seconds
 
 ### Dawn of the Exploration Underground victory (III)
 - Duration: 380s
 - Negative: speech, pop, EDM, trap, hip hop, rap, lyrics, singing
 
-TrackType: Music, VocalType: Instrumental, exploration underground climax, epic and monumental, furious war drums, screaming woodwinds, driving double bass, epic choir, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds
+TrackType: Music, VocalType: Instrumental, dark cinematic ambient climax, vast and cavernous, irregular thuds, low horn tone, contrabass hum, stone knocks, triumphant dawn illuminating a liberated and radiant realm. BPM: 143. Length: 380 seconds

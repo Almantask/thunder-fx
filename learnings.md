@@ -94,3 +94,58 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   block-level spread for "no dynamics", spectral centroid and >8 kHz share for "underwater",
   and normalised frame-to-frame spectral flux for "sounds the same all the way through".
   `engine/test_generation_quality.py` uses them to fail a preset that degrades the audio.
+- **General rules for instrumental prompts, and the three sources they come from.** In order of
+  authority: (1) **Stability's own rewriter, shipped in the venv** —
+  `stable_audio_3/interface/reprompt.py`. Its `SYSTEM_PROMPTS["Music"]` is the template the
+  rewriter was instructed to emit, and its `_has_artifacts()` is a literal reject list, so this
+  is spec rather than folklore. (2) The **official prompt guide**
+  (`Stability-AI/stable-audio-3/docs/guides/prompting.md`, mirrored at
+  stability.ai/guides/stable-audio-3-prompt-guide) — AudioSparx tags, "prompt adherence and audio
+  quality are closely linked with the dataset the model was trained on", and the note that
+  durations should fit what you describe. (3) The **`medium-base` model card** plus the community
+  ComfyUI workflow (`adamdived/stable-audio-3-workflow`) for the settings split: base = euler,
+  50+ steps, CFG 7; distilled = pingpong, 8-20 steps, CFG 1.
+- **The trained shape, in full.** `TrackType: Music, VocalType: Instrumental, <genre/style> with
+  <main instruments>, <supporting layers>, and <rhythm/percussion> creating <mood/energy>.
+  BPM: N. Length: N seconds` — steps 1-8 of the `Music` system prompt. One fluid sentence, no
+  semicolons ("Avoid semicolons" is in the instruction text).
+- **Lead with a genre or style word, never a scene label.** "boss", "combat", "puzzle" are not
+  musical styles and the text encoder has nothing to map them to; "dark ambient orchestral" and
+  "epic hybrid orchestral" do. Step 1 of the template is Genre and the guide's ordering is
+  Genre -> instruments -> mood -> production.
+- **Always emit a BPM, including for beds with no pulse.** Prose like "no perceivable tempo" is
+  not a trained control; BPM is. Stability's own ambient examples carry one anyway —
+  `Dreamy ambient soundscape ... BPM: 40` and `Ambient drone motif loop. BPM: 60`. Use 40-60 for
+  a still bed rather than dropping the tag.
+- **Four hard rejects, straight from `_has_artifacts()`:** more than **45 words**; any of
+  `[ ] * #`; a missing `. Length: N seconds` suffix; and the vocal regex
+  `vocals?|singing|singer|female|male|voice|voices|chorus|rap|rapper|chant(ing)?|lyrics?`.
+  Note what survives it: `wordless choir pad` is fine, `chanting choir` and `singing solo violin`
+  are not — and on `medium-base` at CFG 7 those fight `VocalType: Instrumental` much harder than
+  they do at CFG 1.
+- **Name instruments and include a rhythm or percussion element.** Steps 2-4 of the template are
+  main instruments, supporting layers, *and* rhythm/percussion. A prompt of pure mood adjectives
+  gives guidance nothing concrete to amplify.
+- **Every word should have an acoustic referent.** Scene and roleplay prose ("the biggest lock in
+  the kingdom meets the best picks") spends the 45-word budget on tokens the encoder cannot
+  render, and CFG amplifies whatever is in the conditioning — so on `medium-base` junk gets
+  amplified too. Same for pseudo-instructions the model has no control for: `looping-friendly`,
+  `steady texture with no ending`. Say it acoustically instead — sustained drone, no build, no
+  cadence — or via a low BPM.
+- **Fit the duration to the description.** The `Music` system prompt's own bands are
+  energetic/dance 120-180 s, pop/rock 180-210 s, cinematic/ambient 240-300 s, and the guide adds
+  that results are better when the duration matches what is being described. Reaching for the
+  380 s ceiling is not free.
+- **Write the negative per cue, or not at all.** It is dead weight on `medium` (CFG 1) and the
+  *only* field that gains power on `medium-base`, so a shared boilerplate block wastes exactly
+  the checkpoint it was written for. List only failure modes this prompt could actually produce,
+  and never list something the positive asks for — `light frame drum` against a `drums` negative,
+  or `deep choirs of brass` against `choir`, just makes the two halves fight.
+- **Prompt text is the unit of uniqueness.** Generation is deterministic here, so two cues whose
+  text differs only by a swapped scene noun are the same audio at the same seed. Vary the
+  instrumentation, not the label.
+- **Watch the descriptor balance before blaming the checkpoint.** A library that runs heavily
+  toward `soft / hushed / muted / low / drone` will measure dark on `medium-base` because CFG
+  amplifies that conditioning — which is a plausible confound for the "instrumental measured
+  -38% to -51% centroid" result above. Re-test with genre-forward prompts before concluding a
+  checkpoint is worse for a whole content type.

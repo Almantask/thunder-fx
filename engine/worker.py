@@ -113,6 +113,12 @@ _model_lock = threading.Lock()
 _gen_lock = threading.Lock()
 _stdout_lock = threading.Lock()
 _log_lock = threading.Lock()
+# One in-flight GPU status probe at a time, plus the last good answer. The UI
+# polls every 4s and the CUDA calls behind a probe serialize against a running
+# generation, so without this a stalled driver stacks up a probe per tick.
+_status_probe_lock = threading.Lock()
+_status_cache: dict = {}
+_status_cache_lock = threading.Lock()
 _MAX_ERROR_LOG_BYTES = 2_000_000
 # A finished run emits its "done" event a beat before cmd_generate's `finally`
 # releases the lock, so a caller that fires the next request the moment it sees
@@ -1099,35 +1105,55 @@ def _hub_progress(heartbeat: _Heartbeat):
         if ratio > 0:
             heartbeat.update(phase="loading", ratio=min(1.0, ratio))
 
-    try:
-        from tqdm.auto import tqdm as BaseTqdm
-    except Exception:
-        try:
-            from tqdm import tqdm as BaseTqdm
-        except Exception:
-            BaseTqdm = None  # type: ignore[assignment]
+    def emit_subclass(base: type) -> type:
+        """Wrap one module's own tqdm, rather than swapping in a vanilla one.
 
-    if BaseTqdm is not None:
+        huggingface_hub calls its bars as `cls(disable=..., name=..., **kw)` but
+        only after checking `issubclass(cls, tqdm)` against its *own* subclass --
+        the guard that stops `name` reaching a vanilla tqdm, which rejects it with
+        TqdmKeyError. Patching the module global with a `tqdm.auto` subclass made
+        that check compare the replacement against itself, so it passed, `name`
+        went through, and every hub download died before a byte moved. Deriving
+        from whatever the module already exposes keeps the guard honest.
+        """
 
-        class EmitTqdm(BaseTqdm):
+        class EmitTqdm(base):  # type: ignore[misc,valid-type]
+            def __init__(self, *args, **kwargs):
+                self._tfx_seen = 0
+                super().__init__(*args, **kwargs)
+
             def update(self, n=1):
                 result = super().update(n)
+                # tqdm disables itself when its output is not a TTY, and the
+                # worker's pipes never are -- a disabled bar returns from
+                # update() without advancing self.n, which left this hook
+                # reporting 0 for the whole download. Counting the increments
+                # we are handed works whether or not the bar draws itself.
+                self._tfx_seen = getattr(self, "_tfx_seen", 0) + (n or 0)
                 total = getattr(self, "total", None) or 0
-                current = getattr(self, "n", 0) or 0
+                current = max(getattr(self, "n", 0) or 0, self._tfx_seen)
                 if total:
                     on_ratio(current / total)
                 return result
 
-        for mod_name in ("huggingface_hub.utils.tqdm", "tqdm.auto", "tqdm"):
-            try:
-                mod = __import__(mod_name, fromlist=["tqdm"])
-            except Exception:
-                continue
-            original = getattr(mod, "tqdm", None)
-            if original is None:
-                continue
-            mod.tqdm = EmitTqdm
-            restore.append((mod, original))
+        return EmitTqdm
+
+    for mod_name in ("huggingface_hub.utils.tqdm", "tqdm.auto", "tqdm"):
+        try:
+            mod = __import__(mod_name, fromlist=["tqdm"])
+        except Exception:
+            continue
+        original = getattr(mod, "tqdm", None)
+        # A non-class export (a partial, a shim) cannot be subclassed; leave it be
+        # rather than trading a progress bar for a broken download.
+        if not isinstance(original, type):
+            continue
+        try:
+            patched = emit_subclass(original)
+        except Exception:
+            continue
+        mod.tqdm = patched
+        restore.append((mod, original))
 
     try:
         yield
@@ -1275,7 +1301,8 @@ def _vram_stats() -> dict:
     return out
 
 
-def cmd_status(msg_id: str) -> None:
+def _status_snapshot() -> dict:
+    """The status payload minus its id. Talks to CUDA, so it can block."""
     mock = _env_mock()
     device = "mock"
     ready = True
@@ -1292,7 +1319,6 @@ def cmd_status(msg_id: str) -> None:
             device = "unknown"
             message = str(exc)
     payload = {
-        "id": msg_id,
         "event": "status",
         "ready": ready,
         "mock": mock,
@@ -1303,6 +1329,38 @@ def cmd_status(msg_id: str) -> None:
         "baseModelReady": base_model_cached(),
     }
     payload.update(_vram_stats())
+    return payload
+
+
+def cmd_status(msg_id: str) -> None:
+    if not _status_probe_lock.acquire(blocking=False):
+        # A probe is already parked inside the CUDA driver. Answering from the
+        # last snapshot keeps the poll cheap; the alternative is a second call
+        # into a driver that is demonstrably not answering.
+        with _status_cache_lock:
+            cached = dict(_status_cache)
+        if not cached:
+            cached = {
+                "event": "status",
+                "ready": False,
+                "mock": _env_mock(),
+                "loaded": False,
+                "device": "unknown",
+                "message": "Waiting on the GPU.",
+            }
+        cached["id"] = msg_id
+        cached["stale"] = True
+        _emit(cached)
+        return
+    try:
+        payload = _status_snapshot()
+    finally:
+        _status_probe_lock.release()
+    with _status_cache_lock:
+        _status_cache.clear()
+        _status_cache.update(payload)
+    payload = dict(payload)
+    payload["id"] = msg_id
     _emit(payload)
 
 
@@ -1464,7 +1522,7 @@ def _generate_body(msg: dict) -> None:
             "model has no guidance branch. Use the Max quality preset for it."
         )
     cat_str = _sanitize_folder_name(msg.get("category"), fallback="Custom")
-    subcat_default = "Level I" if music else "General"
+    subcat_default = "I" if music else "General"
     subcat_str = _sanitize_folder_name(
         msg.get("subcategory") or msg.get("intensity"),
         fallback=subcat_default,
@@ -1956,10 +2014,70 @@ def _force_utf8_pipes() -> None:
             pass
 
 
+def _dispatch(cmd: str | None, msg: dict, msg_id) -> None:
+    """Run one command off the stdin loop. Never raises into its thread."""
+    try:
+        if cmd == "status":
+            cmd_status(msg_id)
+        elif cmd == "probe":
+            cmd_probe(msg_id, msg)
+        elif cmd == "generate":
+            cmd_generate(msg)
+        elif cmd == "encode_ogg":
+            cmd_encode_ogg(msg)
+        elif cmd == "encode_audio":
+            cmd_encode_audio(msg)
+        elif cmd == "warmup":
+            cmd_warmup(msg)
+        elif cmd == "unload":
+            cmd_unload(msg_id)
+        else:
+            _emit_error(msg_id, f"unknown cmd {cmd}")
+    except Exception as exc:  # noqa: BLE001
+        _emit_error(msg_id, str(exc), exc, context={"cmd": cmd})
+
+
+def _preload_native_modules() -> None:
+    """Load the C extensions here, on the main thread, before the read loop.
+
+    While any thread sits in a blocking stdin read, a *first* native-extension
+    import on another thread never returns -- it parks inside the module
+    loader and the command that triggered it simply never answers. Dispatching
+    commands to threads walked straight into that: the first `import soundfile`
+    or `import torch` now happens off the main thread. Importing them up front,
+    while nothing is blocked on stdin yet, turns every later import into a
+    sys.modules lookup.
+
+    This is the same work the first `status` used to do inline, just moved a
+    few milliseconds earlier, so it costs the caller nothing it was not already
+    paying. Anything already imported (stable_audio_3 leaning on torch) is
+    fine in a thread; only the first load of a given extension is affected.
+    """
+    names = ["numpy", "soundfile"]
+    # pynvml only supplies a GPU temperature reading and is often absent, so it
+    # is preloaded when present but never complained about.
+    optional = {"pynvml"}
+    if not _env_mock():
+        # Mock mode reaches none of these, and torch alone costs seconds.
+        # stable_audio_3 is on the list because `status` walks the HF cache
+        # through base_model_cached(), which imports it -- that used to happen
+        # on the main thread during the first status, and it is what primed the
+        # import for the generation threads that come later.
+        names += ["torch", "pynvml", "huggingface_hub", "stable_audio_3.model_configs"]
+    for name in names:
+        try:
+            __import__(name)
+        except Exception as exc:  # noqa: BLE001
+            # Not fatal: the command that needs it still reports its own error.
+            if name not in optional:
+                _log_error(f"preload of {name} failed", exc)
+
+
 def main() -> None:
     _force_utf8_pipes()
     sys.excepthook = _excepthook
     threading.excepthook = _thread_excepthook
+    _preload_native_modules()
     for raw in sys.stdin:
         line = raw.strip()
         if not line:
@@ -1971,28 +2089,24 @@ def main() -> None:
             continue
         cmd = msg.get("cmd")
         msg_id = msg.get("id")
-        try:
-            if cmd == "status":
-                cmd_status(msg_id)
-            elif cmd == "probe":
-                cmd_probe(msg_id, msg)
-            elif cmd == "generate":
-                cmd_generate(msg)
-            elif cmd == "cancel":
-                _cancel.set()
-                _emit({"id": msg_id, "event": "status", "message": "cancel requested"})
-            elif cmd == "encode_ogg":
-                cmd_encode_ogg(msg)
-            elif cmd == "encode_audio":
-                cmd_encode_audio(msg)
-            elif cmd == "warmup":
-                cmd_warmup(msg)
-            elif cmd == "unload":
-                cmd_unload(msg_id)
-            else:
-                _emit_error(msg_id, f"unknown cmd {cmd}")
-        except Exception as exc:  # noqa: BLE001
-            _emit_error(msg_id, str(exc), exc, context={"cmd": cmd})
+        # Cancel is the one command that must never wait behind another, so it
+        # runs right here. Everything else moves to a thread: `status` polls the
+        # CUDA driver every 4s and those calls serialize against a running
+        # generation, so handling one inline stopped this loop reading stdin --
+        # which is exactly where cancel arrives. A cancel that never gets read
+        # leaves the generation thread holding _gen_lock forever, and every
+        # later request answers "a generation is already in progress" until the
+        # app is restarted.
+        if cmd == "cancel":
+            _cancel.set()
+            _emit({"id": msg_id, "event": "status", "message": "cancel requested"})
+            continue
+        threading.Thread(
+            target=_dispatch,
+            args=(cmd, msg, msg_id),
+            name=f"thunder-fx-{cmd or 'cmd'}",
+            daemon=True,
+        ).start()
 
 
 def _excepthook(exc_type, exc, tb) -> None:

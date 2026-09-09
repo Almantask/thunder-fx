@@ -6,6 +6,45 @@ All notable Thunder FX changes are listed here.
 
 ### Added
 
+- **Library triage.** A generated library outgrew what could be found in it: a queue run and
+  "Generate 4 takes" produce far more audio than anyone can name or sort. Clips now carry
+  **favourites, a 0-5 rating, free-text tags and a reject flag**, with a filter bar for
+  favourites, a rating floor and tag combinations. A reject is hidden rather than deleted, and
+  favourite and reject clear each other because they are opposite verdicts on the same clip.
+- **Rename a clip**, which renames the WAV on disk as well — so the name given in the library is
+  the name it exports under. A clip's id *is* its file stem, so its metadata row moves with the
+  rename rather than being orphaned by it.
+- **Trash, with undo.** Deleting moves the WAV into `<library>/.trash` and offers an immediate
+  Undo; a Trash view restores or purges, and entries older than 30 days are cleared on their own.
+  A library clip can be several minutes of GPU time, and delete used to destroy the file outright.
+  The library scanners now skip dot-directories so a trashed clip cannot be rescanned back in.
+- **Level-matched A/B compare.** Pick two clips and switch between them at the same moment in
+  each, with their RMS matched by default — without that, the louder take wins regardless of
+  which is better.
+- **Shape: post-generation editing that costs no GPU time.** Equal-power fade in and out,
+  reverse, gain, peak normalize to −1 dBFS, and a resampling pitch shift. Edits apply to the
+  working clip immediately, so playback and export follow them, with Undo stepping back through
+  the stack and Save writing them into the library file.
+- **Pitch variants.** Save several re-pitched copies of a clip in one click — the standard way to
+  stop a repeated footstep or impact sounding machine-gunned, and it needs no GPU time at all.
+- **Update channel.** `tauri-plugin-updater` ships in the app, a tagged release builds and signs
+  an installer through `.github/workflows/release.yml`, and Settings shows the running version
+  with a Check for updates button. A local build has no update channel and says so plainly rather
+  than reporting an error.
+- `npm run version:check` fails when `package.json`, `tauri.conf.json`, `Cargo.toml` and the
+  newest CHANGELOG release disagree, and it runs in CI. `npm run version:set <version>` is the
+  only sanctioned way to bump. The manifests were on **0.2.0 while this file was on 0.4.0**, so
+  every installer and exe built from them was labelled two minor versions behind.
+
+### Fixed
+
+- **A decimal could not be typed into the Shape number fields.** The controlled inputs re-parsed
+  on every keystroke, so "0.5" passed through "0." — which `Number` reads as 0 — and the dot was
+  discarded, landing the next digit as "05". Sub-second fades were unreachable. The fields keep
+  their draft text and clamp on blur instead.
+- **Peak normalize was capped by the manual gain range.** It went through the ±24 dB gain
+  control, so a clip more than 24 dB down came back still quiet, with nothing saying why.
+
 - **Quality presets — Max speed, Balanced, Max quality.** Steps were never the quality dial on
   this model: Medium is ARC-distilled and sampled with `pingpong`, which re-injects fresh noise on
   every step, so a higher step count buys invented detail rather than fidelity. A preset now

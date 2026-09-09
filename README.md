@@ -24,11 +24,39 @@ Three tabs: **Library**, **Generate**, and **Settings**.
 
 Extra controls (CFG, negative prompt, seed) stay collapsed unless you open them.
 
+### Shape — editing after generation
+
+The **Shape** panel next to the waveform edits the clip you already have, so none of it costs
+GPU time:
+
+| Control | What it does |
+| :--- | :--- |
+| **Fade in / out** | Equal-power ramps, so the level does not dip through the middle of the fade |
+| **Reverse** | Plays the clip backwards |
+| **Gain** | −24 to +24 dB |
+| **Normalize** | Peak-normalizes to −1 dBFS in both directions; a near-silent clip is left alone |
+| **Pitch & speed** | ±12 semitones by resampling, so the clip shortens as it rises — as on a sampler |
+| **Variants** | Saves several re-pitched copies to the library, the usual way to stop a repeated footstep sounding machine-gunned |
+
+Edits apply straight away, so playback and export follow them. **Undo** steps back through them;
+**Save** writes them into the library file. Nothing touches disk until you save.
+
 ### Library
 
 - Saved clips, newest first. Cards show a short prompt name; the full prompt appears when you open the clip on Generate.
-- Search and delete.
+- Search, filter, and delete.
 - Click a clip to open it on Generate.
+- **Triage:** star a favourite, rate 0-5, add free-text tags, or mark a reject. Rejects are
+  hidden rather than deleted; favourite and reject clear each other. The filter bar narrows the
+  library to favourites, a rating floor, or a combination of tags.
+- **Rename** a clip to rename its WAV on disk, so the name in the library is the name it exports
+  under. Its rating and tags follow the rename.
+- **Delete moves the clip to the trash** (`<library>/.trash`) with an immediate Undo. **Trash**
+  restores or permanently deletes; anything older than 30 days is cleared automatically.
+- **Compare** two selected clips A/B at the same moment in each, with levels matched so the
+  louder take does not simply win. `A`/`B` switch sides, space plays.
+- Favourites, ratings, tags and renames live in `thunder-fx-meta.json` inside the library folder,
+  so they travel with the audio when the folder is backed up or moved.
 - An empty library shows a few starter prompts for the current mode (sound effects or instrumental).
 
 On the desktop app, Generate writes WAV files to the generated-sounds folder. In the browser (`npm run dev`), clips stay in IndexedDB.
@@ -41,6 +69,9 @@ On the desktop app, Generate writes WAV files to the generated-sounds folder. In
   Everything but WAV is encoded by the Python engine, so those need the desktop app.
 - Hugging Face token and default duration
 - Error log (newest first; Reveal file)
+- **Updates:** the running version, and a check against the release channel. Installers built by
+  the release workflow update in place; a local `tauri build` carries no update channel and says
+  so.
 
 Hover a control for a short explanation. **Ctrl+K** opens a command palette (tabs and error log).
 
@@ -325,6 +356,35 @@ flowchart TD
 - `prompts/ambience` — ambience prompts (Browse prompts → Ambience)
 
 App code is Apache-2.0 (see `LICENSE`). Model weights are downloaded separately and remain under Stability’s license.
+
+## Releasing
+
+Versions live in three manifests plus the changelog, and CI fails if they disagree:
+
+```bash
+npm run version:check
+```
+
+To cut a release, bump all three at once, then tag:
+
+```bash
+npm run version:set 0.5.0 && npm install
+```
+
+Push the tag (`git tag v0.5.0 && git push --follow-tags`) and
+`.github/workflows/release.yml` builds and signs a Windows installer, then opens a draft release.
+
+The updater needs a signing keypair, generated once:
+
+```bash
+npx @tauri-apps/cli signer generate -w ~/.tauri/thunder-fx.key
+```
+
+Add three repository secrets from it — `TAURI_SIGNING_PRIVATE_KEY` (the private key),
+`TAURI_SIGNING_PRIVATE_KEY_PASSWORD`, and `TAURI_UPDATER_PUBKEY` (the `.pub` file). Keep the
+private key out of the repository; the workflow stamps only the public half into
+`src-tauri/tauri.updater.conf.json` at build time. A local `tauri build` merges none of that,
+so it produces a working app with no update channel rather than failing.
 
 ## Release notes
 

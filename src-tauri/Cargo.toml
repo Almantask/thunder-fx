@@ -1,6 +1,6 @@
 [package]
 name = "thunder-fx"
-version = "0.2.0"
+version = "0.4.0"
 description = "Thunder FX desktop studio"
 authors = ["Thunder FX"]
 license = "Apache-2.0"
@@ -17,6 +17,11 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = [] }
 tauri-plugin-dialog = "2"
 tauri-plugin-opener = "2"
+# The updater carries no endpoint or public key in the default config, so a
+# local build registers it and reports "not configured" instead of failing to
+# compile. Release builds merge src-tauri/tauri.updater.conf.json over the top.
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 uuid = { version = "1", features = ["v4"] }

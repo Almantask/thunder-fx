@@ -21,6 +21,13 @@ import {
 import { MAX_GENERATE_SECONDS, MIN_GENERATE_SECONDS, clampGenerateSeconds } from '@/lib/duration'
 import { PRESET_ORDER, QUALITY_PRESETS } from '@/lib/qualityPreset'
 import { DEFAULT_LIBRARY_PLACEHOLDER, type KeepSettings } from '@/lib/types'
+import { APP_VERSION } from '@/lib/buildInfo'
+import {
+  checkForUpdates,
+  downloadAndInstall,
+  relaunchApp,
+  type UpdateState,
+} from '@/lib/updater'
 import { cn, isTauri } from '@/lib/utils'
 
 type SettingsPanelProps = {
@@ -41,6 +48,7 @@ export function SettingsPanel({
 }: SettingsPanelProps) {
   const [logPath, setLogPath] = useState<string | null>(null)
   const [resolvedLibrary, setResolvedLibrary] = useState<string | null>(null)
+  const [update, setUpdate] = useState<UpdateState>({ status: 'idle' })
 
   useEffect(() => {
     if (!isTauri()) return
@@ -51,6 +59,23 @@ export function SettingsPanel({
   async function browseLibrary() {
     const picked = await pickDirectory(settings.libraryDir || resolvedLibrary || undefined)
     if (picked) onChange({ ...settings, libraryDir: picked })
+  }
+
+  async function runUpdateCheck() {
+    setUpdate({ status: 'checking' })
+    setUpdate(await checkForUpdates())
+  }
+
+  /**
+   * Installs in place, then waits for the user to relaunch. Restarting on its
+   * own would kill a generation that is still running behind this panel.
+   */
+  async function runUpdateInstall(version: string) {
+    setUpdate({ status: 'downloading', version })
+    const result = await downloadAndInstall((ratio) =>
+      setUpdate({ status: 'downloading', version, ratio }),
+    )
+    setUpdate(result)
   }
 
   const libraryValue = settings.libraryDir
@@ -341,6 +366,69 @@ export function SettingsPanel({
                 {logPath ?? '%LOCALAPPDATA%\\thunder-fx\\logs\\error.log'}
               </p>
             </Hint>
+          </div>
+
+          <div className="space-y-3">
+            <Hint label="The version running now, and whether a newer signed installer is published.">
+              <h3 className="font-display text-sm tracking-[0.16em] text-muted">UPDATES</h3>
+            </Hint>
+            <p className="font-mono text-xs text-muted">Thunder FX {APP_VERSION}</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <Hint label="Ask the release channel whether a newer version is published. Nothing is downloaded yet.">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={update.status === 'checking' || update.status === 'downloading'}
+                  onClick={() => void runUpdateCheck()}
+                >
+                  {update.status === 'checking' ? 'Checking…' : 'Check for updates'}
+                </Button>
+              </Hint>
+              {update.status === 'available' ? (
+                <Hint label="Download and install the update. Thunder FX keeps running until you restart it.">
+                  <Button type="button" size="sm" onClick={() => void runUpdateInstall(update.version)}>
+                    Install {update.version}
+                  </Button>
+                </Hint>
+              ) : null}
+              {update.status === 'ready' ? (
+                <Hint label="Restart into the new version. Finish anything still generating first.">
+                  <Button type="button" size="sm" onClick={() => void relaunchApp()}>
+                    Restart to finish
+                  </Button>
+                </Hint>
+              ) : null}
+            </div>
+            {update.status === 'current' ? (
+              <p className="text-xs text-muted">Thunder FX is up to date.</p>
+            ) : null}
+            {update.status === 'unsupported' ? (
+              <p className="text-xs text-muted">{update.reason}</p>
+            ) : null}
+            {update.status === 'available' ? (
+              <p className="text-xs text-muted">
+                Version {update.version} is available.
+                {update.date ? ` Published ${update.date}.` : ''}
+                {update.notes ? ` ${update.notes}` : ''}
+              </p>
+            ) : null}
+            {update.status === 'downloading' ? (
+              <p className="text-xs text-muted" role="status">
+                Downloading {update.version}
+                {typeof update.ratio === 'number' ? ` — ${Math.round(update.ratio * 100)}%` : '…'}
+              </p>
+            ) : null}
+            {update.status === 'ready' ? (
+              <p className="text-xs text-muted">
+                Version {update.version} is installed and applies on restart.
+              </p>
+            ) : null}
+            {update.status === 'failed' ? (
+              <p className="text-xs text-danger" role="alert">
+                Update check failed. {update.message}
+              </p>
+            ) : null}
           </div>
 
           <ErrorLogPanel />

@@ -9,6 +9,8 @@
     "core:window:allow-toggle-maximize",
     "core:window:allow-close",
     "core:window:allow-start-dragging",
-    "allow-engine"
+    "allow-engine",
+    "updater:default",
+    "process:allow-restart"
   ]
 }

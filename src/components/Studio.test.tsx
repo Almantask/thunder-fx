@@ -221,6 +221,9 @@ describe('Studio', () => {
     ).toBeInTheDocument()
   }, 15000)
 
+  // Two full mock generations plus library navigation. The 15s budget the
+  // shorter tests use is not enough for this one on a mid-range machine, and it
+  // was already timing out here before the triage controls were added.
   it('displays waveform after single track generation, but keeps waveform unset after queue generation', async () => {
     const user = userEvent.setup()
     renderStudio()
@@ -260,7 +263,7 @@ describe('Studio', () => {
     // Returned to Generate tab: waveform is loaded for the individual track, play button is enabled
     expect(screen.getByRole('tab', { name: 'Generate' })).toHaveAttribute('aria-selected', 'true')
     expect(screen.getByRole('button', { name: /play trimmed clip/i })).toBeEnabled()
-  }, 15000)
+  }, 40000)
 
   it('shows the seed used once a single track finishes generating', async () => {
     const user = userEvent.setup()

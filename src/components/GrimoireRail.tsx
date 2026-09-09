@@ -1,13 +1,23 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { ChevronRight, ChevronsDownUp, ChevronsUpDown, Pause, Play, Trash2 } from 'lucide-react'
+import { ChevronRight, ChevronsDownUp, ChevronsUpDown, Columns2, Pause, Play, Trash2 } from 'lucide-react'
+import { ClipMetaControls } from '@/components/ClipMetaControls'
+import { LibraryFilterBar } from '@/components/LibraryFilterBar'
 import { Hint } from '@/components/Hint'
-import { promptName } from '@/lib/filename'
 import { GENERATE_MODES, clipMode } from '@/lib/generateMode'
 import { extractBpm, extractInstruments } from '@/lib/instruments'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
 import { inferClipCategory, inferClipIntensity, inferClipSubcategory } from '@/lib/promptCatalog'
 import type { AudioFormat } from '@/lib/audioExport'
 import { DEFAULT_PACK_TEMPLATE } from '@/lib/packNaming'
+import {
+  EMPTY_FILTER,
+  clipDisplayName,
+  filterClips,
+  getMeta,
+  tagCounts,
+  type ClipMetaIndex,
+  type LibraryFilter,
+} from '@/lib/clipMeta'
 import type { Clip, GenerateMode } from '@/lib/types'
 import { cn, relativeTime } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
@@ -50,6 +60,20 @@ type GrimoireRailProps = {
   onModeChange?: (mode: GenerateMode) => void
   onExportPack?: (request: PackExportRequest) => void
   getWav?: (id: string) => Promise<ArrayBuffer | undefined>
+  /** Favourites, ratings, tags and renames, keyed by clip id. */
+  meta?: ClipMetaIndex
+  filter?: LibraryFilter
+  onFilter?: (filter: LibraryFilter) => void
+  onToggleFavorite?: (id: string) => void
+  onToggleRejected?: (id: string) => void
+  onRate?: (id: string, rating: number) => void
+  onRename?: (id: string) => void
+  onEditTags?: (id: string) => void
+  /** Opens the trash. Undefined hides the button on builds without one. */
+  onOpenTrash?: () => void
+  trashCount?: number
+  /** Compares exactly two selected clips, level-matched. */
+  onCompare?: (ids: [string, string]) => void
 }
 
 type IntensityGroup = {
@@ -85,6 +109,9 @@ const LIBRARY_TABS: { id: GenerateMode; label: string; hint: string; search: str
   },
 ]
 
+/** Stable empty index, so the default prop does not break memo equality. */
+const NO_META: ClipMetaIndex = {}
+
 function clipNoun(mode: GenerateMode, count: number): string {
   if (mode === 'music') return count === 1 ? 'instrumental' : 'instrumentals'
   if (mode === 'ambience') return count === 1 ? 'ambience' : 'ambiences'
@@ -106,6 +133,17 @@ export function GrimoireRail({
   onModeChange,
   onExportPack,
   getWav,
+  meta = NO_META,
+  filter = EMPTY_FILTER,
+  onFilter,
+  onToggleFavorite,
+  onToggleRejected,
+  onRate,
+  onRename,
+  onEditTags,
+  onOpenTrash,
+  trashCount = 0,
+  onCompare,
 }: GrimoireRailProps) {
   const [selectedMode, setSelectedMode] = useState<GenerateMode | null>(null)
   const [openCategories, setOpenCategories] = useState<Set<string>>(() => new Set())
@@ -144,19 +182,30 @@ export function GrimoireRail({
     [clips, activeMode],
   )
 
+  // Metadata first, then text. A reject stays hidden whatever is searched for,
+  // so a search cannot quietly surface clips the filter is meant to keep out.
+  const triaged = useMemo(
+    () => filterClips(modeClips, meta, filter),
+    [modeClips, meta, filter],
+  )
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
-    if (!q) return modeClips
-    return modeClips.filter((c) => {
+    if (!q) return triaged
+    return triaged.filter((c) => {
       if (c.prompt.toLowerCase().includes(q)) return true
-      if (promptName(c.prompt, c).toLowerCase().includes(q)) return true
+      if (clipDisplayName(c, meta).toLowerCase().includes(q)) return true
       if (c.category?.toLowerCase().includes(q)) return true
       if (c.subcategory?.toLowerCase().includes(q)) return true
       if (inferClipSubcategory(c).toLowerCase().includes(q)) return true
+      if (getMeta(meta, c.id).tags?.some((tag) => tag.includes(q))) return true
       const names = c.instruments?.length ? c.instruments : extractInstruments(c.prompt)
       return names.some((name) => name.toLowerCase().includes(q))
     })
-  }, [modeClips, query])
+  }, [triaged, query, meta])
+
+  const libraryTags = useMemo(() => tagCounts(meta), [meta])
+  const hiddenByFilter = Math.max(0, modeClips.length - triaged.length)
 
   const categoryGroups = useMemo<CategoryGroup[]>(() => {
     const map = new Map<string, Clip[]>()
@@ -535,10 +584,14 @@ export function GrimoireRail({
         : playingId === clip.id && isPlaying
     const isSelected = selectedId === clip.id
     const isChecked = selectedIds.has(clip.id)
+    const clipMeta = getMeta(meta, clip.id)
+    const displayName = clipDisplayName(clip, meta)
     return (
       <li
         key={clip.id}
-        className={`group flex items-center justify-between gap-2.5 rounded-book border px-2.5 py-2 transition-colors ${
+        className={`group flex flex-col rounded-book border px-2.5 py-2 transition-colors ${
+          clipMeta.rejected ? 'opacity-55 ' : ''
+        }${
           isClipPlaying
             ? 'border-gold bg-leather-2/90 ring-1 ring-gold/40'
             : isSelected
@@ -546,10 +599,11 @@ export function GrimoireRail({
               : 'border-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] bg-leather-2/40 hover:border-gold/40 hover:bg-leather-2/70'
         }`}
       >
+        <div className="flex items-center justify-between gap-2.5">
         <Hint label={isChecked ? 'Remove this clip from the pack selection.' : 'Add this clip to the pack selection.'}>
           <Checkbox
             checked={isChecked}
-            aria-label={`Select ${promptName(clip.prompt, clip)}`}
+            aria-label={`Select ${displayName}`}
             onCheckedChange={(value) => {
               setSelectedIds((prev) => {
                 const next = new Set(prev)
@@ -563,8 +617,8 @@ export function GrimoireRail({
         <Hint
           label={
             isClipPlaying
-              ? `Pause ${promptName(clip.prompt, clip)}.`
-              : `Play ${promptName(clip.prompt, clip)}.`
+              ? `Pause ${displayName}.`
+              : `Play ${displayName}.`
           }
         >
           <Button
@@ -591,7 +645,7 @@ export function GrimoireRail({
             className="w-full min-w-0 text-left focus-visible:outline-none"
           >
             <p className="truncate text-xs font-medium text-cream group-hover:text-gold sm:text-sm">
-              {promptName(clip.prompt, clip)}
+              {displayName}
             </p>
             <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] leading-tight">
               {topInstruments.length ? (
@@ -612,7 +666,7 @@ export function GrimoireRail({
           </button>
         </Hint>
 
-        <Hint label="Remove this clip from the library. This cannot be undone.">
+        <Hint label="Move this clip to the trash. It can be restored until the trash is emptied.">
           <Button
             type="button"
             variant="ghost"
@@ -625,6 +679,18 @@ export function GrimoireRail({
             <span className="sr-only sm:not-sr-only sm:ml-1">Delete</span>
           </Button>
         </Hint>
+        </div>
+        {onToggleFavorite ? (
+          <ClipMetaControls
+            meta={clipMeta}
+            name={displayName}
+            onToggleFavorite={() => onToggleFavorite(clip.id)}
+            onToggleRejected={() => onToggleRejected?.(clip.id)}
+            onRate={(rating) => onRate?.(clip.id, rating)}
+            onRename={() => onRename?.(clip.id)}
+            onEditTags={() => onEditTags?.(clip.id)}
+          />
+        ) : null}
       </li>
     )
   }
@@ -696,8 +762,56 @@ export function GrimoireRail({
               </Button>
             </Hint>
           </div>
+          {onFilter ? (
+            <LibraryFilterBar
+              filter={filter}
+              onFilter={onFilter}
+              tags={libraryTags}
+              hiddenCount={hiddenByFilter}
+            />
+          ) : null}
+          <div className="mt-3 flex flex-wrap items-center gap-2">
+            {onCompare ? (
+              <Hint
+                label={
+                  selectedIds.size === 2
+                    ? 'Compare the two selected clips, level-matched so the louder one does not simply win.'
+                    : 'Select exactly two clips to compare them side by side.'
+                }
+              >
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={selectedIds.size !== 2}
+                  onClick={() => {
+                    const [first, second] = [...selectedIds]
+                    if (first && second) onCompare([first, second])
+                  }}
+                  aria-label="Compare selected clips"
+                >
+                  <Columns2 className="h-3.5 w-3.5" />
+                  Compare
+                </Button>
+              </Hint>
+            ) : null}
+            {onOpenTrash ? (
+              <Hint label="Deleted clips are kept here so they can be restored.">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={onOpenTrash}
+                  aria-label="Open trash"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Trash{trashCount ? ` (${trashCount})` : ''}
+                </Button>
+              </Hint>
+            ) : null}
+          </div>
           {filtered.length > 0 ? (
-            <div className="mt-3 flex flex-wrap items-center gap-2">
+            <div className="mt-2 flex flex-wrap items-center gap-2">
               <Hint label="Select every clip currently visible in this tab and search.">
                 <Button
                   type="button"

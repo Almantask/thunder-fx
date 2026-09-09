@@ -774,7 +774,11 @@ async fn engine_generate(
     // Max quality swaps to medium-base, which means an unload + load before the
     // run even starts, so give it the extra headroom on top of its step count.
     let timeout = generate_timeout_secs(seconds, preset_steps(preset.as_deref(), steps))
-        + if preset.as_deref() == Some("quality") { 600 } else { 0 };
+        + if preset.as_deref() == Some("quality") {
+            600
+        } else {
+            0
+        };
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
         "cmd": "generate",
@@ -922,6 +926,37 @@ async fn copy_file(scope: State<'_, PathScope>, src: String, dest: String) -> Re
         }
         std::fs::copy(&src, &dest).map_err(|e| fail(e.to_string()))?;
         Ok(())
+    })
+    .await
+}
+
+/// Rename within the library, used by both "rename clip" and "move to trash".
+///
+/// `std::fs::rename` is instant on one volume but fails across volumes, and a
+/// library folder junctioned to another drive is a supported setup here — so
+/// the copy-then-delete fallback is load-bearing, not defensive.
+#[tauri::command]
+async fn move_file(scope: State<'_, PathScope>, src: String, dest: String) -> Result<(), String> {
+    let src = ensure_allowed(&scope, &src)?;
+    let dest = ensure_allowed(&scope, &dest)?;
+    run_blocking(move || {
+        if !src.exists() {
+            return Err(fail(format!("No such file: {}", src.to_string_lossy())));
+        }
+        if dest.exists() {
+            return Err(fail(format!("{} already exists", dest.to_string_lossy())));
+        }
+        if let Some(parent) = dest.parent() {
+            std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
+        }
+        match std::fs::rename(&src, &dest) {
+            Ok(()) => Ok(()),
+            Err(_) => {
+                std::fs::copy(&src, &dest).map_err(|e| fail(e.to_string()))?;
+                std::fs::remove_file(&src).map_err(|e| fail(e.to_string()))?;
+                Ok(())
+            }
+        }
     })
     .await
 }
@@ -1381,11 +1416,23 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
     (duration, prompt, mode, instruments)
 }
 
+/// Dot-directories are skipped by both walkers below. `.trash` holds deleted
+/// clips as real WAVs, and without this they would be rescanned straight back
+/// into the library they were just removed from.
+fn is_hidden_dir(path: &Path) -> bool {
+    path.file_name()
+        .and_then(|name| name.to_str())
+        .is_some_and(|name| name.starts_with('.'))
+}
+
 fn collect_wav_files_recursive(dir: &Path, files: &mut Vec<PathBuf>) {
     if let Ok(entries) = std::fs::read_dir(dir) {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.is_dir() {
+                if is_hidden_dir(&path) {
+                    continue;
+                }
                 collect_wav_files_recursive(&path, files);
             } else if path
                 .extension()
@@ -1405,6 +1452,9 @@ fn count_wav_files_recursive(dir: &Path) -> usize {
         for entry in entries.flatten() {
             let path = entry.path();
             if path.is_dir() {
+                if is_hidden_dir(&path) {
+                    continue;
+                }
                 count += count_wav_files_recursive(&path);
             } else if path
                 .extension()
@@ -1816,6 +1866,12 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
+        // Registering the updater is always safe: with no `plugins.updater`
+        // block in the config, `check()` reports that this build has no update
+        // channel rather than failing the build. Release builds supply one
+        // through src-tauri/tauri.updater.conf.json.
+        .plugin(tauri_plugin_updater::Builder::new().build())
+        .plugin(tauri_plugin_process::init())
         .manage(Engine {
             proc: Mutex::new(None),
         })
@@ -1831,6 +1887,7 @@ pub fn run() {
             write_file,
             read_file,
             copy_file,
+            move_file,
             delete_file,
             zip_files,
             temp_dir,
@@ -2009,6 +2066,35 @@ mod tests {
         .unwrap();
         assert!(dest.metadata().unwrap().len() > 20);
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn wav_scan_skips_dot_directories() {
+        // `.trash` holds deleted clips as real WAVs. If the walker descended
+        // into it, every delete would come straight back on the next scan.
+        let dir = std::env::temp_dir().join(format!("thunder-fx-scan-{}", uuid::Uuid::new_v4()));
+        let kept = dir.join("sfx").join("combat");
+        let trashed = dir.join(".trash");
+        std::fs::create_dir_all(&kept).unwrap();
+        std::fs::create_dir_all(&trashed).unwrap();
+        std::fs::write(kept.join("sword.wav"), b"RIFFTEST").unwrap();
+        std::fs::write(trashed.join("door--1.wav"), b"RIFFTEST").unwrap();
+
+        let mut found = Vec::new();
+        collect_wav_files_recursive(&dir, &mut found);
+
+        assert_eq!(found.len(), 1, "only the live clip should be collected");
+        assert!(found[0].ends_with("sword.wav"));
+        assert_eq!(count_wav_files_recursive(&dir), 1);
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn hidden_dir_detection_matches_only_dot_prefixes() {
+        assert!(is_hidden_dir(Path::new(r"C:\library\.trash")));
+        assert!(is_hidden_dir(Path::new("/library/.git")));
+        assert!(!is_hidden_dir(Path::new(r"C:\library\sfx")));
+        assert!(!is_hidden_dir(Path::new("/library/ambience")));
     }
 
     #[test]

@@ -4,6 +4,8 @@ import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vitest/config'
 
+import pkg from './package.json' with { type: 'json' }
+
 const root = path.dirname(fileURLToPath(import.meta.url))
 
 export default defineConfig({
@@ -23,6 +25,8 @@ export default defineConfig({
   },
   define: {
     __BUILD_ID__: JSON.stringify(process.env.BUILD_ID || `${Date.now()}`),
+    // Kept in step with the three manifests by `npm run version:check`.
+    __APP_VERSION__: JSON.stringify(pkg.version),
   },
   test: {
     // Pure logic specs run in `node`; standing up jsdom for each of those

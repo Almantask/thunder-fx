@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest'
-import { clipFilename, promptName, slugifyPrompt } from '@/lib/filename'
+import {
+  MAX_STEM_LENGTH,
+  clipFilename,
+  promptName,
+  replacePathStem,
+  sanitizeClipStem,
+  slugifyPrompt,
+} from '@/lib/filename'
 
 describe('clipFilename', () => {
   it('builds a stable game-ready name', () => {
@@ -102,5 +109,55 @@ describe('promptName', () => {
   it('converts file slugs to clean title case', () => {
     expect(promptName('steel-shortsword-clash-8s-a1b2c3d4')).toBe('Steel Shortsword Clash')
     expect(promptName('laser_blast_burst-0.4s')).toBe('Laser Blast Burst')
+  })
+})
+
+describe('sanitizeClipStem', () => {
+  it('keeps a name that is already a usable filename', () => {
+    expect(sanitizeClipStem('sword_swing_03')).toBe('sword_swing_03')
+  })
+
+  it('replaces characters Windows refuses in a filename', () => {
+    expect(sanitizeClipStem('sword: swing / 03?')).toBe('sword swing 03')
+  })
+
+  it('returns nothing usable when the name is only separators', () => {
+    // The caller treats this as "reject the rename" rather than inventing a name.
+    expect(sanitizeClipStem('///')).toBe('')
+    expect(sanitizeClipStem('   ')).toBe('')
+  })
+
+  it('drops a trailing dot or space, which Windows strips silently', () => {
+    // The clip id is the file stem, so a stem that disagrees with the file on
+    // disk would lose the clip's metadata on the next scan.
+    expect(sanitizeClipStem('sword swing.')).toBe('sword swing')
+    expect(sanitizeClipStem('sword swing ')).toBe('sword swing')
+  })
+
+  it('escapes a name Windows reserves whatever the extension is', () => {
+    expect(sanitizeClipStem('CON')).toBe('CON-clip')
+    expect(sanitizeClipStem('lpt1')).toBe('lpt1-clip')
+  })
+
+  it('caps the length so the path stays writable', () => {
+    expect(sanitizeClipStem('a'.repeat(500))).toHaveLength(MAX_STEM_LENGTH)
+  })
+})
+
+describe('replacePathStem', () => {
+  it('keeps the folder and extension on a Windows path', () => {
+    expect(replacePathStem('C:\\library\\sfx\\old.wav', 'new')).toBe('C:\\library\\sfx\\new.wav')
+  })
+
+  it('keeps the folder and extension on a POSIX path', () => {
+    expect(replacePathStem('/library/sfx/old.wav', 'new')).toBe('/library/sfx/new.wav')
+  })
+
+  it('handles a bare filename with no folder', () => {
+    expect(replacePathStem('old.wav', 'new')).toBe('new.wav')
+  })
+
+  it('leaves a file with no extension alone', () => {
+    expect(replacePathStem('C:\\library\\old', 'new')).toBe('C:\\library\\new')
   })
 })

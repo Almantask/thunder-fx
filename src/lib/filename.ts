@@ -150,3 +150,45 @@ export function clipFilename(
   const dur = Math.round(durationSeconds * 10) / 10
   return `${slugifyPrompt(prompt)}-${dur}s.${ext}`
 }
+
+/** Characters Windows refuses in a filename, plus the ones that confuse a shell. */
+const UNSAFE_STEM = /[<>:"/\\|?*\u0000-\u001f]+/g
+
+/** Names Windows reserves whatever the extension is. */
+const RESERVED_STEMS =
+  /^(con|prn|aux|nul|com[1-9]|lpt[1-9])$/i
+
+export const MAX_STEM_LENGTH = 96
+
+/**
+ * Turns a typed clip name into a file stem that is safe to write on Windows.
+ *
+ * The clip id *is* the file stem (`clip_json_from_path` in
+ * src-tauri/src/lib.rs), so this decides the new id as well as the new
+ * filename. Returns an empty string when nothing usable survives, which the
+ * caller treats as "reject this rename" rather than inventing a name.
+ */
+export function sanitizeClipStem(name: string): string {
+  const cleaned = name
+    .replace(UNSAFE_STEM, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    // Windows silently strips a trailing dot or space from a filename, which
+    // would make the file's real stem disagree with the id we recorded.
+    .replace(/[. ]+$/, '')
+    .slice(0, MAX_STEM_LENGTH)
+    .replace(/[. ]+$/, '')
+  if (!cleaned) return ''
+  if (RESERVED_STEMS.test(cleaned)) return `${cleaned}-clip`
+  return cleaned
+}
+
+/** Swaps the stem of a full file path, keeping its folder and extension. */
+export function replacePathStem(path: string, stem: string): string {
+  const separator = path.includes('\\') ? '\\' : '/'
+  const parts = path.split(/[\\/]/)
+  const filename = parts.pop() ?? ''
+  const dot = filename.lastIndexOf('.')
+  const extension = dot > 0 ? filename.slice(dot) : ''
+  return [...parts, `${stem}${extension}`].join(separator)
+}

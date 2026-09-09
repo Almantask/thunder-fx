@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { Altar } from '@/components/Altar'
+import { ClipDetailsDialog } from '@/components/ClipDetailsDialog'
 import { CommandPalette } from '@/components/CommandPalette'
+import { CompareDialog, type CompareSide } from '@/components/CompareDialog'
+import { ShapePanel } from '@/components/ShapePanel'
+import { TrashDialog } from '@/components/TrashDialog'
 import { GrimoireRail, type PackExportRequest } from '@/components/GrimoireRail'
 import { IncantationConsole } from '@/components/IncantationConsole'
 import { PromptCatalogDialog } from '@/components/PromptCatalogDialog'
@@ -34,7 +38,7 @@ import {
   unloadModel,
   writeEncodedFile,
 } from '@/lib/engine'
-import { copyFile, joinPath, tempDir, writeFileBytes, writeTextFile } from '@/lib/tauriFs'
+import { copyFile, joinPath, moveFile, tempDir, writeFileBytes, writeTextFile } from '@/lib/tauriFs'
 import { randomSeed } from '@/lib/seed'
 import {
   BASE_MODEL,
@@ -44,7 +48,37 @@ import {
 } from '@/lib/qualityPreset'
 import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
 import { formatNeedsDesktop, prepareExportWav, resolveDefaultFormat } from '@/lib/audioExport'
-import { clipFilename, isUuidOrSymbol, promptName } from '@/lib/filename'
+import {
+  clipFilename,
+  isUuidOrSymbol,
+  promptName,
+  replacePathStem,
+  sanitizeClipStem,
+} from '@/lib/filename'
+import {
+  EMPTY_FILTER,
+  clipDisplayName,
+  forgetMeta,
+  getMeta,
+  renameMeta,
+  setRating as setClipRating,
+  tagCounts,
+  toggleFavorite as toggleClipFavorite,
+  toggleRejected as toggleClipRejected,
+  type ClipMetaIndex,
+  type LibraryFilter,
+} from '@/lib/clipMeta'
+import { createClipMetaStore } from '@/lib/clipMetaStore'
+import { createDiskTrash, createMemoryTrash, type TrashEntry } from '@/lib/trash'
+import {
+  applyFade,
+  applyGainDb,
+  normalizePeak,
+  pitchShiftWav,
+  reverseWav,
+  variantSemitones,
+  variantSuffix,
+} from '@/lib/audioEdit'
 import { buildPackManifest, formatPackFilename } from '@/lib/packNaming'
 import { detectSilenceBounds } from '@/lib/silenceTrim'
 import { createAppLibrary } from '@/lib/library'
@@ -143,6 +177,18 @@ export function Studio() {
   const [tab, setTab] = useState<KeepTab>('generate')
   const [commandOpen, setCommandOpen] = useState(false)
   const [pendingDelete, setPendingDelete] = useState<PendingDelete>(null)
+  const [meta, setMeta] = useState<ClipMetaIndex>({})
+  const [libraryFilter, setLibraryFilter] = useState<LibraryFilter>(EMPTY_FILTER)
+  const [trashEntries, setTrashEntries] = useState<TrashEntry[]>([])
+  const [trashOpen, setTrashOpen] = useState(false)
+  const [trashBusy, setTrashBusy] = useState(false)
+  const [detailsFor, setDetailsFor] = useState<{ id: string; focus: 'name' | 'tags' } | null>(null)
+  const [detailsBusy, setDetailsBusy] = useState(false)
+  const [compare, setCompare] = useState<{ a: CompareSide; b: CompareSide } | null>(null)
+  // Buffers as they were before each Shape edit. Nothing is written to disk
+  // until Save, so this is the whole undo history for the working clip.
+  const [editStack, setEditStack] = useState<ArrayBuffer[]>([])
+  const [savingEdits, setSavingEdits] = useState(false)
   const [confirmDispel, setConfirmDispel] = useState(false)
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [queue, setQueue] = useState<CatalogEffect[]>(loadQueue)
@@ -168,6 +214,25 @@ export function Studio() {
     [settings.libraryDir],
   )
 
+  const metaStore = useMemo(
+    () => createClipMetaStore(() => settings.libraryDir),
+    [settings.libraryDir],
+  )
+
+  // Disk moves the WAV into `<library>/.trash`; the browser build holds the
+  // IndexedDB bytes for the session instead. Both restore the same way.
+  const trashStore = useMemo(
+    () =>
+      isTauri()
+        ? createDiskTrash(() => settings.libraryDir)
+        : createMemoryTrash({
+            getWav: (id) => library.getWav(id),
+            restoreClip: (clip, wav) => library.save(clip, wav),
+            removeClip: (id) => library.delete(id),
+          }),
+    [settings.libraryDir, library],
+  )
+
   const catalog = useMemo(() => loadPromptCatalog(), [])
   const completedSubcategoryCount = useMemo(
     () => getCompletedSubcategoryCount(clips, catalog),
@@ -176,6 +241,9 @@ export function Studio() {
   // Lookups by id happen on every render and every selection; a linear scan
   // over a few thousand library clips adds up.
   const clipsById = useMemo(() => new Map(clips.map((clip) => [clip.id, clip])), [clips])
+  // Studio re-renders several times a second while a generation runs, so the
+  // tag scan has to be memoized or it walks the whole index on every tick.
+  const tagSuggestions = useMemo(() => tagCounts(meta).map((row) => row.tag), [meta])
   queueRef.current = queue
   timingRef.current = timing
 
@@ -244,6 +312,162 @@ export function Studio() {
     })
   }
 
+  /** Writes through on every change; the sidecar is small and rewritten whole. */
+  function updateMeta(next: ClipMetaIndex) {
+    setMeta(next)
+    void metaStore.save(next).catch((err: unknown) => {
+      const message = reportError(err, 'Could not save clip metadata')
+      toast.error('Could not save that change.', { description: message })
+    })
+  }
+
+  async function refreshTrash() {
+    try {
+      setTrashEntries(await trashStore.list())
+    } catch {
+      setTrashEntries([])
+    }
+  }
+
+  /**
+   * Moves the clip aside rather than destroying it, and offers the undo right
+   * there — a library clip can be minutes of GPU time.
+   */
+  async function trashClip(id: string) {
+    const clip = clipsById.get(id)
+    if (!clip) return
+    const row = getMeta(meta, id)
+    try {
+      const entry = await trashStore.trash(clip, Object.keys(row).length ? row : undefined)
+      if (!entry) {
+        // Nothing to move aside (no path, or no audio held): fall back to the
+        // old behaviour rather than silently leaving the clip in place.
+        await library.delete(id)
+      } else {
+        updateMeta(forgetMeta(meta, id))
+        toast('Moved to trash.', {
+          description: clipDisplayName(clip, meta),
+          action: { label: 'Undo', onClick: () => void restoreFromTrash(id) },
+        })
+      }
+    } catch (err) {
+      const message = reportError(err, 'Delete failed')
+      toast.error('Could not delete that clip.', { description: message })
+      return
+    }
+    if (selectedId === id) {
+      setSelectedId(undefined)
+      setWav(undefined)
+      setEditStack([])
+    }
+    await refreshLibrary()
+    await refreshTrash()
+  }
+
+  async function restoreFromTrash(id: string) {
+    setTrashBusy(true)
+    try {
+      const entry = await trashStore.restore(id)
+      if (!entry) {
+        toast.error('Could not restore that clip.', {
+          description: 'Its audio is no longer where the trash recorded it.',
+        })
+        return
+      }
+      if (entry.meta) updateMeta({ ...meta, [entry.id]: entry.meta })
+      toast.success('Restored.', { description: clipDisplayName(entry.clip, meta) })
+      await refreshLibrary()
+      await refreshTrash()
+    } catch (err) {
+      const message = reportError(err, 'Restore failed')
+      toast.error('Could not restore that clip.', { description: message })
+    } finally {
+      setTrashBusy(false)
+    }
+  }
+
+  async function purgeFromTrash(id: string) {
+    setTrashBusy(true)
+    try {
+      await trashStore.purge(id)
+      await refreshTrash()
+    } finally {
+      setTrashBusy(false)
+    }
+  }
+
+  async function emptyTrash() {
+    setTrashBusy(true)
+    try {
+      await trashStore.empty()
+      await refreshTrash()
+      toast('Trash emptied.')
+    } finally {
+      setTrashBusy(false)
+    }
+  }
+
+  /**
+   * Renames the WAV on disk, because the clip id *is* the file stem — so the
+   * metadata row has to move with it or the clip loses its rating and tags.
+   */
+  async function renameClip(id: string, name: string, tags: string[]) {
+    const clip = clipsById.get(id)
+    if (!clip) return
+    const stem = sanitizeClipStem(name)
+    if (!stem) {
+      toast.error('That name has no characters a filename can use.')
+      return
+    }
+    setDetailsBusy(true)
+    try {
+      let nextId = id
+      if (isTauri() && clip.path) {
+        const destination = replacePathStem(clip.path, stem)
+        if (destination !== clip.path) {
+          await moveFile(clip.path, destination)
+          nextId = stem
+        }
+      }
+      let next = renameMeta(meta, id, nextId, name.trim())
+      const current = getMeta(next, nextId)
+      next = {
+        ...next,
+        [nextId]: { ...current, tags: tags.length ? [...tags].sort() : undefined },
+      }
+      if (!tags.length && !current.favorite && !current.rejected && !current.rating && !name.trim()) {
+        delete next[nextId]
+      }
+      updateMeta(next)
+      if (selectedId === id) setSelectedId(nextId)
+      setDetailsFor(null)
+      await refreshLibrary()
+    } catch (err) {
+      const message = reportError(err, 'Rename failed')
+      toast.error('Could not rename that clip.', {
+        description: `${message} A clip with that name may already exist.`,
+      })
+    } finally {
+      setDetailsBusy(false)
+    }
+  }
+
+  async function openCompare(ids: [string, string]) {
+    const [firstId, secondId] = ids
+    const first = clipsById.get(firstId)
+    const second = clipsById.get(secondId)
+    if (!first || !second) return
+    const [firstWav, secondWav] = await Promise.all([getClipWav(firstId), getClipWav(secondId)])
+    if (!firstWav || !secondWav) {
+      toast.error('Could not load both clips to compare.')
+      return
+    }
+    setCompare({
+      a: { id: firstId, name: clipDisplayName(first, meta), wav: firstWav },
+      b: { id: secondId, name: clipDisplayName(second, meta), wav: secondWav },
+    })
+  }
+
   async function refreshEngine() {
     if (!isTauri()) return
     try {
@@ -259,6 +483,11 @@ export function Studio() {
   useEffect(() => {
     void setLibraryDir(settings.libraryDir).then(() => refreshLibrary())
   }, [settings.libraryDir])
+
+  useEffect(() => {
+    void metaStore.load().then(setMeta)
+    void refreshTrash()
+  }, [metaStore, trashStore])
 
   useEffect(() => {
     if (tab === 'library') {
@@ -412,6 +641,7 @@ export function Studio() {
     }
     setSelectedId(id)
     setWav(buf)
+    setEditStack([])
     setTrimStart(0)
     setTrimEnd(clipSeconds)
     setPlayhead(0)
@@ -627,6 +857,7 @@ export function Studio() {
       if (setActiveClip) {
         setSelectedId(finalClip.id)
         setWav(finalWav)
+        setEditStack([])
         setTrimStart(0)
         setTrimEnd(finalClip.duration)
         setPlayhead(0)
@@ -889,6 +1120,127 @@ export function Studio() {
     await exportFormat('ogg')
   }
 
+  /**
+   * Applies a Shape transform to the working buffer.
+   *
+   * The previous buffer is pushed onto the undo stack rather than written
+   * anywhere, so playback and export follow the edit immediately while the
+   * library file stays as generated until Save.
+   */
+  function applyEdit(transform: (buffer: ArrayBuffer) => ArrayBuffer, label: string) {
+    if (!wav) return
+    try {
+      const before = wavDurationSeconds(wav)
+      const next = transform(wav)
+      if (next === wav) {
+        toast(`Nothing to change for ${label}.`)
+        return
+      }
+      const after = wavDurationSeconds(next)
+      setEditStack((stack) => [...stack, wav])
+      setWav(next)
+      // Only a transform that changes the length invalidates the trim; a gain
+      // or fade should leave the markers where they were put.
+      if (Math.abs(after - before) > 0.001) {
+        setTrimStart(0)
+        setTrimEnd(after)
+        setPlayhead(0)
+      } else {
+        setTrimEnd((end) => Math.min(end, after))
+      }
+    } catch (err) {
+      const message = reportError(err, `${label} failed`)
+      toast.error(`Could not apply ${label}.`, { description: message })
+    }
+  }
+
+  function undoEdit() {
+    const previous = editStack.at(-1)
+    if (!previous) return
+    setEditStack(editStack.slice(0, -1))
+    setWav(previous)
+    const seconds = wavDurationSeconds(previous)
+    setTrimStart(0)
+    setTrimEnd(seconds)
+    setPlayhead(0)
+  }
+
+  /** Writes the edited audio back over the clip's own file. */
+  async function saveEdits() {
+    if (!wav || !selectedId) return
+    const clip = clipsById.get(selectedId)
+    if (!clip) return
+    setSavingEdits(true)
+    try {
+      if (isTauri()) {
+        if (!clip.path) {
+          toast.error('That clip has no file to write back to.')
+          return
+        }
+        await writeFileBytes(clip.path, wav)
+      } else {
+        await library.save({ ...clip, duration: wavDurationSeconds(wav) }, wav)
+      }
+      setEditStack([])
+      toast.success('Edits saved to the library.')
+      await refreshLibrary()
+    } catch (err) {
+      const message = reportError(err, 'Could not save edits')
+      toast.error('Could not save those edits.', { description: message })
+    } finally {
+      setSavingEdits(false)
+    }
+  }
+
+  /**
+   * Saves several re-pitched copies of the current clip as new library clips.
+   * No GPU time: this is the standard way to stop a repeated one-shot sounding
+   * machine-gunned.
+   */
+  async function makePitchVariants(count: number, spread: number) {
+    if (!wav || !selectedId) return
+    const clip = clipsById.get(selectedId)
+    if (!clip) return
+    const offsets = variantSemitones(count, spread)
+    let saved = 0
+    try {
+      for (const semitones of offsets) {
+        const buffer = pitchShiftWav(wav, semitones)
+        const suffix = variantSuffix(semitones)
+        if (isTauri()) {
+          if (!clip.path) continue
+          const stem = sanitizeClipStem(`${clip.id}-${suffix}`)
+          await writeFileBytes(replacePathStem(clip.path, stem), buffer)
+        } else {
+          await library.save(
+            {
+              ...clip,
+              id: `${clip.id}-${suffix}`,
+              duration: wavDurationSeconds(buffer),
+              createdAt: new Date().toISOString(),
+            },
+            buffer,
+          )
+        }
+        saved += 1
+      }
+      if (saved) {
+        toast.success(`Saved ${saved} pitch ${saved === 1 ? 'variant' : 'variants'}.`, {
+          description: offsets
+            .slice(0, saved)
+            .map((value) => `${value > 0 ? '+' : ''}${value} st`)
+            .join(', '),
+        })
+        await refreshLibrary()
+      } else {
+        toast.error('Could not save variants for this clip.')
+      }
+    } catch (err) {
+      const message = reportError(err, 'Variants failed')
+      toast.error('Could not make variants.', { description: message })
+    }
+  }
+
   function autoTrimSilence() {
     if (!wav) return
     const bounds = detectSilenceBounds(wav)
@@ -988,13 +1340,9 @@ export function Studio() {
 
   async function confirmDelete() {
     if (!pendingDelete) return
-    await library.delete(pendingDelete)
-    if (selectedId === pendingDelete) {
-      setSelectedId(undefined)
-      setWav(undefined)
-    }
+    const id = pendingDelete
     setPendingDelete(null)
-    await refreshLibrary()
+    await trashClip(id)
   }
 
   return (
@@ -1048,6 +1396,20 @@ export function Studio() {
           onModeChange={selectMode}
           onExportPack={(request) => void exportLibraryPack(request)}
           getWav={getClipWav}
+          meta={meta}
+          filter={libraryFilter}
+          onFilter={setLibraryFilter}
+          onToggleFavorite={(id) => updateMeta(toggleClipFavorite(meta, id))}
+          onToggleRejected={(id) => updateMeta(toggleClipRejected(meta, id))}
+          onRate={(id, rating) => updateMeta(setClipRating(meta, id, rating))}
+          onRename={(id) => setDetailsFor({ id, focus: 'name' })}
+          onEditTags={(id) => setDetailsFor({ id, focus: 'tags' })}
+          onOpenTrash={() => {
+            void refreshTrash()
+            setTrashOpen(true)
+          }}
+          trashCount={trashEntries.length}
+          onCompare={(ids) => void openCompare(ids)}
         />
       ) : null}
       {tab === 'generate' ? (
@@ -1132,6 +1494,27 @@ export function Studio() {
               onMono={setMono}
               onExport={() => void exportSelectedFormat()}
               onExportFormat={(format) => void exportFormat(format)}
+              shape={
+                <ShapePanel
+                  disabled={!wav || weaving || loadingModel}
+                  canUndo={editStack.length > 0}
+                  dirty={editStack.length > 0}
+                  canSave={Boolean(selectedId)}
+                  saving={savingEdits}
+                  onFade={(fadeInSec, fadeOutSec) =>
+                    applyEdit((buffer) => applyFade(buffer, { fadeInSec, fadeOutSec }), 'fades')
+                  }
+                  onReverse={() => applyEdit(reverseWav, 'reverse')}
+                  onGain={(db) => applyEdit((buffer) => applyGainDb(buffer, db), 'gain')}
+                  onNormalize={() => applyEdit((buffer) => normalizePeak(buffer), 'normalize')}
+                  onPitch={(semitones) =>
+                    applyEdit((buffer) => pitchShiftWav(buffer, semitones), 'pitch shift')
+                  }
+                  onVariants={(count, spread) => void makePitchVariants(count, spread)}
+                  onUndo={undoEdit}
+                  onSave={() => void saveEdits()}
+                />
+              }
             />
           </div>
           <IncantationConsole
@@ -1247,6 +1630,44 @@ export function Studio() {
           })()
         }}
       />
+      {trashOpen ? (
+      <TrashDialog
+        open={trashOpen}
+        entries={trashEntries}
+        busy={trashBusy}
+        onOpenChange={setTrashOpen}
+        onRestore={(id) => void restoreFromTrash(id)}
+        onPurge={(id) => void purgeFromTrash(id)}
+        onEmpty={() => void emptyTrash()}
+      />
+      ) : null}
+      {detailsFor ? (
+      <ClipDetailsDialog
+        open={Boolean(detailsFor)}
+        focus={detailsFor?.focus ?? 'name'}
+        meta={detailsFor ? getMeta(meta, detailsFor.id) : {}}
+        name={
+          detailsFor && clipsById.get(detailsFor.id)
+            ? clipDisplayName(clipsById.get(detailsFor.id)!, meta)
+            : ''
+        }
+        renamesFile={isTauri()}
+        suggestions={tagSuggestions}
+        busy={detailsBusy}
+        onOpenChange={(open) => !open && setDetailsFor(null)}
+        onSubmit={({ name, tags }) => {
+          if (detailsFor) void renameClip(detailsFor.id, name, tags)
+        }}
+      />
+      ) : null}
+      {compare ? (
+        <CompareDialog
+          open
+          a={compare.a}
+          b={compare.b}
+          onOpenChange={(open) => !open && setCompare(null)}
+        />
+      ) : null}
       <CommandPalette
         open={commandOpen}
         onOpenChange={setCommandOpen}
@@ -1295,9 +1716,10 @@ export function Studio() {
             <Hint label="Confirm before deleting a library clip.">
               <AlertDialogTitle>Delete this sound?</AlertDialogTitle>
             </Hint>
-            <Hint label="The WAV is deleted from the local library. Export copies on disk are left alone.">
+            <Hint label="The WAV moves to the trash inside the library folder. Export copies on disk are left alone.">
               <AlertDialogDescription>
-                The clip will be removed from the library. This cannot be undone.
+                The clip moves to the trash. You can restore it from there until the trash is
+                emptied.
               </AlertDialogDescription>
             </Hint>
           </AlertDialogHeader>
@@ -1305,7 +1727,7 @@ export function Studio() {
             <Hint label="Leave this clip in the library.">
               <AlertDialogCancel>Keep</AlertDialogCancel>
             </Hint>
-            <Hint label="Delete this clip from the local library. The WAV file is removed.">
+            <Hint label="Move this clip's WAV into the library's trash folder.">
               <AlertDialogAction onClick={() => void confirmDelete()}>Delete</AlertDialogAction>
             </Hint>
           </AlertDialogFooter>

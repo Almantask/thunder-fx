@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import { Download, Pause, Play, Repeat, Scissors } from 'lucide-react'
 import { Hint } from '@/components/Hint'
 import { Button } from '@/components/ui/button'
@@ -44,6 +45,12 @@ type AltarProps = {
   onMono: (value: boolean) => void
   onExport: () => void
   onExportFormat: (format: AudioFormat) => void
+  /**
+   * Slot for the Shape controls. Passed in rather than wired through props so
+   * this panel keeps owning trim and export alone, and the editing surface can
+   * grow without widening it.
+   */
+  shape?: ReactNode
 }
 
 const selectClass =
@@ -73,6 +80,7 @@ export function Altar({
   onMono,
   onExport,
   onExportFormat,
+  shape,
 }: AltarProps) {
   const otherFormats = AUDIO_FORMATS.filter((option) => option !== format)
   // Rate and Bits are PCM settings; the lossy encoders set their own.
@@ -161,6 +169,7 @@ export function Altar({
           Auto-trim silence
         </Button>
       </Hint>
+      {shape}
       <Hint label="Length that will be written on export, versus the full generated clip.">
         <p className="font-mono text-xs text-muted">
           Export {formatClock(Math.max(0, trimEnd - trimStart))} of {formatClock(duration)}

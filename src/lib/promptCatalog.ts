@@ -299,6 +299,17 @@ function cacheCategory(key: string, value: string): string {
   return value
 }
 
+/**
+ * The A/B wording sets are a measurement harness, not a content taxonomy. Their
+ * prompts are deliberate near-copies of real catalog entries — that is the point
+ * of a control — so letting them compete here would file a clip generated from
+ * Doors under the test set instead, purely because "A/B" sorts first. They stay
+ * browsable in Browse prompts; they just do not claim clips in the library rail.
+ */
+function isDiagnosticCategory(cat: PromptCategory): boolean {
+  return cat.id.endsWith(':ab-wording')
+}
+
 export function inferClipCategory(clip: Clip, catalog?: PromptCategory[]): string {
   if (isValidCategoryName(clip.category)) {
     return clip.category!.trim()
@@ -321,7 +332,9 @@ export function inferClipCategory(clip: Clip, catalog?: PromptCategory[]): strin
     return cacheCategory(cacheKey, 'Custom')
   }
 
-  const libraryCats = catList.filter((c) => c.library === targetLibrary)
+  const libraryCats = catList.filter(
+    (c) => c.library === targetLibrary && !isDiagnosticCategory(c),
+  )
   const promptWords = normPrompt
     .split(/[^a-z0-9]+/i)
     .map((w) => w.trim().toLowerCase())

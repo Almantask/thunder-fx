@@ -31,6 +31,12 @@ type ScrollCanvasProps = {
   ratio?: number
   historicalEstimateMs?: number
   queueTailEstimateMs?: number
+  /**
+   * Milliseconds left as of `nowMs`, asked fresh on every frame. A number prop
+   * could only be as current as the last progress event; a run that slows down
+   * between events would keep counting down at its old pace until the next one.
+   */
+  remainingAt?: (nowMs: number) => number | undefined
   mode?: GenerateMode
   seed?: number
   startedAt?: number
@@ -57,6 +63,7 @@ export function ScrollCanvas({
   ratio,
   historicalEstimateMs,
   queueTailEstimateMs,
+  remainingAt,
   mode = 'sfx',
   seed,
   completedSubcategoryCount = 0,
@@ -73,6 +80,7 @@ export function ScrollCanvas({
   const ratioRef = useRef(ratio)
   const etaRef = useRef(historicalEstimateMs)
   const tailRef = useRef(queueTailEstimateMs)
+  const remainingRef = useRef(remainingAt)
   const modeRef = useRef(mode)
   const startedAtRef = useRef(startedAt)
   const completedCountRef = useRef(completedSubcategoryCount)
@@ -138,6 +146,7 @@ export function ScrollCanvas({
     ratioRef.current = ratio
     etaRef.current = historicalEstimateMs
     tailRef.current = queueTailEstimateMs
+    remainingRef.current = remainingAt
     modeRef.current = mode
     startedAtRef.current = startedAt
     completedCountRef.current = completedSubcategoryCount
@@ -148,6 +157,7 @@ export function ScrollCanvas({
     ratio,
     historicalEstimateMs,
     queueTailEstimateMs,
+    remainingAt,
     mode,
     startedAt,
     completedSubcategoryCount,
@@ -163,6 +173,7 @@ export function ScrollCanvas({
     elapsedMs,
     historicalEstimateMs,
     queueTailEstimateMs,
+    remainingMs: remainingAt?.(Date.now()),
   })
 
   useEffect(() => {
@@ -258,6 +269,9 @@ export function ScrollCanvas({
       })
 
       if (busy) {
+        // Recomputed per frame, not read from a prop: this is the number that
+        // has to track the run's real pace rather than the last event's.
+        const remainingMs = remainingRef.current?.(now)
         const pct = weaveBarPercent({
           step: riteRef.current,
           total: totalRites,
@@ -266,6 +280,7 @@ export function ScrollCanvas({
           elapsedMs: localElapsed,
           historicalEstimateMs: etaRef.current,
           queueTailEstimateMs: tailRef.current,
+          remainingMs,
         })
         if (barIndicatorRef.current && pct != null) {
           barIndicatorRef.current.style.transform = `translateX(-${100 - pct}%)`
@@ -279,6 +294,7 @@ export function ScrollCanvas({
             ratio: ratioRef.current,
             historicalEstimateMs: etaRef.current,
             queueTailEstimateMs: tailRef.current,
+            remainingMs,
           })
         }
       }
@@ -349,7 +365,7 @@ export function ScrollCanvas({
             label={
               loadingModel
                 ? 'Model load progress. Elapsed is wall clock. Remaining is an estimate from this machine and current pace.'
-                : 'Generation progress. Eight steps. Elapsed is wall clock. Remaining is an estimate from this machine and current pace.'
+                : 'Generation progress. Step count comes from the quality preset. Elapsed is wall clock. Remaining is recalculated from the measured pace of this run.'
             }
           >
             <p role="status" aria-live="polite" className="font-mono text-xs text-amber">
@@ -362,6 +378,7 @@ export function ScrollCanvas({
                   ratio,
                   historicalEstimateMs,
                   queueTailEstimateMs,
+                  remainingMs: remainingAt?.(Date.now()),
                 })}
               </span>
               <span className="sr-only">

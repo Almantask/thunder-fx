@@ -110,12 +110,21 @@ import {
   estimateGenerateMs,
   estimateLoadMs,
   estimateQueueMs,
+  getMeasuredPhaseModel,
   loadTimingLog,
   recordGenerate,
   recordLoad,
   saveTimingLog,
   type TimingLog,
 } from '@/lib/timing'
+import {
+  liveRemainingMs,
+  runMeasurements,
+  startRun,
+  trackRun,
+  type RunTrack,
+} from '@/lib/runTiming'
+import type { QueueCostItem } from '@/lib/perfBenchmarks'
 import type { Clip, EngineStatus, GenerateMode, KeepSettings, KeepTab, WeavePhase } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
 
@@ -197,6 +206,9 @@ export function Studio() {
   const abortRef = useRef<AbortController | null>(null)
   const loadAbortRef = useRef<AbortController | null>(null)
   const weaveStartedRef = useRef(0)
+  // The run in flight, so the countdown can be recomputed from its real pace on
+  // every repaint rather than only when a progress event arrives.
+  const runRef = useRef<RunTrack | null>(null)
   const playbackRef = useRef<PlaybackHandle | null>(null)
   const playRaf = useRef<number>(0)
   const queueRef = useRef(queue)
@@ -269,12 +281,78 @@ export function Studio() {
   const activeClip = selectedId ? clipsById.get(selectedId) : undefined
 
   // The steps slider no longer drives generation on its own, so time estimates
-  // have to read the preset's effective step count instead.
-  const effectiveSteps = resolvePresetPlan(preset, {
+  // have to read the preset's effective step count and guidance instead. Both
+  // matter: Max quality runs 50 steps at CFG 4, and guidance above 1 runs a
+  // doubled batch, so pricing it off the slider understated it several times over.
+  const activePresetPlan = resolvePresetPlan(preset, {
     steps,
     mode,
     baseAvailable: engine.baseModelReady,
-  }).steps
+  })
+  const effectiveSteps = activePresetPlan.steps
+
+  /**
+   * Price a queued item on the preset it will actually run under, which is not
+   * always the console's: an item carries the preset it was queued with, and a
+   * queue run can pin one over the top. Estimating them all at the console's
+   * settings is how a queue of Max quality beds got quoted at Balanced speed.
+   */
+  function queueCostItems(items: CatalogEffect[]): QueueCostItem[] {
+    return items.map((item) => {
+      const plan = resolvePresetPlan(queuePreset ?? item.preset ?? preset, {
+        steps,
+        mode: modeFromCatalog(item),
+        baseAvailable: engine.baseModelReady,
+      })
+      return { duration: item.duration, steps: plan.steps, cfg: plan.cfg }
+    })
+  }
+
+  // What the run in flight is actually doing, so its estimate is not read off
+  // the console while a queue item with different settings is on the GPU.
+  const runningItem = queueRunning ? queue[0] : undefined
+  const runningPlan = runningItem
+    ? resolvePresetPlan(queuePreset ?? runningItem.preset ?? preset, {
+        steps,
+        mode: modeFromCatalog(runningItem),
+        baseAvailable: engine.baseModelReady,
+      })
+    : activePresetPlan
+  const runningSeconds = runningItem?.duration ?? duration
+  const runCostOptions = {
+    steps: runningPlan.steps,
+    cfg: runningPlan.cfg,
+    precision: settings.precision,
+    isMock: engine.mock,
+  }
+  const runHistoricalEstimateMs = loadingModel
+    ? estimateLoadMs(timing, {
+        precision: settings.precision,
+        model: activePresetPlan.model,
+        isMock: engine.mock,
+      })
+    : weaving
+      ? estimateGenerateMs(timing, runningSeconds, runCostOptions)
+      : undefined
+  const runQueueTailMs =
+    queueRunning && queue.length > 1
+      ? estimateQueueMs(timing, queueCostItems(queue.slice(1)), {
+          precision: settings.precision,
+          isMock: engine.mock,
+        })
+      : undefined
+  // This machine's calibrated per-step and per-tail costs. The live estimator
+  // blends them with the pace the current run is actually holding.
+  const runCostModel = getMeasuredPhaseModel(timing, runCostOptions)
+
+  function remainingAt(now: number): number | undefined {
+    return liveRemainingMs(runRef.current, {
+      now,
+      model: runCostModel,
+      historicalTotalMs: runHistoricalEstimateMs,
+      queueTailMs: runQueueTailMs,
+    })
+  }
 
   function rememberTiming(next: TimingLog) {
     timingRef.current = next
@@ -683,19 +761,33 @@ export function Studio() {
     setWeaveRatio(undefined)
     const started = Date.now()
     weaveStartedRef.current = started
+    runRef.current = startRun('load', { at: started })
     const controller = new AbortController()
     loadAbortRef.current = controller
     try {
       await loadModel(
         (ratio) => {
-          setElapsedMs(Date.now() - started)
+          const now = Date.now()
+          runRef.current = trackRun(runRef.current, { ratio, phase: 'loading' }, now, {
+            kind: 'load',
+            startedAt: started,
+          })
+          setElapsedMs(now - started)
           setWeaveRatio(ratio)
           setWeavePhase('loading')
         },
         { signal: controller.signal, precision: settings.precision },
       )
       if (!engineMockRef.current) {
-        rememberTiming(recordLoad(timingRef.current, Date.now() - started))
+        // Tagged with what was loaded: fp32 is a longer wait than fp16, and
+        // Medium-Base is a different download again, so an untagged average of
+        // the three predicts none of them.
+        rememberTiming(
+          recordLoad(timingRef.current, Date.now() - started, {
+            precision: settings.precision,
+            model: activePresetPlan.model,
+          }),
+        )
       }
       await refreshEngine()
       setEngine((current) => ({ ...current, loaded: true }))
@@ -711,6 +803,7 @@ export function Studio() {
     } finally {
       setLoadingModel(false)
       loadAbortRef.current = null
+      runRef.current = null
     }
   }
 
@@ -786,7 +879,15 @@ export function Studio() {
   ): Promise<'ok' | 'abort' | 'error'> {
     const manageBusy = options.manageBusy ?? true
     const setActiveClip = options.setActiveClip ?? true
-    const currentSteps = request.steps ?? steps
+    // What the engine will actually run. A named preset owns its step count and
+    // guidance, so the slider is only consulted for Custom -- estimating and
+    // recording off the slider logged 8-step samples for 20-step runs.
+    const runPlan = resolvePresetPlan(request.preset ?? preset, {
+      steps: request.steps ?? steps,
+      mode: request.mode,
+      baseAvailable: engine.baseModelReady,
+    })
+    const currentSteps = runPlan.steps
     setError(undefined)
     if (manageBusy) setWeaving(true)
     setRite(0)
@@ -794,7 +895,13 @@ export function Studio() {
     setElapsedMs(0)
     setWeavePhase('weaving')
     setWeaveRatio(undefined)
-    weaveStartedRef.current = Date.now()
+    const startedAt = Date.now()
+    weaveStartedRef.current = startedAt
+    runRef.current = startRun('generate', {
+      at: startedAt,
+      seconds: request.seconds,
+      totalSteps: currentSteps,
+    })
     const controller = new AbortController()
     abortRef.current = controller
     const parsedSeed = options.seed ?? Number(seed)
@@ -819,6 +926,12 @@ export function Studio() {
           signal: controller.signal,
           stepDelayMs: 60,
           onProgress: (p) => {
+            runRef.current = trackRun(runRef.current, p, Date.now(), {
+              kind: 'generate',
+              startedAt,
+              seconds: request.seconds,
+              totalSteps: currentSteps,
+            })
             setRite(p.step)
             if (p.total) setTotalRites(p.total)
             setElapsedMs(p.elapsedMs)
@@ -864,14 +977,29 @@ export function Studio() {
         setLooping(Boolean(request.seamlessLoop && modeSupportsSeamlessLoop(request.mode ?? 'sfx')))
       }
       if (!engineMockRef.current) {
-        rememberTiming(
-          recordGenerate(
-            timingRef.current,
-            request.seconds,
-            Date.now() - weaveStartedRef.current,
-            { steps: currentSteps, precision: settings.precision },
-          ),
-        )
+        const finishedAt = Date.now()
+        const run = runRef.current
+        // A run that had to swap checkpoints first is not a sample of what
+        // generating costs -- the load would be folded into every later
+        // estimate for a clip of this length.
+        const includedLoad = Boolean(run?.sawLoading)
+        const measured = run && !includedLoad ? runMeasurements(run, finishedAt) : {}
+        if (!includedLoad) {
+          rememberTiming(
+            recordGenerate(
+              timingRef.current,
+              request.seconds,
+              finishedAt - weaveStartedRef.current,
+              {
+                steps: finalClip.steps ?? currentSteps,
+                precision: settings.precision,
+                cfg: runPlan.cfg,
+                ...measured,
+                at: finishedAt,
+              },
+            ),
+          )
+        }
       }
       return 'ok'
     } catch (err) {
@@ -886,6 +1014,7 @@ export function Studio() {
     } finally {
       if (manageBusy) setWeaving(false)
       abortRef.current = null
+      runRef.current = null
     }
   }
 
@@ -1429,29 +1558,9 @@ export function Studio() {
               mode={mode}
               seed={activeClip?.seed}
               completedSubcategoryCount={completedSubcategoryCount}
-              historicalEstimateMs={
-                loadingModel
-                  ? estimateLoadMs(timing, { precision: settings.precision, isMock: engine.mock })
-                  : weaving
-                    ? estimateGenerateMs(
-                        timing,
-                        queueRunning ? (queue[0]?.duration ?? duration) : duration,
-                        {
-                          steps,
-                          precision: settings.precision,
-                          isMock: engine.mock,
-                        },
-                      )
-                    : undefined
-              }
-              queueTailEstimateMs={
-                queueRunning && queue.length > 1
-                  ? estimateQueueMs(timing, queue.slice(1), {
-                      precision: settings.precision,
-                      isMock: engine.mock,
-                    })
-                  : undefined
-              }
+              historicalEstimateMs={runHistoricalEstimateMs}
+              queueTailEstimateMs={runQueueTailMs}
+              remainingAt={remainingAt}
               duration={clipDuration}
               trimStart={trimStart}
               trimEnd={Math.min(trimEnd, clipDuration)}
@@ -1553,19 +1662,25 @@ export function Studio() {
             onCancelQueue={cancelQueue}
             onClearQueue={() => updateQueue([])}
             onRemoveQueued={(id) => updateQueue(removeFromQueue(queueRef.current, id))}
-            loadEstimateMs={estimateLoadMs(timing, { precision: settings.precision, isMock: engine.mock })}
+            loadEstimateMs={estimateLoadMs(timing, {
+              precision: settings.precision,
+              model: activePresetPlan.model,
+              isMock: engine.mock,
+            })}
             castEstimateMs={estimateGenerateMs(timing, duration, {
               steps: effectiveSteps,
+              cfg: activePresetPlan.cfg,
               precision: settings.precision,
               isMock: engine.mock,
             })}
-            queueEstimateMs={estimateQueueMs(timing, queue, {
+            queueEstimateMs={estimateQueueMs(timing, queueCostItems(queue), {
               precision: settings.precision,
               isMock: engine.mock,
             })}
             clipEstimateMs={(seconds) =>
               estimateGenerateMs(timing, seconds, {
                 steps: effectiveSteps,
+                cfg: activePresetPlan.cfg,
                 precision: settings.precision,
                 isMock: engine.mock,
               })

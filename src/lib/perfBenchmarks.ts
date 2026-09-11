@@ -20,35 +20,40 @@ export type PerfMetrics = {
   estimatedVramGb: number
 }
 
+/**
+ * What a generation costs, split into the three stretches the engine can
+ * actually time separately.
+ *
+ * The split is what makes an estimate correctable. A run reports when its first
+ * diffusion step lands, when its last one does, and when the WAV is written, so
+ * every term below can be measured against reality and scaled — see
+ * `getMeasuredPhaseModel` in `timing.ts`. A single lumped ms-per-second figure
+ * cannot be corrected that way: a slow decode and a slow sampler are
+ * indistinguishable in it, and they scale with different things.
+ */
+export type PhaseCostModel = {
+  /** Setup before the first step: conditioning, tokenising, allocation. */
+  leadMs: number
+  /** Per diffusion step, independent of clip length. */
+  stepBaseMs: number
+  /** Per diffusion step, per second of audio — the latent grows with duration. */
+  stepPerSecMs: number
+  /** After the last step: VAE decode, mastering, WAV write. */
+  tailBaseMs: number
+  /** Decode and write cost per second of audio. */
+  tailPerSecMs: number
+}
+
 export type BaselinePerfModel = {
   loadMs: {
     fp16: number
     fp32: number
     mock: number
   }
-  // Linear model: timeMs = baseInterceptMs + (stepFactor * steps) + (secFactor * seconds * (steps / 20))
   generate: {
-    fp16: {
-      baseInterceptMs: number
-      stepFactorMs: number
-      secFactorMs: number
-      vramBaseGb: number
-      vramPerSecGb: number
-    }
-    fp32: {
-      baseInterceptMs: number
-      stepFactorMs: number
-      secFactorMs: number
-      vramBaseGb: number
-      vramPerSecGb: number
-    }
-    mock: {
-      baseInterceptMs: number
-      stepFactorMs: number
-      secFactorMs: number
-      vramBaseGb: number
-      vramPerSecGb: number
-    }
+    fp16: PhaseCostModel & { vramBaseGb: number; vramPerSecGb: number }
+    fp32: PhaseCostModel & { vramBaseGb: number; vramPerSecGb: number }
+    mock: PhaseCostModel & { vramBaseGb: number; vramPerSecGb: number }
   }
 }
 
@@ -64,27 +69,92 @@ export const BASELINE_PERF_ESTIMATES: BaselinePerfModel = {
   },
   generate: {
     fp16: {
-      baseInterceptMs: 3_200,
-      stepFactorMs: 380,
-      secFactorMs: 460,
+      leadMs: 1_600,
+      stepBaseMs: 380,
+      stepPerSecMs: 21,
+      tailBaseMs: 1_600,
+      tailPerSecMs: 40,
       vramBaseGb: 6.2,
       vramPerSecGb: 0.008,
     },
     fp32: {
-      baseInterceptMs: 4_800,
-      stepFactorMs: 520,
-      secFactorMs: 680,
+      leadMs: 2_400,
+      stepBaseMs: 520,
+      stepPerSecMs: 31,
+      tailBaseMs: 2_400,
+      tailPerSecMs: 60,
       vramBaseGb: 12.8,
       vramPerSecGb: 0.016,
     },
     mock: {
-      baseInterceptMs: 150,
-      stepFactorMs: 50,
-      secFactorMs: 0,
+      leadMs: 100,
+      stepBaseMs: 50,
+      stepPerSecMs: 0,
+      tailBaseMs: 50,
+      tailPerSecMs: 0,
       vramBaseGb: 0.4,
       vramPerSecGb: 0.0,
     },
   },
+}
+
+export type GenerateCostOptions = {
+  steps?: number
+  precision?: PrecisionMode
+  isMock?: boolean
+  /**
+   * Guidance scale. Above 1, classifier-free guidance runs the conditioned and
+   * unconditioned batches together, so a step costs close to twice as much.
+   * Max quality is the preset that turns this on, and before it was priced in,
+   * its first run was estimated at roughly half its real cost.
+   */
+  cfg?: number
+}
+
+/** Steps outside this range are not configurations the engine will run. */
+export function clampSteps(steps: number | undefined): number {
+  return Math.max(4, Math.min(100, Math.round(steps ?? 20)))
+}
+
+/** Classifier-free guidance runs a doubled batch; the extra is not quite 2x. */
+export function guidanceFactor(cfg: number | undefined): number {
+  return cfg != null && Number.isFinite(cfg) && cfg > 1 ? 1.85 : 1
+}
+
+export function getBaselinePhaseModel(options?: GenerateCostOptions): PhaseCostModel {
+  const isMock = Boolean(options?.isMock)
+  const model = isMock
+    ? BASELINE_PERF_ESTIMATES.generate.mock
+    : options?.precision === 'fp32'
+      ? BASELINE_PERF_ESTIMATES.generate.fp32
+      : BASELINE_PERF_ESTIMATES.generate.fp16
+  const guidance = isMock ? 1 : guidanceFactor(options?.cfg)
+  return {
+    leadMs: model.leadMs,
+    stepBaseMs: model.stepBaseMs * guidance,
+    stepPerSecMs: model.stepPerSecMs * guidance,
+    tailBaseMs: model.tailBaseMs,
+    tailPerSecMs: model.tailPerSecMs,
+  }
+}
+
+/** Cost of one diffusion step at this clip length, under a phase model. */
+export function phaseStepMs(model: PhaseCostModel, seconds: number): number {
+  return model.stepBaseMs + model.stepPerSecMs * Math.max(0, seconds)
+}
+
+/** Cost of the decode-and-write tail at this clip length, under a phase model. */
+export function phaseTailMs(model: PhaseCostModel, seconds: number): number {
+  return model.tailBaseMs + model.tailPerSecMs * Math.max(0, seconds)
+}
+
+/** Whole-run cost under a phase model: lead, then every step, then the tail. */
+export function phaseTotalMs(
+  model: PhaseCostModel,
+  seconds: number,
+  steps: number,
+): number {
+  return model.leadMs + steps * phaseStepMs(model, seconds) + phaseTailMs(model, seconds)
 }
 
 export function getBaselineLoadMs(precision: PrecisionMode = 'fp16', isMock = false): number {
@@ -96,48 +166,26 @@ export function getBaselineLoadMs(precision: PrecisionMode = 'fp16', isMock = fa
 
 export function getBaselineGenerateMs(
   seconds: number,
-  options?: {
-    steps?: number
-    precision?: PrecisionMode
-    isMock?: boolean
-  },
+  options?: GenerateCostOptions,
 ): number {
   if (!Number.isFinite(seconds) || seconds <= 0) return 0
-  const isMock = Boolean(options?.isMock)
-  const precision: PrecisionMode = options?.precision === 'fp32' ? 'fp32' : 'fp16'
-  const steps = Math.max(4, Math.min(100, Math.round(options?.steps ?? 20)))
-
-  const model = isMock
-    ? BASELINE_PERF_ESTIMATES.generate.mock
-    : precision === 'fp32'
-      ? BASELINE_PERF_ESTIMATES.generate.fp32
-      : BASELINE_PERF_ESTIMATES.generate.fp16
-
-  if (isMock) {
-    return model.baseInterceptMs + steps * model.stepFactorMs
-  }
-
-  const stepScale = steps / 20
-  const durationFactor = seconds * model.secFactorMs * stepScale
-  const stepCost = steps * model.stepFactorMs
-  const total = model.baseInterceptMs + stepCost + durationFactor
-  return Math.round(total)
+  const steps = clampSteps(options?.steps)
+  return Math.round(phaseTotalMs(getBaselinePhaseModel(options), seconds, steps))
 }
 
 export function getTakesGenerateMs(
   seconds: number,
-  options?: {
-    steps?: number
-    precision?: PrecisionMode
-    isMock?: boolean
-  },
+  options?: GenerateCostOptions,
 ): number {
   const single = getBaselineGenerateMs(seconds, options)
   return single * 4
 }
 
+/** A queue entry priced on its own terms — presets can differ per item. */
+export type QueueCostItem = { duration: number; steps?: number; cfg?: number }
+
 export function getBaselineQueueMs(
-  items: { duration: number; steps?: number }[],
+  items: QueueCostItem[],
   options?: {
     precision?: PrecisionMode
     isMock?: boolean
@@ -147,6 +195,7 @@ export function getBaselineQueueMs(
   for (const item of items) {
     total += getBaselineGenerateMs(item.duration, {
       steps: item.steps,
+      cfg: item.cfg,
       precision: options?.precision,
       isMock: options?.isMock,
     })
@@ -155,7 +204,7 @@ export function getBaselineQueueMs(
 }
 
 export function getBatchQueuePace(
-  items: { duration: number; steps?: number }[],
+  items: QueueCostItem[],
   options?: {
     precision?: PrecisionMode
     isMock?: boolean

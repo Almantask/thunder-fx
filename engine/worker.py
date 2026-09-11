@@ -37,6 +37,12 @@ from pathlib import Path
 SAMPLE_RATE = 44100
 CHANNELS = 2
 TOTAL_RITES = 8
+# Sampling is not the whole run: the VAE decode, mastering and WAV write still
+# follow it. Capping the sampling ratio short of 1 leaves that tail visible
+# instead of parking the bar at 100% while the file is still being written.
+SAMPLING_RATIO_CEILING = 0.9
+# Floor between step emits, so a 100-step run does not flood the stdout pipe.
+_STEP_EMIT_MIN_S = 0.08
 DEFAULT_STEPS = 20
 MIN_STEPS = 4
 MAX_STEPS = 100
@@ -1045,6 +1051,7 @@ class _Heartbeat:
         self._step = 0
         self._total = total
         self._ratio: float | None = None
+        self._last_emit = 0.0
         self._msg_id = msg_id
         self._started = started
         self._thread = threading.Thread(
@@ -1073,6 +1080,30 @@ class _Heartbeat:
             if ratio is not None:
                 self._ratio = ratio
 
+    def mark(self, *, step: int, total: int, ratio: float | None = None) -> None:
+        """Publish a step the moment it lands, not on the next 250ms tick.
+
+        The UI derives its live pace from the gap between step events, so a
+        quarter-second of jitter on an eight-step run is the difference between
+        a steady countdown and one that lurches. Throttled so a 100-step run
+        does not flood the pipe.
+        """
+        self.update(step=step, total=total, ratio=ratio)
+        now = time.time()
+        with self._lock:
+            if step < self._total and now - self._last_emit < _STEP_EMIT_MIN_S:
+                return
+            self._last_emit = now
+            phase = self._phase
+        _emit_progress(
+            self._msg_id,
+            self._started,
+            step=step,
+            total=total,
+            phase=phase,
+            ratio=ratio,
+        )
+
     def stop(self) -> None:
         self._stop.set()
         self._thread.join(timeout=1.0)
@@ -1084,6 +1115,8 @@ class _Heartbeat:
     def _run(self) -> None:
         while not self._stop.wait(0.25):
             phase, step, total, ratio = self._snapshot()
+            with self._lock:
+                self._last_emit = time.time()
             _emit_progress(
                 self._msg_id,
                 self._started,
@@ -1437,15 +1470,53 @@ def _cancel_hook(*_args, **_kwargs):
     return {}
 
 
-def _cancel_hook_kwargs(_generate_fn=None) -> dict:
-    """Wire cancellation into the sampler so `cancel` stops the GPU mid-run.
+def _callback_step(args: tuple, kwargs: dict, seen: dict) -> int:
+    """Pull the step index out of whatever shape the sampler hands the callback.
+
+    k-diffusion passes one positional dict carrying a zero-based `i`; other
+    samplers pass it as a keyword or not at all. A local counter covers the
+    last case, so the step number is never worse than "how many times were we
+    called".
+    """
+    for candidate in (*args, kwargs.get("info"), kwargs):
+        if isinstance(candidate, dict) and isinstance(candidate.get("i"), (int, float)):
+            index = int(candidate["i"])
+            if index >= 0:
+                seen["step"] = index + 1
+                return seen["step"]
+    seen["step"] += 1
+    return seen["step"]
+
+
+def _cancel_hook_kwargs(heartbeat: _Heartbeat | None = None, total_steps: int = 0) -> dict:
+    """Wire cancellation and per-step progress into the sampler.
 
     StableAudioModel.generate does not name a callback parameter -- it forwards
     unknown kwargs into sample_diffusion, which passes `callback` down to every
     sampler and invokes it once per step. Probing generate's signature therefore
     always came up empty, leaving cancel unable to act until the run finished.
+
+    The same callback is the only per-step signal the process has, so it also
+    reports progress. Without it the heartbeat repeated `step=0` for the whole
+    sampling phase and the UI had nothing but wall clock to estimate from.
     """
-    return {"callback": _cancel_hook}
+    if heartbeat is None or total_steps <= 0:
+        return {"callback": _cancel_hook}
+
+    seen = {"step": 0}
+
+    def hook(*args, **kwargs):
+        if _cancel.is_set():
+            raise GenerationCancelled("Generation cancelled")
+        step = min(total_steps, _callback_step(args, kwargs, seen))
+        heartbeat.mark(
+            step=step,
+            total=total_steps,
+            ratio=min(SAMPLING_RATIO_CEILING, SAMPLING_RATIO_CEILING * step / total_steps),
+        )
+        return {}
+
+    return {"callback": hook}
 
 
 def cmd_generate(msg: dict) -> None:
@@ -1631,13 +1702,16 @@ def _generate_body(msg: dict) -> None:
             "precision": _model_precision,
             "seamlessLoop": loop,
         }
-        hook = _cancel_hook_kwargs()
         # Without an explicit sample_size, generate() falls back to its own
         # default of 5292032 samples (120s) and _adapt_sample_size clamps every
         # longer request down to it -- so a 380s bed silently came back at 120s.
         sample_size = int(model.model_config["sample_size"])
 
         def run_generate(use_chunked: bool):
+            # Built per attempt: an OOM retry restarts sampling at step 0, so a
+            # counter carried over from the failed attempt would report a run
+            # that is further along than it is.
+            hook = _cancel_hook_kwargs(heartbeat, steps)
             return model.generate(
                 prompt=model_prompt,
                 duration=gen_seconds,

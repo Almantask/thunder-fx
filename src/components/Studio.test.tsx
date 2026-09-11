@@ -139,13 +139,17 @@ describe('Studio', () => {
     )
   }, 15000)
 
-  it('shows a generate time estimate from past clips', () => {
+  it('does not quote GPU timings at the mock engine', () => {
+    // The log holds a 40s run measured on real hardware. The mock engine is a
+    // different machine entirely -- a fixed per-step sleep -- so its estimate
+    // has to come from its own cost, not from what a GPU once took.
     localStorage.setItem(
       TIMING_STORAGE_KEY,
       JSON.stringify({ loads: [], generates: [{ seconds: 8, elapsedMs: 40_000 }] }),
     )
     renderStudio()
-    expect(screen.getByText('~0:40')).toBeInTheDocument()
+    expect(screen.queryByText('~0:40')).not.toBeInTheDocument()
+    expect(screen.getAllByText('~0:01').length).toBeGreaterThan(0)
   })
 
   it('shows remaining time while a generate runs', async () => {

@@ -1034,6 +1034,76 @@ class SeamlessLoopTests(unittest.TestCase):
         self.assertAlmostEqual(len(looped) / 44100, 4.0, delta=0.05)
 
 
+class StepProgressHookTests(unittest.TestCase):
+    """The sampler callback is the only per-step signal the process has.
+
+    Before it reported progress, the heartbeat repeated `step=0` for the whole
+    sampling phase, so the UI had nothing but wall clock to estimate from.
+    """
+
+    def setUp(self) -> None:
+        from worker import _cancel, _Heartbeat
+
+        _cancel.clear()
+        self.addCleanup(_cancel.clear)
+        self.emitted: list[dict] = []
+        import worker
+
+        self._real_emit = worker._emit
+        worker._emit = self.emitted.append
+        self.addCleanup(lambda: setattr(worker, "_emit", self._real_emit))
+        # Not started: this exercises the direct per-step emit, not the ticker.
+        self.heartbeat = _Heartbeat("hook", time.time(), "weaving", total=8)
+
+    def _hook(self, total: int = 8):
+        from worker import _cancel_hook_kwargs
+
+        return _cancel_hook_kwargs(self.heartbeat, total)["callback"]
+
+    def test_reports_the_step_index_the_sampler_supplies(self) -> None:
+        hook = self._hook()
+        for i in range(8):
+            hook({"i": i, "sigma": 1.0})
+            time.sleep(0.09)
+        self.assertEqual([msg["step"] for msg in self.emitted], [1, 2, 3, 4, 5, 6, 7, 8])
+        self.assertEqual({msg["phase"] for msg in self.emitted}, {"weaving"})
+
+    def test_counts_calls_when_the_sampler_supplies_no_index(self) -> None:
+        hook = self._hook(4)
+        for _ in range(4):
+            hook()
+            time.sleep(0.09)
+        self.assertEqual([msg["step"] for msg in self.emitted], [1, 2, 3, 4])
+
+    def test_ratio_leaves_room_for_the_decode_and_write(self) -> None:
+        from worker import SAMPLING_RATIO_CEILING
+
+        hook = self._hook()
+        for i in range(8):
+            hook({"i": i})
+            time.sleep(0.09)
+        ratios = [msg["ratio"] for msg in self.emitted]
+        self.assertEqual(ratios, sorted(ratios))
+        # A full sampling phase must not read as a finished run.
+        self.assertAlmostEqual(ratios[-1], SAMPLING_RATIO_CEILING, places=6)
+        self.assertLess(ratios[-1], 1.0)
+
+    def test_throttles_fast_steps_but_always_emits_the_last(self) -> None:
+        hook = self._hook(50)
+        for i in range(50):
+            hook({"i": i})
+        self.assertLess(len(self.emitted), 50)
+        self.assertEqual(self.emitted[-1]["step"], 50)
+
+    def test_still_raises_on_cancel(self) -> None:
+        from worker import GenerationCancelled, _cancel
+
+        hook = self._hook()
+        _cancel.set()
+        with self.assertRaises(GenerationCancelled):
+            hook({"i": 0})
+
+
 if __name__ == "__main__":
     unittest.main()
 

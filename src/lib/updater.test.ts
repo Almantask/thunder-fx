@@ -9,8 +9,11 @@ import {
 
 describe('isNotConfigured', () => {
   it('recognises a build that carries no update channel', () => {
-    // A local `tauri build` has no `plugins.updater` block, and the plugin
-    // reports that as an error. It is a state to explain, not a failure to log.
+    // A local `tauri build` has an empty `plugins.updater` block, and the
+    // plugin reports that as an error. It is a state to explain, not a failure
+    // to log. The first case is verbatim what tauri-plugin-updater raises for
+    // an empty endpoint list; the rest guard against it rewording that.
+    expect(isNotConfigured('Updater does not have any endpoints set.')).toBe(true)
     expect(isNotConfigured('updater is not configured')).toBe(true)
     expect(isNotConfigured('Updater: no configuration found')).toBe(true)
     expect(isNotConfigured('the updater endpoint is missing')).toBe(true)

@@ -1866,9 +1866,11 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_dialog::init())
-        // Registering the updater is always safe: with no `plugins.updater`
-        // block in the config, `check()` reports that this build has no update
-        // channel rather than failing the build. Release builds supply one
+        // The plugin deserializes `plugins.updater` during setup and aborts the
+        // whole app if that key is absent (`pubkey` has no serde default), so
+        // tauri.conf.json carries an empty block. `check()` then reports no
+        // endpoints — this build has no update channel — instead of the app
+        // dying before its window opens. Release builds fill the block in
         // through src-tauri/tauri.updater.conf.json.
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())

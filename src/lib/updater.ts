@@ -1,11 +1,12 @@
 /**
  * Update checks for the desktop build.
  *
- * The plugin is always registered in Rust, but a build only carries an update
- * channel when `src-tauri/tauri.updater.conf.json` was merged in at release
- * time. A local `tauri build` therefore has no endpoint, and `check()` fails
- * with a configuration error rather than a network one — which is a state to
- * report plainly ("this build has no update channel"), not an error to log.
+ * The plugin is always registered in Rust, and tauri.conf.json always carries
+ * a `plugins.updater` block, but a build only carries real endpoints when
+ * `src-tauri/tauri.updater.conf.json` was merged in at release time. A local
+ * `tauri build` therefore has an empty endpoint list, and `check()` fails with
+ * a configuration error rather than a network one — which is a state to report
+ * plainly ("this build has no update channel"), not an error to log.
  */
 import { isTauri } from '@/lib/utils'
 
@@ -19,7 +20,7 @@ export type UpdateState =
   | { status: 'ready'; version: string }
   | { status: 'failed'; message: string }
 
-/** A missing `plugins.updater` block reads as a config error, not a failure. */
+/** An empty `plugins.updater` block reads as a config error, not a failure. */
 export function isNotConfigured(message: string): boolean {
   const text = message.toLowerCase()
   return (

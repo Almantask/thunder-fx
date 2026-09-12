@@ -2273,7 +2273,8 @@ mod tests {
     #[test]
     fn prompt_from_info_prefers_full_icmt_over_short_title() {
         let full = "TrackType: SFX, polished steel shortsword drawn from a worn oiled leather scabbard, bright metallic ring, crisp attack, close mic, dry studio, fast decay. Length: 2 seconds";
-        let title = "polished steel shortsword drawn from a worn oiled leather scabbard, bright metallic";
+        let title =
+            "polished steel shortsword drawn from a worn oiled leather scabbard, bright metallic";
         assert_eq!(prompt_from_info_fields(title, full), full);
     }
 

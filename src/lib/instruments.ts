@@ -282,6 +282,34 @@ export function buildMusicComment(
   return parts.length ? parts.join(' · ') : undefined
 }
 
+/** Older music clips stored category/instruments in ICMT instead of the prompt. */
+const LEGACY_INFO_COMMENT = /^(category|intensity|instruments)\s*:/i
+
+export function isLegacyInfoComment(text: string): boolean {
+  return LEGACY_INFO_COMMENT.test(text.trim())
+}
+
+/**
+ * ICMT is the generate prompt; INAM is only a short Explorer title.
+ * Skip the pre-change music comments so a rescan of those files still uses INAM.
+ */
+export function promptFromWavInfo(info: Pick<WavInfo, 'title' | 'comment'>): string {
+  const comment = info.comment?.trim() ?? ''
+  const title = info.title?.trim() ?? ''
+  if (comment && !isLegacyInfoComment(comment)) return comment
+  return title || comment
+}
+
+/** Full generate prompt in ICMT; fall back to the old music comment if there is none. */
+export function wavPromptComment(
+  prompt: string,
+  instruments: string[] = [],
+  category?: string,
+  intensity?: string,
+): string | undefined {
+  return prompt.trim() || buildMusicComment(instruments, category, intensity)
+}
+
 export function musicWavInfo(
   prompt: string,
   instruments = extractInstruments(prompt),
@@ -296,7 +324,7 @@ export function musicWavInfo(
     title: title || 'Instrumental',
     category: category?.trim() || undefined,
     intensity: intensity?.trim() || undefined,
-    comment: buildMusicComment(instruments, category, intensity),
+    comment: wavPromptComment(prompt, instruments, category, intensity),
   }
 }
 
@@ -316,7 +344,7 @@ export function clipWavInfo(
       title: title || 'Instrumental',
       category: category?.trim() || undefined,
       intensity: intensity?.trim() || undefined,
-      comment: buildMusicComment(instruments, category, intensity),
+      comment: wavPromptComment(prompt, instruments, category, intensity),
     }
   }
   if (mode === 'ambience') {
@@ -327,7 +355,7 @@ export function clipWavInfo(
       title: title || 'Ambience',
       category: category?.trim() || undefined,
       intensity: undefined,
-      comment: prompt.trim() || undefined,
+      comment: wavPromptComment(prompt),
     }
   }
   return {
@@ -337,7 +365,7 @@ export function clipWavInfo(
     title: title || 'Sound Effect',
     category: category?.trim() || undefined,
     intensity: undefined,
-    comment: prompt.trim() || undefined,
+    comment: wavPromptComment(prompt),
   }
 }
 

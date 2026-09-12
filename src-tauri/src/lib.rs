@@ -1307,9 +1307,33 @@ fn slug_to_proper_name(stem: &str) -> String {
     titled.join(" ")
 }
 
+/// Older music clips stored `Category:` / `Instruments:` in ICMT instead of the
+/// generate prompt. Those comments must not become `clip.prompt` on a rescan.
+fn is_legacy_info_comment(text: &str) -> bool {
+    let lower = text.trim().to_ascii_lowercase();
+    lower.starts_with("category:")
+        || lower.starts_with("intensity:")
+        || lower.starts_with("instruments:")
+}
+
+/// ICMT holds the full generate prompt; INAM is only a short Explorer title.
+/// Prefer the comment unless it is a leftover music-metadata string.
+fn prompt_from_info_fields(inam: &str, icmt: &str) -> String {
+    let title = inam.trim();
+    let comment = icmt.trim();
+    if !comment.is_empty() && !is_legacy_info_comment(comment) {
+        return comment.to_string();
+    }
+    if !title.is_empty() {
+        return title.to_string();
+    }
+    comment.to_string()
+}
+
 fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<String>>) {
     let mut duration = 0.0f32;
-    let mut prompt = String::new();
+    let mut inam = String::new();
+    let mut icmt = String::new();
     let mut mode = "sfx".to_string();
     let mut instruments: Option<Vec<String>> = None;
 
@@ -1368,10 +1392,10 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
                                     std::str::from_utf8(&list_body[sub_data_start..sub_data_end])
                                 {
                                     let trimmed = text.trim_matches('\0').trim();
-                                    let is_title = sub_id == b"INAM"
-                                        || (sub_id == b"ICMT" && prompt.is_empty());
-                                    if is_title && !trimmed.is_empty() {
-                                        prompt = trimmed.to_string();
+                                    if sub_id == b"INAM" && !trimmed.is_empty() {
+                                        inam = trimmed.to_string();
+                                    } else if sub_id == b"ICMT" && !trimmed.is_empty() {
+                                        icmt = trimmed.to_string();
                                     } else if sub_id == b"IKEY" && !trimmed.is_empty() {
                                         let list: Vec<String> = trimmed
                                             .split(';')
@@ -1403,6 +1427,7 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
         }
     }
 
+    let mut prompt = prompt_from_info_fields(&inam, &icmt);
     if prompt.is_empty() || is_uuid_or_hex_stem(&prompt) {
         let stem = path.file_stem().and_then(|s| s.to_str()).unwrap_or("");
         if !stem.is_empty() && !is_uuid_or_hex_stem(stem) {
@@ -2243,5 +2268,32 @@ mod tests {
         assert_eq!(mode.as_deref(), Some("ambience"));
         assert_eq!(cat.as_deref(), Some("Weather"));
         assert_eq!(sub.as_deref(), Some("Rain"));
+    }
+
+    #[test]
+    fn prompt_from_info_prefers_full_icmt_over_short_title() {
+        let full = "TrackType: SFX, polished steel shortsword drawn from a worn oiled leather scabbard, bright metallic ring, crisp attack, close mic, dry studio, fast decay. Length: 2 seconds";
+        let title =
+            "polished steel shortsword drawn from a worn oiled leather scabbard, bright metallic";
+        assert_eq!(prompt_from_info_fields(title, full), full);
+    }
+
+    #[test]
+    fn prompt_from_info_keeps_legacy_music_comment_off_the_clip() {
+        assert_eq!(
+            prompt_from_info_fields(
+                "lute tavern theme, warm strings",
+                "Category: Ancient Discovery · Intensity: I · Instruments: duduk, harp"
+            ),
+            "lute tavern theme, warm strings"
+        );
+        assert_eq!(
+            prompt_from_info_fields("lute and cello", "Instruments: lute, cello"),
+            "lute and cello"
+        );
+        assert!(is_legacy_info_comment("Instruments: lute"));
+        assert!(!is_legacy_info_comment(
+            "TrackType: SFX, heavy oak door slamming shut, close mic"
+        ));
     }
 }

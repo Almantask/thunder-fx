@@ -113,7 +113,7 @@ describe('mockGenerate', () => {
     expect(parseWav(music.wav).info?.instruments).toEqual(['lute'])
     expect(parseWav(music.wav).info?.category).toBe('Custom')
     expect(parseWav(music.wav).info?.intensity).toBe('I')
-    expect(parseWav(music.wav).info?.comment).toContain('Instruments: lute')
+    expect(parseWav(music.wav).info?.comment).toBe('lute')
     expect([...new Uint8Array(music.wav)]).not.toEqual([...new Uint8Array(sfx.wav)])
   })
 
@@ -168,5 +168,24 @@ describe('mockGenerate', () => {
     expect(parseWav(raw.wav).info?.genre).toBe('Ambience')
     expect(looped.clip.duration).toBeCloseTo(4, 1)
     expect(new Uint8Array(looped.wav).slice(44, 200)).not.toEqual(new Uint8Array(raw.wav).slice(44, 200))
+  })
+
+  it('binds the full A/B wording prompt to the clip and the WAV comment', async () => {
+    const prompt =
+      'TrackType: SFX, polished steel shortsword drawn from a worn oiled leather scabbard, bright metallic ring, crisp attack, close mic, dry studio, fast decay. Length: 2 seconds'
+    const terse =
+      'TrackType: SFX, steel shortsword leaving a leather scabbard, close mic, dry studio, fast decay. Length: 2 seconds'
+    const elaborated = await mockGenerate(
+      { prompt, seconds: 1, seed: 4, cfg: 1, negative: '', mode: 'sfx' },
+      { stepDelayMs: 0 },
+    )
+    const short = await mockGenerate(
+      { prompt: terse, seconds: 1, seed: 4, cfg: 1, negative: '', mode: 'sfx' },
+      { stepDelayMs: 0 },
+    )
+    expect(elaborated.clip.prompt).toBe(prompt)
+    expect(parseWav(elaborated.wav).info?.comment).toBe(prompt)
+    expect(parseWav(short.wav).info?.comment).toBe(terse)
+    expect(parseWav(elaborated.wav).info?.comment).not.toBe(parseWav(short.wav).info?.comment)
   })
 })

@@ -128,8 +128,45 @@ class WorkerTests(unittest.TestCase):
 
         info = read_wav_info(Path(done["path"]))
         self.assertEqual(info.get("INAM"), "sword clang")
+        self.assertEqual(info.get("ICMT"), "sword clang")
         self.assertEqual(info.get("ISFT"), "Thunder FX")
         self.assertEqual(info.get("IGNR"), "Sound Effects")
+
+    def test_generate_embeds_full_ab_prompt_in_icmt(self) -> None:
+        prompt = (
+            "TrackType: SFX, polished steel shortsword drawn from a worn oiled "
+            "leather scabbard, bright metallic ring, crisp attack, close mic, "
+            "dry studio, fast decay, isolated one-shot, no room tone. Length: 2 seconds"
+        )
+        self.assertGreater(len(prompt), 200)
+        self.client.send(
+            {
+                "id": "g-ab",
+                "cmd": "generate",
+                "prompt": prompt,
+                "seconds": 0.3,
+                "seed": 7,
+                "cfg": 1,
+                "negative": "",
+                "preset": "custom",
+                "steps": 1,
+            }
+        )
+        done = None
+        while True:
+            msg = self.client.read()
+            if msg.get("id") != "g-ab":
+                continue
+            if msg.get("event") == "error":
+                self.fail(msg.get("message"))
+            if msg.get("event") == "done":
+                done = msg
+                break
+        from worker import read_wav_info
+
+        info = read_wav_info(Path(done["path"]))
+        self.assertEqual(info.get("ICMT"), prompt)
+        self.assertLess(len(info.get("INAM", "")), len(prompt))
 
     def test_generate_seamless_loop_keeps_duration(self) -> None:
         self.client.send(
@@ -296,7 +333,10 @@ class WorkerTests(unittest.TestCase):
 
         info = read_wav_info(Path(done["path"]))
         self.assertEqual(info.get("IKEY"), "choir;celesta;waterphone;drone")
-        self.assertIn("Instruments: choir, celesta, waterphone, drone", info.get("ICMT", ""))
+        self.assertEqual(
+            info.get("ICMT"),
+            "TrackType: Music, wordless choir, celesta glints, waterphone drone",
+        )
 
     def test_generate_embeds_category_intensity_and_instruments(self) -> None:
         self.client.send(
@@ -331,9 +371,10 @@ class WorkerTests(unittest.TestCase):
         self.assertEqual(info.get("ISBJ"), "Ancient Discovery")
         self.assertEqual(info.get("IART"), "I")
         self.assertEqual(info.get("IKEY"), "duduk;harp")
-        self.assertIn("Category: Ancient Discovery", info.get("ICMT", ""))
-        self.assertIn("Intensity: I", info.get("ICMT", ""))
-        self.assertIn("Instruments: duduk, harp", info.get("ICMT", ""))
+        self.assertEqual(
+            info.get("ICMT"),
+            "TrackType: Music, misty forest with duduk and harp",
+        )
 
     def test_generate_progress_includes_weaving_phase(self) -> None:
         self.client.send(
@@ -1102,6 +1143,58 @@ class StepProgressHookTests(unittest.TestCase):
         _cancel.set()
         with self.assertRaises(GenerationCancelled):
             hook({"i": 0})
+
+
+class WavInfoFieldsTests(unittest.TestCase):
+    """The generate prompt is stored in full on the WAV, not a truncated title."""
+
+    def test_icmt_keeps_the_full_prompt_past_the_old_limits(self) -> None:
+        from worker import _wav_info_fields
+
+        prompt = (
+            "TrackType: SFX, polished steel shortsword drawn from a worn oiled "
+            "leather scabbard, bright metallic ring, crisp attack, close mic, "
+            "dry studio, fast decay, isolated one-shot, no room tone. Length: 2 seconds"
+        )
+        self.assertGreater(len(prompt), 200)
+        fields = _wav_info_fields(prompt, [], "sfx")
+        self.assertEqual(fields["ICMT"], prompt)
+        self.assertLess(len(fields["INAM"]), len(prompt))
+        self.assertTrue(fields["INAM"].startswith("polished steel shortsword"))
+
+    def test_music_icmt_is_the_prompt_not_the_instrument_comment(self) -> None:
+        from worker import _wav_info_fields
+
+        prompt = "TrackType: Music, misty forest with duduk and harp"
+        fields = _wav_info_fields(
+            prompt,
+            ["duduk", "harp"],
+            "music",
+            category="Ancient Discovery",
+            intensity="I",
+        )
+        self.assertEqual(fields["ICMT"], prompt)
+        self.assertEqual(fields["IKEY"], "duduk;harp")
+        self.assertEqual(fields["ISBJ"], "Ancient Discovery")
+        self.assertEqual(fields["IART"], "I")
+        self.assertNotIn("Instruments:", fields["ICMT"])
+
+    def test_ab_pair_that_shares_a_first_clause_stays_distinct(self) -> None:
+        from worker import _wav_info_fields
+
+        terse = (
+            "TrackType: SFX, steel shortsword leaving a leather scabbard, "
+            "fast decay. Length: 2 seconds"
+        )
+        tagged = (
+            "TrackType: SFX, steel shortsword leaving a leather scabbard, "
+            "close mic, dry studio, fast decay. Length: 2 seconds"
+        )
+        a = _wav_info_fields(terse, [], "sfx")
+        b = _wav_info_fields(tagged, [], "sfx")
+        self.assertEqual(a["ICMT"], terse)
+        self.assertEqual(b["ICMT"], tagged)
+        self.assertNotEqual(a["ICMT"], b["ICMT"])
 
 
 if __name__ == "__main__":

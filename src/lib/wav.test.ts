@@ -46,7 +46,7 @@ describe('wav', () => {
     )
     const parsed = parseWav(tagged)
     expect(parsed.info?.instruments).toEqual(['lute', 'cello'])
-    expect(parsed.info?.comment).toBe('Instruments: lute, cello')
+    expect(parsed.info?.comment).toBe('TrackType: Music, lute and cello')
     expect(parsed.info?.software).toBe('Thunder FX')
     const trimmed = parseWav(trimWav(tagged, 0, 0.5))
     expect(trimmed.info?.instruments).toEqual(['lute', 'cello'])
@@ -68,7 +68,7 @@ describe('wav', () => {
     expect(parsed.info?.category).toBe('Mountain Mist')
     expect(parsed.info?.intensity).toBe('II')
     expect(parsed.info?.comment).toBe(
-      'Category: Mountain Mist · Intensity: II · Instruments: flute, harp',
+      'TrackType: Music, misty mountains with flute and harp',
     )
     expect(parsed.info?.genre).toBe('Instrumental')
     expect(parsed.info?.software).toBe('Thunder FX')

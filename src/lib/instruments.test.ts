@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { clipWavInfo, extractBpm, extractInstruments, musicWavInfo } from '@/lib/instruments'
+import { clipWavInfo, extractBpm, extractInstruments, musicWavInfo, promptFromWavInfo } from '@/lib/instruments'
 
 describe('extractInstruments', () => {
   it('finds named instruments in a music prompt', () => {
@@ -74,32 +74,49 @@ describe('clipWavInfo', () => {
     expect(info.genre).toBe('Ambience')
     expect(info.instruments).toEqual([])
     expect(info.title).toMatch(/heavy rain/i)
+    expect(info.comment).toBe('TrackType: SFX, heavy rain on cobblestone, steady bed')
+  })
+
+  it('binds the full generate prompt, not a shortened title', () => {
+    const prompt =
+      'TrackType: SFX, polished steel shortsword drawn from a worn oiled leather scabbard, bright metallic ring, crisp attack, close mic, dry studio, fast decay. Length: 2 seconds'
+    const info = clipWavInfo(prompt, 'sfx')
+    expect(info.comment).toBe(prompt)
+    expect(info.title!.length).toBeLessThan(prompt.length)
+    expect(promptFromWavInfo(info)).toBe(prompt)
   })
 })
 
 describe('musicWavInfo', () => {
   it('builds INFO fields for the WAV tag', () => {
-    const info = musicWavInfo('TrackType: Music, lute tavern theme')
+    const prompt = 'TrackType: Music, lute tavern theme'
+    const info = musicWavInfo(prompt)
     expect(info.instruments).toEqual(['lute'])
-    expect(info.comment).toBe('Instruments: lute')
+    expect(info.comment).toBe(prompt)
     expect(info.genre).toBe('Instrumental')
     expect(info.software).toBe('Thunder FX')
     expect(info.title).toMatch(/lute tavern theme/i)
   })
 
-  it('embeds category and intensity in INFO fields and comment', () => {
-    const info = musicWavInfo(
-      'TrackType: Music, ancient ruins with duduk and harp',
-      ['duduk', 'harp'],
-      'Ancient Discovery',
-      'I',
-    )
+  it('embeds category and intensity in INFO fields and keeps the full prompt in the comment', () => {
+    const prompt = 'TrackType: Music, ancient ruins with duduk and harp'
+    const info = musicWavInfo(prompt, ['duduk', 'harp'], 'Ancient Discovery', 'I')
     expect(info.instruments).toEqual(['duduk', 'harp'])
     expect(info.category).toBe('Ancient Discovery')
     expect(info.intensity).toBe('I')
-    expect(info.comment).toBe(
-      'Category: Ancient Discovery · Intensity: I · Instruments: duduk, harp',
-    )
+    expect(info.comment).toBe(prompt)
+    expect(promptFromWavInfo(info)).toBe(prompt)
+  })
+})
+
+describe('promptFromWavInfo', () => {
+  it('ignores leftover music metadata comments', () => {
+    expect(
+      promptFromWavInfo({
+        title: 'lute tavern theme',
+        comment: 'Category: Ancient Discovery · Intensity: I · Instruments: duduk, harp',
+      }),
+    ).toBe('lute tavern theme')
   })
 })
 

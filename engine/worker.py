@@ -640,25 +640,30 @@ def _wav_info_fields(
     fields = {"ISFT": "Thunder FX", "IGNR": genre}
     title = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).strip()
     if title:
+        # INAM is the Explorer title: keep it short. The generate prompt
+        # itself lives in ICMT so a library rescan can recover the wording
+        # that actually produced the clip — A/B pairs often differ after the
+        # first clause, which is all a truncated title would keep.
         fields["INAM"] = title[:120]
     if category:
         fields["ISBJ"] = category[:80]
     if intensity:
         fields["IART"] = intensity[:80]
-
-    comment_parts = []
-    if category and mode == "music":
-        comment_parts.append(f"Category: {category}")
-    if intensity and mode == "music":
-        comment_parts.append(f"Intensity: {intensity}")
     if instruments:
         fields["IKEY"] = ";".join(instruments)
-        comment_parts.append("Instruments: " + ", ".join(instruments))
 
-    if comment_parts:
-        fields["ICMT"] = " · ".join(comment_parts)
-    elif prompt:
-        fields["ICMT"] = prompt[:200]
+    if prompt:
+        fields["ICMT"] = prompt
+    else:
+        comment_parts = []
+        if category and mode == "music":
+            comment_parts.append(f"Category: {category}")
+        if intensity and mode == "music":
+            comment_parts.append(f"Intensity: {intensity}")
+        if instruments:
+            comment_parts.append("Instruments: " + ", ".join(instruments))
+        if comment_parts:
+            fields["ICMT"] = " · ".join(comment_parts)
 
     return fields
 

@@ -59,6 +59,19 @@ All notable Thunder FX changes are listed here.
   on the command ACL.
 - **First-run time estimates** use the NVMe hardware-reference load times (3.5 s FP16 / 5.2 s
   FP32). `python scripts/bench_estimates.py` reprints the README table from the same constants.
+- **Library and catalog search** use `useDeferredValue` and a lower-cased haystack built at
+  ingest, so typing does not rescan the catalog per keystroke. Taxonomy (category,
+  subcategory, intensity, instruments) is filled once when a clip is loaded.
+- **Clip cards are memoised** with stable callbacks, and closed catalog / takes / command
+  dialogs unmount instead of keeping their hooks on every Studio render.
+- **The waveform clock and progress bar** update from the animation frame, not from render, so
+  a moving playhead no longer restarts the goblin loop.
+- **The browser resampler** looks up a 1024-point Kaiser window instead of calling `besselI0`
+  per tap. `toArrayBuffer` reuses a whole-buffer `Uint8Array` view. IndexedDB keeps one open
+  connection. Zip packs stream entries and store already-compressed audio uncompressed.
+- **Vite** targets Chrome 120, splits react / radix / lucide, stamps `__BUILD_ID__` from the
+  git SHA, and can emit `dist/stats.html` via `npm run build:analyze`. The Rust release
+  profile uses thin LTO, one codegen unit, stripped symbols, and abort-on-panic.
 
 ### Fixed
 

@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { ScrollCanvas } from '@/components/ScrollCanvas'
 import { TooltipProvider } from '@/components/ui/tooltip'
@@ -42,7 +42,7 @@ describe('ScrollCanvas', () => {
     expect(screen.getByRole('status')).toHaveTextContent(/step 1 of 8/i)
   })
 
-  it('shows remaining time while generating', () => {
+  it('shows remaining time while generating', async () => {
     render(
       <TooltipProvider>
         <ScrollCanvas
@@ -55,10 +55,12 @@ describe('ScrollCanvas', () => {
         />
       </TooltipProvider>,
     )
-    expect(screen.getByRole('status')).toHaveTextContent(/~0:20 remaining/)
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent(/~0:20 remaining/)
+    })
   })
 
-  it('preserves continuous elapsed time when startedAt is provided across tab changes', () => {
+  it('preserves continuous elapsed time when startedAt is provided across tab changes', async () => {
     const startedAt = Date.now() - 15_000
     render(
       <TooltipProvider>
@@ -72,7 +74,9 @@ describe('ScrollCanvas', () => {
         />
       </TooltipProvider>,
     )
-    expect(screen.getByRole('status')).toHaveTextContent(/0:15(\.0)? elapsed/i)
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent(/0:15\.\d elapsed/i)
+    })
   })
 
   it('hides the loading bar when the waveform is idle', () => {
@@ -218,6 +222,23 @@ describe('ScrollCanvas', () => {
       </TooltipProvider>,
     )
     expect(screen.queryByText(/seed/i)).not.toBeInTheDocument()
+  })
+
+  it('does not restart the animation loop when the playhead moves', () => {
+    const cancel = vi.spyOn(window, 'cancelAnimationFrame')
+    const { rerender } = render(
+      <TooltipProvider>
+        <ScrollCanvas {...base} weaving rite={1} phase="weaving" />
+      </TooltipProvider>,
+    )
+    const cancelsAfterMount = cancel.mock.calls.length
+    rerender(
+      <TooltipProvider>
+        <ScrollCanvas {...base} weaving rite={1} phase="weaving" playhead={1.5} elapsedMs={500} />
+      </TooltipProvider>,
+    )
+    expect(cancel.mock.calls.length).toBe(cancelsAfterMount)
+    cancel.mockRestore()
   })
 
   it('hides goblin crew and displays waveform when individual wav is loaded', () => {

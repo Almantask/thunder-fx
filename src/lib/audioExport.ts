@@ -157,6 +157,8 @@ export function downmixToMono(pcm: Int16Array, channels: number): Int16Array {
  * worker's torchaudio resampler, but the browser build has only this.
  */
 const SINC_HALF_WIDTH = 16
+const KAISER_BETA = 8.6
+const KAISER_TABLE_SIZE = 1024
 
 function besselI0(x: number): number {
   // Series expansion; converges fast for the beta values used here.
@@ -170,6 +172,27 @@ function besselI0(x: number): number {
   return sum
 }
 
+function makeKaiserTable(beta: number, size: number): Float64Array {
+  const denom = besselI0(beta)
+  const table = new Float64Array(size + 1)
+  for (let i = 0; i <= size; i += 1) {
+    const t = i / size
+    table[i] = besselI0(beta * Math.sqrt(Math.max(0, 1 - t * t))) / denom
+  }
+  return table
+}
+
+const KAISER_WINDOW = makeKaiserTable(KAISER_BETA, KAISER_TABLE_SIZE)
+
+function kaiserWindow(t: number): number {
+  const at = Math.abs(t)
+  if (at >= 1) return 0
+  const x = at * KAISER_TABLE_SIZE
+  const i = Math.min(KAISER_TABLE_SIZE - 1, Math.floor(x))
+  const frac = x - i
+  return (KAISER_WINDOW[i] ?? 0) * (1 - frac) + (KAISER_WINDOW[i + 1] ?? 0) * frac
+}
+
 function resampleChannel(input: Float32Array, fromRate: number, toRate: number): Float32Array {
   if (fromRate === toRate || input.length === 0) return input
   const ratio = fromRate / toRate
@@ -180,9 +203,7 @@ function resampleChannel(input: Float32Array, fromRate: number, toRate: number):
   // Downsampling has to move the cutoff below the *output* Nyquist; upsampling
   // keeps the source Nyquist.
   const cutoff = ratio > 1 ? 1 / ratio : 1
-  const beta = 8.6 // ~ -90 dB stopband
   const halfWidth = Math.max(1, Math.round(SINC_HALF_WIDTH / cutoff))
-  const denom = besselI0(beta)
 
   for (let i = 0; i < outLen; i += 1) {
     const src = i * ratio
@@ -198,8 +219,7 @@ function resampleChannel(input: Float32Array, fromRate: number, toRate: number):
       if (t <= -1 || t >= 1) continue
       const px = Math.PI * x * cutoff
       const sinc = px === 0 ? cutoff : (Math.sin(px) / px) * cutoff
-      const window = besselI0(beta * Math.sqrt(1 - t * t)) / denom
-      const tap = sinc * window
+      const tap = sinc * kaiserWindow(t)
       acc += (input[idx] ?? 0) * tap
       norm += tap
     }

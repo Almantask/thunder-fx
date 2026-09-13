@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   EMPTY_FILTER,
+  EMPTY_META,
   addTag,
   clipDisplayName,
   filterClips,
@@ -35,6 +36,11 @@ function clip(id: string, prompt = 'a heavy iron door slams'): Clip {
 }
 
 describe('clipMeta', () => {
+  it('returns the same empty row for clips with no metadata', () => {
+    expect(getMeta({}, 'missing')).toBe(EMPTY_META)
+    expect(getMeta({}, 'also-missing')).toBe(getMeta({}, 'missing'))
+  })
+
   it('toggles a favourite on and back off', () => {
     let index: ClipMetaIndex = {}
     index = toggleFavorite(index, 'a')

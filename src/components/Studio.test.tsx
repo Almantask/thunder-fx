@@ -1,7 +1,7 @@
 /**
  * @vitest-environment jsdom
  */
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { describe, expect, it } from 'vitest'
 import { Studio } from '@/components/Studio'
@@ -162,7 +162,9 @@ describe('Studio', () => {
     await user.type(screen.getByRole('textbox', { name: 'Prompt' }), 'tavern door')
     await user.click(screen.getByRole('button', { name: /generate sound/i }))
     expect(await screen.findByRole('progressbar', { name: /generation progress/i })).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent(/~0:\d{2} remaining/)
+    await waitFor(() => {
+      expect(screen.getByRole('status')).toHaveTextContent(/~0:\d{2} remaining/)
+    })
     expect(
       await screen.findByRole('button', { name: /generate sound/i }, { timeout: 15000 }),
     ).toBeInTheDocument()

@@ -3,6 +3,8 @@ import { deriveTakeSeed } from '@/lib/seed'
 import {
   catalogFromFiles,
   clampQueueTakes,
+  clipSearchHaystack,
+  enrichClipTaxonomy,
   expandEffectTakes,
   expandTakes,
   formatIntensityLabel,
@@ -197,6 +199,32 @@ describe('queue helpers', () => {
     const [first] = catalog[0]?.effects ?? []
     expect(first).toBeDefined()
     expect(expandEffectTakes(first!, 1)).toEqual([first])
+  })
+
+  it('builds a lower-cased search haystack at ingest', () => {
+    const catalog = catalogFromFiles({ '/prompts/combat.md': combatMd })
+    const [first] = catalog[0]?.effects ?? []
+    expect(first).toBeDefined()
+    expect(first!.searchHaystack).toContain(first!.title.toLowerCase())
+    expect(first!.searchHaystack).toContain(first!.prompt.toLowerCase())
+  })
+
+  it('fills missing taxonomy on a clip once at ingest', () => {
+    const catalog = catalogFromFiles({ '/prompts/combat.md': combatMd })
+    const [first] = catalog[0]?.effects ?? []
+    const clip = enrichClipTaxonomy({
+      id: 'legacy',
+      prompt: first!.prompt,
+      duration: 1,
+      seed: 1,
+      createdAt: '2026-01-01T00:00:00.000Z',
+      cfg: 1,
+      negative: '',
+      mode: 'sfx',
+    })
+    expect(clip.category).toBeTruthy()
+    expect(clipSearchHaystack(clip)).toContain(clip.category!.toLowerCase())
+    expect(enrichClipTaxonomy(clip)).toBe(clip)
   })
 
   it('expands an effect into distinct, seeded take entries', () => {

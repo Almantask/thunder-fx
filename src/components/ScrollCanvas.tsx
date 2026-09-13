@@ -84,6 +84,18 @@ export function ScrollCanvas({
   const modeRef = useRef(mode)
   const startedAtRef = useRef(startedAt)
   const completedCountRef = useRef(completedSubcategoryCount)
+  const playheadRef = useRef(playhead)
+  const trimStartRef = useRef(trimStart)
+  const trimEndRef = useRef(trimEnd)
+  const durationRef = useRef(duration)
+  const elapsedRef = useRef(elapsedMs)
+  const totalRitesRef = useRef(totalRites)
+  playheadRef.current = playhead
+  trimStartRef.current = trimStart
+  trimEndRef.current = trimEnd
+  durationRef.current = duration
+  elapsedRef.current = elapsedMs
+  totalRitesRef.current = totalRites
 
   const targetVisualState: GoblinVisualState = loadingModel
     ? 'loading'
@@ -165,69 +177,64 @@ export function ScrollCanvas({
 
   const barIndicatorRef = useRef<HTMLDivElement>(null)
 
-  const barValue = weaveBarPercent({
-    step: rite,
-    total: totalRites,
-    phase,
-    ratio,
-    elapsedMs,
-    historicalEstimateMs,
-    queueTailEstimateMs,
-    remainingMs: remainingAt?.(Date.now()),
-  })
-
   useEffect(() => {
     peaksRef.current = wav ? waveformPeaks(wav, 240) : { min: new Float32Array(0), max: new Float32Array(0) }
   }, [wav])
 
   const shouldAnimate = busy || targetVisualState !== 'hidden' || transitionRef.current !== null
 
-  useEffect(() => {
-    if (!shouldAnimate && visualStateRef.current === 'hidden' && !transitionRef.current) {
-      const canvas = canvasRef.current
-      if (!canvas) return
-      const ctx = canvas.getContext('2d')
-      if (!ctx) return
-      const { width, height } = canvas
-      ctx.clearRect(0, 0, width, height)
-      ctx.fillStyle = '#16110d'
-      ctx.fillRect(0, 0, width, height)
-      const peaks = peaksRef.current
-      const mid = height / 2
-      if (!peaks.max.length) return
-      const bar = width / peaks.max.length
-      ctx.fillStyle = '#c4a35a'
-      for (let i = 0; i < peaks.max.length; i += 1) {
-        const hi = Math.max(0, peaks.max[i] ?? 0) * (height * 0.39)
-        const lo = Math.max(0, -(peaks.min[i] ?? 0)) * (height * 0.39)
-        const top = mid - Math.max(1, hi)
-        const h = Math.max(2, hi + lo)
-        ctx.globalAlpha = 0.85
-        ctx.fillRect(i * bar, top, Math.max(1, bar - 1), h)
-      }
-      ctx.globalAlpha = 1
-      const x0 = (trimStart / duration) * width
-      const x1 = (trimEnd / duration) * width
-      ctx.fillStyle = 'rgba(228, 195, 106, 0.16)'
-      ctx.fillRect(x0, 0, x1 - x0, height)
-      ctx.fillStyle = '#e4c36a'
-      ctx.fillRect(x0 - 1, 0, 3, height)
-      ctx.fillRect(x1 - 1, 0, 3, height)
-      const px = (playhead / duration) * width
-      ctx.fillStyle = '#f3e6c8'
-      ctx.fillRect(px, 0, 2, height)
-      return
+  function drawStaticWaveform(ctx: CanvasRenderingContext2D, width: number, height: number) {
+    ctx.clearRect(0, 0, width, height)
+    ctx.fillStyle = '#16110d'
+    ctx.fillRect(0, 0, width, height)
+    const peaks = peaksRef.current
+    const mid = height / 2
+    if (!peaks.max.length) return
+    const bar = width / peaks.max.length
+    ctx.fillStyle = '#c4a35a'
+    for (let i = 0; i < peaks.max.length; i += 1) {
+      const hi = Math.max(0, peaks.max[i] ?? 0) * (height * 0.39)
+      const lo = Math.max(0, -(peaks.min[i] ?? 0)) * (height * 0.39)
+      const top = mid - Math.max(1, hi)
+      const h = Math.max(2, hi + lo)
+      ctx.globalAlpha = 0.85
+      ctx.fillRect(i * bar, top, Math.max(1, bar - 1), h)
     }
+    ctx.globalAlpha = 1
+    const dur = durationRef.current || 1
+    const x0 = (trimStartRef.current / dur) * width
+    const x1 = (trimEndRef.current / dur) * width
+    ctx.fillStyle = 'rgba(228, 195, 106, 0.16)'
+    ctx.fillRect(x0, 0, x1 - x0, height)
+    ctx.fillStyle = '#e4c36a'
+    ctx.fillRect(x0 - 1, 0, 3, height)
+    ctx.fillRect(x1 - 1, 0, 3, height)
+    const px = (playheadRef.current / dur) * width
+    ctx.fillStyle = '#f3e6c8'
+    ctx.fillRect(px, 0, 2, height)
+  }
+
+  useEffect(() => {
+    if (shouldAnimate) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    if (!ctx) return
+    drawStaticWaveform(ctx, canvas.width, canvas.height)
+  }, [shouldAnimate, wav, playhead, trimStart, trimEnd, duration])
+
+  useEffect(() => {
+    if (!shouldAnimate) return
 
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
-    const localStart =
-      startedAtRef.current && startedAtRef.current > 0
-        ? startedAtRef.current
-        : Date.now() - (elapsedMs || 0)
     let raf = 0
     const tick = () => {
+      const localStart =
+        startedAtRef.current && startedAtRef.current > 0
+          ? startedAtRef.current
+          : Date.now() - (elapsedRef.current || 0)
       const localElapsed = Math.max(0, Date.now() - localStart)
       const { width, height } = canvas
       ctx.clearRect(0, 0, width, height)
@@ -262,7 +269,7 @@ export function ScrollCanvas({
         height,
         elapsedMs: localElapsed,
         rite: riteRef.current,
-        totalRites,
+        totalRites: totalRitesRef.current,
         phase: phaseRef.current,
         mode: modeRef.current,
         completedCount: completedCountRef.current,
@@ -277,7 +284,7 @@ export function ScrollCanvas({
         const remainingMs = remainingRef.current?.(now)
         const pct = weaveBarPercent({
           step: riteRef.current,
-          total: totalRites,
+          total: totalRitesRef.current,
           phase: phaseRef.current,
           ratio: ratioRef.current,
           elapsedMs: localElapsed,
@@ -292,7 +299,7 @@ export function ScrollCanvas({
           statusRef.current.textContent = weaveBusyStatus({
             phase: phaseRef.current,
             rite: riteRef.current,
-            total: totalRites,
+            total: totalRitesRef.current,
             elapsedMs: localElapsed,
             ratio: ratioRef.current,
             historicalEstimateMs: etaRef.current,
@@ -307,17 +314,7 @@ export function ScrollCanvas({
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [
-    shouldAnimate,
-    busy,
-    totalRites,
-    elapsedMs,
-    duration,
-    trimStart,
-    trimEnd,
-    playhead,
-    wav,
-  ])
+  }, [shouldAnimate, busy, wav])
 
   const dragging = useRef<'start' | 'end' | 'seek' | null>(null)
 
@@ -372,18 +369,7 @@ export function ScrollCanvas({
             }
           >
             <p role="status" aria-live="polite" className="font-mono text-xs text-amber">
-              <span ref={statusRef}>
-                {weaveBusyStatus({
-                  phase: loadingModel ? 'loading' : phase,
-                  rite,
-                  total: totalRites,
-                  elapsedMs,
-                  ratio,
-                  historicalEstimateMs,
-                  queueTailEstimateMs,
-                  remainingMs: remainingAt?.(Date.now()),
-                })}
-              </span>
+              <span ref={statusRef} />
               <span className="sr-only">
                 {loadingModel || phase === 'loading'
                   ? 'Loading model'
@@ -417,9 +403,8 @@ export function ScrollCanvas({
         >
           <Progress
             className="w-full"
-            value={barValue ?? 0}
             indicatorRef={barIndicatorRef}
-            indeterminate={barValue == null}
+            indeterminate={false}
             mode={mode}
             aria-label={loadingModel ? 'Model load progress' : 'Generation progress'}
           />

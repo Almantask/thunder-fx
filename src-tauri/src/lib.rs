@@ -1,7 +1,7 @@
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde::{Deserialize, Serialize};
-use std::fs::OpenOptions;
-use std::io::{BufRead, BufReader, Write};
+use std::fs::{File, OpenOptions};
+use std::io::{copy, BufRead, BufReader, Write};
 use std::path::{Component, Path, PathBuf};
 use std::process::{Child, ChildStdin, Command, Stdio};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -1080,6 +1080,22 @@ struct ZipEntry {
     dest: String,
 }
 
+fn zip_compression_for(name: &str) -> zip::CompressionMethod {
+    let lower = name.to_ascii_lowercase();
+    if lower.ends_with(".wav")
+        || lower.ends_with(".aiff")
+        || lower.ends_with(".aif")
+        || lower.ends_with(".flac")
+        || lower.ends_with(".opus")
+        || lower.ends_with(".ogg")
+        || lower.ends_with(".mp3")
+    {
+        zip::CompressionMethod::Stored
+    } else {
+        zip::CompressionMethod::Deflated
+    }
+}
+
 fn write_zip_archive(
     entries: Vec<ZipEntry>,
     dest: &Path,
@@ -1090,16 +1106,18 @@ fn write_zip_archive(
     }
     let file = std::fs::File::create(dest).map_err(|e| fail(e.to_string()))?;
     let mut zip = zip::ZipWriter::new(file);
-    let options = zip::write::SimpleFileOptions::default()
-        .compression_method(zip::CompressionMethod::Deflated);
     for entry in entries {
-        let bytes = std::fs::read(&entry.src).map_err(|e| fail(e.to_string()))?;
         let name = entry.dest.replace('\\', "/");
-        zip.start_file(name, options)
+        let options =
+            zip::write::SimpleFileOptions::default().compression_method(zip_compression_for(&name));
+        zip.start_file(&name, options)
             .map_err(|e| fail(e.to_string()))?;
-        zip.write_all(&bytes).map_err(|e| fail(e.to_string()))?;
+        let mut src = File::open(&entry.src).map_err(|e| fail(e.to_string()))?;
+        copy(&mut src, &mut zip).map_err(|e| fail(e.to_string()))?;
     }
     if let Some(body) = manifest {
+        let options = zip::write::SimpleFileOptions::default()
+            .compression_method(zip::CompressionMethod::Deflated);
         zip.start_file("manifest.json", options)
             .map_err(|e| fail(e.to_string()))?;
         zip.write_all(body.as_bytes())
@@ -2222,6 +2240,16 @@ mod tests {
         )
         .unwrap();
         assert!(dest.metadata().unwrap().len() > 20);
+        let archive_file = File::open(&dest).unwrap();
+        let mut archive = zip::ZipArchive::new(archive_file).unwrap();
+        {
+            let wav = archive.by_name("SFX_Combat_Sword_01.wav").unwrap();
+            assert_eq!(wav.compression(), zip::CompressionMethod::Stored);
+        }
+        {
+            let manifest = archive.by_name("manifest.json").unwrap();
+            assert_eq!(manifest.compression(), zip::CompressionMethod::Deflated);
+        }
         let _ = std::fs::remove_dir_all(&dir);
     }
 

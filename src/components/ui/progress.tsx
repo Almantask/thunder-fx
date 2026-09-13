@@ -32,7 +32,11 @@ function Progress({
           isMusic ? 'progress-bar-music' : 'progress-bar-fx',
           indeterminate ? 'progress-indeterminate' : 'magic-shimmer',
         )}
-        style={indeterminate ? undefined : { transform: `translateX(-${100 - (value ?? 0)}%)` }}
+        style={
+          indeterminate || indicatorRef
+            ? undefined
+            : { transform: `translateX(-${100 - (value ?? 0)}%)` }
+        }
       >
         {/* Leading edge spark flare */}
         <div

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useDeferredValue, useMemo, useState } from 'react'
 import { ChevronRight } from 'lucide-react'
 import { Hint } from '@/components/Hint'
 import { Button } from '@/components/ui/button'
@@ -58,6 +58,7 @@ export function PromptCatalogDialog({
   const [collapsedSubcategories, setCollapsedSubcategories] = useState<Set<string>>(new Set())
   const [openIntensities, setOpenIntensities] = useState<Set<string>>(new Set())
   const [query, setQuery] = useState('')
+  const deferredQuery = useDeferredValue(query)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [previewId, setPreviewId] = useState<string | null>(null)
   // Kept as free text while typing (so clearing the field doesn't snap back
@@ -68,7 +69,7 @@ export function PromptCatalogDialog({
   const libraryCategories = catalog.filter((c) => c.library === library)
   const category = libraryCategories.find((c) => c.id === categoryId) ?? libraryCategories[0]
 
-  const isSearching = query.trim().length > 0
+  const isSearching = deferredQuery.trim().length > 0
 
   const availableInstruments = useMemo(() => {
     if (library !== 'music') return []
@@ -138,9 +139,11 @@ export function PromptCatalogDialog({
         return e.instruments.some((inst) => selectedInstruments.has(inst))
       })
     }
-    const q = query.trim().toLowerCase()
+    const q = deferredQuery.trim().toLowerCase()
     if (!q) return effects
     return effects.filter((effect) => {
+      const haystack = effect.searchHaystack
+      if (haystack) return haystack.includes(q)
       if (effect.title.toLowerCase().includes(q)) return true
       if (effect.prompt.toLowerCase().includes(q)) return true
       if (effect.category && effect.category.toLowerCase().includes(q)) return true
@@ -158,7 +161,7 @@ export function PromptCatalogDialog({
     })
   }, [
     category,
-    query,
+    deferredQuery,
     selectedSubcategory,
     selectedInstruments,
     instrumentMatchMode,

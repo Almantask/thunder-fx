@@ -175,3 +175,15 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   so a take set of four reproduces from the Advanced seed field (or one catalog parent).
   Pin `torch.manual_seed` / a CUDA `Generator` per generation; the library still draws with
   global `torch.randn` when it ignores the generator kwarg.
+- **PQ-36 search.** `useDeferredValue` is enough; a 150 ms debounce would lag the input. The
+  haystack has to be built at catalog parse / clip ingest — lower-casing title+prompt+tags
+  per keystroke was the cost, not the `.includes` itself.
+- **PQ-38 ScrollCanvas.** The remaining-time string and the progress transform must not be
+  React state: putting `playhead` or `elapsedMs` on the rAF effect restarts the goblin loop
+  on every tick. Read those from refs inside the frame. `Progress` needs an `indicatorRef`
+  so React does not fight the imperative `translateX`.
+- **PQ-47 write_file.** Tauri `Request::body()` only lends `&InvokeBody`, so `spawn_blocking`
+  still needs an owned `Vec`. Skipping the clone needs a Tauri API that yields the body by
+  value. The TypeScript `toArrayBuffer` whole-buffer reuse is the half that ships now.
+- **PQ-53 release profile.** `panic = "abort"` is what the backlog asked for. A panic in a
+  plugin then takes the process down instead of unwinding; that is the size/start trade.

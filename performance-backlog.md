@@ -105,58 +105,58 @@ are closed.
 
 ### C. Frontend rendering and state
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-28** | [Take the playhead out of React state](#pq-28-take-the-playhead-out-of-react-state) | Perf | High | M |
-| **PQ-29** | [One progress state object per engine event](#pq-29-one-progress-state-object-per-engine-event) | Perf | High | S |
-| **PQ-30** | [Stop re-parsing the whole WAV on every Studio render](#pq-30-stop-re-parsing-the-whole-wav-on-every-studio-render) | Perf | High | S |
-| **PQ-31** | [Split `Studio.tsx` into feature hooks and contexts](#pq-31-split-studiotsx-into-feature-hooks-and-contexts) | Health | High | L |
-| **PQ-32** | [Engine status poll: stop colliding with a busy engine](#pq-32-engine-status-poll-stop-colliding-with-a-busy-engine) | Reliability | High | S |
-| **PQ-33** | [Canvas at device resolution, sized by a `ResizeObserver`](#pq-33-canvas-at-device-resolution-sized-by-a-resizeobserver) | Perf | Medium | M |
-| **PQ-34** | [Layer the waveform canvas and stop animating when nothing moves](#pq-34-layer-the-waveform-canvas-and-stop-animating-when-nothing-moves) | Perf | Medium | M |
-| **PQ-35** | [Virtualise the library and catalog lists](#pq-35-virtualise-the-library-and-catalog-lists) | Perf | Medium | M |
-| **PQ-36** | [Debounced search over a precomputed index](#pq-36-debounced-search-over-a-precomputed-index) | Perf | Medium | S |
-| **PQ-37** | [Infer category, subcategory and intensity once, at ingest](#pq-37-infer-category-subcategory-and-intensity-once-at-ingest) | Perf | Medium | S |
-| **PQ-38** | [Pure renders: no `Date.now()` in JSX, no playhead in effect deps](#pq-38-pure-renders-no-datenow-in-jsx-no-playhead-in-effect-deps) | Health | Low | S |
-| **PQ-39** | [A memoised `ClipCard` with selection out of the card props](#pq-39-a-memoised-clipcard-with-selection-out-of-the-card-props) | Perf | Medium | S |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-28** | [Take the playhead out of React state](#pq-28-take-the-playhead-out-of-react-state) | Perf | High | M | |
+| **PQ-29** | [One progress state object per engine event](#pq-29-one-progress-state-object-per-engine-event) | Perf | High | S | **Done** |
+| **PQ-30** | [Stop re-parsing the whole WAV on every Studio render](#pq-30-stop-re-parsing-the-whole-wav-on-every-studio-render) | Perf | High | S | **Done** |
+| **PQ-31** | [Split `Studio.tsx` into feature hooks and contexts](#pq-31-split-studiotsx-into-feature-hooks-and-contexts) | Health | High | L | |
+| **PQ-32** | [Engine status poll: stop colliding with a busy engine](#pq-32-engine-status-poll-stop-colliding-with-a-busy-engine) | Reliability | High | S | **Done** |
+| **PQ-33** | [Canvas at device resolution, sized by a `ResizeObserver`](#pq-33-canvas-at-device-resolution-sized-by-a-resizeobserver) | Perf | Medium | M | |
+| **PQ-34** | [Layer the waveform canvas and stop animating when nothing moves](#pq-34-layer-the-waveform-canvas-and-stop-animating-when-nothing-moves) | Perf | Medium | M | |
+| **PQ-35** | [Virtualise the library and catalog lists](#pq-35-virtualise-the-library-and-catalog-lists) | Perf | Medium | M | |
+| **PQ-36** | [Debounced search over a precomputed index](#pq-36-debounced-search-over-a-precomputed-index) | Perf | Medium | S | **Done** |
+| **PQ-37** | [Infer category, subcategory and intensity once, at ingest](#pq-37-infer-category-subcategory-and-intensity-once-at-ingest) | Perf | Medium | S | **Done (JS ingest)** |
+| **PQ-38** | [Pure renders: no `Date.now()` in JSX, no playhead in effect deps](#pq-38-pure-renders-no-datenow-in-jsx-no-playhead-in-effect-deps) | Health | Low | S | **Done** |
+| **PQ-39** | [A memoised `ClipCard` with selection out of the card props](#pq-39-a-memoised-clipcard-with-selection-out-of-the-card-props) | Perf | Medium | S | **Done** |
 
 ### D. Audio data path and memory
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-40** | [`parseWav` must not copy the PCM](#pq-40-parsewav-must-not-copy-the-pcm) | Perf | High | S |
-| **PQ-41** | [One shared `AudioContext`; build buffers from the PCM you already have](#pq-41-one-shared-audiocontext-build-buffers-from-the-pcm-you-already-have) | Perf | High | M |
-| **PQ-42** | [Play and preview through the asset protocol, not through the IPC](#pq-42-play-and-preview-through-the-asset-protocol-not-through-the-ipc) | Perf | High | M |
-| **PQ-43** | [An undo stack of operations, not of whole WAV files](#pq-43-an-undo-stack-of-operations-not-of-whole-wav-files) | Perf | Medium | M |
-| **PQ-44** | [Move DSP off the main thread](#pq-44-move-dsp-off-the-main-thread) | Perf | Medium | L |
-| **PQ-45** | [Precompute the Kaiser window in the browser resampler](#pq-45-precompute-the-kaiser-window-in-the-browser-resampler) | Perf | Medium | S |
-| **PQ-46** | [Export from the file on disk, not from bytes pushed back out of the webview](#pq-46-export-from-the-file-on-disk-not-from-bytes-pushed-back-out-of-the-webview) | Perf | Medium | M |
-| **PQ-47** | [`write_file` and `toArrayBuffer` without the extra copy](#pq-47-write_file-and-toarraybuffer-without-the-extra-copy) | Perf | Medium | S |
-| **PQ-48** | [Trim and tag in Rust so long clips never enter JavaScript](#pq-48-trim-and-tag-in-rust-so-long-clips-never-enter-javascript) | Perf | Medium | M |
-| **PQ-49** | [Stream pack exports instead of holding every clip in memory](#pq-49-stream-pack-exports-instead-of-holding-every-clip-in-memory) | Perf | Medium | M |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-40** | [`parseWav` must not copy the PCM](#pq-40-parsewav-must-not-copy-the-pcm) | Perf | High | S | **Done** |
+| **PQ-41** | [One shared `AudioContext`; build buffers from the PCM you already have](#pq-41-one-shared-audiocontext-build-buffers-from-the-pcm-you-already-have) | Perf | High | M | |
+| **PQ-42** | [Play and preview through the asset protocol, not through the IPC](#pq-42-play-and-preview-through-the-asset-protocol-not-through-the-ipc) | Perf | High | M | |
+| **PQ-43** | [An undo stack of operations, not of whole WAV files](#pq-43-an-undo-stack-of-operations-not-of-whole-wav-files) | Perf | Medium | M | |
+| **PQ-44** | [Move DSP off the main thread](#pq-44-move-dsp-off-the-main-thread) | Perf | Medium | L | |
+| **PQ-45** | [Precompute the Kaiser window in the browser resampler](#pq-45-precompute-the-kaiser-window-in-the-browser-resampler) | Perf | Medium | S | **Done** |
+| **PQ-46** | [Export from the file on disk, not from bytes pushed back out of the webview](#pq-46-export-from-the-file-on-disk-not-from-bytes-pushed-back-out-of-the-webview) | Perf | Medium | M | |
+| **PQ-47** | [`write_file` and `toArrayBuffer` without the extra copy](#pq-47-write_file-and-toarraybuffer-without-the-extra-copy) | Perf | Medium | S | **Done (TS)** |
+| **PQ-48** | [Trim and tag in Rust so long clips never enter JavaScript](#pq-48-trim-and-tag-in-rust-so-long-clips-never-enter-javascript) | Perf | Medium | M | |
+| **PQ-49** | [Stream pack exports instead of holding every clip in memory](#pq-49-stream-pack-exports-instead-of-holding-every-clip-in-memory) | Perf | Medium | M | |
 
 ### E. Startup and bundle
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-50** | [Take 6.6 MB of prompt markdown out of the main bundle](#pq-50-take-66-mb-of-prompt-markdown-out-of-the-main-bundle) | Perf | High | M |
-| **PQ-51** | [Lazy-load dialogs, onboarding, Settings and the goblin renderer](#pq-51-lazy-load-dialogs-onboarding-settings-and-the-goblin-renderer) | Perf | High | M |
-| **PQ-52** | [A build configuration that knows about chunks, targets and budgets](#pq-52-a-build-configuration-that-knows-about-chunks-targets-and-budgets) | Perf | Medium | S |
-| **PQ-53** | [A Rust release profile](#pq-53-a-rust-release-profile) | Perf | Medium | S |
-| **PQ-54** | [Unmount closed dialogs](#pq-54-unmount-closed-dialogs) | Perf | Low | S |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-50** | [Take 6.6 MB of prompt markdown out of the main bundle](#pq-50-take-66-mb-of-prompt-markdown-out-of-the-main-bundle) | Perf | High | M | |
+| **PQ-51** | [Lazy-load dialogs, onboarding, Settings and the goblin renderer](#pq-51-lazy-load-dialogs-onboarding-settings-and-the-goblin-renderer) | Perf | High | M | |
+| **PQ-52** | [A build configuration that knows about chunks, targets and budgets](#pq-52-a-build-configuration-that-knows-about-chunks-targets-and-budgets) | Perf | Medium | S | **Done** |
+| **PQ-53** | [A Rust release profile](#pq-53-a-rust-release-profile) | Perf | Medium | S | **Done** |
+| **PQ-54** | [Unmount closed dialogs](#pq-54-unmount-closed-dialogs) | Perf | Low | S | **Done** |
 
 ### F. Library, metadata and filesystem
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-55** | [A single-pass library scan with a cache](#pq-55-a-single-pass-library-scan-with-a-cache) | Perf | High | M |
-| **PQ-56** | [Atomic, debounced writes for the meta, trash and scope files](#pq-56-atomic-debounced-writes-for-the-meta-trash-and-scope-files) | Reliability | High | S |
-| **PQ-57** | [Trash sweep in the background, on the same volume](#pq-57-trash-sweep-in-the-background-on-the-same-volume) | Reliability | Medium | S |
-| **PQ-58** | [Watch the library folder instead of rescanning it](#pq-58-watch-the-library-folder-instead-of-rescanning-it) | Perf | Medium | M |
-| **PQ-59** | [A typed clip record filled from the RIFF tags on scan](#pq-59-a-typed-clip-record-filled-from-the-riff-tags-on-scan) | Reliability | Medium | S |
-| **PQ-60** | [Prune metadata rows whose audio is gone](#pq-60-prune-metadata-rows-whose-audio-is-gone) | Health | Low | S |
-| **PQ-61** | [Cache the IndexedDB connection in the browser build](#pq-61-cache-the-indexeddb-connection-in-the-browser-build) | Perf | Low | S |
-| **PQ-62** | [Stream zip entries; store compressed audio uncompressed](#pq-62-stream-zip-entries-store-compressed-audio-uncompressed) | Perf | Medium | S |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-55** | [A single-pass library scan with a cache](#pq-55-a-single-pass-library-scan-with-a-cache) | Perf | High | M | |
+| **PQ-56** | [Atomic, debounced writes for the meta, trash and scope files](#pq-56-atomic-debounced-writes-for-the-meta-trash-and-scope-files) | Reliability | High | S | **Done** |
+| **PQ-57** | [Trash sweep in the background, on the same volume](#pq-57-trash-sweep-in-the-background-on-the-same-volume) | Reliability | Medium | S | |
+| **PQ-58** | [Watch the library folder instead of rescanning it](#pq-58-watch-the-library-folder-instead-of-rescanning-it) | Perf | Medium | M | |
+| **PQ-59** | [A typed clip record filled from the RIFF tags on scan](#pq-59-a-typed-clip-record-filled-from-the-riff-tags-on-scan) | Reliability | Medium | S | |
+| **PQ-60** | [Prune metadata rows whose audio is gone](#pq-60-prune-metadata-rows-whose-audio-is-gone) | Health | Low | S | |
+| **PQ-61** | [Cache the IndexedDB connection in the browser build](#pq-61-cache-the-indexeddb-connection-in-the-browser-build) | Perf | Low | S | **Done** |
+| **PQ-62** | [Stream zip entries; store compressed audio uncompressed](#pq-62-stream-zip-entries-store-compressed-audio-uncompressed) | Perf | Medium | S | **Done** |
 
 ### G. Rust shell: process, IPC, permissions
 
@@ -1681,6 +1681,17 @@ Delivered items, kept for the record.
 | **PQ-10** | Master on the GPU with one device-to-host copy | Unreleased (engine S-wave) |
 | **PQ-13** | Progress emit budget, and report the real output length | Unreleased (engine S-wave) |
 | **PQ-15** | Seeds: CUDA generator and derived per-take seeds | Unreleased (engine S-wave) |
+| **PQ-36** | Debounced search over a precomputed index | Unreleased (frontend/startup S-wave) |
+| **PQ-37** | Infer category, subcategory and intensity once, at ingest | Unreleased (JS ingest; RIFF write is PQ-59) |
+| **PQ-38** | Pure renders: no `Date.now()` in JSX, no playhead in effect deps | Unreleased (frontend/startup S-wave) |
+| **PQ-39** | A memoised `ClipCard` with selection out of the card props | Unreleased (frontend/startup S-wave) |
+| **PQ-45** | Precompute the Kaiser window in the browser resampler | Unreleased (frontend/startup S-wave) |
+| **PQ-47** | `write_file` and `toArrayBuffer` without the extra copy | Unreleased (TS `toArrayBuffer`; Rust body still clones) |
+| **PQ-52** | A build configuration that knows about chunks, targets and budgets | Unreleased (frontend/startup S-wave) |
+| **PQ-53** | A Rust release profile | Unreleased (frontend/startup S-wave) |
+| **PQ-54** | Unmount closed dialogs | Unreleased (frontend/startup S-wave) |
+| **PQ-61** | Cache the IndexedDB connection in the browser build | Unreleased (frontend/startup S-wave) |
+| **PQ-62** | Stream zip entries; store compressed audio uncompressed | Unreleased (frontend/startup S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

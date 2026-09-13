@@ -160,8 +160,11 @@ function withMeta(index: ClipMetaIndex, id: string, patch: ClipMeta): ClipMetaIn
   return next
 }
 
+/** Shared empty row so cards without metadata keep a stable prop identity. */
+export const EMPTY_META: ClipMeta = Object.freeze({})
+
 export function getMeta(index: ClipMetaIndex, id: string): ClipMeta {
-  return index[id] ?? {}
+  return index[id] ?? EMPTY_META
 }
 
 export function toggleFavorite(index: ClipMetaIndex, id: string): ClipMetaIndex {

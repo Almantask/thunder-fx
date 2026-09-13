@@ -28,6 +28,8 @@ export type CatalogEffect = {
   negative: string
   intensity?: string
   instruments?: string[]
+  /** Lower-cased haystack built at ingest so search does not re-scan fields. */
+  searchHaystack?: string
   /** Explicit seed for this queue entry. Set when queueing more than one take so each take is a distinct variation, regardless of the Generate console's seed field. */
   seed?: number
   /** Parent of derived take seeds. A take set of four reproduces from this one number. */
@@ -41,6 +43,67 @@ export type PromptCategory = {
   library: PromptLibrary
   name: string
   effects: CatalogEffect[]
+}
+
+export function catalogSearchHaystack(effect: {
+  title: string
+  prompt: string
+  category?: string
+  subcategory?: string
+  instruments?: string[]
+}): string {
+  return [
+    effect.title,
+    effect.prompt,
+    effect.category,
+    effect.subcategory,
+    ...(effect.instruments ?? []),
+  ]
+    .filter((part): part is string => Boolean(part && part.trim()))
+    .join('\n')
+    .toLowerCase()
+}
+
+export function clipSearchHaystack(
+  clip: Clip,
+  extra: { displayName?: string; tags?: string[] } = {},
+): string {
+  return [
+    clip.prompt,
+    extra.displayName,
+    clip.category,
+    clip.subcategory,
+    clip.intensity,
+    ...(clip.instruments ?? []),
+    ...(extra.tags ?? []),
+  ]
+    .filter((part): part is string => Boolean(part && part.trim()))
+    .join('\n')
+    .toLowerCase()
+}
+
+/** Fill taxonomy fields once so render/search paths do not scan the catalog. */
+export function enrichClipTaxonomy(clip: Clip): Clip {
+  const category = inferClipCategory(clip)
+  const withCategory = clip.category === category ? clip : { ...clip, category }
+  const subcategory = inferClipSubcategory(withCategory)
+  const mode = clipMode(withCategory)
+  const intensity =
+    mode === 'music' || mode === 'ambience'
+      ? inferClipIntensity(withCategory)
+      : withCategory.intensity
+  const instruments = withCategory.instruments?.length
+    ? withCategory.instruments
+    : extractInstruments(withCategory.prompt)
+  if (
+    withCategory.category === category &&
+    withCategory.subcategory === subcategory &&
+    withCategory.intensity === intensity &&
+    withCategory.instruments === instruments
+  ) {
+    return withCategory
+  }
+  return { ...withCategory, category, subcategory, intensity, instruments }
 }
 
 const DURATION = /duration:\s*(\d+(?:\.\d+)?)\s*s\b/i
@@ -146,6 +209,13 @@ export function parsePromptMarkdown(path: string, markdown: string): PromptCateg
       negative: parseNegative(body),
       intensity,
       instruments: effectInstruments,
+      searchHaystack: catalogSearchHaystack({
+        title,
+        prompt,
+        category: name,
+        subcategory: effectSubcategory,
+        instruments: effectInstruments,
+      }),
     })
   }
   return { id, library, name, effects }

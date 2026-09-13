@@ -6,21 +6,29 @@ import { readFileBytes } from '@/lib/tauriFs'
 const DB_NAME = 'thunder-fx'
 const DB_VERSION = 1
 
+let dbPromise: Promise<IDBDatabase> | undefined
+
 function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION)
-    req.onupgradeneeded = () => {
-      const db = req.result
-      if (!db.objectStoreNames.contains('clips')) {
-        db.createObjectStore('clips', { keyPath: 'id' })
+  if (!dbPromise) {
+    dbPromise = new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION)
+      req.onupgradeneeded = () => {
+        const db = req.result
+        if (!db.objectStoreNames.contains('clips')) {
+          db.createObjectStore('clips', { keyPath: 'id' })
+        }
+        if (!db.objectStoreNames.contains('wavs')) {
+          db.createObjectStore('wavs')
+        }
       }
-      if (!db.objectStoreNames.contains('wavs')) {
-        db.createObjectStore('wavs')
+      req.onsuccess = () => resolve(req.result)
+      req.onerror = () => {
+        dbPromise = undefined
+        reject(req.error)
       }
-    }
-    req.onsuccess = () => resolve(req.result)
-    req.onerror = () => reject(req.error)
-  })
+    })
+  }
+  return dbPromise
 }
 
 export type LibraryStore = {

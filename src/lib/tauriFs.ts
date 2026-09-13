@@ -34,12 +34,13 @@ function encodePathHeader(path: string): string {
   return btoa(String.fromCharCode(...new TextEncoder().encode(path)))
 }
 
-function toArrayBuffer(value: ArrayBuffer | Uint8Array): ArrayBuffer {
+export function toArrayBuffer(value: ArrayBuffer | Uint8Array): ArrayBuffer {
   if (value instanceof Uint8Array) {
-    return value.buffer.slice(
-      value.byteOffset,
-      value.byteOffset + value.byteLength,
-    ) as ArrayBuffer
+    const { buffer, byteOffset, byteLength } = value
+    if (byteOffset === 0 && byteLength === buffer.byteLength) {
+      return buffer as ArrayBuffer
+    }
+    return buffer.slice(byteOffset, byteOffset + byteLength) as ArrayBuffer
   }
   return value
 }

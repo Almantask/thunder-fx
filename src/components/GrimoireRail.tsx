@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react'
 import { ChevronRight, ChevronsDownUp, ChevronsUpDown, Columns2, Pause, Play, Trash2 } from 'lucide-react'
 import { ClipMetaControls } from '@/components/ClipMetaControls'
 import { LibraryFilterBar } from '@/components/LibraryFilterBar'
@@ -6,7 +6,7 @@ import { Hint } from '@/components/Hint'
 import { GENERATE_MODES, clipMode } from '@/lib/generateMode'
 import { extractBpm, extractInstruments } from '@/lib/instruments'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
-import { inferClipCategory, inferClipIntensity, inferClipSubcategory } from '@/lib/promptCatalog'
+import { inferClipCategory, inferClipIntensity, inferClipSubcategory, clipSearchHaystack } from '@/lib/promptCatalog'
 import type { AudioFormat } from '@/lib/audioExport'
 import { DEFAULT_PACK_TEMPLATE } from '@/lib/packNaming'
 import {
@@ -15,6 +15,7 @@ import {
   filterClips,
   getMeta,
   tagCounts,
+  type ClipMeta,
   type ClipMetaIndex,
   type LibraryFilter,
 } from '@/lib/clipMeta'
@@ -92,6 +93,149 @@ type CategoryGroup = {
   intensityGroups?: IntensityGroup[]
   subcategoryGroups?: SubcategoryGroup[]
 }
+
+type ClipCardProps = {
+  clip: Clip
+  displayName: string
+  isSelected: boolean
+  isChecked: boolean
+  isPlaying: boolean
+  instruments: string[]
+  bpm: number | undefined
+  clipMeta: ClipMeta
+  onSelect: (id: string) => void
+  onToggleChecked: (id: string, checked: boolean) => void
+  onPlay: (id: string) => void
+  onDelete: (id: string) => void
+  onToggleFavorite?: (id: string) => void
+  onToggleRejected?: (id: string) => void
+  onRate?: (id: string, rating: number) => void
+  onRename?: (id: string) => void
+  onEditTags?: (id: string) => void
+}
+
+const ClipCard = memo(function ClipCard({
+  clip,
+  displayName,
+  isSelected,
+  isChecked,
+  isPlaying,
+  instruments,
+  bpm,
+  clipMeta,
+  onSelect,
+  onToggleChecked,
+  onPlay,
+  onDelete,
+  onToggleFavorite,
+  onToggleRejected,
+  onRate,
+  onRename,
+  onEditTags,
+}: ClipCardProps) {
+  const topInstruments = instruments.slice(0, 3)
+  return (
+    <li
+      className={`group flex flex-col rounded-book border px-2.5 py-2 transition-colors ${
+        clipMeta.rejected ? 'opacity-55 ' : ''
+      }${
+        isPlaying
+          ? 'border-gold bg-leather-2/90 ring-1 ring-gold/40'
+          : isSelected
+            ? 'border-gold/50 bg-leather-2'
+            : 'border-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] bg-leather-2/40 hover:border-gold/40 hover:bg-leather-2/70'
+      }`}
+    >
+      <div className="flex items-center justify-between gap-2.5">
+      <Hint label={isChecked ? 'Remove this clip from the pack selection.' : 'Add this clip to the pack selection.'}>
+        <Checkbox
+          checked={isChecked}
+          aria-label={`Select ${displayName}`}
+          onCheckedChange={(value) => onToggleChecked(clip.id, value === true)}
+        />
+      </Hint>
+      <Hint
+        label={
+          isPlaying
+            ? `Pause ${displayName}.`
+            : `Play ${displayName}.`
+        }
+      >
+        <Button
+          type="button"
+          variant={isPlaying ? 'default' : 'ghost'}
+          size="sm"
+          className="h-7 w-7 shrink-0 rounded-full p-0 text-cream"
+          onClick={() => onPlay(clip.id)}
+          aria-label={isPlaying ? 'Pause sound' : 'Play sound'}
+          aria-pressed={isPlaying}
+        >
+          {isPlaying ? (
+            <Pause className="h-3.5 w-3.5" />
+          ) : (
+            <Play className="h-3.5 w-3.5 translate-x-0.5" />
+          )}
+        </Button>
+      </Hint>
+
+      <Hint className="min-w-0 flex-1" label="Load this clip in Generate for preview, trim, and export.">
+        <button
+          type="button"
+          onClick={() => onSelect(clip.id)}
+          className="w-full min-w-0 text-left focus-visible:outline-none"
+        >
+          <p className="truncate text-xs font-medium text-cream group-hover:text-gold sm:text-sm">
+            {displayName}
+          </p>
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] leading-tight">
+            {topInstruments.length ? (
+              <span
+                className="truncate text-gold"
+                aria-label={`Instruments: ${topInstruments.join(', ')}`}
+              >
+                {topInstruments.join(', ')}
+              </span>
+            ) : null}
+            {topInstruments.length ? <span className="text-muted/40">·</span> : null}
+            <span className="shrink-0 font-mono text-muted">
+              {bpm ? `${bpm} BPM · ` : null}
+              {relativeTime(clip.createdAt)}
+              {Number.isFinite(clip.seed) ? ` · seed ${clip.seed}` : null}
+            </span>
+          </div>
+        </button>
+      </Hint>
+
+      <Hint label="Move this clip to the trash. It can be restored until the trash is emptied.">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="h-7 shrink-0 px-1.5 text-xs text-danger hover:bg-danger/10 hover:text-danger"
+          onClick={() => onDelete(clip.id)}
+          aria-label="Delete"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+          <span className="sr-only sm:not-sr-only sm:ml-1">Delete</span>
+        </Button>
+      </Hint>
+      </div>
+      {onToggleFavorite ? (
+        <ClipMetaControls
+          meta={clipMeta}
+          name={displayName}
+          onToggleFavorite={() => onToggleFavorite(clip.id)}
+          onToggleRejected={() => onToggleRejected?.(clip.id)}
+          onRate={(rating) => onRate?.(clip.id, rating)}
+          onRename={() => onRename?.(clip.id)}
+          onEditTags={() => onEditTags?.(clip.id)}
+        />
+      ) : null}
+    </li>
+  )
+})
+
+const NO_INSTRUMENTS: string[] = []
 
 const LIBRARY_TABS: { id: GenerateMode; label: string; hint: string; search: string }[] = [
   { id: 'sfx', label: 'Sounds', hint: 'Browse sound effect clips.', search: 'Search sounds…' },
@@ -189,20 +333,27 @@ export function GrimoireRail({
     [modeClips, meta, filter],
   )
 
+  const deferredQuery = useDeferredValue(query)
+
+  const haystacks = useMemo(() => {
+    const map = new Map<string, string>()
+    for (const clip of triaged) {
+      map.set(
+        clip.id,
+        clipSearchHaystack(clip, {
+          displayName: clipDisplayName(clip, meta),
+          tags: getMeta(meta, clip.id).tags,
+        }),
+      )
+    }
+    return map
+  }, [triaged, meta])
+
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase()
+    const q = deferredQuery.trim().toLowerCase()
     if (!q) return triaged
-    return triaged.filter((c) => {
-      if (c.prompt.toLowerCase().includes(q)) return true
-      if (clipDisplayName(c, meta).toLowerCase().includes(q)) return true
-      if (c.category?.toLowerCase().includes(q)) return true
-      if (c.subcategory?.toLowerCase().includes(q)) return true
-      if (inferClipSubcategory(c).toLowerCase().includes(q)) return true
-      if (getMeta(meta, c.id).tags?.some((tag) => tag.includes(q))) return true
-      const names = c.instruments?.length ? c.instruments : extractInstruments(c.prompt)
-      return names.some((name) => name.toLowerCase().includes(q))
-    })
-  }, [triaged, query, meta])
+    return triaged.filter((c) => haystacks.get(c.id)?.includes(q))
+  }, [triaged, deferredQuery, haystacks])
 
   const libraryTags = useMemo(() => tagCounts(meta), [meta])
   const hiddenByFilter = Math.max(0, modeClips.length - triaged.length)
@@ -210,7 +361,7 @@ export function GrimoireRail({
   const categoryGroups = useMemo<CategoryGroup[]>(() => {
     const map = new Map<string, Clip[]>()
     for (const clip of filtered) {
-      const cat = inferClipCategory(clip)
+      const cat = clip.category || inferClipCategory(clip)
       const list = map.get(cat) ?? []
       list.push(clip)
       map.set(cat, list)
@@ -220,7 +371,7 @@ export function GrimoireRail({
       if (activeMode === 'music') {
         const intensityMap = new Map<string, Clip[]>()
         for (const clip of groupClips) {
-          const intensity = inferClipIntensity(clip)
+          const intensity = clip.intensity || inferClipIntensity(clip)
           const list = intensityMap.get(intensity) ?? []
           list.push(clip)
           intensityMap.set(intensity, list)
@@ -234,7 +385,7 @@ export function GrimoireRail({
       } else {
         const subcategoryMap = new Map<string, Clip[]>()
         for (const clip of groupClips) {
-          const subcat = inferClipSubcategory(clip)
+          const subcat = clip.subcategory || inferClipSubcategory(clip)
           const list = subcategoryMap.get(subcat) ?? []
           list.push(clip)
           subcategoryMap.set(subcat, list)
@@ -569,129 +720,74 @@ export function GrimoireRail({
     }
   }, [])
 
+  const onSelectRef = useRef(onSelect)
+  onSelectRef.current = onSelect
+  const onToggleFavoriteRef = useRef(onToggleFavorite)
+  onToggleFavoriteRef.current = onToggleFavorite
+  const onToggleRejectedRef = useRef(onToggleRejected)
+  onToggleRejectedRef.current = onToggleRejected
+  const onRateRef = useRef(onRate)
+  onRateRef.current = onRate
+  const onRenameRef = useRef(onRename)
+  onRenameRef.current = onRename
+  const onEditTagsRef = useRef(onEditTags)
+  onEditTagsRef.current = onEditTags
+  const handleDeleteRef = useRef(handleDelete)
+  handleDeleteRef.current = handleDelete
+  const togglePlayClipRef = useRef(togglePlayClip)
+  togglePlayClipRef.current = togglePlayClip
+
+  const onSelectStable = useCallback((id: string) => onSelectRef.current(id), [])
+  const onPlayStable = useCallback((id: string) => {
+    void togglePlayClipRef.current(id)
+  }, [])
+  const onDeleteStable = useCallback((id: string) => handleDeleteRef.current(id), [])
+  const onToggleCheckedStable = useCallback((id: string, checked: boolean) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      if (checked) next.add(id)
+      else next.delete(id)
+      return next
+    })
+  }, [])
+  const onToggleFavoriteStable = useCallback((id: string) => onToggleFavoriteRef.current?.(id), [])
+  const onToggleRejectedStable = useCallback((id: string) => onToggleRejectedRef.current?.(id), [])
+  const onRateStable = useCallback((id: string, rating: number) => onRateRef.current?.(id, rating), [])
+  const onRenameStable = useCallback((id: string) => onRenameRef.current?.(id), [])
+  const onEditTagsStable = useCallback((id: string) => onEditTagsRef.current?.(id), [])
+
   const renderClipCard = (clip: Clip) => {
     const allInstruments =
       clip.instruments?.length
         ? clip.instruments
         : clipMode(clip) === 'music'
           ? extractInstruments(clip.prompt)
-          : []
-    const topInstruments = allInstruments.slice(0, 3)
-    const bpm = extractBpm(clip.prompt)
+          : NO_INSTRUMENTS
     const isClipPlaying =
       clipMode(clip) === 'sfx'
         ? fxPlayingIds.has(clip.id) || (playingId === clip.id && isPlaying)
         : playingId === clip.id && isPlaying
-    const isSelected = selectedId === clip.id
-    const isChecked = selectedIds.has(clip.id)
-    const clipMeta = getMeta(meta, clip.id)
-    const displayName = clipDisplayName(clip, meta)
     return (
-      <li
+      <ClipCard
         key={clip.id}
-        className={`group flex flex-col rounded-book border px-2.5 py-2 transition-colors ${
-          clipMeta.rejected ? 'opacity-55 ' : ''
-        }${
-          isClipPlaying
-            ? 'border-gold bg-leather-2/90 ring-1 ring-gold/40'
-            : isSelected
-              ? 'border-gold/50 bg-leather-2'
-              : 'border-[color-mix(in_srgb,var(--color-gold)_20%,transparent)] bg-leather-2/40 hover:border-gold/40 hover:bg-leather-2/70'
-        }`}
-      >
-        <div className="flex items-center justify-between gap-2.5">
-        <Hint label={isChecked ? 'Remove this clip from the pack selection.' : 'Add this clip to the pack selection.'}>
-          <Checkbox
-            checked={isChecked}
-            aria-label={`Select ${displayName}`}
-            onCheckedChange={(value) => {
-              setSelectedIds((prev) => {
-                const next = new Set(prev)
-                if (value === true) next.add(clip.id)
-                else next.delete(clip.id)
-                return next
-              })
-            }}
-          />
-        </Hint>
-        <Hint
-          label={
-            isClipPlaying
-              ? `Pause ${displayName}.`
-              : `Play ${displayName}.`
-          }
-        >
-          <Button
-            type="button"
-            variant={isClipPlaying ? 'default' : 'ghost'}
-            size="sm"
-            className="h-7 w-7 shrink-0 rounded-full p-0 text-cream"
-            onClick={() => togglePlayClip(clip.id)}
-            aria-label={isClipPlaying ? 'Pause sound' : 'Play sound'}
-            aria-pressed={isClipPlaying}
-          >
-            {isClipPlaying ? (
-              <Pause className="h-3.5 w-3.5" />
-            ) : (
-              <Play className="h-3.5 w-3.5 translate-x-0.5" />
-            )}
-          </Button>
-        </Hint>
-
-        <Hint className="min-w-0 flex-1" label="Load this clip in Generate for preview, trim, and export.">
-          <button
-            type="button"
-            onClick={() => onSelect(clip.id)}
-            className="w-full min-w-0 text-left focus-visible:outline-none"
-          >
-            <p className="truncate text-xs font-medium text-cream group-hover:text-gold sm:text-sm">
-              {displayName}
-            </p>
-            <div className="mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] leading-tight">
-              {topInstruments.length ? (
-                <span
-                  className="truncate text-gold"
-                  aria-label={`Instruments: ${topInstruments.join(', ')}`}
-                >
-                  {topInstruments.join(', ')}
-                </span>
-              ) : null}
-              {topInstruments.length ? <span className="text-muted/40">·</span> : null}
-              <span className="shrink-0 font-mono text-muted">
-                {bpm ? `${bpm} BPM · ` : null}
-                {relativeTime(clip.createdAt)}
-                {Number.isFinite(clip.seed) ? ` · seed ${clip.seed}` : null}
-              </span>
-            </div>
-          </button>
-        </Hint>
-
-        <Hint label="Move this clip to the trash. It can be restored until the trash is emptied.">
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className="h-7 shrink-0 px-1.5 text-xs text-danger hover:bg-danger/10 hover:text-danger"
-            onClick={() => handleDelete(clip.id)}
-            aria-label="Delete"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:ml-1">Delete</span>
-          </Button>
-        </Hint>
-        </div>
-        {onToggleFavorite ? (
-          <ClipMetaControls
-            meta={clipMeta}
-            name={displayName}
-            onToggleFavorite={() => onToggleFavorite(clip.id)}
-            onToggleRejected={() => onToggleRejected?.(clip.id)}
-            onRate={(rating) => onRate?.(clip.id, rating)}
-            onRename={() => onRename?.(clip.id)}
-            onEditTags={() => onEditTags?.(clip.id)}
-          />
-        ) : null}
-      </li>
+        clip={clip}
+        displayName={clipDisplayName(clip, meta)}
+        isSelected={selectedId === clip.id}
+        isChecked={selectedIds.has(clip.id)}
+        isPlaying={isClipPlaying}
+        instruments={allInstruments}
+        bpm={extractBpm(clip.prompt)}
+        clipMeta={getMeta(meta, clip.id)}
+        onSelect={onSelectStable}
+        onToggleChecked={onToggleCheckedStable}
+        onPlay={onPlayStable}
+        onDelete={onDeleteStable}
+        onToggleFavorite={onToggleFavorite ? onToggleFavoriteStable : undefined}
+        onToggleRejected={onToggleRejected ? onToggleRejectedStable : undefined}
+        onRate={onRate ? onRateStable : undefined}
+        onRename={onRename ? onRenameStable : undefined}
+        onEditTags={onEditTags ? onEditTagsStable : undefined}
+      />
     )
   }
 

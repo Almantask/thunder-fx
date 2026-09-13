@@ -93,6 +93,7 @@ import { mockStatus } from '@/lib/mockEngine'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
 import { canCast } from '@/lib/prompt'
 import {
+  enrichClipTaxonomy,
   getCompletedSubcategoryCount,
   loadPromptCatalog,
   mergeQueue,
@@ -379,9 +380,10 @@ export function Studio() {
   }
 
   function normalizeClip(clip: Clip): Clip {
-    return isUuidOrSymbol(clip.prompt)
+    const named = isUuidOrSymbol(clip.prompt)
       ? { ...clip, prompt: promptName(clip.prompt, clip) }
       : clip
+    return enrichClipTaxonomy(named)
   }
 
   /**
@@ -1812,6 +1814,7 @@ export function Studio() {
           onInstallBaseModel={installBaseModel}
         />
       ) : null}
+      {catalogOpen ? (
       <PromptCatalogDialog
         open={catalogOpen}
         catalog={catalog}
@@ -1828,6 +1831,8 @@ export function Studio() {
           setCatalogOpen(false)
         }}
       />
+      ) : null}
+      {takesOpen ? (
       <TakesGrid
         open={takesOpen}
         takes={takes}
@@ -1854,6 +1859,7 @@ export function Studio() {
           })()
         }}
       />
+      ) : null}
       {trashOpen ? (
       <TrashDialog
         open={trashOpen}
@@ -1892,6 +1898,7 @@ export function Studio() {
           onOpenChange={(open) => !open && setCompare(null)}
         />
       ) : null}
+      {commandOpen ? (
       <CommandPalette
         open={commandOpen}
         onOpenChange={setCommandOpen}
@@ -1934,6 +1941,7 @@ export function Studio() {
           void castQueue()
         }}
       />
+      ) : null}
       <AlertDialog open={Boolean(pendingDelete)} onOpenChange={(o) => !o && setPendingDelete(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>

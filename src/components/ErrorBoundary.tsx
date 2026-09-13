@@ -4,6 +4,8 @@ import { logClientError, revealErrorLog } from '@/lib/engine'
 
 type ErrorBoundaryProps = {
   children: ReactNode
+  /** Compact recovery for a pane; omit for the full-window fallback. */
+  name?: string
 }
 
 type ErrorBoundaryState = {
@@ -23,11 +25,27 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, info: ErrorInfo): void {
-    void logClientError(error.message, `${error.stack ?? ''}\n${info.componentStack ?? ''}`)
+    void logClientError(error.message, `${error.stack ?? ''}\n${info.componentStack ?? ''}`, {
+      source: this.props.name ? `ui:${this.props.name}` : 'ui',
+    })
   }
 
   render(): ReactNode {
     if (!this.state.message) return this.props.children
+    if (this.props.name) {
+      return (
+        <div
+          role="alert"
+          className="flex flex-col items-center justify-center gap-3 bg-leather/80 px-4 py-6 text-center"
+        >
+          <p className="text-sm text-cream">{this.props.name} hit an unexpected error.</p>
+          <p className="max-w-md font-mono text-xs text-danger break-all">{this.state.message}</p>
+          <Button type="button" variant="outline" onClick={() => this.setState({ message: undefined })}>
+            Try again
+          </Button>
+        </div>
+      )
+    }
     return (
       <div
         role="alert"

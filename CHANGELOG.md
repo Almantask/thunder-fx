@@ -90,6 +90,15 @@ All notable Thunder FX changes are listed here.
   `cancel` and marks the worker dead if no ack arrives (PQ-68). Worker stderr is a 50-line
   ring flushed into the error log (PQ-69). Allowed-path roots are cached until grant or
   library change (PQ-70).
+- **The error log is one ISO-8601 line per event** (`LEVEL [source] message {json}`),
+  shared by Rust, Python and the UI (PQ-73). Tests write to a temp log directory, not
+  `%LOCALAPPDATA%` (PQ-74). The file is opened once, flushed per line, and rotated at
+  2 MB keeping `error.log.1` (PQ-75). A generation with no progress for 8× the expected
+  step time offers Cancel (PQ-76). Nested error boundaries wrap Library, Waveform,
+  Catalog and Compare (PQ-77). Queue runs toast warnings once with a count (PQ-78).
+  Each generate records `peakVramGb` when CUDA reports it (PQ-79). Worker `print` goes
+  to stderr; the JSON-lines channel is a private handle, and Rust skips non-JSON lines
+  (PQ-80).
 
 ### Fixed
 

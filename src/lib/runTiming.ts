@@ -249,3 +249,15 @@ export function liveRunRatio(run: RunTrack | null | undefined): number | undefin
   if (total <= 0 || done <= 0) return undefined
   return Math.min(1, done / total)
 }
+
+/** How long without a progress event before the UI should offer Cancel. */
+export const STALL_STEP_MULTIPLIER = 8
+export const STALL_MIN_MS = 30_000
+export const STALL_MAX_MS = 180_000
+export const STALL_LOADING_MS = 120_000
+
+export function stallBudgetMs(expectedStepMs?: number, phase?: string): number {
+  if (phase === 'loading') return STALL_LOADING_MS
+  const step = expectedStepMs != null && expectedStepMs > 0 ? expectedStepMs : 8_000
+  return Math.min(STALL_MAX_MS, Math.max(STALL_MIN_MS, step * STALL_STEP_MULTIPLIER))
+}

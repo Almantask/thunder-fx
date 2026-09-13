@@ -31,6 +31,7 @@ import time
 import traceback
 import uuid
 import wave
+from datetime import datetime, timezone
 from urllib.parse import quote
 from contextlib import contextmanager
 from pathlib import Path
@@ -125,6 +126,8 @@ _model_lock = threading.Lock()
 _gen_lock = threading.Lock()
 _stdout_lock = threading.Lock()
 _log_lock = threading.Lock()
+# Protocol lines go here so third-party print() cannot corrupt JSON-lines.
+_protocol_out = None
 # One in-flight GPU status probe at a time, plus the last good answer. The UI
 # polls every 4s and the CUDA calls behind a probe serialize against a running
 # generation, so without this a stalled driver stacks up a probe per tick.
@@ -1349,18 +1352,32 @@ def _mock_pcm(seconds: float, seed: int, *, music: bool = False) -> list[tuple[i
 def _emit(payload: dict) -> None:
     with _stdout_lock:
         line = json.dumps(payload) + "\n"
+        stream = _protocol_out if _protocol_out is not None else sys.stdout
         try:
-            sys.stdout.write(line)
-            sys.stdout.flush()
+            stream.write(line)
+            stream.flush()
         except OSError as exc:
             try:
-                if hasattr(sys.stdout, "buffer"):
-                    sys.stdout.buffer.write(line.encode("utf-8"))
-                    sys.stdout.buffer.flush()
+                if hasattr(stream, "buffer"):
+                    stream.buffer.write(line.encode("utf-8"))
+                    stream.buffer.flush()
             except Exception:
                 _log_error(f"Pipe write failed: {exc}", exc)
         except Exception as exc:
             _log_error(f"Emit failed: {exc}", exc)
+
+
+def install_protocol_stdout() -> None:
+    """Send protocol JSON on a private fd-1 handle; print() goes to stderr."""
+    global _protocol_out
+    if _protocol_out is not None:
+        return
+    try:
+        _protocol_out = os.fdopen(os.dup(sys.stdout.fileno()), "w", encoding="utf-8", buffering=1)
+    except (OSError, ValueError, AttributeError):
+        _protocol_out = sys.stdout
+        return
+    sys.stdout = sys.stderr
 
 
 def _emit_progress(
@@ -1561,9 +1578,10 @@ def _hub_progress(heartbeat: _Heartbeat):
 
 
 def _logs_dir() -> Path:
-    override = os.environ.get("THUNDER_FX_LOG_DIR", "").strip()
-    if override:
-        return Path(override)
+    for key in ("THUNDER_FX_LOG_DIR", "THUNDER_FX_LOGS_DIR"):
+        override = os.environ.get(key, "").strip()
+        if override:
+            return Path(override)
     local = os.environ.get("LOCALAPPDATA") or os.environ.get("XDG_DATA_HOME")
     if local:
         return Path(local) / "thunder-fx" / "logs"
@@ -1586,27 +1604,39 @@ def _rotate_error_log(path: Path) -> None:
         return
 
 
+def _log_line(
+    level: str,
+    source: str,
+    message: str,
+    *,
+    context: dict | None = None,
+    exc: BaseException | None = None,
+) -> None:
+    try:
+        path = error_log_path()
+        path.parent.mkdir(parents=True, exist_ok=True)
+        _rotate_error_log(path)
+        stamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        text = " ".join(str(message).split())
+        line = f"{stamp} {level} [{source}] {text}"
+        payload = dict(context or {})
+        if exc is not None:
+            payload["exception"] = "".join(traceback.format_exception(exc)).rstrip()
+        if payload:
+            line += " " + json.dumps(payload, default=str, ensure_ascii=True)
+        with _log_lock, path.open("a", encoding="utf-8") as fh:
+            fh.write(line + "\n")
+    except Exception:
+        return
+
+
 def _log_error(
     message: str,
     exc: BaseException | None = None,
     *,
     context: dict | None = None,
 ) -> None:
-    try:
-        path = error_log_path()
-        path.parent.mkdir(parents=True, exist_ok=True)
-        _rotate_error_log(path)
-        stamp = time.strftime("%Y-%m-%dT%H:%M:%S")
-        block = [f"[{stamp}] ERROR {message}"]
-        if context:
-            block.append("context: " + json.dumps(context, default=str, ensure_ascii=True))
-        if exc is not None:
-            block.append("".join(traceback.format_exception(exc)).rstrip())
-        text = "\n".join(block) + "\n\n"
-        with _log_lock, path.open("a", encoding="utf-8") as fh:
-            fh.write(text)
-    except Exception:
-        return
+    _log_line("ERROR", "python", message, context=context, exc=exc)
 
 
 def _emit_error(
@@ -1696,6 +1726,34 @@ def _vram_stats() -> dict:
     except Exception:
         pass
     return out
+
+
+def _reset_peak_vram() -> None:
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.reset_peak_memory_stats()
+    except Exception:
+        return
+
+
+def _peak_vram_gb() -> float | None:
+    try:
+        import torch
+
+        if not torch.cuda.is_available():
+            return None
+        return round(float(torch.cuda.max_memory_allocated()) / (1024 ** 3), 3)
+    except Exception:
+        return None
+
+
+def _attach_peak(payload: dict) -> dict:
+    peak = _peak_vram_gb()
+    if peak is not None:
+        payload["peakVramGb"] = peak
+    return payload
 
 
 def _status_snapshot() -> dict:
@@ -1932,6 +1990,7 @@ def _generate_body(msg: dict) -> None:
     model_name = plan["model"]
     negative = str(msg.get("negative") or "") or None
     _cancel.clear()
+    _reset_peak_vram()
     if seed <= 0:
         seed = random.randint(1, MAX_SEED)
     music = _wants_music(msg)
@@ -2013,25 +2072,27 @@ def _generate_body(msg: dict) -> None:
             ),
         )
         _emit(
-            {
-                "id": msg_id,
-                "event": "done",
-                "path": str(out),
-                "seed": seed,
-                "duration": actual_duration,
-                "steps": steps,
-                "prompt": prompt,
-                "mode": mode_str,
-                "category": cat_str,
-                "subcategory": subcat_str,
-                "instruments": instruments,
-                "seamlessLoop": loop,
-                "preset": plan["preset"],
-                "sampler": sampler,
-                "model": model_name,
-                "presetUnavailable": plan["unavailable"],
-                "warnings": warnings,
-            }
+            _attach_peak(
+                {
+                    "id": msg_id,
+                    "event": "done",
+                    "path": str(out),
+                    "seed": seed,
+                    "duration": actual_duration,
+                    "steps": steps,
+                    "prompt": prompt,
+                    "mode": mode_str,
+                    "category": cat_str,
+                    "subcategory": subcat_str,
+                    "instruments": instruments,
+                    "seamlessLoop": loop,
+                    "preset": plan["preset"],
+                    "sampler": sampler,
+                    "model": model_name,
+                    "presetUnavailable": plan["unavailable"],
+                    "warnings": warnings,
+                }
+            )
         )
         return
 
@@ -2178,26 +2239,28 @@ def _generate_body(msg: dict) -> None:
             ),
         )
         _emit(
-            {
-                "id": msg_id,
-                "event": "done",
-                "path": str(out),
-                "seed": seed,
-                "duration": written_duration,
-                "steps": steps,
-                "prompt": prompt,
-                "mode": mode_str,
-                "category": cat_str,
-                "subcategory": subcat_str,
-                "chunkedDecode": chunked,
-                "instruments": instruments,
-                "seamlessLoop": loop,
-                "preset": plan["preset"],
-                "sampler": sampler,
-                "model": model_name,
-                "presetUnavailable": plan["unavailable"],
-                "warnings": warnings,
-            }
+            _attach_peak(
+                {
+                    "id": msg_id,
+                    "event": "done",
+                    "path": str(out),
+                    "seed": seed,
+                    "duration": written_duration,
+                    "steps": steps,
+                    "prompt": prompt,
+                    "mode": mode_str,
+                    "category": cat_str,
+                    "subcategory": subcat_str,
+                    "chunkedDecode": chunked,
+                    "instruments": instruments,
+                    "seamlessLoop": loop,
+                    "preset": plan["preset"],
+                    "sampler": sampler,
+                    "model": model_name,
+                    "presetUnavailable": plan["unavailable"],
+                    "warnings": warnings,
+                }
+            )
         )
     finally:
         heartbeat.stop()
@@ -2670,6 +2733,7 @@ def _preload_native_modules() -> None:
 
 def main() -> None:
     _force_utf8_pipes()
+    install_protocol_stdout()
     sys.excepthook = _excepthook
     threading.excepthook = _thread_excepthook
     _preload_native_modules()

@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { applyGainDb, rmsDbfs } from '@/lib/audioEdit'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
+import { reportError } from '@/lib/engine'
 import { wavDurationSeconds } from '@/lib/wav'
 import { cn } from '@/lib/utils'
 
@@ -76,8 +77,8 @@ export function CompareDialog({ open, a, b, onOpenChange }: CompareDialogProps) 
         }
         handles.current = { a: handleA, b: handleB }
         setReady(true)
-      } catch {
-        /* Preview is optional; the dialog still shows both names. */
+      } catch (err) {
+        reportError(err, 'Compare preview failed')
       }
     })()
 

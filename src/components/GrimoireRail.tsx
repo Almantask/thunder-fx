@@ -6,6 +6,7 @@ import { Hint } from '@/components/Hint'
 import { GENERATE_MODES, clipMode } from '@/lib/generateMode'
 import { extractBpm, extractInstruments } from '@/lib/instruments'
 import { createPlayback, type PlaybackHandle } from '@/lib/playback'
+import { reportError } from '@/lib/engine'
 import { inferClipCategory, inferClipIntensity, inferClipSubcategory, clipSearchHaystack } from '@/lib/promptCatalog'
 import type { AudioFormat } from '@/lib/audioExport'
 import { DEFAULT_PACK_TEMPLATE } from '@/lib/packNaming'
@@ -590,7 +591,8 @@ export function GrimoireRail({
 
       playbackRef.current = handle
       await handle.play(0, clip.duration, false)
-    } catch {
+    } catch (err) {
+      reportError(err, 'Library playback failed')
       if (playRunIdRef.current === runId && isPlayingRef.current && activeIdRef.current === clip.id) {
         const currentList = filteredRef.current
         const currentIdx = currentList.findIndex((c) => c.id === clip.id)
@@ -663,7 +665,8 @@ export function GrimoireRail({
 
         fxPlaybacksRef.current.set(clipId, handle)
         await handle.play(0, clip.duration, false)
-      } catch {
+      } catch (err) {
+        reportError(err, 'Clip preview failed')
         setFxPlayingIds((prev) => {
           const next = new Set(prev)
           next.delete(clipId)

@@ -26,6 +26,9 @@ import {
 
 export type GenerateHandlers = {
   onProgress?: (progress: WeaveProgress) => void
+  /** No progress event for N × expected step time. */
+  onStall?: (idleMs: number) => void
+  expectedStepMs?: number
   signal?: AbortSignal
   stepDelayMs?: number
 }

@@ -1,7 +1,7 @@
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use serde::{Deserialize, Serialize};
 use std::fs::{File, OpenOptions};
-use std::io::{copy, BufRead, BufReader, Write};
+use std::io::{copy, BufRead, BufReader, BufWriter, Write};
 use std::path::{Component, Path, PathBuf};
 use std::process::{Child, ChildStdin, Command, Stdio};
 use std::sync::atomic::{AtomicBool, Ordering};
@@ -83,19 +83,28 @@ fn library_dir() -> PathBuf {
 }
 
 fn logs_dir() -> PathBuf {
-    if let Ok(dir) = std::env::var("THUNDER_FX_LOG_DIR") {
-        let trimmed = dir.trim();
-        if !trimmed.is_empty() {
-            return PathBuf::from(trimmed);
+    for key in ["THUNDER_FX_LOG_DIR", "THUNDER_FX_LOGS_DIR"] {
+        if let Ok(dir) = std::env::var(key) {
+            let trimmed = dir.trim();
+            if !trimmed.is_empty() {
+                return PathBuf::from(trimmed);
+            }
         }
     }
-    if let Ok(local) = std::env::var("LOCALAPPDATA") {
-        return PathBuf::from(local).join("thunder-fx").join("logs");
+    #[cfg(test)]
+    {
+        return std::env::temp_dir().join(format!("thunder-fx-test-logs-{}", std::process::id()));
     }
-    if let Ok(home) = std::env::var("USERPROFILE").or_else(|_| std::env::var("HOME")) {
-        return PathBuf::from(home).join(".thunder-fx").join("logs");
+    #[cfg(not(test))]
+    {
+        if let Ok(local) = std::env::var("LOCALAPPDATA") {
+            return PathBuf::from(local).join("thunder-fx").join("logs");
+        }
+        if let Ok(home) = std::env::var("USERPROFILE").or_else(|_| std::env::var("HOME")) {
+            return PathBuf::from(home).join(".thunder-fx").join("logs");
+        }
+        std::env::temp_dir().join("thunder-fx").join("logs")
     }
-    std::env::temp_dir().join("thunder-fx").join("logs")
 }
 
 /// Directories the webview is allowed to touch without an explicit grant.
@@ -386,27 +395,81 @@ fn ensure_allowed(scope: &PathScope, path: &str) -> Result<PathBuf, String> {
     )))
 }
 
+const ERROR_LOG_ROTATE_BYTES: u64 = 2_000_000;
+
+struct ErrorLogState {
+    path: PathBuf,
+    writer: BufWriter<File>,
+}
+
+static ERROR_LOG: Mutex<Option<ErrorLogState>> = Mutex::new(None);
+
 fn error_log_file() -> PathBuf {
     let path = logs_dir().join("error.log");
     if let Some(parent) = path.parent() {
         let _ = std::fs::create_dir_all(parent);
     }
-    if !path.exists() {
-        let _ = OpenOptions::new().create(true).append(true).open(&path);
-    }
     path
 }
 
-fn append_error_log(message: &str) {
-    let path = error_log_file();
-    let secs = SystemTime::now()
-        .duration_since(UNIX_EPOCH)
-        .map(|d| d.as_secs())
-        .unwrap_or(0);
-    let line = format!("[{secs}] ERROR {message}\n\n");
-    if let Ok(mut file) = OpenOptions::new().create(true).append(true).open(&path) {
-        let _ = file.write_all(line.as_bytes());
+fn one_line(message: &str) -> String {
+    message
+        .replace('\r', " ")
+        .replace('\n', " ")
+        .trim()
+        .to_string()
+}
+
+fn log_event(level: &str, source: &str, message: &str, context: Option<&serde_json::Value>) {
+    let stamp = format_utc_iso(SystemTime::now());
+    let mut line = format!("{stamp} {level} [{source}] {}", one_line(message));
+    if let Some(ctx) = context {
+        if !ctx.is_null() && ctx != &serde_json::Value::Object(Default::default()) {
+            line.push(' ');
+            line.push_str(&ctx.to_string());
+        }
     }
+    write_error_log_line(&line);
+}
+
+fn write_error_log_line(line: &str) {
+    let path = error_log_file();
+    let mut slot = match ERROR_LOG.lock() {
+        Ok(guard) => guard,
+        Err(poisoned) => poisoned.into_inner(),
+    };
+    if slot.as_ref().is_some_and(|state| state.path != path) {
+        *slot = None;
+    }
+    let size = std::fs::metadata(&path).map(|meta| meta.len()).unwrap_or(0);
+    if size >= ERROR_LOG_ROTATE_BYTES {
+        *slot = None;
+        let backup = path.with_file_name("error.log.1");
+        let _ = std::fs::remove_file(&backup);
+        let _ = std::fs::rename(&path, &backup);
+    }
+    if slot.is_none() {
+        if let Some(parent) = path.parent() {
+            let _ = std::fs::create_dir_all(parent);
+        }
+        match OpenOptions::new().create(true).append(true).open(&path) {
+            Ok(file) => {
+                *slot = Some(ErrorLogState {
+                    path: path.clone(),
+                    writer: BufWriter::new(file),
+                });
+            }
+            Err(_) => return,
+        }
+    }
+    if let Some(state) = slot.as_mut() {
+        let _ = writeln!(state.writer, "{line}");
+        let _ = state.writer.flush();
+    }
+}
+
+fn append_error_log(message: &str) {
+    log_event("ERROR", "rust", message, None);
 }
 
 fn fail(message: impl Into<String>) -> String {
@@ -557,7 +620,12 @@ fn flush_stderr_log(proc: &EngineProc, reason: &str) {
     if lines.is_empty() {
         return;
     }
-    append_error_log(&format!("{reason}; last stderr:\n{}", lines.join("\n")));
+    log_event(
+        "ERROR",
+        "engine",
+        reason,
+        Some(&serde_json::json!({ "stderr": lines })),
+    );
 }
 
 fn mark_engine_dead(proc: &EngineProc) {
@@ -716,6 +784,14 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
                                 let _ = tx.send(parsed);
                             }
                         }
+                    } else {
+                        let preview: String = trimmed.chars().take(200).collect();
+                        log_event(
+                            "WARN",
+                            "engine",
+                            "Skipped a non-JSON worker line",
+                            Some(&serde_json::json!({ "line": preview })),
+                        );
                     }
                 }
                 Err(e) => {
@@ -1361,13 +1437,38 @@ async fn pick_directory(
 }
 
 #[tauri::command]
-fn log_error(message: String, detail: Option<String>) -> Result<(), String> {
-    match detail {
-        Some(detail) if !detail.is_empty() => {
-            append_error_log(&format!("{message}\n{detail}"));
+fn log_error(
+    message: String,
+    detail: Option<String>,
+    source: Option<String>,
+    level: Option<String>,
+) -> Result<(), String> {
+    let mut context = serde_json::Map::new();
+    if let Some(detail) = detail {
+        if !detail.is_empty() {
+            context.insert("detail".into(), serde_json::Value::String(detail));
         }
-        _ => append_error_log(&message),
     }
+    let ctx = if context.is_empty() {
+        None
+    } else {
+        Some(serde_json::Value::Object(context))
+    };
+    let level = match level.as_deref().map(str::trim).unwrap_or("ERROR") {
+        "WARN" | "warn" => "WARN",
+        "INFO" | "info" => "INFO",
+        _ => "ERROR",
+    };
+    log_event(
+        level,
+        source
+            .as_deref()
+            .map(str::trim)
+            .filter(|s| !s.is_empty())
+            .unwrap_or("ui"),
+        &message,
+        ctx.as_ref(),
+    );
     Ok(())
 }
 
@@ -2480,7 +2581,43 @@ mod tests {
         append_error_log("omen test");
         let text = std::fs::read_to_string(dir.join("error.log")).unwrap();
         assert!(text.contains("omen test"));
-        assert!(text.contains("ERROR"));
+        assert!(text.contains("ERROR [rust]"));
+        assert!(text.contains('T') && text.contains('Z'));
+    }
+
+    #[test]
+    fn log_event_is_one_iso_line_with_context() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let dir = std_temp().join(format!("thunder-fx-log-fmt-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let _guard = EnvGuard::set("THUNDER_FX_LOG_DIR", &dir);
+        log_event(
+            "WARN",
+            "ui",
+            "scan failed\nwith a path",
+            Some(&serde_json::json!({ "path": "D:/library" })),
+        );
+        let text = std::fs::read_to_string(dir.join("error.log")).unwrap();
+        let line = text.lines().next().unwrap();
+        assert!(line.contains(" WARN [ui] scan failed with a path "));
+        assert!(line.contains("\"path\":\"D:/library\"") || line.contains("\"path\": \"D:/library\""));
+        assert!(line.starts_with("20"));
+        assert!(line.contains('T') && line.contains('Z'));
+    }
+
+    #[test]
+    fn error_log_rotates_at_two_megabytes() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let dir = std_temp().join(format!("thunder-fx-log-rot-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let _guard = EnvGuard::set("THUNDER_FX_LOG_DIR", &dir);
+        let chunk = "x".repeat(80_000);
+        for _ in 0..30 {
+            append_error_log(&chunk);
+        }
+        assert!(dir.join("error.log.1").exists());
+        assert!(dir.join("error.log").exists());
+        assert!(dir.join("error.log").metadata().unwrap().len() < ERROR_LOG_ROTATE_BYTES);
     }
 
     #[test]

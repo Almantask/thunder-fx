@@ -15,6 +15,7 @@ import type {
   WeaveProgress,
 } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
+import { stallBudgetMs } from '@/lib/runTiming'
 import {
   resolveQualityPreset,
   type QualityPreset,
@@ -82,6 +83,7 @@ type EngineMsg = {
   presetUnavailable?: boolean
   steps?: number
   warnings?: string[]
+  peakVramGb?: number
 }
 
 function throwIfEngineError(msg: EngineMsg): void {
@@ -103,13 +105,22 @@ export function reportError(err: unknown, fallback: string): string {
   return message
 }
 
-export async function logClientError(message: string, detail?: string): Promise<void> {
+export async function logClientError(
+  message: string,
+  detail?: string,
+  extra?: { source?: string; level?: 'ERROR' | 'WARN' | 'INFO' },
+): Promise<void> {
   if (!isTauri()) return
   try {
     const { invoke } = await import('@tauri-apps/api/core')
-    await invoke('log_error', { message, detail: detail ?? null })
+    await invoke('log_error', {
+      message,
+      detail: detail ?? null,
+      source: extra?.source ?? 'ui',
+      level: extra?.level ?? 'ERROR',
+    })
   } catch {
-    /* logging must never break the studio */
+    // Logging must never break the studio.
   }
 }
 
@@ -119,6 +130,7 @@ export async function errorLogPath(): Promise<string | null> {
     const { invoke } = await import('@tauri-apps/api/core')
     return await invoke<string>('error_log_path')
   } catch {
+    // Settings still shows a default path if the command is missing.
     return null
   }
 }
@@ -135,6 +147,7 @@ export async function libraryPath(): Promise<string | null> {
     const { invoke } = await import('@tauri-apps/api/core')
     return await invoke<string>('library_path')
   } catch {
+    // Optional chrome; Generate still has the folder setting.
     return null
   }
 }
@@ -147,6 +160,7 @@ export async function setLibraryDir(dir: string | undefined): Promise<string | n
     const { invoke } = await import('@tauri-apps/api/core')
     return await invoke<string>('set_library_dir', { dir: dir?.trim() || null })
   } catch {
+    // A typed folder that the backend refuses still shows in Settings.
     return null
   }
 }
@@ -179,7 +193,7 @@ export async function deleteDiskFile(path: string): Promise<void> {
   try {
     await deleteScopedFile(path)
   } catch {
-    /* ignore error */
+    // Delete is best-effort; the library card is already gone.
   }
 }
 
@@ -189,6 +203,7 @@ export async function readErrorLog(): Promise<string> {
     const { invoke } = await import('@tauri-apps/api/core')
     return await invoke<string>('read_error_log')
   } catch {
+    // An unreadable log is shown as empty rather than crashing Settings.
     return ''
   }
 }
@@ -262,9 +277,23 @@ export async function generate(
   }
   const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
+  let lastProgressAt = Date.now()
+  let lastPhase: WeaveProgress['phase']
+  let stalled = false
   const unlisten = await listen<WeaveProgress>('engine-progress', (ev) => {
+    lastProgressAt = Date.now()
+    lastPhase = ev.payload.phase
+    stalled = false
     handlers.onProgress?.(ev.payload)
   })
+  const watchdog = window.setInterval(() => {
+    if (stalled || handlers.signal?.aborted) return
+    const idle = Date.now() - lastProgressAt
+    if (idle >= stallBudgetMs(handlers.expectedStepMs, lastPhase)) {
+      stalled = true
+      handlers.onStall?.(idle)
+    }
+  }, 1000)
   const onAbort = () => {
     void cancelGenerate()
   }
@@ -344,8 +373,9 @@ export async function generate(
       intensity: resolvedIntensity,
     }
 
-    return { clip, wav, warnings: result.warnings }
+    return { clip, wav, warnings: result.warnings, peakVramGb: result.peakVramGb }
   } finally {
+    window.clearInterval(watchdog)
     handlers.signal?.removeEventListener('abort', onAbort)
     unlisten()
   }

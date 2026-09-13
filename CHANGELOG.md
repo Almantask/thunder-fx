@@ -72,6 +72,12 @@ All notable Thunder FX changes are listed here.
 - **Vite** targets Chrome 120, splits react / radix / lucide, stamps `__BUILD_ID__` from the
   git SHA, and can emit `dist/stats.html` via `npm run build:analyze`. The Rust release
   profile uses thin LTO, one codegen unit, stripped symbols, and abort-on-panic.
+- **Trim cuts get a 3 ms equal-power fade**, and silence detection sums both channels so a
+  hard-panned right tail is not cropped (PQ-21). Loop joins search for a quiet sign-change
+  with matching slope instead of a same-sign trough; short clips use a 50 ms crossfade floor
+  rather than 500 ms (PQ-22). PCM ↔ float uses 32768 both ways (PQ-23). Every TypeScript
+  int16 write goes through a shared TPDF `quantise16` (PQ-24). Export resampling refuses
+  rather than `np.interp` when soxr and torchaudio are both missing (PQ-26).
 
 ### Fixed
 

@@ -22,6 +22,18 @@ describe('wav', () => {
     expect(wavDurationSeconds(trimmed)).toBeCloseTo(1.5, 1)
   })
 
+  it('fades the cut points so a mid-cycle trim has no step', () => {
+    const sampleRate = 44100
+    const pcm = new Int16Array(sampleRate * 2)
+    pcm.fill(20000)
+    const buf = writeWav({ sampleRate, channels: 2, bitsPerSample: 16, pcm })
+    const trimmed = parseWav(trimWav(buf, 0.1, 0.2))
+    expect(Math.abs(trimmed.pcm[0] ?? 0)).toBeLessThan(800)
+    expect(Math.abs(trimmed.pcm[trimmed.pcm.length - 2] ?? 0)).toBeLessThan(800)
+    const mid = trimmed.pcm[Math.floor(trimmed.pcm.length / 2)] ?? 0
+    expect(Math.abs(mid)).toBeGreaterThan(15000)
+  })
+
   it('is deterministic for a given seed', () => {
     const a = new Uint8Array(generateMockSfxWav(1, 99))
     const b = new Uint8Array(generateMockSfxWav(1, 99))

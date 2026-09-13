@@ -39,4 +39,20 @@ describe('silenceTrim', () => {
     expect(bounds.startSec).toBeLessThan(0.05)
     expect(bounds.endSec).toBeGreaterThan(0.2)
   })
+
+  it('hears a hard-panned right-channel hit', () => {
+    const sampleRate = 44100
+    const pcm = new Int16Array(sampleRate * 2)
+    const start = Math.floor(sampleRate * 0.3)
+    const end = Math.floor(sampleRate * 0.5)
+    for (let i = start; i < end; i += 1) {
+      pcm[i * 2 + 1] = 12000
+    }
+    const buf = writeWav({ sampleRate, channels: 2, bitsPerSample: 16, pcm })
+    const bounds = detectSilenceBounds(buf, { thresholdDb: -42, padMs: 30 })
+    expect(bounds.startSec).toBeGreaterThan(0.2)
+    expect(bounds.startSec).toBeLessThan(0.3)
+    expect(bounds.endSec).toBeGreaterThan(0.5)
+    expect(bounds.endSec).toBeLessThan(0.6)
+  })
 })

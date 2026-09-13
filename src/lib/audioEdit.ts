@@ -11,6 +11,12 @@
  * single pass does not.
  */
 import { parseWav, writeWav, type WavAudio } from '@/lib/wav'
+import {
+  INT16_MAX,
+  fadeGain,
+  pcm16ToFloatSample,
+  quantise16,
+} from '@/lib/pcm'
 
 export const MIN_GAIN_DB = -24
 export const MAX_GAIN_DB = 24
@@ -21,15 +27,6 @@ export const DEFAULT_PEAK_DBFS = -1
 
 export const MIN_SEMITONES = -12
 export const MAX_SEMITONES = 12
-
-const INT16_MAX = 32767
-const INT16_MIN = -32768
-
-function clampSample(value: number): number {
-  if (value > INT16_MAX) return INT16_MAX
-  if (value < INT16_MIN) return INT16_MIN
-  return Math.round(value)
-}
 
 export function dbToGain(db: number): number {
   return 10 ** (db / 20)
@@ -51,17 +48,6 @@ export function clampSemitones(value: number): number {
 
 function frameCount(wav: WavAudio): number {
   return Math.floor(wav.pcm.length / wav.channels)
-}
-
-/**
- * Equal-power rather than linear.
- *
- * A linear ramp dips about 3 dB in perceived level through the middle of the
- * fade, which is audible on a sustained bed; a sine/cosine pair holds constant
- * power across it. This is the same curve the loop crossfade uses.
- */
-function fadeGain(position: number): number {
-  return Math.sin((Math.min(1, Math.max(0, position)) * Math.PI) / 2)
 }
 
 export type FadeOptions = {
@@ -93,7 +79,7 @@ export function applyFade(buffer: ArrayBuffer, options: FadeOptions): ArrayBuffe
     const gain = fadeGain((f + 1) / fadeIn)
     for (let c = 0; c < wav.channels; c += 1) {
       const i = f * wav.channels + c
-      pcm[i] = clampSample((pcm[i] ?? 0) * gain)
+      pcm[i] = quantise16(pcm16ToFloatSample(pcm[i] ?? 0) * gain, true, i)
     }
   }
   for (let f = 0; f < fadeOut; f += 1) {
@@ -102,7 +88,7 @@ export function applyFade(buffer: ArrayBuffer, options: FadeOptions): ArrayBuffe
     const gain = fadeGain((f + 1) / fadeOut)
     for (let c = 0; c < wav.channels; c += 1) {
       const i = frame * wav.channels + c
-      pcm[i] = clampSample((pcm[i] ?? 0) * gain)
+      pcm[i] = quantise16(pcm16ToFloatSample(pcm[i] ?? 0) * gain, true, i)
     }
   }
   return writeWav({ ...wav, pcm })
@@ -129,7 +115,7 @@ function scaleWav(buffer: ArrayBuffer, gain: number): ArrayBuffer {
   const wav = parseWav(buffer)
   const pcm = new Int16Array(wav.pcm.length)
   for (let i = 0; i < wav.pcm.length; i += 1) {
-    pcm[i] = clampSample((wav.pcm[i] ?? 0) * gain)
+    pcm[i] = quantise16(pcm16ToFloatSample(wav.pcm[i] ?? 0) * gain, true, i)
   }
   return writeWav({ ...wav, pcm })
 }
@@ -211,9 +197,9 @@ export function pitchShiftWav(buffer: ArrayBuffer, semitones: number): ArrayBuff
     const fraction = source - index
     const next = Math.min(frames - 1, index + 1)
     for (let c = 0; c < wav.channels; c += 1) {
-      const a = wav.pcm[index * wav.channels + c] ?? 0
-      const b = wav.pcm[next * wav.channels + c] ?? 0
-      pcm[f * wav.channels + c] = clampSample(a + (b - a) * fraction)
+      const a = pcm16ToFloatSample(wav.pcm[index * wav.channels + c] ?? 0)
+      const b = pcm16ToFloatSample(wav.pcm[next * wav.channels + c] ?? 0)
+      pcm[f * wav.channels + c] = quantise16(a + (b - a) * fraction, true, f * wav.channels + c)
     }
   }
   return writeWav({ ...wav, pcm })
@@ -294,7 +280,7 @@ export function layerWavs(
   const mixed = new Float64Array(frames * channels)
   for (let f = 0; f < baseFrames; f += 1) {
     for (let c = 0; c < channels; c += 1) {
-      mixed[f * channels + c] = base.pcm[f * base.channels + c] ?? 0
+      mixed[f * channels + c] = pcm16ToFloatSample(base.pcm[f * base.channels + c] ?? 0)
     }
   }
   for (let f = 0; f < overlayFrames; f += 1) {
@@ -303,7 +289,9 @@ export function layerWavs(
     for (let c = 0; c < channels; c += 1) {
       // A mono overlay feeds every channel; a stereo one wraps if the base has
       // fewer channels than it does.
-      const source = overlay.pcm[f * overlay.channels + (c % overlay.channels)] ?? 0
+      const source = pcm16ToFloatSample(
+        overlay.pcm[f * overlay.channels + (c % overlay.channels)] ?? 0,
+      )
       mixed[target * channels + c] += source * gain
     }
   }
@@ -315,13 +303,13 @@ export function layerWavs(
       const magnitude = Math.abs(mixed[i] ?? 0)
       if (magnitude > peak) peak = magnitude
     }
-    const ceiling = INT16_MAX * dbToGain(DEFAULT_PEAK_DBFS)
+    const ceiling = dbToGain(DEFAULT_PEAK_DBFS)
     if (peak > ceiling) scale = ceiling / peak
   }
 
   const pcm = new Int16Array(mixed.length)
   for (let i = 0; i < mixed.length; i += 1) {
-    pcm[i] = clampSample((mixed[i] ?? 0) * scale)
+    pcm[i] = quantise16((mixed[i] ?? 0) * scale, true, i)
   }
   return writeWav({ ...base, pcm })
 }

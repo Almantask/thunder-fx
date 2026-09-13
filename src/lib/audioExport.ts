@@ -1,4 +1,7 @@
 import { parseWav, writeWav, type WavAudio } from '@/lib/wav'
+import { floatToPcm16, pcmToFloat, quantise16, pcm16ToFloatSample } from '@/lib/pcm'
+
+export { pcmToFloat, floatToPcm16 } from '@/lib/pcm'
 
 export type AudioFormat = 'wav' | 'aiff' | 'flac' | 'opus' | 'ogg' | 'mp3'
 export type SampleRateOption = 44100 | 48000
@@ -116,23 +119,6 @@ export function formatMime(format: AudioFormat): string {
   return FORMAT_MIME[format] ?? 'audio/wav'
 }
 
-export function pcmToFloat(pcm: Int16Array): Float32Array {
-  const out = new Float32Array(pcm.length)
-  for (let i = 0; i < pcm.length; i += 1) {
-    out[i] = (pcm[i] ?? 0) / 32768
-  }
-  return out
-}
-
-export function floatToPcm16(samples: Float32Array): Int16Array {
-  const out = new Int16Array(samples.length)
-  for (let i = 0; i < samples.length; i += 1) {
-    const v = Math.max(-1, Math.min(1, samples[i] ?? 0))
-    out[i] = Math.round(v * 32767)
-  }
-  return out
-}
-
 export function downmixToMono(pcm: Int16Array, channels: number): Int16Array {
   if (channels <= 1) return new Int16Array(pcm)
   const frames = Math.floor(pcm.length / channels)
@@ -140,9 +126,9 @@ export function downmixToMono(pcm: Int16Array, channels: number): Int16Array {
   for (let f = 0; f < frames; f += 1) {
     let sum = 0
     for (let c = 0; c < channels; c += 1) {
-      sum += pcm[f * channels + c] ?? 0
+      sum += pcm16ToFloatSample(pcm[f * channels + c] ?? 0)
     }
-    out[f] = Math.round(sum / channels)
+    out[f] = quantise16(sum / channels, true, f)
   }
   return out
 }

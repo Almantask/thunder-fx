@@ -1,3 +1,4 @@
+import { PCM16_SCALE } from '@/lib/pcm'
 import { parseWav } from '@/lib/wav'
 
 export type SilenceTrimOptions = {
@@ -13,9 +14,11 @@ function rmsWindow(pcm: Int16Array, channels: number, start: number, end: number
   let sum = 0
   let count = 0
   for (let f = start; f < end; f += 1) {
-    const s = (pcm[f * channels] ?? 0) / 32768
-    sum += s * s
-    count += 1
+    for (let c = 0; c < channels; c += 1) {
+      const s = (pcm[f * channels + c] ?? 0) / PCM16_SCALE
+      sum += s * s
+      count += 1
+    }
   }
   if (count === 0) return 0
   return Math.sqrt(sum / count)

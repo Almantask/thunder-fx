@@ -88,20 +88,20 @@ are closed.
 
 ### B. Audio fidelity
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-16** | [A true-peak ceiling in the engine master](#pq-16-a-true-peak-ceiling-in-the-engine-master) | Fidelity | High | M |
-| **PQ-17** | [Float working buffer for Shape edits; quantise once on save](#pq-17-float-working-buffer-for-shape-edits-quantise-once-on-save) | Fidelity | High | M |
-| **PQ-18** | [Anti-aliased pitch shift](#pq-18-anti-aliased-pitch-shift) | Fidelity | High | M |
-| **PQ-19** | [Real 24-bit export instead of padded 16-bit](#pq-19-real-24-bit-export-instead-of-padded-16-bit) | Fidelity | High | S |
-| **PQ-20** | [Bitrate and quality controls for Opus, Vorbis and MP3](#pq-20-bitrate-and-quality-controls-for-opus-vorbis-and-mp3) | Fidelity | High | S |
-| **PQ-21** | [Micro-fades at trim points; stereo-aware silence detection](#pq-21-micro-fades-at-trim-points-stereo-aware-silence-detection) | Fidelity | Medium | S |
-| **PQ-22** | [A real zero-crossing search, and shorter loop crossfades for short clips](#pq-22-a-real-zero-crossing-search-and-shorter-loop-crossfades-for-short-clips) | Fidelity | Low | S |
-| **PQ-23** | [Symmetric PCM ↔ float mapping](#pq-23-symmetric-pcm--float-mapping) | Fidelity | Low | S |
-| **PQ-24** | [Dither every 16-bit quantisation in the TypeScript path](#pq-24-dither-every-16-bit-quantisation-in-the-typescript-path) | Fidelity | Medium | S |
-| **PQ-25** | [A soft limiter instead of a hard clamp on hot beds](#pq-25-a-soft-limiter-instead-of-a-hard-clamp-on-hot-beds) | Fidelity | Medium | M |
-| **PQ-26** | [Make `soxr` a hard dependency and delete the linear fallback](#pq-26-make-soxr-a-hard-dependency-and-delete-the-linear-fallback) | Fidelity | Medium | S |
-| **PQ-27** | [A CI-able objective quality suite with golden seeds](#pq-27-a-ci-able-objective-quality-suite-with-golden-seeds) | Fidelity | Medium | M |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-16** | [A true-peak ceiling in the engine master](#pq-16-a-true-peak-ceiling-in-the-engine-master) | Fidelity | High | M | |
+| **PQ-17** | [Float working buffer for Shape edits; quantise once on save](#pq-17-float-working-buffer-for-shape-edits-quantise-once-on-save) | Fidelity | High | M | |
+| **PQ-18** | [Anti-aliased pitch shift](#pq-18-anti-aliased-pitch-shift) | Fidelity | High | M | |
+| **PQ-19** | [Real 24-bit export instead of padded 16-bit](#pq-19-real-24-bit-export-instead-of-padded-16-bit) | Fidelity | High | S | **Done (label)** |
+| **PQ-20** | [Bitrate and quality controls for Opus, Vorbis and MP3](#pq-20-bitrate-and-quality-controls-for-opus-vorbis-and-mp3) | Fidelity | High | S | **Done** |
+| **PQ-21** | [Micro-fades at trim points; stereo-aware silence detection](#pq-21-micro-fades-at-trim-points-stereo-aware-silence-detection) | Fidelity | Medium | S | **Done** |
+| **PQ-22** | [A real zero-crossing search, and shorter loop crossfades for short clips](#pq-22-a-real-zero-crossing-search-and-shorter-loop-crossfades-for-short-clips) | Fidelity | Low | S | **Done** |
+| **PQ-23** | [Symmetric PCM ↔ float mapping](#pq-23-symmetric-pcm--float-mapping) | Fidelity | Low | S | **Done** |
+| **PQ-24** | [Dither every 16-bit quantisation in the TypeScript path](#pq-24-dither-every-16-bit-quantisation-in-the-typescript-path) | Fidelity | Medium | S | **Done** |
+| **PQ-25** | [A soft limiter instead of a hard clamp on hot beds](#pq-25-a-soft-limiter-instead-of-a-hard-clamp-on-hot-beds) | Fidelity | Medium | M | |
+| **PQ-26** | [Make `soxr` a hard dependency and delete the linear fallback](#pq-26-make-soxr-a-hard-dependency-and-delete-the-linear-fallback) | Fidelity | Medium | S | **Done** |
+| **PQ-27** | [A CI-able objective quality suite with golden seeds](#pq-27-a-ci-able-objective-quality-suite-with-golden-seeds) | Fidelity | Medium | M | |
 
 ### C. Frontend rendering and state
 
@@ -549,6 +549,7 @@ TypeScript editing path that re-quantises on every step.
 ### PQ-21: Micro-fades at trim points; stereo-aware silence detection
 
 * **Type / Impact / Effort:** Fidelity / Medium / S
+* **Status:** **Done** (fidelity S-wave)
 * **Problem:** `detectSilenceBounds` only reports bounds; `trimWav` cuts at a sample. A cut
   through a non-zero sample is a click, and auto-trim pads by 30 ms, which is not a fade.
   `rmsWindow` (`src/lib/silenceTrim.ts:16`) reads the left channel only, so a hard-panned
@@ -562,6 +563,7 @@ TypeScript editing path that re-quantises on every step.
 ### PQ-22: A real zero-crossing search, and shorter loop crossfades for short clips
 
 * **Type / Impact / Effort:** Fidelity / Low / S
+* **Status:** **Done** (fidelity S-wave)
 * **Problem:** `nearestZeroCrossing` (`src/lib/seamlessLoop.ts:28-47`) finds the minimum
   absolute left-channel sample in a ±5 ms window, not a sign change, and ignores the right
   channel. `MIN_CROSSFADE_SEC = 0.5` forces half a second of crossfade onto a 2 s loop, which
@@ -574,6 +576,7 @@ TypeScript editing path that re-quantises on every step.
 ### PQ-23: Symmetric PCM ↔ float mapping
 
 * **Type / Impact / Effort:** Fidelity / Low / S
+* **Status:** **Done** (fidelity S-wave)
 * **Problem:** `pcmToFloat` divides by 32768 (`src/lib/audioExport.ts:88`) and `floatToPcm16`
   multiplies by 32767 (`:97`). A round trip attenuates by 1/32768 and a full-scale negative
   sample cannot be represented on the way back. Harmless once, cumulative across edits.
@@ -585,6 +588,7 @@ TypeScript editing path that re-quantises on every step.
 ### PQ-24: Dither every 16-bit quantisation in the TypeScript path
 
 * **Type / Impact / Effort:** Fidelity / Medium / S
+* **Status:** **Done** (fidelity S-wave)
 * **Problem:** The engine applies TPDF dither; nothing in `src/lib` does. `floatToPcm16`,
   `clampSample`, `downmixToMono` and the seamless-loop crossfade all truncate with
   `Math.round`, so an edited or exported clip loses the noise-shaping the engine paid for.
@@ -611,6 +615,7 @@ TypeScript editing path that re-quantises on every step.
 ### PQ-26: Make `soxr` a hard dependency and delete the linear fallback
 
 * **Type / Impact / Effort:** Fidelity / Medium / S
+* **Status:** **Done** (fidelity S-wave)
 * **Problem:** Export resampling prefers soxr, then torchaudio's windowed sinc, then
   `np.interp` (`worker.py:1854-1856`). The changelog already records that the linear path
   aliased and was the one actually running. The fallback still exists, so a broken torchaudio
@@ -1692,6 +1697,11 @@ Delivered items, kept for the record.
 | **PQ-54** | Unmount closed dialogs | Unreleased (frontend/startup S-wave) |
 | **PQ-61** | Cache the IndexedDB connection in the browser build | Unreleased (frontend/startup S-wave) |
 | **PQ-62** | Stream zip entries; store compressed audio uncompressed | Unreleased (frontend/startup S-wave) |
+| **PQ-21** | Micro-fades at trim points; stereo-aware silence detection | Unreleased (fidelity S-wave) |
+| **PQ-22** | Real zero-crossing search; 50 ms loop-crossfade floor | Unreleased (fidelity S-wave) |
+| **PQ-23** | Symmetric PCM ↔ float mapping (32768 both ways) | Unreleased (fidelity S-wave) |
+| **PQ-24** | TPDF dither on every TypeScript int16 quantisation | Unreleased (fidelity S-wave) |
+| **PQ-26** | Pin `soxr`; delete the linear resample fallback | Unreleased (fidelity S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

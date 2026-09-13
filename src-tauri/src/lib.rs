@@ -998,11 +998,9 @@ fn preset_steps(preset: Option<&str>, steps: Option<u32>) -> u32 {
     }
 }
 
-#[tauri::command]
-#[allow(clippy::too_many_arguments)] // one parameter per IPC field
-async fn engine_generate(
-    app: AppHandle,
-    scope: State<'_, PathScope>,
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct GenerateArgs {
     prompt: String,
     seconds: f32,
     seed: i64,
@@ -1019,40 +1017,63 @@ async fn engine_generate(
     seamless_loop: Option<bool>,
     preset: Option<String>,
     sampler: Option<String>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct EncodeAudioArgs {
+    wav_path: String,
+    dest_path: String,
+    format: Option<String>,
+    sample_rate: Option<u32>,
+    bit_depth: Option<u32>,
+    mono: Option<bool>,
+    bitrate: Option<u32>,
+    quality: Option<f32>,
+}
+
+#[tauri::command]
+async fn engine_generate(
+    app: AppHandle,
+    scope: State<'_, PathScope>,
+    args: GenerateArgs,
 ) -> Result<serde_json::Value, String> {
     let proc = ensure_engine_async(app).await?;
     // The worker writes the WAV under this folder, so the app has to be able to
     // read it straight back; adopting it here keeps scope and output in step
     // even for a folder that was typed in rather than picked in a dialog.
-    scope.set_library(library_dir.as_deref());
+    scope.set_library(args.library_dir.as_deref());
     // Max quality swaps to medium-base, which means an unload + load before the
     // run even starts, so give it the extra headroom on top of its step count.
-    let timeout = generate_timeout_secs(seconds, preset_steps(preset.as_deref(), steps))
-        + if preset.as_deref() == Some("quality") {
-            600
-        } else {
-            0
-        };
+    let extra = if args.preset.as_deref() == Some("quality") {
+        600
+    } else {
+        0
+    };
+    let timeout = generate_timeout_secs(
+        args.seconds,
+        preset_steps(args.preset.as_deref(), args.steps),
+    ) + extra;
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
         "cmd": "generate",
-        "prompt": prompt,
-        "seconds": seconds,
-        "seed": seed,
-        "cfg": cfg,
-        "negative": negative,
-        "hf_token": hf_token,
-        "library_dir": library_dir,
-        "mode": mode,
-        "instruments": instruments,
+        "prompt": args.prompt,
+        "seconds": args.seconds,
+        "seed": args.seed,
+        "cfg": args.cfg,
+        "negative": args.negative,
+        "hf_token": args.hf_token,
+        "library_dir": args.library_dir,
+        "mode": args.mode,
+        "instruments": args.instruments,
         // Null lets the preset own the step count; only the custom preset pins it.
-        "steps": steps,
-        "preset": preset,
-        "sampler": sampler,
-        "category": category,
-        "subcategory": subcategory,
-        "intensity": intensity,
-        "seamless_loop": seamless_loop.unwrap_or(false)
+        "steps": args.steps,
+        "preset": args.preset,
+        "sampler": args.sampler,
+        "category": args.category,
+        "subcategory": args.subcategory,
+        "intensity": args.intensity,
+        "seamless_loop": args.seamless_loop.unwrap_or(false)
     });
     run_blocking(move || send_and_receive(&proc, payload, timeout)).await
 }
@@ -1068,23 +1089,15 @@ fn engine_cancel(state: State<'_, Engine>) -> Result<serde_json::Value, String> 
 }
 
 #[tauri::command]
-#[allow(clippy::too_many_arguments)] // one parameter per IPC field
 async fn engine_encode_audio(
     app: AppHandle,
     scope: State<'_, PathScope>,
-    wav_path: String,
-    dest_path: String,
-    format: Option<String>,
-    sample_rate: Option<u32>,
-    bit_depth: Option<u32>,
-    mono: Option<bool>,
-    bitrate: Option<u32>,
-    quality: Option<f32>,
+    args: EncodeAudioArgs,
 ) -> Result<serde_json::Value, String> {
-    let wav_path = ensure_allowed(&scope, &wav_path)?
+    let wav_path = ensure_allowed(&scope, &args.wav_path)?
         .to_string_lossy()
         .into_owned();
-    let dest_path = ensure_allowed(&scope, &dest_path)?
+    let dest_path = ensure_allowed(&scope, &args.dest_path)?
         .to_string_lossy()
         .into_owned();
     let proc = ensure_engine_async(app).await?;
@@ -1094,12 +1107,12 @@ async fn engine_encode_audio(
         "wav_path": wav_path,
         "dest_path": dest_path,
         "ogg_path": dest_path,
-        "format": format.unwrap_or_else(|| "ogg".into()),
-        "sample_rate": sample_rate,
-        "bit_depth": bit_depth,
-        "mono": mono.unwrap_or(false),
-        "bitrate": bitrate,
-        "quality": quality
+        "format": args.format.unwrap_or_else(|| "ogg".into()),
+        "sample_rate": args.sample_rate,
+        "bit_depth": args.bit_depth,
+        "mono": args.mono.unwrap_or(false),
+        "bitrate": args.bitrate,
+        "quality": args.quality
     });
     run_blocking(move || send_and_receive(&proc, payload, 120)).await
 }
@@ -2539,6 +2552,46 @@ mod tests {
     use std::sync::Mutex;
 
     static ENV_LOCK: Mutex<()> = Mutex::new(());
+
+    #[test]
+    fn generate_args_deserializes_camel_case_invoke_object() {
+        let args: GenerateArgs = serde_json::from_value(serde_json::json!({
+            "prompt": "iron gate",
+            "seconds": 8.0,
+            "seed": 9,
+            "cfg": 1.0,
+            "negative": "",
+            "hfToken": "hf_x",
+            "libraryDir": "D:/library",
+            "seamlessLoop": true,
+            "preset": "balanced",
+        }))
+        .unwrap();
+        assert_eq!(args.prompt, "iron gate");
+        assert_eq!(args.hf_token.as_deref(), Some("hf_x"));
+        assert_eq!(args.library_dir.as_deref(), Some("D:/library"));
+        assert_eq!(args.seamless_loop, Some(true));
+        assert_eq!(args.preset.as_deref(), Some("balanced"));
+    }
+
+    #[test]
+    fn encode_audio_args_deserializes_camel_case_invoke_object() {
+        let args: EncodeAudioArgs = serde_json::from_value(serde_json::json!({
+            "wavPath": "C:/tmp/a.wav",
+            "destPath": "C:/tmp/a.ogg",
+            "format": "ogg",
+            "sampleRate": 44100,
+            "bitDepth": 16,
+            "mono": false,
+            "bitrate": 192,
+            "quality": 6.0,
+        }))
+        .unwrap();
+        assert_eq!(args.wav_path, "C:/tmp/a.wav");
+        assert_eq!(args.dest_path, "C:/tmp/a.ogg");
+        assert_eq!(args.format.as_deref(), Some("ogg"));
+        assert_eq!(args.bitrate, Some(192));
+    }
 
     /// Sets an env var for the duration of a test and restores the previous
     /// value on drop, so one test's override cannot leak into the next.

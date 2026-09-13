@@ -331,22 +331,24 @@ export async function generate(
       (mode === 'music' ? inferClipIntensity(dummyClip) : undefined)
 
     const result = await invoke<EngineMsg>('engine_generate', {
-      prompt: request.prompt,
-      seconds: request.seconds,
-      seed: request.seed,
-      cfg: request.cfg,
-      preset,
-      sampler: request.sampler ?? null,
-      steps: preset === 'custom' ? (request.steps ?? null) : null,
-      negative: request.negative,
-      hfToken: hfToken(),
-      libraryDir: request.libraryDir?.trim() || loadSettings().libraryDir.trim() || null,
-      mode,
-      category: resolvedCategory,
-      subcategory: resolvedSubcategory || resolvedIntensity,
-      intensity: resolvedIntensity,
-      instruments: topInstruments,
-      seamlessLoop: loop,
+      args: {
+        prompt: request.prompt,
+        seconds: request.seconds,
+        seed: request.seed,
+        cfg: request.cfg,
+        preset,
+        sampler: request.sampler ?? null,
+        steps: preset === 'custom' ? (request.steps ?? null) : null,
+        negative: request.negative,
+        hfToken: hfToken(),
+        libraryDir: request.libraryDir?.trim() || loadSettings().libraryDir.trim() || null,
+        mode,
+        category: resolvedCategory,
+        subcategory: resolvedSubcategory || resolvedIntensity,
+        intensity: resolvedIntensity,
+        instruments: topInstruments,
+        seamlessLoop: loop,
+      },
     })
     throwIfEngineError(result)
     if (!result.path) throw new Error('Engine did not return a WAV path')
@@ -479,14 +481,16 @@ export async function exportClipFile(options: {
     const wavPath = joinPath(await tempDir(), `thunder-fx-export-${crypto.randomUUID()}.wav`)
     await writeFileBytes(wavPath, prepared)
     const encoded = await invoke<EngineMsg>('engine_encode_audio', {
-      wavPath,
-      destPath: path,
-      format: options.format,
-      sampleRate: options.sampleRate ?? 44100,
-      bitDepth: options.bitDepth ?? 16,
-      mono: Boolean(options.mono),
-      bitrate: options.bitrateKbps,
-      quality: options.vorbisQuality,
+      args: {
+        wavPath,
+        destPath: path,
+        format: options.format,
+        sampleRate: options.sampleRate ?? 44100,
+        bitDepth: options.bitDepth ?? 16,
+        mono: Boolean(options.mono),
+        bitrate: options.bitrateKbps,
+        quality: options.vorbisQuality,
+      },
     })
     throwIfEngineError(encoded)
     await deleteDiskFile(wavPath)
@@ -588,14 +592,16 @@ export async function writeEncodedFile(options: {
   const wavPath = joinPath(await tempDir(), `thunder-fx-encode-${crypto.randomUUID()}.wav`)
   await writeFileBytes(wavPath, prepared)
   const encoded = await invoke<EngineMsg>('engine_encode_audio', {
-    wavPath,
-    destPath: options.path,
-    format: options.format,
-    sampleRate: options.sampleRate ?? 44100,
-    bitDepth: options.bitDepth ?? 16,
-    mono: Boolean(options.mono),
-    bitrate: options.bitrateKbps,
-    quality: options.vorbisQuality,
+    args: {
+      wavPath,
+      destPath: options.path,
+      format: options.format,
+      sampleRate: options.sampleRate ?? 44100,
+      bitDepth: options.bitDepth ?? 16,
+      mono: Boolean(options.mono),
+      bitrate: options.bitrateKbps,
+      quality: options.vorbisQuality,
+    },
   })
   throwIfEngineError(encoded)
   await deleteDiskFile(wavPath)

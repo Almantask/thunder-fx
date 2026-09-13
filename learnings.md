@@ -237,3 +237,16 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   that saw a download ratio in `(0, 1)`; excluded even as the sole sample.
 - **PQ-83 bar.** `remainingMs` from `liveRemainingMs` wins. Else elapsed /
   historical total. Else `null` (indeterminate CSS), never `1 - exp(-t/14000)`.
+- **PQ-86 args.** Tauri 2 names the struct `args`, so the invoke object is
+  `{ args: { prompt, seconds, … } }`, not a flat list matching Rust params.
+- **PQ-87 except.** Command-boundary `except Exception` stays: that is the IPC
+  firewall. The named fallbacks (conditioner, high-pass, VRAM, OOM type probe)
+  catch the types they mean and `_warn_once` so a queue does not reprint them.
+- **PQ-90 CI.** Keep `npm run build` as `tsc -b && vite build` for Tauri's
+  `beforeBuildCommand`. CI runs `typecheck` then `build:vite`.
+- **PQ-93 budget.** 8.5 MB per JS file / 11 MB total. The catalog is still in
+  the main chunk; tighten after PQ-50/51. `vitest bench` is `npm run bench`,
+  not a CI wall-clock gate — shared runners are too noisy for a 20 % threshold.
+  Tests that call `worker.main()` must clear `_protocol_out` first: it is
+  process-global after PQ-80, and a second `main()` otherwise emits into the
+  previous test's stdout.

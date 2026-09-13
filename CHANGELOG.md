@@ -104,6 +104,13 @@ All notable Thunder FX changes are listed here.
   that included a weights download is tagged `cold` and excluded from the load quote.
   The progress bar uses `liveRemainingMs` or the historical total — never a synthetic
   curve — and stays indeterminate until one of those exists (PQ-83).
+- **Generate and encode IPC take one argument struct** instead of a long positional
+  list (PQ-86). Conditioner move, high-pass, VRAM probe and OOM detection catch the
+  types they mean, and log a single WARN when falling back (PQ-87). CI type-checks
+  once, then `vite build`; the native job uses `swatinem/rust-cache` and the Python
+  job runs ruff through `uv` (PQ-90). A JS chunk budget (`npm run size:check`) fails
+  the PR if the bundle grows past 8.5 MB / 11 MB total; `npm run bench` times the
+  audio hot path; `python engine/worker.py --profile` prints lead/step/tail (PQ-93).
 
 ### Fixed
 

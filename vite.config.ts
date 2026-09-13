@@ -3,7 +3,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import { defineConfig, type PluginOption } from 'vitest/config'
+import { defineConfig } from 'vitest/config'
+import type { PluginOption } from 'vite'
 
 import pkg from './package.json' with { type: 'json' }
 

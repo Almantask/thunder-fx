@@ -92,9 +92,10 @@ export function enrichClipTaxonomy(clip: Clip): Clip {
     mode === 'music' || mode === 'ambience'
       ? inferClipIntensity(withCategory)
       : withCategory.intensity
-  const instruments = withCategory.instruments?.length
-    ? withCategory.instruments
-    : extractInstruments(withCategory.prompt)
+  const instruments =
+    withCategory.instruments !== undefined
+      ? withCategory.instruments
+      : extractInstruments(withCategory.prompt)
   if (
     withCategory.category === category &&
     withCategory.subcategory === subcategory &&

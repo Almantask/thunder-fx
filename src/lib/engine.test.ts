@@ -6,6 +6,7 @@ import {
   generate,
   probeEngine,
   engineStatus,
+  enginePing,
   loadModel,
   unloadModel,
   reportError,
@@ -28,6 +29,7 @@ describe('engine bridge', () => {
     expect(status.loaded).toBe(true)
     expect(status.vramTotalGb).toBe(8)
     expect(status.gpuName).toBe('mock')
+    expect(await enginePing()).toBe(false)
     const steps: number[] = []
     const phases: string[] = []
     const result = await generate(

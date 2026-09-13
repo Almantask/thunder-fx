@@ -234,6 +234,14 @@ export async function engineStatus(): Promise<EngineStatus> {
   }
 }
 
+/** Whether the Python worker is already running — never starts it. */
+export async function enginePing(): Promise<boolean> {
+  if (!isTauri()) return false
+  const { invoke } = await import('@tauri-apps/api/core')
+  const result = await invoke<{ alive?: boolean }>('engine_ping')
+  return Boolean(result.alive)
+}
+
 export async function cancelGenerate(): Promise<void> {
   if (!isTauri()) return
   const { invoke } = await import('@tauri-apps/api/core')
@@ -254,7 +262,7 @@ export async function generate(
   }
   const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
-  const unlisten = await listen<WeaveProgress>('weave-progress', (ev) => {
+  const unlisten = await listen<WeaveProgress>('engine-progress', (ev) => {
     handlers.onProgress?.(ev.payload)
   })
   const onAbort = () => {
@@ -362,7 +370,7 @@ export async function scribeWeights(
   }
   const { invoke } = await import('@tauri-apps/api/core')
   const { listen } = await import('@tauri-apps/api/event')
-  const unlisten = await listen<WeaveProgress>('scribe-progress', (ev) => {
+  const unlisten = await listen<WeaveProgress>('engine-progress', (ev) => {
     const ratio = ev.payload.ratio
     if (typeof ratio === 'number' && Number.isFinite(ratio) && ratio > 0) {
       onProgress(Math.min(1, ratio))

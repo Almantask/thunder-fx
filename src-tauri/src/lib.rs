@@ -9,7 +9,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 use tauri::{AppHandle, Emitter, Manager, State};
 
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 use std::sync::mpsc::{channel, Sender};
 
 struct Engine {
@@ -25,6 +25,7 @@ struct EngineProc {
     pending: Arc<PendingRequests>,
     child: Mutex<Child>,
     alive: Arc<AtomicBool>,
+    stderr: Arc<Mutex<VecDeque<String>>>,
 }
 
 impl EngineProc {
@@ -45,18 +46,24 @@ impl Drop for EngineProc {
     }
 }
 
-#[derive(Serialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Default)]
 struct WeaveProgressPayload {
+    #[serde(default)]
     step: u32,
+    #[serde(default = "default_progress_total")]
     total: u32,
-    #[serde(rename = "elapsedMs")]
+    #[serde(rename = "elapsedMs", default)]
     elapsed_ms: u64,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     phase: Option<String>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     ratio: Option<f64>,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     message: Option<String>,
+}
+
+fn default_progress_total() -> u32 {
+    20
 }
 
 fn library_dir() -> PathBuf {
@@ -130,6 +137,7 @@ fn scope_config_file() -> PathBuf {
 struct PathScope {
     granted: Mutex<Vec<PathBuf>>,
     library: Mutex<Option<PathBuf>>,
+    cached_roots: Mutex<Option<Arc<[PathBuf]>>>,
 }
 
 #[derive(Serialize, Deserialize, Default)]
@@ -157,6 +165,7 @@ impl PathScope {
                     .map(|p| normalize_path(Path::new(&p)))
                     .filter(|p| !p.as_os_str().is_empty()),
             ),
+            cached_roots: Mutex::new(None),
         }
     }
 
@@ -171,6 +180,7 @@ impl PathScope {
             }
             granted.push(normalized);
         }
+        self.invalidate_roots();
         self.persist();
     }
 
@@ -191,6 +201,7 @@ impl PathScope {
             }
             *library = next;
         }
+        self.invalidate_roots();
         self.persist();
     }
 
@@ -217,7 +228,20 @@ impl PathScope {
         }
     }
 
-    fn roots(&self) -> Vec<PathBuf> {
+    fn roots(&self) -> Arc<[PathBuf]> {
+        if let Ok(cache) = self.cached_roots.lock() {
+            if let Some(roots) = cache.as_ref() {
+                return Arc::clone(roots);
+            }
+        }
+        let computed: Arc<[PathBuf]> = self.compute_roots().into();
+        if let Ok(mut cache) = self.cached_roots.lock() {
+            *cache = Some(Arc::clone(&computed));
+        }
+        computed
+    }
+
+    fn compute_roots(&self) -> Vec<PathBuf> {
         let mut roots: Vec<PathBuf> = default_scope_roots()
             .iter()
             .map(|root| normalize_path(root))
@@ -229,6 +253,12 @@ impl PathScope {
             roots.extend(granted.iter().cloned());
         }
         roots
+    }
+
+    fn invalidate_roots(&self) {
+        if let Ok(mut cache) = self.cached_roots.lock() {
+            *cache = None;
+        }
     }
 
     /// Custom library folder when Settings set one; otherwise the built-in default.
@@ -345,7 +375,7 @@ fn ensure_allowed(scope: &PathScope, path: &str) -> Result<PathBuf, String> {
             None => normalized.clone(),
         }
     };
-    for root in scope.roots() {
+    for root in scope.roots().iter() {
         if path_is_within(&root, &probe) || path_is_within(&root, &normalized) {
             return Ok(normalized);
         }
@@ -484,6 +514,76 @@ fn python_commands(script: &Path) -> Vec<Command> {
     commands
 }
 
+const STDERR_RING_LINES: usize = 50;
+const CANCEL_ACK_SECS: u64 = 2;
+
+fn record_stderr_line(buf: &mut VecDeque<String>, line: &str) {
+    let trimmed = line.trim_end();
+    if trimmed.is_empty() {
+        return;
+    }
+    if buf.len() >= STDERR_RING_LINES {
+        buf.pop_front();
+    }
+    buf.push_back(trimmed.to_string());
+}
+
+fn drain_engine_stderr(stderr: impl std::io::Read, ring: &Mutex<VecDeque<String>>) {
+    let mut reader = BufReader::new(stderr);
+    let mut line = String::new();
+    loop {
+        line.clear();
+        match reader.read_line(&mut line) {
+            Ok(0) | Err(_) => break,
+            Ok(_) => {
+                if let Ok(mut buf) = ring.lock() {
+                    record_stderr_line(&mut buf, &line);
+                }
+            }
+        }
+    }
+}
+
+fn snapshot_stderr(proc: &EngineProc) -> Vec<String> {
+    proc.stderr
+        .lock()
+        .ok()
+        .map(|buf| buf.iter().cloned().collect())
+        .unwrap_or_default()
+}
+
+fn flush_stderr_log(proc: &EngineProc, reason: &str) {
+    let lines = snapshot_stderr(proc);
+    if lines.is_empty() {
+        return;
+    }
+    append_error_log(&format!("{reason}; last stderr:\n{}", lines.join("\n")));
+}
+
+fn mark_engine_dead(proc: &EngineProc) {
+    proc.alive.store(false, Ordering::SeqCst);
+    if let Ok(mut child) = proc.child.lock() {
+        let _ = child.kill();
+    }
+}
+
+fn existing_engine(state: &Engine) -> Option<Arc<EngineProc>> {
+    let guard = state.proc.lock().ok()?;
+    let proc = guard.as_ref()?;
+    proc.is_alive().then(|| Arc::clone(proc))
+}
+
+fn idle_engine_status() -> serde_json::Value {
+    serde_json::json!({
+        "ok": true,
+        "ready": false,
+        "loaded": false,
+        "mock": false,
+        "device": "unknown",
+        "message": "Engine not started"
+    })
+}
+
 fn default_pytorch_cuda_alloc_conf() -> Option<&'static str> {
     // Expandable segments cut allocator-fragmentation OOMs on long sessions.
     // Leave an explicit user value alone.
@@ -500,7 +600,7 @@ fn spawn_python(script: &Path) -> Result<Child, String> {
     for mut cmd in python_commands(script) {
         cmd.stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
+            .stderr(Stdio::piped())
             .env("PYTHONUNBUFFERED", "1")
             // Without these, Python decodes our UTF-8 JSON with the Windows ANSI
             // code page: an em dash in a category name arrives as mojibake and
@@ -553,11 +653,18 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
         .stdout
         .take()
         .ok_or_else(|| fail("engine stdout missing"))?;
+    let stderr = child.stderr.take();
 
     let pending = Arc::new(PendingRequests {
         map: Mutex::new(HashMap::new()),
     });
     let alive = Arc::new(AtomicBool::new(true));
+    let stderr_ring = Arc::new(Mutex::new(VecDeque::new()));
+
+    if let Some(stderr) = stderr {
+        let ring = Arc::clone(&stderr_ring);
+        std::thread::spawn(move || drain_engine_stderr(stderr, &ring));
+    }
 
     let reader_pending = Arc::clone(&pending);
     let reader_alive = Arc::clone(&alive);
@@ -590,27 +697,11 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
                     if let Ok(parsed) = serde_json::from_str::<serde_json::Value>(trimmed) {
                         let event = parsed.get("event").and_then(|v| v.as_str()).unwrap_or("");
                         if event == "progress" {
-                            let payload = WeaveProgressPayload {
-                                step: parsed.get("step").and_then(|v| v.as_u64()).unwrap_or(0)
-                                    as u32,
-                                total: parsed.get("total").and_then(|v| v.as_u64()).unwrap_or(20)
-                                    as u32,
-                                elapsed_ms: parsed
-                                    .get("elapsedMs")
-                                    .and_then(|v| v.as_u64())
-                                    .unwrap_or(0),
-                                phase: parsed
-                                    .get("phase")
-                                    .and_then(|v| v.as_str())
-                                    .map(|s| s.to_string()),
-                                ratio: parsed.get("ratio").and_then(|v| v.as_f64()),
-                                message: parsed
-                                    .get("message")
-                                    .and_then(|v| v.as_str())
-                                    .map(|s| s.to_string()),
-                            };
-                            let _ = app_handle.emit("weave-progress", payload.clone());
-                            let _ = app_handle.emit("scribe-progress", payload);
+                            if let Ok(payload) =
+                                serde_json::from_value::<WeaveProgressPayload>(parsed)
+                            {
+                                let _ = app_handle.emit("engine-progress", payload);
+                            }
                         } else if let Some(id_val) = parsed.get("id") {
                             let id_str = match id_val {
                                 serde_json::Value::String(s) => s.clone(),
@@ -648,6 +739,7 @@ fn spawn_engine(app: &AppHandle) -> Result<EngineProc, String> {
         pending,
         child: Mutex::new(child),
         alive,
+        stderr: stderr_ring,
     })
 }
 
@@ -660,8 +752,8 @@ impl Drop for AliveGuard {
     }
 }
 
-fn ensure_engine(app: &AppHandle, state: &State<Engine>) -> Result<Arc<EngineProc>, String> {
-    let mut guard = state.proc.lock().map_err(|e| fail(e.to_string()))?;
+fn ensure_engine(app: &AppHandle, engine: &Engine) -> Result<Arc<EngineProc>, String> {
+    let mut guard = engine.proc.lock().map_err(|e| fail(e.to_string()))?;
     if let Some(existing) = guard.as_ref() {
         if existing.is_alive() {
             return Ok(Arc::clone(existing));
@@ -700,6 +792,7 @@ fn send_and_receive(
         if let Ok(mut map) = proc.pending.map.lock() {
             map.remove(&id_str);
         }
+        flush_stderr_log(proc, &e);
         return Err(e);
     }
     match rx.recv_timeout(std::time::Duration::from_secs(timeout_secs)) {
@@ -709,6 +802,7 @@ fn send_and_receive(
                     .get("message")
                     .and_then(|v| v.as_str())
                     .unwrap_or("Engine error");
+                flush_stderr_log(proc, msg);
                 return Err(fail(msg));
             }
             Ok(res)
@@ -717,15 +811,47 @@ fn send_and_receive(
             if let Ok(mut map) = proc.pending.map.lock() {
                 map.remove(&id_str);
             }
-            Err(fail(format!(
-                "Engine command timed out after {timeout_secs}s"
-            )))
+            recover_timed_out_command(proc, timeout_secs)
         }
         Err(std::sync::mpsc::RecvTimeoutError::Disconnected) => {
             if let Ok(mut map) = proc.pending.map.lock() {
                 map.remove(&id_str);
             }
+            mark_engine_dead(proc);
+            flush_stderr_log(proc, "Engine disconnected");
             Err(fail("Engine disconnected"))
+        }
+    }
+}
+
+fn recover_timed_out_command(
+    proc: &EngineProc,
+    timeout_secs: u64,
+) -> Result<serde_json::Value, String> {
+    let message = format!("Engine command timed out after {timeout_secs}s");
+    let cancel_id = uuid::Uuid::new_v4().to_string();
+    let (tx, rx) = channel();
+    if let Ok(mut map) = proc.pending.map.lock() {
+        map.insert(cancel_id.clone(), tx);
+    }
+    let cancel = serde_json::json!({"id": cancel_id.clone(), "cmd": "cancel"});
+    if send_line(proc, &cancel).is_err() {
+        mark_engine_dead(proc);
+        flush_stderr_log(proc, &message);
+        return Err(fail(message));
+    }
+    match rx.recv_timeout(std::time::Duration::from_secs(CANCEL_ACK_SECS)) {
+        Ok(_) => {
+            flush_stderr_log(proc, &message);
+            Err(fail(message))
+        }
+        Err(_) => {
+            if let Ok(mut map) = proc.pending.map.lock() {
+                map.remove(&cancel_id);
+            }
+            mark_engine_dead(proc);
+            flush_stderr_log(proc, &format!("{message}; worker marked unhealthy"));
+            Err(fail(message))
         }
     }
 }
@@ -738,12 +864,25 @@ async fn run_blocking<T: Send + 'static>(
         .map_err(|e| fail(e.to_string()))?
 }
 
+async fn ensure_engine_async(app: AppHandle) -> Result<Arc<EngineProc>, String> {
+    run_blocking(move || {
+        let handle = app.clone();
+        let engine = app.state::<Engine>();
+        ensure_engine(&handle, &*engine)
+    })
+    .await
+}
+
 #[tauri::command]
-async fn engine_status(
-    app: AppHandle,
-    state: State<'_, Engine>,
-) -> Result<serde_json::Value, String> {
-    let proc = ensure_engine(&app, &state)?;
+fn engine_ping(state: State<'_, Engine>) -> serde_json::Value {
+    serde_json::json!({ "alive": existing_engine(&state).is_some() })
+}
+
+#[tauri::command]
+async fn engine_status(state: State<'_, Engine>) -> Result<serde_json::Value, String> {
+    let Some(proc) = existing_engine(&state) else {
+        return Ok(idle_engine_status());
+    };
     let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "status"});
     run_blocking(move || send_and_receive(&proc, payload, 10)).await
 }
@@ -751,10 +890,9 @@ async fn engine_status(
 #[tauri::command]
 async fn engine_probe(
     app: AppHandle,
-    state: State<'_, Engine>,
     hf_token: Option<String>,
 ) -> Result<serde_json::Value, String> {
-    let proc = ensure_engine(&app, &state)?;
+    let proc = ensure_engine_async(app).await?;
     let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "probe", "hf_token": hf_token});
     run_blocking(move || send_and_receive(&proc, payload, 30)).await
 }
@@ -788,7 +926,6 @@ fn preset_steps(preset: Option<&str>, steps: Option<u32>) -> u32 {
 #[allow(clippy::too_many_arguments)] // one parameter per IPC field
 async fn engine_generate(
     app: AppHandle,
-    state: State<'_, Engine>,
     scope: State<'_, PathScope>,
     prompt: String,
     seconds: f32,
@@ -807,7 +944,7 @@ async fn engine_generate(
     preset: Option<String>,
     sampler: Option<String>,
 ) -> Result<serde_json::Value, String> {
-    let proc = ensure_engine(&app, &state)?;
+    let proc = ensure_engine_async(app).await?;
     // The worker writes the WAV under this folder, so the app has to be able to
     // read it straight back; adopting it here keeps scope and output in step
     // even for a folder that was typed in rather than picked in a dialog.
@@ -845,8 +982,10 @@ async fn engine_generate(
 }
 
 #[tauri::command]
-fn engine_cancel(app: AppHandle, state: State<Engine>) -> Result<serde_json::Value, String> {
-    let proc = ensure_engine(&app, &state)?;
+fn engine_cancel(state: State<'_, Engine>) -> Result<serde_json::Value, String> {
+    let Some(proc) = existing_engine(&state) else {
+        return Ok(serde_json::json!({ "ok": true, "alive": false }));
+    };
     let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "cancel"});
     send_line(&proc, &payload)?;
     Ok(payload)
@@ -856,7 +995,6 @@ fn engine_cancel(app: AppHandle, state: State<Engine>) -> Result<serde_json::Val
 #[allow(clippy::too_many_arguments)] // one parameter per IPC field
 async fn engine_encode_audio(
     app: AppHandle,
-    state: State<'_, Engine>,
     scope: State<'_, PathScope>,
     wav_path: String,
     dest_path: String,
@@ -873,7 +1011,7 @@ async fn engine_encode_audio(
     let dest_path = ensure_allowed(&scope, &dest_path)?
         .to_string_lossy()
         .into_owned();
-    let proc = ensure_engine(&app, &state)?;
+    let proc = ensure_engine_async(app).await?;
     let payload = serde_json::json!({
         "id": uuid::Uuid::new_v4().to_string(),
         "cmd": "encode_audio",
@@ -893,13 +1031,12 @@ async fn engine_encode_audio(
 #[tauri::command]
 async fn engine_warmup(
     app: AppHandle,
-    state: State<'_, Engine>,
     hf_token: Option<String>,
     precision: Option<String>,
     preset: Option<String>,
     model: Option<String>,
 ) -> Result<serde_json::Value, String> {
-    let proc = ensure_engine(&app, &state)?;
+    let proc = ensure_engine_async(app).await?;
     // Preloading medium-base means a multi-GB download on first use, so it gets
     // a far longer budget than a warm local load of Medium.
     let downloading = model.as_deref() == Some("medium-base")
@@ -917,11 +1054,10 @@ async fn engine_warmup(
 }
 
 #[tauri::command]
-async fn engine_unload(
-    app: AppHandle,
-    state: State<'_, Engine>,
-) -> Result<serde_json::Value, String> {
-    let proc = ensure_engine(&app, &state)?;
+async fn engine_unload(state: State<'_, Engine>) -> Result<serde_json::Value, String> {
+    let Some(proc) = existing_engine(&state) else {
+        return Ok(serde_json::json!({ "ok": true, "alive": false }));
+    };
     let payload = serde_json::json!({"id": uuid::Uuid::new_v4().to_string(), "cmd": "unload"});
     run_blocking(move || send_and_receive(&proc, payload, 30)).await
 }
@@ -2263,6 +2399,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             engine_status,
+            engine_ping,
             engine_probe,
             engine_generate,
             engine_cancel,
@@ -2399,6 +2536,7 @@ mod tests {
         let scope = PathScope {
             granted: Mutex::new(Vec::new()),
             library: Mutex::new(None),
+            cached_roots: Mutex::new(None),
         };
 
         // Inside the library root, including a file that does not exist yet.
@@ -2420,6 +2558,7 @@ mod tests {
             .lock()
             .unwrap()
             .push(normalize_path(outside.parent().unwrap_or(Path::new("/"))));
+        scope.invalidate_roots();
         assert!(ensure_allowed(&scope, &outside.to_string_lossy()).is_ok());
 
         let _ = std::fs::remove_dir_all(&lib);
@@ -2438,6 +2577,7 @@ mod tests {
         let scope = PathScope {
             granted: Mutex::new(Vec::new()),
             library: Mutex::new(None),
+            cached_roots: Mutex::new(None),
         };
 
         // A library folder the user typed rather than picked in a dialog: the
@@ -2688,6 +2828,7 @@ mod tests {
 
     const REGISTERED_COMMANDS: &[&str] = &[
         "engine_status",
+        "engine_ping",
         "engine_probe",
         "engine_generate",
         "engine_cancel",
@@ -2736,6 +2877,7 @@ mod tests {
         let scope = PathScope {
             granted: Mutex::new(Vec::new()),
             library: Mutex::new(None),
+            cached_roots: Mutex::new(None),
         };
         let outside = std_temp()
             .parent()
@@ -2888,6 +3030,7 @@ mod tests {
         let scope = PathScope {
             granted: Mutex::new(Vec::new()),
             library: Mutex::new(Some(custom.clone())),
+            cached_roots: Mutex::new(None),
         };
         assert_eq!(scope.library_or_default(), custom);
     }
@@ -2903,5 +3046,68 @@ mod tests {
         assert!(!src.exists());
         assert_eq!(std::fs::read(&dest).unwrap(), b"audio");
         let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn progress_payload_deserialises_from_worker_json() {
+        let parsed: WeaveProgressPayload = serde_json::from_str(
+            r#"{"event":"progress","step":3,"total":8,"elapsedMs":1200,"phase":"weaving"}"#,
+        )
+        .unwrap();
+        assert_eq!(parsed.step, 3);
+        assert_eq!(parsed.total, 8);
+        assert_eq!(parsed.elapsed_ms, 1200);
+        assert_eq!(parsed.phase.as_deref(), Some("weaving"));
+        let sparse: WeaveProgressPayload =
+            serde_json::from_str(r#"{"event":"progress","step":1}"#).unwrap();
+        assert_eq!(sparse.total, 20);
+    }
+
+    #[test]
+    fn stderr_ring_keeps_the_last_fifty_lines() {
+        let mut buf = VecDeque::new();
+        for i in 0..60 {
+            record_stderr_line(&mut buf, &format!("line {i}"));
+        }
+        assert_eq!(buf.len(), 50);
+        assert_eq!(buf.front().map(String::as_str), Some("line 10"));
+        assert_eq!(buf.back().map(String::as_str), Some("line 59"));
+        record_stderr_line(&mut buf, "   ");
+        assert_eq!(buf.len(), 50);
+    }
+
+    #[test]
+    fn scope_roots_are_cached_until_grant_or_library_change() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let lib = std_temp().join(format!("thunder-fx-root-cache-{}", std::process::id()));
+        let _guard = EnvGuard::set("THUNDER_FX_LIBRARY_DIR", &lib);
+        let scope_file =
+            std_temp().join(format!("thunder-fx-root-cache-{}.json", std::process::id()));
+        let _scope_guard = EnvGuard::set("THUNDER_FX_SCOPE_FILE", &scope_file);
+        let scope = PathScope {
+            granted: Mutex::new(Vec::new()),
+            library: Mutex::new(None),
+            cached_roots: Mutex::new(None),
+        };
+        let first = scope.roots();
+        let second = scope.roots();
+        assert!(Arc::ptr_eq(&first, &second));
+        let extra = std_temp()
+            .parent()
+            .unwrap_or(Path::new("/"))
+            .join(format!("thunder-fx-grant-{}", std::process::id()));
+        scope.grant(&extra);
+        let third = scope.roots();
+        assert!(!Arc::ptr_eq(&first, &third));
+        assert!(third.iter().any(|root| root == &normalize_path(&extra)));
+        let _ = std::fs::remove_file(&scope_file);
+    }
+
+    #[test]
+    fn idle_engine_status_does_not_claim_ready() {
+        let status = idle_engine_status();
+        assert_eq!(status["ready"], false);
+        assert_eq!(status["loaded"], false);
+        assert_eq!(status["message"], "Engine not started");
     }
 }

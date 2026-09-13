@@ -83,6 +83,13 @@ All notable Thunder FX changes are listed here.
   silent copy — keep the library and `.trash` on the same drive. A library scan fills seed,
   CFG, steps, preset and sampler from the WAV's ISFT tag (PQ-59). Sidecar rows whose audio
   is gone, and not in trash, are dropped on a successful scan (PQ-60).
+- **The Python worker is not started by a status poll.** `engine_status`, `engine_cancel`
+  and `engine_unload` return immediately when nothing is running; `engine_ping` reports the
+  alive flag without spawning (PQ-66). Spawn and venv resolution run on a blocking thread
+  (PQ-66). Progress is one `engine-progress` event (PQ-67). A timed-out command sends
+  `cancel` and marks the worker dead if no ack arrives (PQ-68). Worker stderr is a 50-line
+  ring flushed into the error log (PQ-69). Allowed-path roots are cached until grant or
+  library change (PQ-70).
 
 ### Fixed
 

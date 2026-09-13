@@ -209,3 +209,15 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   compare PCM samples, not `wav.slice(44, 200)`.
 - **PQ-60 prune.** Drop sidecar rows whose id is on neither the scan nor the trash index.
   Do **not** prune when `library.list()` throws — an empty error must not wipe ratings.
+- **PQ-66 ping.** `engine_status` used to call `ensure_engine`, so the idle poll started
+  Python. Status / cancel / unload now read the alive flag; Generate, Load, probe and
+  encode still spawn, but on `spawn_blocking` so the IPC runtime is not stalled for the
+  cold import of torch.
+- **PQ-67 events.** The frontend only ever listened to one of `weave-progress` /
+  `scribe-progress`. One `engine-progress` event is enough; deserialize the payload
+  instead of picking fields off `serde_json::Value`.
+- **PQ-68 timeout.** Dropping the waiter leaves the worker running the ghost job. Send
+  `cancel`, wait 2 s for an ack, then `kill` and clear `alive` so the next command
+  respawns. Flush the stderr ring with the timeout so the log has the traceback.
+- **PQ-70 scope cache.** Tests that push onto `granted` directly must `invalidate_roots()`
+  (or call `grant`); production only mutates through `grant` / `set_library`.

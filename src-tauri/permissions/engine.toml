@@ -3,6 +3,7 @@ identifier = "allow-engine"
 description = "Python sidecar, scoped file access, and export helpers"
 commands.allow = [
   "engine_status",
+  "engine_ping",
   "engine_probe",
   "engine_generate",
   "engine_cancel",

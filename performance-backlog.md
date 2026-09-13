@@ -160,18 +160,18 @@ are closed.
 
 ### G. Rust shell: process, IPC, permissions
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-63** | [Allow-list the three commands the UI calls but the ACL omits](#pq-63-allow-list-the-three-commands-the-ui-calls-but-the-acl-omits) | Reliability | High | S |
-| **PQ-64** | [Scope-check the scan commands](#pq-64-scope-check-the-scan-commands) | Reliability | High | S |
-| **PQ-65** | [A Job Object so an orphaned Python process dies with the app](#pq-65-a-job-object-so-an-orphaned-python-process-dies-with-the-app) | Reliability | High | M |
-| **PQ-66** | [Spawn the engine off the IPC thread, and add a ping that never spawns](#pq-66-spawn-the-engine-off-the-ipc-thread-and-add-a-ping-that-never-spawns) | Perf | Medium | S |
-| **PQ-67** | [One progress event, not two](#pq-67-one-progress-event-not-two) | Perf | Low | S |
-| **PQ-68** | [A timed-out command cancels the worker and marks it unhealthy](#pq-68-a-timed-out-command-cancels-the-worker-and-marks-it-unhealthy) | Reliability | Medium | S |
-| **PQ-69** | [Capture the worker's stderr into the error log](#pq-69-capture-the-workers-stderr-into-the-error-log) | Reliability | Medium | S |
-| **PQ-70** | [Cache the resolved scope roots](#pq-70-cache-the-resolved-scope-roots) | Perf | Low | S |
-| **PQ-71** | [One source of truth for the IPC contract](#pq-71-one-source-of-truth-for-the-ipc-contract) | Health | High | L |
-| **PQ-72** | [Typed errors across the IPC boundary](#pq-72-typed-errors-across-the-ipc-boundary) | Health | Medium | M |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-63** | [Allow-list the three commands the UI calls but the ACL omits](#pq-63-allow-list-the-three-commands-the-ui-calls-but-the-acl-omits) | Reliability | High | S | **Done** |
+| **PQ-64** | [Scope-check the scan commands](#pq-64-scope-check-the-scan-commands) | Reliability | High | S | **Done** |
+| **PQ-65** | [A Job Object so an orphaned Python process dies with the app](#pq-65-a-job-object-so-an-orphaned-python-process-dies-with-the-app) | Reliability | High | M | |
+| **PQ-66** | [Spawn the engine off the IPC thread, and add a ping that never spawns](#pq-66-spawn-the-engine-off-the-ipc-thread-and-add-a-ping-that-never-spawns) | Perf | Medium | S | **Done** |
+| **PQ-67** | [One progress event, not two](#pq-67-one-progress-event-not-two) | Perf | Low | S | **Done** |
+| **PQ-68** | [A timed-out command cancels the worker and marks it unhealthy](#pq-68-a-timed-out-command-cancels-the-worker-and-marks-it-unhealthy) | Reliability | Medium | S | **Done** |
+| **PQ-69** | [Capture the worker's stderr into the error log](#pq-69-capture-the-workers-stderr-into-the-error-log) | Reliability | Medium | S | **Done** |
+| **PQ-70** | [Cache the resolved scope roots](#pq-70-cache-the-resolved-scope-roots) | Perf | Low | S | **Done** |
+| **PQ-71** | [One source of truth for the IPC contract](#pq-71-one-source-of-truth-for-the-ipc-contract) | Health | High | L | |
+| **PQ-72** | [Typed errors across the IPC boundary](#pq-72-typed-errors-across-the-ipc-boundary) | Health | Medium | M | |
 
 ### H. Reliability and observability
 
@@ -1705,6 +1705,11 @@ Delivered items, kept for the record.
 | **PQ-57** | Trash sweep in the background, on the same volume | Unreleased (library S-wave) |
 | **PQ-59** | A typed clip record filled from the RIFF tags on scan | Unreleased (library S-wave) |
 | **PQ-60** | Prune metadata rows whose audio is gone | Unreleased (library S-wave) |
+| **PQ-66** | Spawn the engine off the IPC thread, and add a ping that never spawns | Unreleased (Rust shell S-wave) |
+| **PQ-67** | One progress event, not two | Unreleased (Rust shell S-wave) |
+| **PQ-68** | A timed-out command cancels the worker and marks it unhealthy | Unreleased (Rust shell S-wave) |
+| **PQ-69** | Capture the worker's stderr into the error log | Unreleased (Rust shell S-wave) |
+| **PQ-70** | Cache the resolved scope roots | Unreleased (Rust shell S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

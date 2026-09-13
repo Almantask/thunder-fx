@@ -796,7 +796,7 @@ export function PromptCatalogDialog({
         <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 pt-1">
           <Hint
             className="mr-auto flex items-center gap-2"
-            label="How many random-seed takes to queue per prompt. Each take generates and saves as its own clip."
+            label="How many takes to queue per prompt. Seeds are derived from one parent so the set reproduces from a single number."
           >
             <div className="flex items-center gap-2">
               <Label htmlFor="catalog-takes" className="text-xs whitespace-nowrap text-muted uppercase tracking-[0.1em]">

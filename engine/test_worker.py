@@ -201,6 +201,7 @@ class WorkerTests(unittest.TestCase):
             ch = wav.getnchannels()
             frames = wav.readframes(n)
         self.assertAlmostEqual(n / sr, 2.0, delta=0.08)
+        self.assertAlmostEqual(done["duration"], n / sr, delta=0.08)
         samples = memoryview(frames).cast("h")
         first = samples[0]
         last = samples[(n - 1) * ch]
@@ -1135,6 +1136,12 @@ class StepProgressHookTests(unittest.TestCase):
             hook({"i": i})
         self.assertLess(len(self.emitted), 50)
         self.assertEqual(self.emitted[-1]["step"], 50)
+
+    def test_mark_quiets_the_heartbeat_until_the_phase_leaves_sampling(self) -> None:
+        self.heartbeat.mark(step=1, total=8, ratio=0.1)
+        self.assertTrue(self.heartbeat._quiet)
+        self.heartbeat.update(phase="writing")
+        self.assertFalse(self.heartbeat._quiet)
 
     def test_still_raises_on_cancel(self) -> None:
         from worker import GenerationCancelled, _cancel

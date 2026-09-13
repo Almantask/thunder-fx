@@ -68,23 +68,23 @@ are closed.
 
 ### A. Inference engine
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-01** | [Stop denoising 6 s of padding on every clip](#pq-01-stop-denoising-6-s-of-padding-on-every-clip) | Perf | High | S |
-| **PQ-02** | [Re-enable TF32 and cuDNN autotune after the model constructs](#pq-02-re-enable-tf32-and-cudnn-autotune-after-the-model-constructs) | Perf | High | S |
-| **PQ-03** | [Cache text-encoder conditioning across takes and queue items](#pq-03-cache-text-encoder-conditioning-across-takes-and-queue-items) | Perf | High | M |
-| **PQ-04** | [Generate a take set as one batch](#pq-04-generate-a-take-set-as-one-batch) | Perf | High | M |
-| **PQ-05** | [Load FP16 weights without an FP32 peak on the GPU](#pq-05-load-fp16-weights-without-an-fp32-peak-on-the-gpu) | Perf | High | M |
-| **PQ-06** | [Warm the kernels after load](#pq-06-warm-the-kernels-after-load) | Perf | Medium | S |
-| **PQ-07** | [Make the OOM retry change something, and set the allocator config](#pq-07-make-the-oom-retry-change-something-and-set-the-allocator-config) | Reliability | Medium | S |
-| **PQ-08** | [Choose chunked decode by free VRAM, not by precision](#pq-08-choose-chunked-decode-by-free-vram-not-by-precision) | Perf | Medium | S |
-| **PQ-09** | [Vectorise the loudness block loop](#pq-09-vectorise-the-loudness-block-loop) | Perf | Medium | S |
-| **PQ-10** | [Master on the GPU with one device-to-host copy](#pq-10-master-on-the-gpu-with-one-device-to-host-copy) | Perf | Medium | S |
-| **PQ-11** | [Spike: `torch.compile` on the DiT](#pq-11-spike-torchcompile-on-the-dit) | Perf | Medium | L |
-| **PQ-12** | [Text encoder offload, and both checkpoints resident when VRAM allows](#pq-12-text-encoder-offload-and-both-checkpoints-resident-when-vram-allows) | Perf | Medium | M |
-| **PQ-13** | [Progress emit budget, and report the real output length](#pq-13-progress-emit-budget-and-report-the-real-output-length) | Perf | Low | S |
-| **PQ-14** | [Spike: confirm Flash Attention 2 is actually on the attention path](#pq-14-spike-confirm-flash-attention-2-is-actually-on-the-attention-path) | Perf | Medium | S |
-| **PQ-15** | [Seeds: CUDA generator and derived per-take seeds](#pq-15-seeds-cuda-generator-and-derived-per-take-seeds) | Reliability | Medium | S |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-01** | [Stop denoising 6 s of padding on every clip](#pq-01-stop-denoising-6-s-of-padding-on-every-clip) | Perf | High | S | **Done** |
+| **PQ-02** | [Re-enable TF32 and cuDNN autotune after the model constructs](#pq-02-re-enable-tf32-and-cudnn-autotune-after-the-model-constructs) | Perf | High | S | **Done** |
+| **PQ-03** | [Cache text-encoder conditioning across takes and queue items](#pq-03-cache-text-encoder-conditioning-across-takes-and-queue-items) | Perf | High | M | |
+| **PQ-04** | [Generate a take set as one batch](#pq-04-generate-a-take-set-as-one-batch) | Perf | High | M | |
+| **PQ-05** | [Load FP16 weights without an FP32 peak on the GPU](#pq-05-load-fp16-weights-without-an-fp32-peak-on-the-gpu) | Perf | High | M | |
+| **PQ-06** | [Warm the kernels after load](#pq-06-warm-the-kernels-after-load) | Perf | Medium | S | **Done** |
+| **PQ-07** | [Make the OOM retry change something, and set the allocator config](#pq-07-make-the-oom-retry-change-something-and-set-the-allocator-config) | Reliability | Medium | S | **Done** |
+| **PQ-08** | [Choose chunked decode by free VRAM, not by precision](#pq-08-choose-chunked-decode-by-free-vram-not-by-precision) | Perf | Medium | S | **Done** |
+| **PQ-09** | [Vectorise the loudness block loop](#pq-09-vectorise-the-loudness-block-loop) | Perf | Medium | S | **Done** |
+| **PQ-10** | [Master on the GPU with one device-to-host copy](#pq-10-master-on-the-gpu-with-one-device-to-host-copy) | Perf | Medium | S | **Done** |
+| **PQ-11** | [Spike: `torch.compile` on the DiT](#pq-11-spike-torchcompile-on-the-dit) | Perf | Medium | L | |
+| **PQ-12** | [Text encoder offload, and both checkpoints resident when VRAM allows](#pq-12-text-encoder-offload-and-both-checkpoints-resident-when-vram-allows) | Perf | Medium | M | |
+| **PQ-13** | [Progress emit budget, and report the real output length](#pq-13-progress-emit-budget-and-report-the-real-output-length) | Perf | Low | S | **Done** |
+| **PQ-14** | [Spike: confirm Flash Attention 2 is actually on the attention path](#pq-14-spike-confirm-flash-attention-2-is-actually-on-the-attention-path) | Perf | Medium | S | |
+| **PQ-15** | [Seeds: CUDA generator and derived per-take seeds](#pq-15-seeds-cuda-generator-and-derived-per-take-seeds) | Reliability | Medium | S | **Done** |
 
 ### B. Audio fidelity
 
@@ -223,6 +223,10 @@ The worker is `engine/worker.py`. A request runs `cmd_generate` → `_generate_b
 `resolve_preset` → `model.generate(...)` → `_save_generated_wav` (loop → master → dither →
 WAV) and answers with a path. Everything in this section is about the time between clicking
 Generate and the `done` line.
+
+Wave 2 (remaining S-effort engine items: PQ-06–10, PQ-13, PQ-15) shipped on top of the
+quick-win padding/TF32 work. PQ-03–05 (High/M) and the `torch.compile` / Flash Attention
+spikes are still open.
 
 ### PQ-01: Stop denoising 6 s of padding on every clip
 
@@ -1670,6 +1674,13 @@ Delivered items, kept for the record.
 | **PQ-63** | Allow-list the three commands the UI calls but the ACL omits | Unreleased (this change) |
 | **PQ-64** | Scope-check the scan commands | Unreleased (this change) |
 | **PQ-81** | Reconcile the estimate baselines with the README measurements | Unreleased (this change) |
+| **PQ-06** | Warm the kernels after load | Unreleased (engine S-wave) |
+| **PQ-07** | Make the OOM retry change something, and set the allocator config | Unreleased (engine S-wave) |
+| **PQ-08** | Choose chunked decode by free VRAM, not by precision | Unreleased (engine S-wave) |
+| **PQ-09** | Vectorise the loudness block loop | Unreleased (engine S-wave) |
+| **PQ-10** | Master on the GPU with one device-to-host copy | Unreleased (engine S-wave) |
+| **PQ-13** | Progress emit budget, and report the real output length | Unreleased (engine S-wave) |
+| **PQ-15** | Seeds: CUDA generator and derived per-take seeds | Unreleased (engine S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

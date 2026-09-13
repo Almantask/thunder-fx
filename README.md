@@ -16,7 +16,8 @@ Three tabs: **Library**, **Generate**, and **Settings**.
 - **Sound effects** (default) or **Instrumental**. Same model either way. Instrumental uses a music-style prompt and a negative prompt that tries to avoid vocals.
 - Clips can be **0.5 seconds to 6 minutes 20 seconds**. Instrumental defaults to 20 seconds.
 - **Max speed / Balanced / Max quality** picks how the clip is generated. See [Quality presets](#quality-presets).
-- **Load model** puts the model into GPU memory. Do that once after you open the app. **Generate** only makes a clip.
+- **Load model** puts the model into GPU memory and warms the CUDA kernels with a discarded
+  0.5 s / 2-step pass, so the first real clip is not the slow one. **Generate** only makes a clip.
 - **Browse prompts** opens bundled lists. Filter **FX** (`prompts/fx`) or **Ambience** (`prompts/ambience`, tabletop-style beds such as forest or tavern). **Preview** shows the full prompt. **Use** fills the current prompt. Check items — or a whole category — to add them to a queue.
 - **Generate queue** runs queued prompts one after another and saves each clip. **Cancel** stops the clip in progress; the rest stay queued.
 - After you have loaded or generated on this machine, **Load model**, **Generate**, and **Generate queue** show a `~m:ss` estimate. While work is in progress, the waveform clock also shows estimated remaining time.
@@ -127,8 +128,9 @@ engine\.venv\Scripts\python.exe -u engine\worker.py
 The CUDA venv is about 4 GB; Medium + T5Gemma weights are several more GB. If `C:` is full, set `UV_CACHE_DIR` and `HF_HUB_CACHE` to a larger drive and junction `engine/.venv` / `engine/.hf-cache` there. Setup downloads weights into `HF_HUB_CACHE`. You need a Hugging Face login that has accepted the Stability Community License and Gemma Terms.
 
 Quality is chosen with a **preset** rather than a step count — see [Quality presets](#quality-presets).
-Precision defaults to FP16 (optional FP32 in Settings; FP32 also turns off chunked decode and
-roughly doubles peak VRAM).
+Precision defaults to FP16 (optional FP32 in Settings; FP32 roughly doubles peak VRAM).
+Chunked VAE decode is chosen from free VRAM and clip length, not from precision
+(`THUNDER_FX_CHUNKED_DECODE=0/1` overrides).
 
 ## Quality presets
 

@@ -164,3 +164,14 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   **3.5 s NVMe** cold load. Fast Preview **12.6 s** included the 6 s of discarded padding;
   the phase model (~4.8 s for 1 s @ 4 steps, model already loaded) is now the first-run
   number, reprinted by `scripts/bench_estimates.py`.
+- **PQ-07 OOM retry.** On the default FP16 path chunked decode was already on, so the old
+  retry re-ran the identical configuration. Catch `torch.cuda.OutOfMemoryError`, empty the
+  cache, and fail fast with VRAM figures when chunked was already chosen. Pair with
+  `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` before the first CUDA context.
+- **PQ-08 chunked decode.** Decide from `mem_get_info` plus clip length (1.5 GiB workspace +
+  12 MiB/s). If the guess is wrong, PQ-07 retries once with chunked on. Do not tie the
+  choice to precision — a 24 GB card on FP16 should take the fast path.
+- **PQ-15 take seeds.** Derive with a 32-bit mix of `parentSeed ^ (takeIndex+1)*0x9e3779b9`
+  so a take set of four reproduces from the Advanced seed field (or one catalog parent).
+  Pin `torch.manual_seed` / a CUDA `Generator` per generation; the library still draws with
+  global `torch.randn` when it ignores the generator kwarg.

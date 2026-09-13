@@ -475,6 +475,16 @@ fn python_commands(script: &Path) -> Vec<Command> {
     commands
 }
 
+fn default_pytorch_cuda_alloc_conf() -> Option<&'static str> {
+    // Expandable segments cut allocator-fragmentation OOMs on long sessions.
+    // Leave an explicit user value alone.
+    if std::env::var("PYTORCH_CUDA_ALLOC_CONF").is_ok() {
+        None
+    } else {
+        Some("expandable_segments:True")
+    }
+}
+
 fn spawn_python(script: &Path) -> Result<Child, String> {
     let mock = std::env::var("THUNDER_FX_MOCK_ENGINE").ok();
     let mut last_err = "no Python interpreter attempted".to_string();
@@ -488,6 +498,9 @@ fn spawn_python(script: &Path) -> Result<Child, String> {
             // an undefined byte kills the worker outright.
             .env("PYTHONUTF8", "1")
             .env("PYTHONIOENCODING", "utf-8");
+        if let Some(conf) = default_pytorch_cuda_alloc_conf() {
+            cmd.env("PYTORCH_CUDA_ALLOC_CONF", conf);
+        }
         if let Some(parent) = script.parent() {
             let hf = parent.join(".hf-cache");
             if hf.exists() && std::env::var("HF_HUB_CACHE").is_err() {
@@ -2042,6 +2055,10 @@ mod tests {
 
     impl EnvGuard {
         fn set(key: &'static str, value: &Path) -> Self {
+            Self::set_str(key, &value.to_string_lossy())
+        }
+
+        fn set_str(key: &'static str, value: &str) -> Self {
             let previous = std::env::var(key).ok();
             unsafe {
                 std::env::set_var(key, value);
@@ -2071,6 +2088,28 @@ mod tests {
         let text = std::fs::read_to_string(dir.join("error.log")).unwrap();
         assert!(text.contains("omen test"));
         assert!(text.contains("ERROR"));
+    }
+
+    #[test]
+    fn pytorch_alloc_conf_defaults_when_unset() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let previous = std::env::var("PYTORCH_CUDA_ALLOC_CONF").ok();
+        unsafe {
+            std::env::remove_var("PYTORCH_CUDA_ALLOC_CONF");
+        }
+        assert_eq!(
+            default_pytorch_cuda_alloc_conf(),
+            Some("expandable_segments:True")
+        );
+        let _guard = EnvGuard::set_str("PYTORCH_CUDA_ALLOC_CONF", "max_split_size_mb:128");
+        assert_eq!(default_pytorch_cuda_alloc_conf(), None);
+        drop(_guard);
+        unsafe {
+            match previous {
+                Some(value) => std::env::set_var("PYTORCH_CUDA_ALLOC_CONF", value),
+                None => std::env::remove_var("PYTORCH_CUDA_ALLOC_CONF"),
+            }
+        }
     }
 
     #[test]

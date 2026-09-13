@@ -41,6 +41,13 @@ All notable Thunder FX changes are listed here.
 - **Shorter clips no longer denoise 6 s of discarded padding.** Generation now pads 0.5 s for
   one-shots and 1 s for beds (PQ-01). TF32 and cuDNN autotune are restored after the model
   loads (`THUNDER_FX_TF32=0` turns that off).
+- **Load model warms CUDA kernels** with a discarded 0.5 s / 2-step pass (PQ-06). CUDA OOM
+  fails fast when chunked decode is already on, instead of paying for the same run twice;
+  the engine spawn sets `PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True` (PQ-07). Chunked
+  VAE decode is chosen from free VRAM and clip length (PQ-08). Loudness uses one `unfold`
+  instead of a Python loop per 400 ms block (PQ-09). Mastering stays on the GPU and copies
+  int16 once (PQ-10). Heartbeats pause while step events flow, and `done.duration` is the
+  length actually written (PQ-13). Take sets derive four seeds from one parent (PQ-15).
 - **One progress state object per engine event**, WAV duration is memoised, and `parseWav`
   returns a view instead of copying PCM. Engine status polling backs off while a generation or
   load is in flight so it no longer collides with a busy worker.

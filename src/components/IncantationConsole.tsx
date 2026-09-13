@@ -543,7 +543,7 @@ export function IncantationConsole({
                 </Button>
               </Hint>
             ) : (
-              <Hint label="Generate four variations with random seeds, then keep or discard each take.">
+              <Hint label="Generate four variations from one parent seed, then keep or discard each take.">
                 <Button
                   type="button"
                   variant="outline"

@@ -151,10 +151,10 @@ are closed.
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **PQ-55** | [A single-pass library scan with a cache](#pq-55-a-single-pass-library-scan-with-a-cache) | Perf | High | M | |
 | **PQ-56** | [Atomic, debounced writes for the meta, trash and scope files](#pq-56-atomic-debounced-writes-for-the-meta-trash-and-scope-files) | Reliability | High | S | **Done** |
-| **PQ-57** | [Trash sweep in the background, on the same volume](#pq-57-trash-sweep-in-the-background-on-the-same-volume) | Reliability | Medium | S | |
+| **PQ-57** | [Trash sweep in the background, on the same volume](#pq-57-trash-sweep-in-the-background-on-the-same-volume) | Reliability | Medium | S | **Done** |
 | **PQ-58** | [Watch the library folder instead of rescanning it](#pq-58-watch-the-library-folder-instead-of-rescanning-it) | Perf | Medium | M | |
-| **PQ-59** | [A typed clip record filled from the RIFF tags on scan](#pq-59-a-typed-clip-record-filled-from-the-riff-tags-on-scan) | Reliability | Medium | S | |
-| **PQ-60** | [Prune metadata rows whose audio is gone](#pq-60-prune-metadata-rows-whose-audio-is-gone) | Health | Low | S | |
+| **PQ-59** | [A typed clip record filled from the RIFF tags on scan](#pq-59-a-typed-clip-record-filled-from-the-riff-tags-on-scan) | Reliability | Medium | S | **Done** |
+| **PQ-60** | [Prune metadata rows whose audio is gone](#pq-60-prune-metadata-rows-whose-audio-is-gone) | Health | Low | S | **Done** |
 | **PQ-61** | [Cache the IndexedDB connection in the browser build](#pq-61-cache-the-indexeddb-connection-in-the-browser-build) | Perf | Low | S | **Done** |
 | **PQ-62** | [Stream zip entries; store compressed audio uncompressed](#pq-62-stream-zip-entries-store-compressed-audio-uncompressed) | Perf | Medium | S | **Done** |
 
@@ -1702,6 +1702,9 @@ Delivered items, kept for the record.
 | **PQ-23** | Symmetric PCM ↔ float mapping (32768 both ways) | Unreleased (fidelity S-wave) |
 | **PQ-24** | TPDF dither on every TypeScript int16 quantisation | Unreleased (fidelity S-wave) |
 | **PQ-26** | Pin `soxr`; delete the linear resample fallback | Unreleased (fidelity S-wave) |
+| **PQ-57** | Trash sweep in the background, on the same volume | Unreleased (library S-wave) |
+| **PQ-59** | A typed clip record filled from the RIFF tags on scan | Unreleased (library S-wave) |
+| **PQ-60** | Prune metadata rows whose audio is gone | Unreleased (library S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

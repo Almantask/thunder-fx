@@ -167,7 +167,7 @@ describe('mockGenerate', () => {
     expect(raw.clip.instruments).toBeUndefined()
     expect(parseWav(raw.wav).info?.genre).toBe('Ambience')
     expect(looped.clip.duration).toBeCloseTo(4, 1)
-    expect(new Uint8Array(looped.wav).slice(44, 200)).not.toEqual(new Uint8Array(raw.wav).slice(44, 200))
+    expect(parseWav(looped.wav).pcm.subarray(0, 2048)).not.toEqual(parseWav(raw.wav).pcm.subarray(0, 2048))
   })
 
   it('binds the full A/B wording prompt to the clip and the WAV comment', async () => {

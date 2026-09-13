@@ -129,7 +129,8 @@ class WorkerTests(unittest.TestCase):
         info = read_wav_info(Path(done["path"]))
         self.assertEqual(info.get("INAM"), "sword clang")
         self.assertEqual(info.get("ICMT"), "sword clang")
-        self.assertEqual(info.get("ISFT"), "Thunder FX")
+        self.assertTrue(info.get("ISFT", "").startswith("Thunder FX"))
+        self.assertIn("seed=7", info.get("ISFT", ""))
         self.assertEqual(info.get("IGNR"), "Sound Effects")
 
     def test_generate_embeds_full_ab_prompt_in_icmt(self) -> None:
@@ -303,7 +304,7 @@ class WorkerTests(unittest.TestCase):
         info = read_wav_info(Path(done["path"]))
         self.assertEqual(info.get("IKEY"), "lute;cello")
         self.assertIn("lute", info.get("ICMT", ""))
-        self.assertEqual(info.get("ISFT"), "Thunder FX")
+        self.assertTrue(info.get("ISFT", "").startswith("Thunder FX"))
 
     def test_generate_embeds_expanded_instruments(self) -> None:
         self.client.send(
@@ -1204,6 +1205,24 @@ class WavInfoFieldsTests(unittest.TestCase):
         self.assertEqual(a["ICMT"], terse)
         self.assertEqual(b["ICMT"], tagged)
         self.assertNotEqual(a["ICMT"], b["ICMT"])
+
+    def test_software_stamp_carries_seed_and_preset(self) -> None:
+        from worker import _wav_info_fields
+
+        fields = _wav_info_fields(
+            "sword clang",
+            [],
+            "sfx",
+            seed=7,
+            cfg=1,
+            steps=8,
+            preset="speed",
+            sampler="pingpong",
+        )
+        self.assertTrue(fields["ISFT"].startswith("Thunder FX | "))
+        self.assertIn("seed=7", fields["ISFT"])
+        self.assertIn("preset=speed", fields["ISFT"])
+        self.assertIn("sampler=pingpong", fields["ISFT"])
 
 
 if __name__ == "__main__":

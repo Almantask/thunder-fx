@@ -11,6 +11,7 @@ import {
   reportError,
   readErrorLog,
 } from '@/lib/engine'
+import { parseWav } from '@/lib/wav'
 import { isTauri } from '@/lib/utils'
 
 describe('engine bridge', () => {
@@ -129,7 +130,7 @@ describe('engine bridge', () => {
     expect(looped.clip.mode).toBe('ambience')
     expect(looped.clip.instruments).toBeUndefined()
     expect(looped.clip.duration).toBeCloseTo(4, 1)
-    expect(new Uint8Array(looped.wav).slice(44, 200)).not.toEqual(new Uint8Array(raw.wav).slice(44, 200))
+    expect(parseWav(looped.wav).pcm.subarray(0, 2048)).not.toEqual(parseWav(raw.wav).pcm.subarray(0, 2048))
   })
 
   it('passes a looped music generate through the mock engine', async () => {

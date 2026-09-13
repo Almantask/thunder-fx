@@ -4,8 +4,9 @@
  * A library clip can be several minutes of GPU time, and delete used to call
  * `remove_file` straight away — one misclick and the render was gone. Clips now
  * go to `<library>/.trash/` and stay there until they are purged on purpose.
- * The Rust scanners skip dot-directories, so a trashed clip does not reappear
- * in the library it was just removed from.
+ * The 30-day sweep runs in Rust after the window shows (`sweep_trash`), so
+ * opening the trash view is just a read. `move_file` refuses a cross-volume
+ * copy so a library on another drive cannot silently duplicate a deleted clip.
  *
  * The index records where each file came from, plus the metadata row it had, so
  * restoring puts the audio back at its original path *and* brings its rating
@@ -24,7 +25,7 @@ import { copyFile, deleteFile, joinPath, moveFile, readFileBytes, writeTextFile,
 export const TRASH_DIRNAME = '.trash'
 export const TRASH_INDEX_FILENAME = 'thunder-fx-trash.json'
 
-/** Purged automatically once older than this on load. */
+/** Purged automatically once older than this on startup. */
 export const TRASH_RETENTION_DAYS = 30
 
 export type TrashEntry = {
@@ -150,16 +151,7 @@ export function createDiskTrash(getLibraryDir: () => string): TrashStore {
   return {
     async list() {
       const entries = await readIndex()
-      const expired = entries.filter((entry) => isExpired(entry))
-      if (!expired.length) {
-        return [...entries].sort((a, b) => b.deletedAt.localeCompare(a.deletedAt))
-      }
-      let kept = entries
-      for (const entry of expired) {
-        kept = await removeEntry(kept, entry.id)
-      }
-      await writeIndex(kept)
-      return [...kept].sort((a, b) => b.deletedAt.localeCompare(a.deletedAt))
+      return [...entries].sort((a, b) => b.deletedAt.localeCompare(a.deletedAt))
     },
 
     async trash(clip, meta) {

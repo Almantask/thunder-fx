@@ -198,3 +198,14 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
 - **PQ-26 soxr.** `np.interp` was the path that actually ran and aliased 44.1 → 48 kHz.
   Pinning `soxr>=0.5.0` and raising if neither soxr nor torchaudio loads is the only way the
   changelog claim stays true on a broken install.
+- **PQ-57 trash sweep.** Opening Trash used to delete expired files on the UI await chain.
+  Sweep in Rust after the window shows, and again from the frontend once Settings has named
+  the library folder — the startup thread reads PathScope, not only `library_dir()`.
+  `rename` across volumes is EXDEV (Windows 17/18); refuse it. Do not copy: a library on `D:`
+  with the app on `C:` would duplicate every deleted clip.
+- **PQ-59 ISFT stamp.** ICMT is the prompt; Explorer still shows "Thunder FX". Knobs live in
+  ISFT as `Thunder FX | seed=7 cfg=1 steps=20 preset=balanced sampler=pingpong` with
+  `neg=` URI-encoded. A longer INFO chunk can occupy WAV bytes 44–200, so loop tests must
+  compare PCM samples, not `wav.slice(44, 200)`.
+- **PQ-60 prune.** Drop sidecar rows whose id is on neither the scan nor the trash index.
+  Do **not** prune when `library.list()` throws — an empty error must not wipe ratings.

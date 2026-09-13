@@ -31,6 +31,7 @@ import time
 import traceback
 import uuid
 import wave
+from urllib.parse import quote
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -914,12 +915,48 @@ def _slugify_prompt(prompt: str, max_len: int = 48) -> str:
     return cleaned or "sound"
 
 
+SOFTWARE_NAME = "Thunder FX"
+
+
+def _software_stamp(
+    seed=None,
+    cfg=None,
+    steps=None,
+    preset: str = "",
+    sampler: str = "",
+    negative: str = "",
+) -> str:
+    """ISFT prefix plus the generate knobs a library rescan needs."""
+    bits: list[str] = []
+    if seed is not None:
+        bits.append(f"seed={int(seed)}")
+    if cfg is not None:
+        bits.append(f"cfg={float(cfg):g}")
+    if steps is not None:
+        bits.append(f"steps={int(steps)}")
+    if str(preset).strip():
+        bits.append(f"preset={str(preset).strip()}")
+    if str(sampler).strip():
+        bits.append(f"sampler={str(sampler).strip()}")
+    if str(negative).strip():
+        bits.append("neg=" + quote(str(negative).strip(), safe=""))
+    if not bits:
+        return SOFTWARE_NAME
+    return f"{SOFTWARE_NAME} | " + " ".join(bits)
+
+
 def _wav_info_fields(
     prompt: str,
     instruments: list[str],
     mode: str = "sfx",
     category: str = "",
     intensity: str = "",
+    seed=None,
+    cfg=None,
+    steps=None,
+    preset: str = "",
+    sampler: str = "",
+    negative: str = "",
 ) -> dict[str, str]:
     if mode == "music":
         genre = "Instrumental"
@@ -927,7 +964,7 @@ def _wav_info_fields(
         genre = "Ambience"
     else:
         genre = "Sound Effects"
-    fields = {"ISFT": "Thunder FX", "IGNR": genre}
+    fields = {"ISFT": _software_stamp(seed, cfg, steps, preset, sampler, negative), "IGNR": genre}
     title = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).strip()
     if title:
         # INAM is the Explorer title: keep it short. The generate prompt
@@ -1967,6 +2004,12 @@ def _generate_body(msg: dict) -> None:
                 mode_str,
                 category=cat_str,
                 intensity=intensity_val,
+                seed=seed,
+                cfg=cfg,
+                steps=steps,
+                preset=plan["preset"],
+                sampler=sampler,
+                negative=negative or "",
             ),
         )
         _emit(
@@ -2126,6 +2169,12 @@ def _generate_body(msg: dict) -> None:
                 mode_str,
                 category=cat_str,
                 intensity=intensity_val,
+                seed=seed,
+                cfg=cfg,
+                steps=steps,
+                preset=plan["preset"],
+                sampler=sampler,
+                negative=negative or "",
             ),
         )
         _emit(

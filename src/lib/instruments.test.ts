@@ -85,6 +85,18 @@ describe('clipWavInfo', () => {
     expect(info.title!.length).toBeLessThan(prompt.length)
     expect(promptFromWavInfo(info)).toBe(prompt)
   })
+
+  it('stamps generate knobs into ISFT so a rescan can recover them', () => {
+    const info = clipWavInfo('sword clang', 'sfx', [], undefined, undefined, {
+      seed: 7,
+      cfg: 1,
+      steps: 8,
+      preset: 'speed',
+      sampler: 'pingpong',
+    })
+    expect(info.software).toContain('seed=7')
+    expect(info.software).toContain('preset=speed')
+  })
 })
 
 describe('musicWavInfo', () => {

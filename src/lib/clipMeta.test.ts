@@ -11,6 +11,7 @@ import {
   matchesFilter,
   normalizeTag,
   parseMetaFile,
+  pruneMissingMeta,
   removeTag,
   renameMeta,
   serializeMetaFile,
@@ -133,6 +134,16 @@ describe('clipMeta', () => {
   it('forgets a row outright', () => {
     const index = forgetMeta(toggleFavorite({}, 'a'), 'a')
     expect(index.a).toBeUndefined()
+  })
+
+  it('prunes sidecar rows whose audio is neither on disk nor in the trash', () => {
+    let index: ClipMetaIndex = {}
+    index = toggleFavorite(index, 'live')
+    index = toggleFavorite(index, 'trashed')
+    index = toggleFavorite(index, 'gone')
+    const { index: next, removed } = pruneMissingMeta(index, ['live'], ['trashed'])
+    expect(removed).toBe(1)
+    expect(Object.keys(next).sort()).toEqual(['live', 'trashed'])
   })
 
   describe('display name', () => {

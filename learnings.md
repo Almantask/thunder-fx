@@ -231,3 +231,9 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   during `loading`. Progress resets the timer; one `onStall` per quiet stretch.
 - **PQ-80 stdout.** `os.dup(1)` before pointing `sys.stdout` at stderr. Tests that
   never call `main()` still `_emit` to `sys.stdout` until `_protocol_out` is set.
+- **PQ-82 checkpoint.** Generate samples that omit `model` are distilled Medium.
+  Medium-Base is dropped from the Balanced fit (weight 0), not discounted — a
+  heavier DiT is not a slower version of the same step. `cold: true` on a load
+  that saw a download ratio in `(0, 1)`; excluded even as the sole sample.
+- **PQ-83 bar.** `remainingMs` from `liveRemainingMs` wins. Else elapsed /
+  historical total. Else `null` (indeterminate CSS), never `1 - exp(-t/14000)`.

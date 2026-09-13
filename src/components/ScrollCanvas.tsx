@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Hint } from '@/components/Hint'
 import { Progress } from '@/components/ui/progress'
 import {
@@ -178,6 +178,7 @@ export function ScrollCanvas({
   ])
 
   const barIndicatorRef = useRef<HTMLDivElement>(null)
+  const [barIndeterminate, setBarIndeterminate] = useState(true)
 
   useEffect(() => {
     peaksRef.current = wav ? waveformPeaks(wav, 240) : { min: new Float32Array(0), max: new Float32Array(0) }
@@ -294,9 +295,11 @@ export function ScrollCanvas({
           queueTailEstimateMs: tailRef.current,
           remainingMs,
         })
-        if (barIndicatorRef.current && pct != null) {
-          barIndicatorRef.current.style.transform = `translateX(-${100 - pct}%)`
+        if (barIndicatorRef.current) {
+          barIndicatorRef.current.style.transform =
+            pct == null ? '' : `translateX(-${100 - pct}%)`
         }
+        setBarIndeterminate(pct == null)
         if (statusRef.current) {
           statusRef.current.textContent = weaveBusyStatus({
             phase: phaseRef.current,
@@ -410,7 +413,7 @@ export function ScrollCanvas({
           <Progress
             className="w-full"
             indicatorRef={barIndicatorRef}
-            indeterminate={false}
+            indeterminate={barIndeterminate}
             mode={mode}
             aria-label={loadingModel ? 'Model load progress' : 'Generation progress'}
           />

@@ -117,6 +117,11 @@ export type GenerateCostOptions = {
    * its first run was estimated at roughly half its real cost.
    */
   cfg?: number
+  /**
+   * Checkpoint the run will load. Medium and Medium-Base do not share a step
+   * cost, so the measured model is fitted per name rather than averaged.
+   */
+  model?: string
 }
 
 /** Steps outside this range are not configurations the engine will run. */
@@ -190,7 +195,7 @@ export function getTakesGenerateMs(
 }
 
 /** A queue entry priced on its own terms — presets can differ per item. */
-export type QueueCostItem = { duration: number; steps?: number; cfg?: number }
+export type QueueCostItem = { duration: number; steps?: number; cfg?: number; model?: string }
 
 export function getBaselineQueueMs(
   items: QueueCostItem[],
@@ -204,6 +209,7 @@ export function getBaselineQueueMs(
     total += getBaselineGenerateMs(item.duration, {
       steps: item.steps,
       cfg: item.cfg,
+      model: item.model,
       precision: options?.precision,
       isMock: options?.isMock,
     })

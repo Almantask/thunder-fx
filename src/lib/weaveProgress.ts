@@ -1,7 +1,12 @@
-import { estimateRemainingMs, formatEstimateMs } from '@/lib/timing'
+import { formatEstimateMs } from '@/lib/timing'
 import type { WeavePhase, WeaveProgress } from '@/lib/types'
 import { formatClock } from '@/lib/utils'
 
+/**
+ * Progress bar fill. One estimator: `remainingMs` from `liveRemainingMs` once a
+ * run exists, the historical total before the first event, otherwise
+ * indeterminate. Never a synthetic curve.
+ */
 export function weaveBarPercent(
   progress: Pick<WeaveProgress, 'step' | 'total' | 'phase' | 'ratio'> & {
     elapsedMs?: number
@@ -16,47 +21,31 @@ export function weaveBarPercent(
   if (progress.phase === 'writing') {
     return 96
   }
+
+  const elapsed = progress.elapsedMs
+  const remaining = progress.remainingMs
   if (
-    (progress.phase ?? 'loading') === 'loading' &&
-    progress.step <= 0 &&
-    progress.elapsedMs == null &&
-    progress.historicalEstimateMs == null
+    remaining != null &&
+    Number.isFinite(remaining) &&
+    elapsed != null &&
+    Number.isFinite(elapsed) &&
+    elapsed + remaining > 0
   ) {
-    return null
+    return Math.min(95, Math.max(1, (elapsed / (elapsed + remaining)) * 100))
   }
 
-  const stepRatio =
-    progress.step > 0 && (progress.total || 8) > 0 ? progress.step / (progress.total || 8) : 0
-
-  if (progress.elapsedMs != null && progress.elapsedMs >= 0) {
-    const elapsedMs = progress.elapsedMs
-    const remaining =
-      progress.remainingMs ??
-      estimateRemainingMs({
-        elapsedMs,
-        historicalTotalMs: progress.historicalEstimateMs,
-        progress: weaveProgressRatio(progress),
-        queueTailMs: progress.queueTailEstimateMs,
-      })
-
-    if (remaining != null && elapsedMs + remaining > 0) {
-      const timePercent = (elapsedMs / (elapsedMs + remaining)) * 100
-      const stepPercent = stepRatio * 100
-      const combined = Math.max(stepPercent, timePercent)
-      return Math.min(95, Math.max(1, combined))
-    }
-
-    if (elapsedMs > 0) {
-      const timePercent = (1 - Math.exp(-elapsedMs / 14000)) * 88
-      const stepPercent = stepRatio * 100
-      const combined = Math.max(stepPercent, timePercent)
-      return Math.min(95, Math.max(1, combined))
-    }
+  if (
+    elapsed != null &&
+    Number.isFinite(elapsed) &&
+    elapsed >= 0 &&
+    progress.historicalEstimateMs != null &&
+    progress.historicalEstimateMs > 0
+  ) {
+    if (elapsed <= 0) return 1
+    return Math.min(95, Math.max(1, (elapsed / progress.historicalEstimateMs) * 100))
   }
 
-  const total = progress.total || 8
-  if (progress.step <= 0) return (progress.phase ?? 'loading') === 'loading' ? null : 0
-  return Math.min(100, Math.max(0, (progress.step / total) * 100))
+  return null
 }
 
 export function weaveProgressRatio(
@@ -71,6 +60,22 @@ export function weaveProgressRatio(
   return undefined
 }
 
+function statusRemainingMs(args: {
+  elapsedMs: number
+  remainingMs?: number
+  historicalEstimateMs?: number
+  queueTailEstimateMs?: number
+}): number | undefined {
+  if (args.remainingMs != null && Number.isFinite(args.remainingMs)) return args.remainingMs
+  const historical =
+    args.historicalEstimateMs != null
+      ? Math.max(0, args.historicalEstimateMs - args.elapsedMs)
+      : undefined
+  const tail = Math.max(0, args.queueTailEstimateMs ?? 0)
+  if (historical == null) return tail > 0 ? tail : undefined
+  return historical + tail
+}
+
 export function weaveBusyStatus(args: {
   phase: WeavePhase | undefined
   rite: number
@@ -81,20 +86,13 @@ export function weaveBusyStatus(args: {
   historicalEstimateMs?: number
   queueTailEstimateMs?: number
 }): string {
-  const remaining =
-    args.remainingMs ??
-    estimateRemainingMs({
-      elapsedMs: args.elapsedMs,
-      historicalTotalMs: args.historicalEstimateMs,
-      progress: weaveProgressRatio({
-        step: args.rite,
-        total: args.total,
-        phase: args.phase,
-        ratio: args.ratio,
-      }),
-      queueTailMs: args.queueTailEstimateMs,
-    })
-  return weaveStatusLabel(args.phase, args.rite, args.total, args.elapsedMs, remaining)
+  return weaveStatusLabel(
+    args.phase,
+    args.rite,
+    args.total,
+    args.elapsedMs,
+    statusRemainingMs(args),
+  )
 }
 
 export function weaveStatusLabel(

@@ -9,6 +9,10 @@ export type ExportOptions = {
   sampleRate: SampleRateOption
   bitDepth: BitDepthOption
   mono: boolean
+  /** Opus and MP3, kbps. Ignored for lossless and Vorbis. */
+  bitrateKbps?: number
+  /** Vorbis quality 0–10. Ignored for other formats. */
+  vorbisQuality?: number
 }
 
 /** Lossless first, then lossy, each group ordered by how widely it is accepted. */
@@ -21,6 +25,9 @@ export const DESKTOP_ONLY_FORMATS: readonly AudioFormat[] = ['aiff', 'flac', 'op
  * is why it is what a fresh install exports.
  */
 export const DEFAULT_EXPORT_FORMAT: AudioFormat = 'opus'
+export const DEFAULT_OPUS_BITRATE_KBPS = 128
+export const DEFAULT_VORBIS_QUALITY = 6
+export const DEFAULT_MP3_BITRATE_KBPS = 320
 
 const FORMAT_LABELS: Record<AudioFormat, string> = {
   wav: 'WAV',
@@ -28,7 +35,7 @@ const FORMAT_LABELS: Record<AudioFormat, string> = {
   flac: 'FLAC',
   opus: 'Opus',
   ogg: 'OGG Vorbis',
-  mp3: 'MP3 320',
+  mp3: 'MP3',
 }
 
 const FORMAT_NOTES: Record<AudioFormat, string> = {
@@ -37,7 +44,7 @@ const FORMAT_NOTES: Record<AudioFormat, string> = {
   flac: 'Lossless, about half the size of WAV.',
   opus: 'Best size for the quality. Always written at 48 kHz.',
   ogg: 'Vorbis. The lossy format Unity and Godot read natively.',
-  mp3: '320 kbps CBR. Plays anywhere.',
+  mp3: 'CBR. Plays anywhere. Default is 320 kbps.',
 }
 
 export function formatNote(format: AudioFormat): string {
@@ -46,6 +53,33 @@ export function formatNote(format: AudioFormat): string {
 
 export function isLosslessFormat(format: AudioFormat): boolean {
   return format === 'wav' || format === 'aiff' || format === 'flac'
+}
+
+export function needsBitrate(format: AudioFormat): boolean {
+  return format === 'opus' || format === 'mp3'
+}
+
+export function needsVorbisQuality(format: AudioFormat): boolean {
+  return format === 'ogg'
+}
+
+export function defaultBitrateKbps(format: AudioFormat): number {
+  return format === 'opus' ? DEFAULT_OPUS_BITRATE_KBPS : DEFAULT_MP3_BITRATE_KBPS
+}
+
+export function clampBitrateKbps(value: number): number {
+  if (!Number.isFinite(value)) return DEFAULT_OPUS_BITRATE_KBPS
+  return Math.max(16, Math.min(512, Math.round(value)))
+}
+
+export function clampVorbisQuality(value: number): number {
+  if (!Number.isFinite(value)) return DEFAULT_VORBIS_QUALITY
+  return Math.max(0, Math.min(10, Math.round(value)))
+}
+
+/** 24-bit export still only has 16-bit content until a float master ships. */
+export function bitDepthLabel(bits: BitDepthOption): string {
+  return bits === 24 ? '24-bit container (16-bit content)' : '16-bit'
 }
 
 export function isAudioFormat(value: unknown): value is AudioFormat {

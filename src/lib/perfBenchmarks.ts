@@ -58,13 +58,21 @@ export type BaselinePerfModel = {
 }
 
 /**
- * Empirically measured baseline estimates established from performance benchmarks.
- * Used when no real machine generation samples have been recorded on the current build.
+ * Empirically measured baseline estimates.
+ *
+ * Load times are the NVMe hardware-reference measurements (RTX 3090, Samsung
+ * 980 PRO / Kingston SA2000). Generate costs are the phase model that produces
+ * the README estimate table; `scripts/bench_estimates.py` reprints both from
+ * these constants so the first-run UI and the docs cannot drift apart.
+ *
+ * The old 12 s FP16 load figure was a mechanical-HDD-class guess. Fast Preview
+ * used to measure 12.6 s wall because every clip denoised 6 s of padding
+ * (PQ-01); the phase model is the loaded-model cost without that padding.
  */
 export const BASELINE_PERF_ESTIMATES: BaselinePerfModel = {
   loadMs: {
-    fp16: 12_000,
-    fp32: 18_000,
+    fp16: 3_500,
+    fp32: 5_200,
     mock: 2_000,
   },
   generate: {

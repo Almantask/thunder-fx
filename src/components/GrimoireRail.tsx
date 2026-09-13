@@ -1099,7 +1099,7 @@ export function GrimoireRail({
                 <option value="wav">WAV</option>
                 <option value="flac">FLAC</option>
                 <option value="ogg">OGG Vorbis</option>
-                <option value="mp3">MP3 320</option>
+                <option value="mp3">MP3</option>
               </select>
             </div>
             <label className="flex items-center gap-2 text-sm text-cream">

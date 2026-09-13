@@ -138,7 +138,22 @@ function encodeListInfo(info: WavInfo): Uint8Array | undefined {
   return chunk
 }
 
-export function parseWav(buffer: ArrayBuffer): WavAudio {
+export type WavHeader = {
+  sampleRate: number
+  channels: number
+  bitsPerSample: number
+  dataOffset: number
+  dataSize: number
+  info?: WavInfo
+}
+
+/** Peak envelope for drawing. `min` is negative-going, `max` is positive-going. */
+export type WaveformPeaks = {
+  min: Float32Array
+  max: Float32Array
+}
+
+export function readWavHeader(buffer: ArrayBuffer): WavHeader {
   const view = new DataView(buffer)
   const tag = (offset: number) =>
     String.fromCharCode(
@@ -173,9 +188,31 @@ export function parseWav(buffer: ArrayBuffer): WavAudio {
     offset += 8 + size + (size % 2)
   }
   if (dataOffset < 0) throw new Error('WAVE data chunk missing')
-  if (bitsPerSample !== 16) throw new Error('Only 16-bit PCM is supported')
-  const pcm = new Int16Array(buffer, dataOffset, dataSize / 2)
-  return { sampleRate, channels, bitsPerSample, pcm: new Int16Array(pcm), info }
+  return { sampleRate, channels, bitsPerSample, dataOffset, dataSize, info }
+}
+
+/**
+ * Parse a 16-bit PCM WAVE.
+ *
+ * The returned `pcm` is a view onto `buffer` when the data chunk is 2-byte
+ * aligned. Callers that mutate samples must copy first; Shape edits already
+ * allocate their own output.
+ */
+export function parseWav(buffer: ArrayBuffer): WavAudio {
+  const header = readWavHeader(buffer)
+  if (header.bitsPerSample !== 16) throw new Error('Only 16-bit PCM is supported')
+  const samples = Math.floor(header.dataSize / 2)
+  const pcm =
+    (header.dataOffset & 1) === 0
+      ? new Int16Array(buffer, header.dataOffset, samples)
+      : new Int16Array(buffer.slice(header.dataOffset, header.dataOffset + samples * 2))
+  return {
+    sampleRate: header.sampleRate,
+    channels: header.channels,
+    bitsPerSample: header.bitsPerSample,
+    pcm,
+    info: header.info,
+  }
 }
 
 function writePcm24(bytes: Uint8Array, offset: number, pcm: Int16Array): void {
@@ -236,8 +273,10 @@ export function tagWav(buffer: ArrayBuffer, info: WavInfo): ArrayBuffer {
 export const tagMusicWav = tagWav
 
 export function wavDurationSeconds(buffer: ArrayBuffer): number {
-  const wav = parseWav(buffer)
-  return wav.pcm.length / wav.channels / wav.sampleRate
+  const header = readWavHeader(buffer)
+  const bytesPerSample = Math.max(1, header.bitsPerSample / 8)
+  const frames = header.dataSize / (header.channels * bytesPerSample)
+  return frames / header.sampleRate
 }
 
 export function trimWav(
@@ -308,22 +347,29 @@ export function generateMockSfxWav(seconds: number, seed: number): ArrayBuffer {
   })
 }
 
-export function waveformPeaks(buffer: ArrayBuffer, buckets: number): Float32Array {
+export function waveformPeaks(buffer: ArrayBuffer, buckets: number): WaveformPeaks {
   const wav = parseWav(buffer)
   const frames = wav.pcm.length / wav.channels
-  const peaks = new Float32Array(Math.max(1, buckets))
-  const step = frames / peaks.length
-  for (let i = 0; i < peaks.length; i += 1) {
+  const count = Math.max(1, buckets)
+  const min = new Float32Array(count)
+  const max = new Float32Array(count)
+  const step = frames / count
+  for (let i = 0; i < count; i += 1) {
     const start = Math.floor(i * step)
-    const end = Math.floor((i + 1) * step)
-    let max = 0
+    const end = Math.max(start + 1, Math.floor((i + 1) * step))
+    let lo = 0
+    let hi = 0
     for (let f = start; f < end; f += 1) {
-      const s = Math.abs(wav.pcm[f * wav.channels] ?? 0) / 32768
-      if (s > max) max = s
+      for (let c = 0; c < wav.channels; c += 1) {
+        const s = (wav.pcm[f * wav.channels + c] ?? 0) / 32768
+        if (s < lo) lo = s
+        if (s > hi) hi = s
+      }
     }
-    peaks[i] = max
+    min[i] = lo
+    max[i] = hi
   }
-  return peaks
+  return { min, max }
 }
 
 export function downloadArrayBuffer(

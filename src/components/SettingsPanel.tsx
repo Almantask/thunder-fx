@@ -7,9 +7,13 @@ import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   AUDIO_FORMATS,
+  clampBitrateKbps,
+  clampVorbisQuality,
   formatLabel,
   formatNeedsDesktop,
   formatNote,
+  needsBitrate,
+  needsVorbisQuality,
   type AudioFormat,
 } from '@/lib/audioExport'
 import {
@@ -179,6 +183,69 @@ export function SettingsPanel({
                 ? ` ${formatLabel(settings.defaultExportFormat)} needs the desktop app; exports in the browser fall back to WAV.`
                 : ''}
             </p>
+            {needsBitrate(settings.defaultExportFormat) ? (
+              <Hint
+                className="w-full flex-col"
+                label={
+                  settings.defaultExportFormat === 'opus'
+                    ? 'Default Opus VBR target used by Export and sound packs.'
+                    : 'Default MP3 CBR used by Export and sound packs.'
+                }
+              >
+                <div className="w-full">
+                  <Label htmlFor="default-bitrate">Default bitrate</Label>
+                  <select
+                    id="default-bitrate"
+                    className="mt-1 h-9 w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-leather-2 px-2 font-mono text-sm text-cream"
+                    value={
+                      settings.defaultExportFormat === 'opus'
+                        ? settings.defaultOpusBitrateKbps
+                        : settings.defaultMp3BitrateKbps
+                    }
+                    onChange={(e) => {
+                      const kbps = clampBitrateKbps(Number(e.target.value))
+                      onChange(
+                        settings.defaultExportFormat === 'opus'
+                          ? { ...settings, defaultOpusBitrateKbps: kbps }
+                          : { ...settings, defaultMp3BitrateKbps: kbps },
+                      )
+                    }}
+                    aria-label="Default bitrate"
+                  >
+                    {[64, 96, 128, 160, 192, 256, 320].map((kbps) => (
+                      <option key={kbps} value={kbps}>
+                        {kbps} kbps
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </Hint>
+            ) : null}
+            {needsVorbisQuality(settings.defaultExportFormat) ? (
+              <Hint className="w-full flex-col" label="Default Vorbis quality (0–10) used by Export and sound packs.">
+                <div className="w-full">
+                  <Label htmlFor="default-vorbis-quality">Default Vorbis quality</Label>
+                  <select
+                    id="default-vorbis-quality"
+                    className="mt-1 h-9 w-full rounded-book border border-[color-mix(in_srgb,var(--color-gold)_40%,transparent)] bg-leather-2 px-2 font-mono text-sm text-cream"
+                    value={settings.defaultVorbisQuality}
+                    onChange={(e) =>
+                      onChange({
+                        ...settings,
+                        defaultVorbisQuality: clampVorbisQuality(Number(e.target.value)),
+                      })
+                    }
+                    aria-label="Default Vorbis quality"
+                  >
+                    {[0, 2, 4, 6, 8, 10].map((q) => (
+                      <option key={q} value={q}>
+                        q{q}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </Hint>
+            ) : null}
           </div>
 
           <div className="space-y-4">

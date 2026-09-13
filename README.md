@@ -65,7 +65,7 @@ On the desktop app, Generate writes WAV files to the generated-sounds folder. In
 
 - Generated-sounds folder (desktop default: `%LOCALAPPDATA%\thunder-fx\library`)
 - Default export folder
-- Default audio format for exports: WAV, AIFF, FLAC, Opus (default), OGG Vorbis, MP3 320.
+- Default audio format for exports: WAV, AIFF, FLAC, Opus (default), OGG Vorbis, MP3, with bitrate/quality controls for the lossy encoders.
   Everything but WAV is encoded by the Python engine, so those need the desktop app.
 - Hugging Face token and default duration
 - Error log (newest first; Reveal file)
@@ -256,7 +256,9 @@ Thunder FX uses empirical performance benchmark models to predict generation and
 | **Model Cold Load** | FP32 | **~5.2 s** | NVMe SSD |
 | **Model Cold Load** | FP16 | **221.4 s (~3.7 min)** | Mechanical SATA HDD (Toshiba HDWD240) |
 | **Model Cold Load** | FP32 | **330.2 s (~5.5 min)** | Mechanical SATA HDD (Toshiba HDWD240) |
-| **Fast Preview (1s @ 4 steps)** | FP16 | **12.6 s** | CUDA / Flash Attention 2 |
+| **Fast Preview (1s @ 4 steps)** | FP16 | **~4.8 s** | CUDA / Flash Attention 2; first-run phase model, model already loaded |
+
+The load times and Fast Preview row are the first-run estimates in `src/lib/perfBenchmarks.ts`. Reprint them with `python scripts/bench_estimates.py`. An older Fast Preview wall of **12.6 s** included 6 s of denoised padding that the clip then threw away; that padding is now 0.5–1 s (PQ-01).
 
 > [!TIP]
 > Keep `HF_HUB_CACHE` on an **NVMe SSD** (e.g. `D:\huggingface\hub` or `C:\Users\<User>\.cache\huggingface\hub`) for near-instant cold loads (~3–5s) rather than a mechanical hard drive.

@@ -12,11 +12,11 @@ import {
 describe('perfBenchmarks', () => {
   describe('getBaselineLoadMs', () => {
     it('returns FP16 load baseline by default', () => {
-      expect(getBaselineLoadMs()).toBe(12_000)
+      expect(getBaselineLoadMs()).toBe(3_500)
     })
 
     it('returns FP32 load baseline when specified', () => {
-      expect(getBaselineLoadMs('fp32')).toBe(18_000)
+      expect(getBaselineLoadMs('fp32')).toBe(5_200)
     })
 
     it('returns mock load baseline in mock mode', () => {
@@ -95,6 +95,19 @@ describe('perfBenchmarks', () => {
         const fp32 = getBaselineGenerateMs(dur, { steps: 20, precision: 'fp32' })
         expect(fp32).toBeGreaterThan(fp16)
       }
+    })
+
+    it('first-run load estimate is within 30% of the NVMe hardware table', () => {
+      expect(getBaselineLoadMs('fp16')).toBeGreaterThanOrEqual(3_500 * 0.7)
+      expect(getBaselineLoadMs('fp16')).toBeLessThanOrEqual(3_500 * 1.3)
+      expect(getBaselineLoadMs('fp32')).toBeGreaterThanOrEqual(5_200 * 0.7)
+      expect(getBaselineLoadMs('fp32')).toBeLessThanOrEqual(5_200 * 1.3)
+    })
+
+    it('Fast Preview (1s @ 4 steps) matches the phase-model README row', () => {
+      const ms = getBaselineGenerateMs(1.0, { steps: 4, precision: 'fp16' })
+      expect(ms).toBeGreaterThan(3_000)
+      expect(ms).toBeLessThan(7_000)
     })
 
     it('handles mock engine timing cleanly', () => {

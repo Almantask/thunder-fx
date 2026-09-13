@@ -142,20 +142,7 @@ struct ScopeConfig {
 
 impl PathScope {
     fn load() -> Self {
-        let config = std::fs::read_to_string(scope_config_file())
-            .ok()
-            .and_then(|text| {
-                serde_json::from_str::<ScopeConfig>(&text).ok().or_else(|| {
-                    // Older builds stored a bare array of granted folders.
-                    serde_json::from_str::<Vec<String>>(&text)
-                        .ok()
-                        .map(|granted| ScopeConfig {
-                            granted,
-                            library: None,
-                        })
-                })
-            })
-            .unwrap_or_default();
+        let config = read_scope_config().unwrap_or_default();
         PathScope {
             granted: Mutex::new(
                 config
@@ -226,7 +213,7 @@ impl PathScope {
             let _ = std::fs::create_dir_all(parent);
         }
         if let Ok(text) = serde_json::to_string_pretty(&config) {
-            let _ = std::fs::write(&file, text);
+            let _ = write_bytes_atomic(&file, text.as_bytes());
         }
     }
 
@@ -243,6 +230,38 @@ impl PathScope {
         }
         roots
     }
+}
+
+fn scope_sidecar_bak(path: &Path) -> PathBuf {
+    match path.file_name().and_then(|name| name.to_str()) {
+        Some(name) => path.with_file_name(format!("{name}.bak")),
+        None => path.with_extension("bak"),
+    }
+}
+
+fn parse_scope_config(text: &str) -> Option<ScopeConfig> {
+    serde_json::from_str::<ScopeConfig>(text).ok().or_else(|| {
+        // Older builds stored a bare array of granted folders.
+        serde_json::from_str::<Vec<String>>(text)
+            .ok()
+            .map(|granted| ScopeConfig {
+                granted,
+                library: None,
+            })
+    })
+}
+
+fn read_scope_config() -> Option<ScopeConfig> {
+    let file = scope_config_file();
+    if let Ok(text) = std::fs::read_to_string(&file) {
+        if let Some(config) = parse_scope_config(&text) {
+            return Some(config);
+        }
+    }
+    let bak = scope_sidecar_bak(&file);
+    std::fs::read_to_string(bak)
+        .ok()
+        .and_then(|text| parse_scope_config(&text))
 }
 
 /// Lexical resolution: absolutise, then fold away `.` and `..` without
@@ -823,6 +842,8 @@ async fn engine_encode_audio(
     sample_rate: Option<u32>,
     bit_depth: Option<u32>,
     mono: Option<bool>,
+    bitrate: Option<u32>,
+    quality: Option<f32>,
 ) -> Result<serde_json::Value, String> {
     let wav_path = ensure_allowed(&scope, &wav_path)?
         .to_string_lossy()
@@ -840,7 +861,9 @@ async fn engine_encode_audio(
         "format": format.unwrap_or_else(|| "ogg".into()),
         "sample_rate": sample_rate,
         "bit_depth": bit_depth,
-        "mono": mono.unwrap_or(false)
+        "mono": mono.unwrap_or(false),
+        "bitrate": bitrate,
+        "quality": quality
     });
     run_blocking(move || send_and_receive(&proc, payload, 120)).await
 }
@@ -881,11 +904,50 @@ async fn engine_unload(
     run_blocking(move || send_and_receive(&proc, payload, 30)).await
 }
 
+fn sidecar_tmp_path(path: &Path) -> PathBuf {
+    match path.file_name().and_then(|name| name.to_str()) {
+        Some(name) => path.with_file_name(format!("{name}.tmp")),
+        None => path.with_extension("tmp"),
+    }
+}
+
 fn write_bytes_to(path: &Path, bytes: &[u8]) -> Result<(), String> {
     if let Some(parent) = path.parent() {
         std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
     }
     std::fs::write(path, bytes).map_err(|e| fail(e.to_string()))
+}
+
+/// Write to `<name>.tmp`, fsync, keep `<name>.bak`, then rename over the original.
+///
+/// A crash mid-write used to leave a truncated sidecar that the next save would
+/// happily overwrite with an empty index. Rename-over is atomic on the same
+/// volume; the `.bak` is the previous complete version if the new file cannot
+/// be parsed.
+fn write_bytes_atomic(path: &Path, bytes: &[u8]) -> Result<(), String> {
+    if let Some(parent) = path.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
+    }
+    let tmp = sidecar_tmp_path(path);
+    {
+        let mut file = std::fs::File::create(&tmp).map_err(|e| fail(e.to_string()))?;
+        file.write_all(bytes).map_err(|e| fail(e.to_string()))?;
+        file.sync_all().map_err(|e| fail(e.to_string()))?;
+    }
+    let bak = scope_sidecar_bak(path);
+    if path.exists() {
+        let _ = std::fs::copy(path, &bak);
+    }
+    if cfg!(windows) && path.exists() {
+        std::fs::remove_file(path).map_err(|e| fail(e.to_string()))?;
+    }
+    match std::fs::rename(&tmp, path) {
+        Ok(()) => Ok(()),
+        Err(err) => {
+            let _ = std::fs::remove_file(&tmp);
+            Err(fail(err.to_string()))
+        }
+    }
 }
 
 /// Raw-bytes write. The frontend sends an `ArrayBuffer` as the request body and
@@ -903,6 +965,21 @@ async fn write_file(
     let path = ensure_allowed(&scope, &path)?;
     let bytes = bytes.clone();
     run_blocking(move || write_bytes_to(&path, &bytes)).await
+}
+
+/// Atomic sibling of [`write_file`] for JSON sidecars (meta, trash, scope).
+#[tauri::command]
+async fn write_file_atomic(
+    scope: State<'_, PathScope>,
+    request: tauri::ipc::Request<'_>,
+) -> Result<(), String> {
+    let tauri::ipc::InvokeBody::Raw(bytes) = request.body() else {
+        return Err(fail("write_file_atomic expects a binary body"));
+    };
+    let path = header_path(&request, "x-thunder-path")?;
+    let path = ensure_allowed(&scope, &path)?;
+    let bytes = bytes.clone();
+    run_blocking(move || write_bytes_atomic(&path, &bytes)).await
 }
 
 /// Raw-bytes read: returns an `ArrayBuffer` straight to the webview.
@@ -1642,249 +1719,262 @@ fn clip_json_from_path(root: &Path, path: &Path) -> Option<serde_json::Value> {
     }))
 }
 
+fn ensure_scan_root(scope: &PathScope, dir: Option<String>) -> Result<PathBuf, String> {
+    let root = dir
+        .filter(|d| !d.trim().is_empty())
+        .map(PathBuf::from)
+        .unwrap_or_else(library_dir);
+    ensure_allowed(scope, &root.to_string_lossy())
+}
+
+fn scan_library_categories_inner(
+    root: PathBuf,
+    mode: Option<String>,
+) -> Result<Vec<serde_json::Value>, String> {
+    if !root.exists() {
+        return Ok(Vec::new());
+    }
+
+    let filter_mode = mode
+        .map(|m| m.trim().to_ascii_lowercase())
+        .filter(|m| !m.is_empty());
+    let mut categories = Vec::new();
+
+    let mode_dirs = match &filter_mode {
+        Some(m) if m == "music" => vec![("music", root.join("music"))],
+        Some(m) if m == "ambience" => vec![("ambience", root.join("ambience"))],
+        Some(m) if m == "sfx" || m == "fx" => {
+            vec![("sfx", root.join("sfx")), ("sfx", root.join("fx"))]
+        }
+        _ => vec![
+            ("sfx", root.join("sfx")),
+            ("sfx", root.join("fx")),
+            ("ambience", root.join("ambience")),
+            ("music", root.join("music")),
+        ],
+    };
+
+    let mut found_mode_dir = false;
+    for (m_name, m_path) in &mode_dirs {
+        if m_path.is_dir() {
+            found_mode_dir = true;
+            if let Ok(cat_entries) = std::fs::read_dir(m_path) {
+                for cat_entry in cat_entries.flatten() {
+                    let cat_path = cat_entry.path();
+                    if !cat_path.is_dir() {
+                        continue;
+                    }
+                    let cat_name = cat_path
+                        .file_name()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("")
+                        .to_string();
+                    if cat_name.is_empty() {
+                        continue;
+                    }
+
+                    let mut subcategories = Vec::new();
+                    let mut cat_count = 0;
+
+                    if let Ok(sub_entries) = std::fs::read_dir(&cat_path) {
+                        for sub_entry in sub_entries.flatten() {
+                            let sub_path = sub_entry.path();
+                            if sub_path.is_dir() {
+                                let sub_name = sub_path
+                                    .file_name()
+                                    .and_then(|s| s.to_str())
+                                    .unwrap_or("")
+                                    .to_string();
+                                if !sub_name.is_empty() {
+                                    let sub_count = count_wav_files_recursive(&sub_path);
+                                    cat_count += sub_count;
+                                    subcategories.push(serde_json::json!({
+                                        "name": sub_name,
+                                        "path": sub_path.to_string_lossy(),
+                                        "count": sub_count,
+                                    }));
+                                }
+                            } else if sub_path
+                                .extension()
+                                .and_then(|s| s.to_str())
+                                .map(|s| s.eq_ignore_ascii_case("wav"))
+                                == Some(true)
+                            {
+                                cat_count += 1;
+                            }
+                        }
+                    }
+
+                    subcategories.sort_by(|a, b| {
+                        let a_name = a["name"].as_str().unwrap_or("");
+                        let b_name = b["name"].as_str().unwrap_or("");
+                        if a_name == "General" {
+                            std::cmp::Ordering::Greater
+                        } else if b_name == "General" {
+                            std::cmp::Ordering::Less
+                        } else {
+                            a_name.cmp(b_name)
+                        }
+                    });
+
+                    categories.push(serde_json::json!({
+                        "name": cat_name,
+                        "mode": m_name,
+                        "path": cat_path.to_string_lossy(),
+                        "count": cat_count,
+                        "subcategories": subcategories,
+                    }));
+                }
+            }
+        }
+    }
+
+    if !found_mode_dir {
+        if let Ok(entries) = std::fs::read_dir(&root) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.is_dir() {
+                    let name = path
+                        .file_name()
+                        .and_then(|s| s.to_str())
+                        .unwrap_or("")
+                        .to_string();
+                    if name.is_empty() || name.eq_ignore_ascii_case("logs") {
+                        continue;
+                    }
+                    let mut subcategories = Vec::new();
+                    let mut cat_count = 0;
+                    if let Ok(sub_entries) = std::fs::read_dir(&path) {
+                        for sub_entry in sub_entries.flatten() {
+                            let sub_path = sub_entry.path();
+                            if sub_path.is_dir() {
+                                let sub_name = sub_path
+                                    .file_name()
+                                    .and_then(|s| s.to_str())
+                                    .unwrap_or("")
+                                    .to_string();
+                                if !sub_name.is_empty() {
+                                    let sub_count = count_wav_files_recursive(&sub_path);
+                                    cat_count += sub_count;
+                                    subcategories.push(serde_json::json!({
+                                        "name": sub_name,
+                                        "path": sub_path.to_string_lossy(),
+                                        "count": sub_count,
+                                    }));
+                                }
+                            } else if sub_path
+                                .extension()
+                                .and_then(|s| s.to_str())
+                                .map(|s| s.eq_ignore_ascii_case("wav"))
+                                == Some(true)
+                            {
+                                cat_count += 1;
+                            }
+                        }
+                    }
+                    categories.push(serde_json::json!({
+                        "name": name,
+                        "mode": filter_mode.as_deref().unwrap_or("sfx"),
+                        "path": path.to_string_lossy(),
+                        "count": cat_count,
+                        "subcategories": subcategories,
+                    }));
+                }
+            }
+        }
+    }
+
+    categories.sort_by(|a, b| {
+        let a_name = a["name"].as_str().unwrap_or("");
+        let b_name = b["name"].as_str().unwrap_or("");
+        if a_name == "Custom" {
+            std::cmp::Ordering::Greater
+        } else if b_name == "Custom" {
+            std::cmp::Ordering::Less
+        } else {
+            a_name.cmp(b_name)
+        }
+    });
+
+    Ok(categories)
+}
+
 #[tauri::command]
 async fn scan_library_categories(
+    scope: State<'_, PathScope>,
     dir: Option<String>,
     mode: Option<String>,
 ) -> Result<Vec<serde_json::Value>, String> {
-    run_blocking(move || {
-        let root = dir
-            .filter(|d| !d.trim().is_empty())
-            .map(PathBuf::from)
-            .unwrap_or_else(library_dir);
+    let root = ensure_scan_root(&scope, dir)?;
+    run_blocking(move || scan_library_categories_inner(root, mode)).await
+}
 
-        if !root.exists() {
-            return Ok(Vec::new());
+fn scan_folder_tracks_inner(path: PathBuf) -> Result<Vec<serde_json::Value>, String> {
+    if !path.exists() {
+        return Ok(Vec::new());
+    }
+
+    let mut wav_paths = Vec::new();
+    collect_wav_files_recursive(&path, &mut wav_paths);
+
+    let root = library_dir();
+    let mut clips = Vec::new();
+
+    for wav_path in wav_paths {
+        if let Some(clip_json) = clip_json_from_path(&root, &wav_path) {
+            clips.push(clip_json);
         }
+    }
 
-        let filter_mode = mode
-            .map(|m| m.trim().to_ascii_lowercase())
-            .filter(|m| !m.is_empty());
-        let mut categories = Vec::new();
+    clips.sort_by(|a, b| {
+        let a_time = a["createdAt"].as_str().unwrap_or("");
+        let b_time = b["createdAt"].as_str().unwrap_or("");
+        b_time.cmp(a_time)
+    });
 
-        let mode_dirs = match &filter_mode {
-            Some(m) if m == "music" => vec![("music", root.join("music"))],
-            Some(m) if m == "ambience" => vec![("ambience", root.join("ambience"))],
-            Some(m) if m == "sfx" || m == "fx" => {
-                vec![("sfx", root.join("sfx")), ("sfx", root.join("fx"))]
-            }
-            _ => vec![
-                ("sfx", root.join("sfx")),
-                ("sfx", root.join("fx")),
-                ("ambience", root.join("ambience")),
-                ("music", root.join("music")),
-            ],
-        };
-
-        let mut found_mode_dir = false;
-        for (m_name, m_path) in &mode_dirs {
-            if m_path.is_dir() {
-                found_mode_dir = true;
-                if let Ok(cat_entries) = std::fs::read_dir(m_path) {
-                    for cat_entry in cat_entries.flatten() {
-                        let cat_path = cat_entry.path();
-                        if !cat_path.is_dir() {
-                            continue;
-                        }
-                        let cat_name = cat_path
-                            .file_name()
-                            .and_then(|s| s.to_str())
-                            .unwrap_or("")
-                            .to_string();
-                        if cat_name.is_empty() {
-                            continue;
-                        }
-
-                        let mut subcategories = Vec::new();
-                        let mut cat_count = 0;
-
-                        if let Ok(sub_entries) = std::fs::read_dir(&cat_path) {
-                            for sub_entry in sub_entries.flatten() {
-                                let sub_path = sub_entry.path();
-                                if sub_path.is_dir() {
-                                    let sub_name = sub_path
-                                        .file_name()
-                                        .and_then(|s| s.to_str())
-                                        .unwrap_or("")
-                                        .to_string();
-                                    if !sub_name.is_empty() {
-                                        let sub_count = count_wav_files_recursive(&sub_path);
-                                        cat_count += sub_count;
-                                        subcategories.push(serde_json::json!({
-                                            "name": sub_name,
-                                            "path": sub_path.to_string_lossy(),
-                                            "count": sub_count,
-                                        }));
-                                    }
-                                } else if sub_path
-                                    .extension()
-                                    .and_then(|s| s.to_str())
-                                    .map(|s| s.eq_ignore_ascii_case("wav"))
-                                    == Some(true)
-                                {
-                                    cat_count += 1;
-                                }
-                            }
-                        }
-
-                        subcategories.sort_by(|a, b| {
-                            let a_name = a["name"].as_str().unwrap_or("");
-                            let b_name = b["name"].as_str().unwrap_or("");
-                            if a_name == "General" {
-                                std::cmp::Ordering::Greater
-                            } else if b_name == "General" {
-                                std::cmp::Ordering::Less
-                            } else {
-                                a_name.cmp(b_name)
-                            }
-                        });
-
-                        categories.push(serde_json::json!({
-                            "name": cat_name,
-                            "mode": m_name,
-                            "path": cat_path.to_string_lossy(),
-                            "count": cat_count,
-                            "subcategories": subcategories,
-                        }));
-                    }
-                }
-            }
-        }
-
-        if !found_mode_dir {
-            if let Ok(entries) = std::fs::read_dir(&root) {
-                for entry in entries.flatten() {
-                    let path = entry.path();
-                    if path.is_dir() {
-                        let name = path
-                            .file_name()
-                            .and_then(|s| s.to_str())
-                            .unwrap_or("")
-                            .to_string();
-                        if name.is_empty() || name.eq_ignore_ascii_case("logs") {
-                            continue;
-                        }
-                        let mut subcategories = Vec::new();
-                        let mut cat_count = 0;
-                        if let Ok(sub_entries) = std::fs::read_dir(&path) {
-                            for sub_entry in sub_entries.flatten() {
-                                let sub_path = sub_entry.path();
-                                if sub_path.is_dir() {
-                                    let sub_name = sub_path
-                                        .file_name()
-                                        .and_then(|s| s.to_str())
-                                        .unwrap_or("")
-                                        .to_string();
-                                    if !sub_name.is_empty() {
-                                        let sub_count = count_wav_files_recursive(&sub_path);
-                                        cat_count += sub_count;
-                                        subcategories.push(serde_json::json!({
-                                            "name": sub_name,
-                                            "path": sub_path.to_string_lossy(),
-                                            "count": sub_count,
-                                        }));
-                                    }
-                                } else if sub_path
-                                    .extension()
-                                    .and_then(|s| s.to_str())
-                                    .map(|s| s.eq_ignore_ascii_case("wav"))
-                                    == Some(true)
-                                {
-                                    cat_count += 1;
-                                }
-                            }
-                        }
-                        categories.push(serde_json::json!({
-                            "name": name,
-                            "mode": filter_mode.as_deref().unwrap_or("sfx"),
-                            "path": path.to_string_lossy(),
-                            "count": cat_count,
-                            "subcategories": subcategories,
-                        }));
-                    }
-                }
-            }
-        }
-
-        categories.sort_by(|a, b| {
-            let a_name = a["name"].as_str().unwrap_or("");
-            let b_name = b["name"].as_str().unwrap_or("");
-            if a_name == "Custom" {
-                std::cmp::Ordering::Greater
-            } else if b_name == "Custom" {
-                std::cmp::Ordering::Less
-            } else {
-                a_name.cmp(b_name)
-            }
-        });
-
-        Ok(categories)
-    })
-    .await
+    Ok(clips)
 }
 
 #[tauri::command]
-async fn scan_folder_tracks(folder_path: String) -> Result<Vec<serde_json::Value>, String> {
-    run_blocking(move || {
-        let path = PathBuf::from(folder_path);
-        if !path.exists() {
-            return Ok(Vec::new());
+async fn scan_folder_tracks(
+    scope: State<'_, PathScope>,
+    folder_path: String,
+) -> Result<Vec<serde_json::Value>, String> {
+    let path = ensure_allowed(&scope, &folder_path)?;
+    run_blocking(move || scan_folder_tracks_inner(path)).await
+}
+
+fn scan_library_dir_inner(target: PathBuf) -> Result<Vec<serde_json::Value>, String> {
+    if !target.exists() {
+        return Ok(Vec::new());
+    }
+
+    let mut wav_paths = Vec::new();
+    collect_wav_files_recursive(&target, &mut wav_paths);
+
+    let mut clips = Vec::new();
+    for path in wav_paths {
+        if let Some(clip_json) = clip_json_from_path(&target, &path) {
+            clips.push(clip_json);
         }
+    }
 
-        let mut wav_paths = Vec::new();
-        collect_wav_files_recursive(&path, &mut wav_paths);
+    clips.sort_by(|a, b| {
+        let a_time = a["createdAt"].as_str().unwrap_or("");
+        let b_time = b["createdAt"].as_str().unwrap_or("");
+        b_time.cmp(a_time)
+    });
 
-        let root = library_dir();
-        let mut clips = Vec::new();
-
-        for wav_path in wav_paths {
-            if let Some(clip_json) = clip_json_from_path(&root, &wav_path) {
-                clips.push(clip_json);
-            }
-        }
-
-        clips.sort_by(|a, b| {
-            let a_time = a["createdAt"].as_str().unwrap_or("");
-            let b_time = b["createdAt"].as_str().unwrap_or("");
-            b_time.cmp(a_time)
-        });
-
-        Ok(clips)
-    })
-    .await
+    Ok(clips)
 }
 
 #[tauri::command]
-async fn scan_library_dir(dir: Option<String>) -> Result<Vec<serde_json::Value>, String> {
-    run_blocking(move || {
-        let target = dir
-            .filter(|d| !d.trim().is_empty())
-            .map(PathBuf::from)
-            .unwrap_or_else(library_dir);
-
-        if !target.exists() {
-            return Ok(Vec::new());
-        }
-
-        let mut wav_paths = Vec::new();
-        collect_wav_files_recursive(&target, &mut wav_paths);
-
-        let mut clips = Vec::new();
-        for path in wav_paths {
-            if let Some(clip_json) = clip_json_from_path(&target, &path) {
-                clips.push(clip_json);
-            }
-        }
-
-        clips.sort_by(|a, b| {
-            let a_time = a["createdAt"].as_str().unwrap_or("");
-            let b_time = b["createdAt"].as_str().unwrap_or("");
-            b_time.cmp(a_time)
-        });
-
-        Ok(clips)
-    })
-    .await
+async fn scan_library_dir(
+    scope: State<'_, PathScope>,
+    dir: Option<String>,
+) -> Result<Vec<serde_json::Value>, String> {
+    let target = ensure_scan_root(&scope, dir)?;
+    run_blocking(move || scan_library_dir_inner(target)).await
 }
 
 pub fn run() {
@@ -1912,6 +2002,7 @@ pub fn run() {
             engine_warmup,
             engine_unload,
             write_file,
+            write_file_atomic,
             read_file,
             copy_file,
             move_file,
@@ -2186,10 +2277,7 @@ mod tests {
                 w.write_sample(0i16).unwrap();
             }
 
-            let cats =
-                scan_library_categories(Some(dir.to_string_lossy().into()), Some("sfx".into()))
-                    .await
-                    .unwrap();
+            let cats = scan_library_categories_inner(dir.clone(), Some("sfx".into())).unwrap();
             assert_eq!(cats.len(), 1);
             assert_eq!(cats[0]["name"], "Combat");
             assert_eq!(cats[0]["count"], 1);
@@ -2198,18 +2286,14 @@ mod tests {
             assert_eq!(subcats[0]["name"], "Sword");
             assert_eq!(subcats[0]["count"], 1);
 
-            let tracks = scan_folder_tracks(sword_dir.to_string_lossy().into())
-                .await
-                .unwrap();
+            let tracks = scan_folder_tracks_inner(sword_dir.clone()).unwrap();
             assert_eq!(tracks.len(), 1);
             assert_eq!(tracks[0]["id"], "test-sword");
             assert_eq!(tracks[0]["category"], "Combat");
             assert_eq!(tracks[0]["subcategory"], "Sword");
             assert_eq!(tracks[0]["mode"], "sfx");
 
-            let all_clips = scan_library_dir(Some(dir.to_string_lossy().into()))
-                .await
-                .unwrap();
+            let all_clips = scan_library_dir_inner(dir.clone()).unwrap();
             assert_eq!(all_clips.len(), 1);
             assert_eq!(all_clips[0]["id"], "test-sword");
 
@@ -2295,5 +2379,83 @@ mod tests {
         assert!(!is_legacy_info_comment(
             "TrackType: SFX, heavy oak door slamming shut, close mic"
         ));
+    }
+
+    const REGISTERED_COMMANDS: &[&str] = &[
+        "engine_status",
+        "engine_probe",
+        "engine_generate",
+        "engine_cancel",
+        "engine_encode_audio",
+        "engine_warmup",
+        "engine_unload",
+        "write_file",
+        "write_file_atomic",
+        "read_file",
+        "copy_file",
+        "move_file",
+        "delete_file",
+        "zip_files",
+        "temp_dir",
+        "pick_save_path",
+        "pick_directory",
+        "reveal_path",
+        "log_error",
+        "error_log_path",
+        "library_path",
+        "set_library_dir",
+        "read_error_log",
+        "scan_library_dir",
+        "scan_library_categories",
+        "scan_folder_tracks",
+    ];
+
+    #[test]
+    fn engine_acl_covers_every_registered_command() {
+        let toml = include_str!("../permissions/engine.toml");
+        for cmd in REGISTERED_COMMANDS {
+            assert!(
+                toml.contains(&format!("\"{cmd}\"")),
+                "{cmd} is registered in generate_handler! but missing from permissions/engine.toml"
+            );
+        }
+    }
+
+    #[test]
+    fn scan_commands_refuse_paths_outside_the_scope() {
+        let _lock = ENV_LOCK.lock().unwrap_or_else(|e| e.into_inner());
+        let lib = std_temp().join(format!("thunder-fx-scan-scope-{}", std::process::id()));
+        std::fs::create_dir_all(&lib).unwrap();
+        let _guard = EnvGuard::set("THUNDER_FX_LIBRARY_DIR", &lib);
+        let scope = PathScope {
+            granted: Mutex::new(Vec::new()),
+            library: Mutex::new(None),
+        };
+        let outside = std_temp()
+            .parent()
+            .unwrap_or(Path::new("/"))
+            .join(format!("thunder-fx-scan-escape-{}", std::process::id()));
+        std::fs::create_dir_all(&outside).unwrap();
+
+        assert!(ensure_scan_root(&scope, Some(outside.to_string_lossy().into())).is_err());
+        assert!(ensure_allowed(&scope, &outside.to_string_lossy()).is_err());
+        assert!(ensure_scan_root(&scope, Some(lib.to_string_lossy().into())).is_ok());
+
+        let _ = std::fs::remove_dir_all(&lib);
+        let _ = std::fs::remove_dir_all(&outside);
+    }
+
+    #[test]
+    fn write_bytes_atomic_leaves_a_bak_and_a_complete_file() {
+        let dir = std_temp().join(format!("thunder-fx-atomic-{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join("thunder-fx-meta.json");
+        write_bytes_atomic(&path, b"{\"version\":1}\n").unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "{\"version\":1}\n");
+        write_bytes_atomic(&path, b"{\"version\":2}\n").unwrap();
+        assert_eq!(std::fs::read_to_string(&path).unwrap(), "{\"version\":2}\n");
+        let bak = scope_sidecar_bak(&path);
+        assert_eq!(std::fs::read_to_string(&bak).unwrap(), "{\"version\":1}\n");
+        let _ = std::fs::remove_dir_all(&dir);
     }
 }

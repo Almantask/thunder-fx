@@ -1,4 +1,4 @@
-import { isAudioFormat } from '@/lib/audioExport'
+import { isAudioFormat, clampBitrateKbps, clampVorbisQuality } from '@/lib/audioExport'
 import { clampGenerateSeconds } from '@/lib/duration'
 import { isGenerateMode } from '@/lib/generateMode'
 import { isPrecisionMode } from '@/lib/precision'
@@ -36,6 +36,21 @@ export function loadSettings(): KeepSettings {
     const defaultExportFormat = isAudioFormat(parsed.defaultExportFormat)
       ? parsed.defaultExportFormat
       : DEFAULT_SETTINGS.defaultExportFormat
+    const defaultOpusBitrateKbps = clampBitrateKbps(
+      typeof parsed.defaultOpusBitrateKbps === 'number'
+        ? parsed.defaultOpusBitrateKbps
+        : DEFAULT_SETTINGS.defaultOpusBitrateKbps,
+    )
+    const defaultVorbisQuality = clampVorbisQuality(
+      typeof parsed.defaultVorbisQuality === 'number'
+        ? parsed.defaultVorbisQuality
+        : DEFAULT_SETTINGS.defaultVorbisQuality,
+    )
+    const defaultMp3BitrateKbps = clampBitrateKbps(
+      typeof parsed.defaultMp3BitrateKbps === 'number'
+        ? parsed.defaultMp3BitrateKbps
+        : DEFAULT_SETTINGS.defaultMp3BitrateKbps,
+    )
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
@@ -43,6 +58,9 @@ export function loadSettings(): KeepSettings {
       precision,
       defaultDuration,
       defaultExportFormat,
+      defaultOpusBitrateKbps,
+      defaultVorbisQuality,
+      defaultMp3BitrateKbps,
     }
   } catch {
     return { ...DEFAULT_SETTINGS }

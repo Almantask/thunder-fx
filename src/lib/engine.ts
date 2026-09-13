@@ -407,6 +407,8 @@ export async function exportClipFile(options: {
   sampleRate?: SampleRateOption
   bitDepth?: BitDepthOption
   mono?: boolean
+  bitrateKbps?: number
+  vorbisQuality?: number
   defaultDir?: string
 }): Promise<string | null> {
   const prepared = prepareExportWav(options.buffer, {
@@ -442,6 +444,8 @@ export async function exportClipFile(options: {
       sampleRate: options.sampleRate ?? 44100,
       bitDepth: options.bitDepth ?? 16,
       mono: Boolean(options.mono),
+      bitrate: options.bitrateKbps,
+      quality: options.vorbisQuality,
     })
     throwIfEngineError(encoded)
     await deleteDiskFile(wavPath)
@@ -519,6 +523,8 @@ export async function writeEncodedFile(options: {
   sampleRate?: SampleRateOption
   bitDepth?: BitDepthOption
   mono?: boolean
+  bitrateKbps?: number
+  vorbisQuality?: number
 }): Promise<void> {
   const prepared = prepareExportWav(options.buffer, {
     format: options.format,
@@ -547,6 +553,8 @@ export async function writeEncodedFile(options: {
     sampleRate: options.sampleRate ?? 44100,
     bitDepth: options.bitDepth ?? 16,
     mono: Boolean(options.mono),
+    bitrate: options.bitrateKbps,
+    quality: options.vorbisQuality,
   })
   throwIfEngineError(encoded)
   await deleteDiskFile(wavPath)

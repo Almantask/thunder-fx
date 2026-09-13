@@ -1,4 +1,4 @@
-import { DEFAULT_EXPORT_FORMAT, type AudioFormat } from '@/lib/audioExport'
+import { DEFAULT_EXPORT_FORMAT, DEFAULT_MP3_BITRATE_KBPS, DEFAULT_OPUS_BITRATE_KBPS, DEFAULT_VORBIS_QUALITY, type AudioFormat } from '@/lib/audioExport'
 import { DEFAULT_PRESET, type QualityPreset, type SamplerType } from '@/lib/qualityPreset'
 
 export type GenerateMode = 'sfx' | 'ambience' | 'music'
@@ -69,6 +69,14 @@ export type WeaveProgress = {
   message?: string
 }
 
+export type WeaveUiState = {
+  rite: number
+  totalRites: number
+  elapsedMs: number
+  phase: WeavePhase
+  ratio?: number
+}
+
 export type GenerateRequest = {
   prompt: string
   seconds: number
@@ -116,6 +124,9 @@ export type KeepSettings = {
   precision: PrecisionMode
   defaultExportFormat: AudioFormat
   defaultPreset: QualityPreset
+  defaultOpusBitrateKbps: number
+  defaultVorbisQuality: number
+  defaultMp3BitrateKbps: number
 }
 
 export type KeepTab = 'library' | 'generate' | 'settings'
@@ -133,6 +144,9 @@ export const DEFAULT_SETTINGS: KeepSettings = {
   precision: 'fp16',
   defaultExportFormat: DEFAULT_EXPORT_FORMAT,
   defaultPreset: DEFAULT_PRESET,
+  defaultOpusBitrateKbps: DEFAULT_OPUS_BITRATE_KBPS,
+  defaultVorbisQuality: DEFAULT_VORBIS_QUALITY,
+  defaultMp3BitrateKbps: DEFAULT_MP3_BITRATE_KBPS,
 }
 
 

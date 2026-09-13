@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import math
+import os
 import sys
 import tempfile
 import unittest
@@ -595,6 +596,49 @@ class RefusesUnavailablePresetTests(unittest.TestCase):
                 msg = self._generate("0", preset, lib)
                 self.assertEqual(msg.get("event"), "done", msg)
                 self.assertEqual(msg.get("sampler"), "pingpong")
+
+
+class DurationPaddingTests(unittest.TestCase):
+    def test_one_shots_pad_half_a_second_and_beds_pad_one(self) -> None:
+        from worker import duration_padding_sec
+
+        self.assertEqual(duration_padding_sec("sfx"), 0.5)
+        self.assertEqual(duration_padding_sec("music"), 1.0)
+        self.assertEqual(duration_padding_sec("ambience"), 1.0)
+        self.assertEqual(duration_padding_sec("unknown"), 0.5)
+
+
+class InferenceMatmulTests(unittest.TestCase):
+    def test_env_flag_skips_tf32(self) -> None:
+        from worker import apply_inference_matmul_settings
+
+        previous = os.environ.get("THUNDER_FX_TF32")
+        os.environ["THUNDER_FX_TF32"] = "0"
+        try:
+            self.assertFalse(apply_inference_matmul_settings())
+        finally:
+            if previous is None:
+                os.environ.pop("THUNDER_FX_TF32", None)
+            else:
+                os.environ["THUNDER_FX_TF32"] = previous
+
+
+class LossyEncodeArgsTests(unittest.TestCase):
+    def test_opus_vorbis_and_mp3_flags(self) -> None:
+        from worker import lossy_encode_ffmpeg_args
+
+        self.assertEqual(
+            lossy_encode_ffmpeg_args("opus", bitrate_kbps=128, quality=6),
+            ["-c:a", "libopus", "-b:a", "128k", "-vbr", "on"],
+        )
+        self.assertEqual(
+            lossy_encode_ffmpeg_args("ogg", bitrate_kbps=160, quality=6),
+            ["-c:a", "libvorbis", "-q:a", "6"],
+        )
+        self.assertEqual(
+            lossy_encode_ffmpeg_args("mp3", bitrate_kbps=192, quality=0),
+            ["-c:a", "libmp3lame", "-b:a", "192k"],
+        )
 
 
 if __name__ == "__main__":

@@ -36,6 +36,23 @@ All notable Thunder FX changes are listed here.
   only sanctioned way to bump. The manifests were on **0.2.0 while this file was on 0.4.0**, so
   every installer and exe built from them was labelled two minor versions behind.
 
+### Performance
+
+- **Shorter clips no longer denoise 6 s of discarded padding.** Generation now pads 0.5 s for
+  one-shots and 1 s for beds (PQ-01). TF32 and cuDNN autotune are restored after the model
+  loads (`THUNDER_FX_TF32=0` turns that off).
+- **One progress state object per engine event**, WAV duration is memoised, and `parseWav`
+  returns a view instead of copying PCM. Engine status polling backs off while a generation or
+  load is in flight so it no longer collides with a busy worker.
+- **Opus/Vorbis/MP3 bitrate and quality** are controllable from Export and Settings. 24-bit
+  export is labelled as a 24-bit container with 16-bit content until a float master ships.
+- **Meta, trash, and allowed-path files** write atomically (tmp + fsync + rename, with a `.bak`).
+  A corrupt sidecar is quarantined instead of being overwritten with an empty index.
+- **Scan commands are scope-checked**, and `move_file`, `reveal_path`, and `set_library_dir` are
+  on the command ACL.
+- **First-run time estimates** use the NVMe hardware-reference load times (3.5 s FP16 / 5.2 s
+  FP32). `python scripts/bench_estimates.py` reprints the README table from the same constants.
+
 ### Fixed
 
 - **A decimal could not be typed into the Shape number fields.** The controlled inputs re-parsed

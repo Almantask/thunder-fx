@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 import { describe, expect, it } from 'vitest'
-import { generateMockMusicWav, generateMockSfxWav, parseWav, tagMusicWav, trimWav, wavDurationSeconds } from '@/lib/wav'
+import { generateMockMusicWav, generateMockSfxWav, parseWav, readWavHeader, tagMusicWav, trimWav, wavDurationSeconds, waveformPeaks, writeWav } from '@/lib/wav'
 import { musicWavInfo } from '@/lib/instruments'
 
 describe('wav', () => {
@@ -13,6 +13,7 @@ describe('wav', () => {
     expect(wav.channels).toBe(2)
     expect(wav.bitsPerSample).toBe(16)
     expect(wavDurationSeconds(buf)).toBeCloseTo(2, 2)
+    expect(wav.pcm.buffer).toBe(buf)
   })
 
   it('trims to the export region', () => {
@@ -77,5 +78,29 @@ describe('wav', () => {
     expect(trimmed.info?.category).toBe('Mountain Mist')
     expect(trimmed.info?.intensity).toBe('II')
     expect(trimmed.info?.instruments).toEqual(['flute', 'harp'])
+  })
+
+  it('reads duration from the header without copying PCM', () => {
+    const buf = generateMockSfxWav(2, 7)
+    const header = readWavHeader(buf)
+    expect(header.sampleRate).toBe(44100)
+    expect(header.channels).toBe(2)
+    expect(header.bitsPerSample).toBe(16)
+    expect(wavDurationSeconds(buf)).toBeCloseTo(2, 2)
+  })
+
+  it('builds min/max peaks from both channels', () => {
+    const frames = 8
+    const pcm = new Int16Array(frames * 2)
+    pcm[0] = 0
+    pcm[1] = 32767
+    pcm[2] = -16384
+    pcm[3] = 0
+    const buf = writeWav({ sampleRate: 44100, channels: 2, bitsPerSample: 16, pcm })
+    const peaks = waveformPeaks(buf, 2)
+    expect(peaks.max.length).toBe(2)
+    expect(peaks.min.length).toBe(2)
+    expect(peaks.max[0]).toBeGreaterThan(0.9)
+    expect(peaks.min[0]).toBeLessThan(-0.4)
   })
 })

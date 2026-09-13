@@ -125,13 +125,16 @@ export function TakesGrid({ open, takes, onOpenChange, onKeep, onDiscard }: Take
                   </Hint>
                 </div>
                 <div className="mb-3 flex h-10 items-end gap-px" aria-hidden>
-                  {Array.from(take.peaks).map((peak, i) => (
-                    <span
-                      key={i}
-                      className="flex-1 rounded-t-sm bg-gold/80"
-                      style={{ height: `${Math.max(8, peak * 100)}%` }}
-                    />
-                  ))}
+                  {Array.from(take.peaks.max, (peak, i) => {
+                    const mag = Math.max(-(take.peaks.min[i] ?? 0), peak)
+                    return (
+                      <span
+                        key={i}
+                        className="flex-1 rounded-t-sm bg-gold/80"
+                        style={{ height: `${Math.max(8, mag * 100)}%` }}
+                      />
+                    )
+                  })}
                 </div>
                 <div className="flex gap-2">
                   <Button type="button" size="sm" variant={selected ? 'default' : 'outline'} onClick={() => keepOne(take.clip.id)}>

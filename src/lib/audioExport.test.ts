@@ -3,6 +3,10 @@ import { generateMockSfxWav, parseWav, wavDurationSeconds } from '@/lib/wav'
 import {
   AUDIO_FORMATS,
   DEFAULT_EXPORT_FORMAT,
+  bitDepthLabel,
+  clampBitrateKbps,
+  clampVorbisQuality,
+  defaultBitrateKbps,
   downmixToMono,
   formatLabel,
   formatMime,
@@ -59,7 +63,7 @@ describe('audioExport', () => {
     expect(isAudioFormat('aiff')).toBe(true)
     expect(isAudioFormat('wma')).toBe(false)
     expect(isAudioFormat(undefined)).toBe(false)
-    expect(formatLabel('mp3')).toBe('MP3 320')
+    expect(formatLabel('mp3')).toBe('MP3')
     expect(formatLabel('opus')).toBe('Opus')
   })
 
@@ -74,6 +78,20 @@ describe('audioExport', () => {
     expect(AUDIO_FORMATS.filter(isLosslessFormat)).toEqual(['wav', 'aiff', 'flac'])
     // Only WAV is written in-process, so every other format needs the desktop app.
     expect(AUDIO_FORMATS.filter((format) => !formatNeedsDesktop(format))).toEqual(['wav'])
+  })
+
+  it('labels 24-bit as a container until a float master exists', () => {
+    expect(bitDepthLabel(16)).toBe('16-bit')
+    expect(bitDepthLabel(24)).toBe('24-bit container (16-bit content)')
+  })
+
+  it('clamps bitrate and vorbis quality to the encoder range', () => {
+    expect(clampBitrateKbps(8)).toBe(16)
+    expect(clampBitrateKbps(999)).toBe(512)
+    expect(clampVorbisQuality(-1)).toBe(0)
+    expect(clampVorbisQuality(11)).toBe(10)
+    expect(defaultBitrateKbps('opus')).toBe(128)
+    expect(defaultBitrateKbps('mp3')).toBe(320)
   })
 
   it('keeps the requested bit depth for lossless targets only', () => {

@@ -13,7 +13,13 @@
  */
 import type { ClipMeta } from '@/lib/clipMeta'
 import type { Clip } from '@/lib/types'
-import { deleteFile, joinPath, moveFile, readFileBytes, writeTextFile } from '@/lib/tauriFs'
+import { reportError } from '@/lib/engine'
+import {
+  SidecarCorruptError,
+  corruptSidecarPath,
+  isJsonParseable,
+} from '@/lib/sidecarFile'
+import { copyFile, deleteFile, joinPath, moveFile, readFileBytes, writeTextFile, writeTextFileAtomic } from '@/lib/tauriFs'
 
 export const TRASH_DIRNAME = '.trash'
 export const TRASH_INDEX_FILENAME = 'thunder-fx-trash.json'
@@ -102,17 +108,31 @@ export function createDiskTrash(getLibraryDir: () => string): TrashStore {
 
   async function readIndex(): Promise<TrashEntry[]> {
     if (!getLibraryDir()) return []
+    const path = indexPath()
     try {
-      const bytes = await readFileBytes(indexPath())
-      return bytes ? parseTrashIndex(decodeUtf8(bytes)) : []
-    } catch {
+      const bytes = await readFileBytes(path)
+      if (!bytes || bytes.byteLength === 0) return []
+      const text = decodeUtf8(bytes)
+      if (!text.trim()) return []
+      if (!isJsonParseable(text)) {
+        const backupPath = corruptSidecarPath(path)
+        try {
+          await copyFile(path, backupPath)
+        } catch {
+          await writeTextFile(backupPath, text)
+        }
+        throw new SidecarCorruptError(path, backupPath)
+      }
+      return parseTrashIndex(text)
+    } catch (err) {
+      if (err instanceof SidecarCorruptError) throw err
       return []
     }
   }
 
   async function writeIndex(entries: TrashEntry[]): Promise<void> {
     if (!getLibraryDir()) return
-    await writeTextFile(indexPath(), serializeTrashIndex(entries))
+    await writeTextFileAtomic(indexPath(), serializeTrashIndex(entries))
   }
 
   async function removeEntry(entries: TrashEntry[], id: string): Promise<TrashEntry[]> {
@@ -146,7 +166,12 @@ export function createDiskTrash(getLibraryDir: () => string): TrashStore {
       if (!clip.path || !getLibraryDir()) return undefined
       const deletedAt = new Date().toISOString()
       const destination = joinPath(trashDir(), trashFilename(clip.id))
-      await moveFile(clip.path, destination)
+      try {
+        await moveFile(clip.path, destination)
+      } catch (err) {
+        reportError(err, 'Could not move clip to trash')
+        throw err
+      }
       const entry: TrashEntry = {
         id: clip.id,
         clip,
@@ -166,7 +191,8 @@ export function createDiskTrash(getLibraryDir: () => string): TrashStore {
       if (!entry) return undefined
       try {
         await moveFile(entry.trashPath, entry.originalPath)
-      } catch {
+      } catch (err) {
+        reportError(err, 'Could not restore clip from trash')
         // The audio is gone, or something already occupies the original path.
         // Leave the row alone so the trash view can still show and purge it.
         return undefined

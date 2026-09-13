@@ -231,8 +231,8 @@ def _try_load_model(precision: str = "fp16", model_name: str = DEFAULT_MODEL):
                         c.proj_out.to("cuda")
                     if hasattr(c, "_device_initialized"):
                         c._device_initialized = True
-        except Exception:
-            pass
+        except (AttributeError, RuntimeError, TypeError) as exc:
+            _warn_once("conditioner_move", "Conditioner move to CUDA skipped", exc)
         _model_precision = wanted
         _model_name = model_name
         apply_inference_matmul_settings()
@@ -302,10 +302,10 @@ def _is_cuda_oom(exc: BaseException) -> bool:
     try:
         import torch
 
-        oom_type = getattr(torch.cuda, "OutOfMemoryError", ())
-        if oom_type and isinstance(exc, oom_type):
+        oom_type = getattr(torch.cuda, "OutOfMemoryError", None)
+        if oom_type is not None and isinstance(exc, oom_type):
             return True
-    except Exception:
+    except ImportError:
         pass
     text = str(exc).lower()
     return "out of memory" in text or "cuda oom" in text
@@ -1176,7 +1176,7 @@ def integrated_lufs(wav, sample_rate: int = SAMPLE_RATE):
 
     try:
         weighted = _k_weight(wav, sample_rate)
-    except Exception:
+    except (ImportError, RuntimeError, ValueError):
         return None
     block = int(0.4 * sample_rate)
     hop = max(1, block // 4)
@@ -1217,8 +1217,10 @@ def _master_audio_cpu(wav, mode: str = "sfx"):
             import torchaudio.functional as F
 
             wav = F.highpass_biquad(wav, sample_rate=SAMPLE_RATE, cutoff_freq=25.0, Q=0.7071)
-        except Exception:
-            pass
+        except ImportError as exc:
+            _warn_once("highpass_import", "High-pass skipped: torchaudio is not installed", exc)
+        except (RuntimeError, ValueError) as exc:
+            _warn_once("highpass_run", "High-pass skipped", exc)
 
     peak = float(wav.abs().max().item())
     if peak <= 0.0:
@@ -1425,6 +1427,8 @@ class _Heartbeat:
         self._quiet = False
         self._msg_id = msg_id
         self._started = started
+        self.first_step_at: float | None = None
+        self.last_step_at: float | None = None
         self._thread = threading.Thread(
             target=self._run, name="thunder-fx-heartbeat", daemon=True
         )
@@ -1466,6 +1470,10 @@ class _Heartbeat:
         self.update(step=step, total=total, ratio=ratio)
         now = time.time()
         with self._lock:
+            if step > 0:
+                if self.first_step_at is None:
+                    self.first_step_at = now
+                self.last_step_at = now
             self._quiet = True
             if step < self._total and now - self._last_emit < _STEP_EMIT_MIN_S:
                 return
@@ -1639,6 +1647,17 @@ def _log_error(
     _log_line("ERROR", "python", message, context=context, exc=exc)
 
 
+_warned_keys: set[str] = set()
+
+
+def _warn_once(key: str, message: str, exc: BaseException | None = None) -> None:
+    """One WARN per process for a deliberate fallback, so a queue does not flood the log."""
+    if key in _warned_keys:
+        return
+    _warned_keys.add(key)
+    _log_line("WARN", "python", message, exc=exc)
+
+
 def _emit_error(
     msg_id,
     message: str,
@@ -1698,8 +1717,8 @@ def _vram_stats() -> dict:
             free, total_info = torch.cuda.mem_get_info(idx)
             total = float(total_info)
             used = float(total_info - free)
-        except Exception:
-            pass
+        except (RuntimeError, AttributeError) as exc:
+            _warn_once("vram_mem_get_info", "VRAM mem_get_info failed; using reserved bytes", exc)
         gib = 1024 ** 3
         out["vramUsedGb"] = round(used / gib, 2)
         out["vramTotalGb"] = round(total / gib, 2)
@@ -1710,8 +1729,8 @@ def _vram_stats() -> dict:
             temp_fn = getattr(torch.cuda, "temperature", None)
             if callable(temp_fn):
                 out["gpuTempC"] = int(temp_fn(idx))
-        except Exception:
-            pass
+        except (RuntimeError, TypeError, AttributeError) as exc:
+            _warn_once("gpu_temp_torch", "GPU temperature via torch failed", exc)
         if "gpuTempC" not in out:
             try:
                 import pynvml
@@ -1721,10 +1740,12 @@ def _vram_stats() -> dict:
                 out["gpuTempC"] = int(
                     pynvml.nvmlDeviceGetTemperature(handle, pynvml.NVML_TEMPERATURE_GPU)
                 )
-            except Exception:
-                pass
-    except Exception:
-        pass
+            except (ImportError, OSError, AttributeError) as exc:
+                _warn_once("gpu_temp_nvml", "GPU temperature via NVML failed", exc)
+    except ImportError:
+        return out
+    except (RuntimeError, AttributeError) as exc:
+        _warn_once("vram_probe", "VRAM probe failed", exc)
     return out
 
 
@@ -2035,10 +2056,16 @@ def _generate_body(msg: dict) -> None:
         if _mock_unloaded:
             _emit_error(msg_id, "The model is not loaded. Click Load model first.")
             return
+        first_step_at = None
+        last_step_at = None
         for step in range(1, steps + 1):
             if _cancel.is_set():
                 _emit_error(msg_id, "Generation cancelled", log=False)
                 return
+            now = time.time()
+            if first_step_at is None:
+                first_step_at = now
+            last_step_at = now
             _emit_progress(
                 msg_id,
                 started,
@@ -2070,6 +2097,15 @@ def _generate_body(msg: dict) -> None:
                 sampler=sampler,
                 negative=negative or "",
             ),
+        )
+        _emit_profile(
+            started,
+            first_step_at=first_step_at,
+            last_step_at=last_step_at,
+            seed=seed,
+            seconds=seconds,
+            steps=steps,
+            model=model_name,
         )
         _emit(
             _attach_peak(
@@ -2237,6 +2273,15 @@ def _generate_body(msg: dict) -> None:
                 sampler=sampler,
                 negative=negative or "",
             ),
+        )
+        _emit_profile(
+            started,
+            first_step_at=heartbeat.first_step_at,
+            last_step_at=heartbeat.last_step_at,
+            seed=seed,
+            seconds=seconds,
+            steps=steps,
+            model=model_name,
         )
         _emit(
             _attach_peak(
@@ -2731,7 +2776,52 @@ def _preload_native_modules() -> None:
                 _log_error(f"preload of {name} failed", exc)
 
 
+def _wants_profile() -> bool:
+    flag = os.environ.get("THUNDER_FX_PROFILE", "").strip().lower()
+    return flag in {"1", "true", "yes", "on"}
+
+
+def _take_profile_argv(argv: list[str] | None = None) -> list[str]:
+    """Pull `--profile` off argv and remember it for this process."""
+    incoming = list(sys.argv if argv is None else argv)
+    if "--profile" not in incoming:
+        return incoming
+    os.environ["THUNDER_FX_PROFILE"] = "1"
+    return [item for item in incoming if item != "--profile"]
+
+
+def _emit_profile(
+    started: float,
+    *,
+    first_step_at: float | None,
+    last_step_at: float | None,
+    seed: int,
+    seconds: float,
+    steps: int,
+    model: str,
+) -> None:
+    if not _wants_profile():
+        return
+    done = time.time()
+    lead_ms = ((first_step_at - started) * 1000) if first_step_at else None
+    step_ms = None
+    if first_step_at and last_step_at and last_step_at > first_step_at and steps > 1:
+        step_ms = (last_step_at - first_step_at) / (steps - 1) * 1000
+    tail_ms = ((done - last_step_at) * 1000) if last_step_at else None
+
+    def fmt(value: float | None) -> str:
+        return f"{value:.0f}" if value is not None else "-"
+
+    print(
+        f"PROFILE seed={seed} seconds={seconds:g} steps={steps} model={model} "
+        f"lead_ms={fmt(lead_ms)} step_ms={fmt(step_ms)} tail_ms={fmt(tail_ms)}",
+        file=sys.stderr,
+        flush=True,
+    )
+
+
 def main() -> None:
+    sys.argv = _take_profile_argv()
     _force_utf8_pipes()
     install_protocol_stdout()
     sys.excepthook = _excepthook

@@ -784,12 +784,15 @@ class DispatchLoopTests(unittest.TestCase):
         out = io.StringIO()
         stdin, stdout = sys.stdin, sys.stdout
         excepthook, thread_hook = sys.excepthook, threading.excepthook
+        previous_proto = worker._protocol_out
+        worker._protocol_out = None
         sys.stdin = io.StringIO("\n".join(lines) + "\n")
         sys.stdout = out
 
         def restore() -> None:
             sys.stdin, sys.stdout = stdin, stdout
             sys.excepthook, threading.excepthook = excepthook, thread_hook
+            worker._protocol_out = previous_proto
 
         self.addCleanup(restore)
         thread = threading.Thread(target=worker.main, daemon=True)
@@ -1246,6 +1249,79 @@ class WavInfoFieldsTests(unittest.TestCase):
         self.assertIn("seed=7", fields["ISFT"])
         self.assertIn("preset=speed", fields["ISFT"])
         self.assertIn("sampler=pingpong", fields["ISFT"])
+
+
+class WarnOnceTests(unittest.TestCase):
+    def tearDown(self) -> None:
+        from worker import _warned_keys
+
+        _warned_keys.clear()
+
+    def test_warn_once_writes_a_single_warn_line(self) -> None:
+        import worker
+
+        worker._warned_keys.clear()
+        with tempfile.TemporaryDirectory() as tmp:
+            old = os.environ.get("THUNDER_FX_LOG_DIR")
+            os.environ["THUNDER_FX_LOG_DIR"] = tmp
+            try:
+                worker._warn_once("highpass_import", "High-pass skipped")
+                worker._warn_once("highpass_import", "High-pass skipped")
+                text = (Path(tmp) / "error.log").read_text(encoding="utf-8")
+            finally:
+                if old is None:
+                    os.environ.pop("THUNDER_FX_LOG_DIR", None)
+                else:
+                    os.environ["THUNDER_FX_LOG_DIR"] = old
+        self.assertEqual(text.count("WARN [python]"), 1)
+        self.assertIn("High-pass skipped", text)
+
+
+class ProfileFlagTests(unittest.TestCase):
+    def tearDown(self) -> None:
+        os.environ.pop("THUNDER_FX_PROFILE", None)
+
+    def test_take_profile_argv_sets_the_env(self) -> None:
+        from worker import _take_profile_argv
+
+        os.environ.pop("THUNDER_FX_PROFILE", None)
+        leftover = _take_profile_argv(["worker.py", "--profile"])
+        self.assertEqual(leftover, ["worker.py"])
+        self.assertEqual(os.environ.get("THUNDER_FX_PROFILE"), "1")
+
+    def test_emit_profile_prints_lead_step_tail(self) -> None:
+        import io
+        import worker
+
+        os.environ["THUNDER_FX_PROFILE"] = "1"
+        now = time.time()
+        buf = io.StringIO()
+        old = sys.stderr
+        sys.stderr = buf
+        try:
+            worker._emit_profile(
+                now - 5,
+                first_step_at=now - 4,
+                last_step_at=now - 1,
+                seed=9,
+                seconds=8,
+                steps=5,
+                model="medium",
+            )
+        finally:
+            sys.stderr = old
+        line = buf.getvalue()
+        self.assertIn("PROFILE", line)
+        self.assertIn("seed=9", line)
+        self.assertIn("model=medium", line)
+        self.assertIn("lead_ms=1000", line)
+        self.assertIn("step_ms=750", line)
+
+    def test_cuda_oom_detector_ignores_unrelated_errors(self) -> None:
+        from worker import _is_cuda_oom
+
+        self.assertTrue(_is_cuda_oom(RuntimeError("CUDA out of memory")))
+        self.assertFalse(_is_cuda_oom(RuntimeError("file not found")))
 
 
 if __name__ == "__main__":

@@ -197,23 +197,23 @@ are closed.
 
 ### J. Code health
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-85** | [Split the four monoliths](#pq-85-split-the-four-monoliths) | Health | Medium | L |
-| **PQ-86** | [Argument structs instead of `too_many_arguments`](#pq-86-argument-structs-instead-of-too_many_arguments) | Health | Low | S |
-| **PQ-87** | [Narrow the broad `except Exception` sites](#pq-87-narrow-the-broad-except-exception-sites) | Health | Low | S |
-| **PQ-88** | [Parse 24-bit and float WAV, or refuse them consistently](#pq-88-parse-24-bit-and-float-wav-or-refuse-them-consistently) | Reliability | Medium | M |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-85** | [Split the four monoliths](#pq-85-split-the-four-monoliths) | Health | Medium | L | |
+| **PQ-86** | [Argument structs instead of `too_many_arguments`](#pq-86-argument-structs-instead-of-too_many_arguments) | Health | Low | S | **Done** |
+| **PQ-87** | [Narrow the broad `except Exception` sites](#pq-87-narrow-the-broad-except-exception-sites) | Health | Low | S | **Done** |
+| **PQ-88** | [Parse 24-bit and float WAV, or refuse them consistently](#pq-88-parse-24-bit-and-float-wav-or-refuse-them-consistently) | Reliability | Medium | M | |
 
 ### K. Tooling, tests and CI
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-89** | [Cut the test suite's wall time](#pq-89-cut-the-test-suites-wall-time) | DX | Medium | M |
-| **PQ-90** | [Stop type-checking twice, and cache the native job](#pq-90-stop-type-checking-twice-and-cache-the-native-job) | DX | Low | S |
-| **PQ-91** | [Stricter TypeScript, formatted Python, typed Python](#pq-91-stricter-typescript-formatted-python-typed-python) | DX | Medium | M |
-| **PQ-92** | [Close the test gaps, and fuzz the WAV codec](#pq-92-close-the-test-gaps-and-fuzz-the-wav-codec) | DX | Medium | M |
-| **PQ-93** | [A bundle-size budget and a perf regression gate in CI](#pq-93-a-bundle-size-budget-and-a-perf-regression-gate-in-ci) | DX | Medium | S |
-| **PQ-94** | [A GPU job for the generation-quality tests](#pq-94-a-gpu-job-for-the-generation-quality-tests) | DX | Low | M |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-89** | [Cut the test suite's wall time](#pq-89-cut-the-test-suites-wall-time) | DX | Medium | M | |
+| **PQ-90** | [Stop type-checking twice, and cache the native job](#pq-90-stop-type-checking-twice-and-cache-the-native-job) | DX | Low | S | **Done** |
+| **PQ-91** | [Stricter TypeScript, formatted Python, typed Python](#pq-91-stricter-typescript-formatted-python-typed-python) | DX | Medium | M | |
+| **PQ-92** | [Close the test gaps, and fuzz the WAV codec](#pq-92-close-the-test-gaps-and-fuzz-the-wav-codec) | DX | Medium | M | |
+| **PQ-93** | [A bundle-size budget and a perf regression gate in CI](#pq-93-a-bundle-size-budget-and-a-perf-regression-gate-in-ci) | DX | Medium | S | **Done** |
+| **PQ-94** | [A GPU job for the generation-quality tests](#pq-94-a-gpu-job-for-the-generation-quality-tests) | DX | Low | M | |
 
 ---
 
@@ -1720,6 +1720,10 @@ Delivered items, kept for the record.
 | **PQ-80** | Keep third-party `print` off the JSON-lines channel | Unreleased (reliability S-wave) |
 | **PQ-82** | Checkpoint and cold-load as features of the timing model | Unreleased (estimates S-wave) |
 | **PQ-83** | One estimator path | Unreleased (estimates S-wave) |
+| **PQ-86** | Argument structs instead of too_many_arguments | Unreleased (health/DX S-wave) |
+| **PQ-87** | Narrow the broad except Exception sites | Unreleased (health/DX S-wave) |
+| **PQ-90** | Stop type-checking twice, and cache the native job | Unreleased (health/DX S-wave) |
+| **PQ-93** | A bundle-size budget and a perf regression gate in CI | Unreleased (health/DX S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

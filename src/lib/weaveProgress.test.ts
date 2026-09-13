@@ -10,12 +10,31 @@ describe('weaveBarPercent', () => {
     expect(weaveBarPercent({ step: 0, total: 8, phase: 'loading', ratio: 0.4 })).toBe(40)
   })
 
-  it('maps weaving rites to a percent', () => {
-    expect(weaveBarPercent({ step: 4, total: 8, phase: 'weaving' })).toBe(50)
+  it('is indeterminate when weaving has no remaining and no historical total', () => {
+    expect(weaveBarPercent({ step: 4, total: 8, phase: 'weaving' })).toBeNull()
+    expect(
+      weaveBarPercent({
+        step: 4,
+        total: 8,
+        phase: 'weaving',
+        elapsedMs: 20_000,
+      }),
+    ).toBeNull()
   })
 
-  it('calculates consistent percent from elapsed and estimated remaining time', () => {
-    // Explicit 20s elapsed and 20s remaining -> 50%
+  it('uses live remaining once a run exists, not the step ratio', () => {
+    expect(
+      weaveBarPercent({
+        step: 4,
+        total: 8,
+        phase: 'weaving',
+        elapsedMs: 10_000,
+        remainingMs: 90_000,
+      }),
+    ).toBe(10)
+  })
+
+  it('calculates percent from elapsed and remaining time', () => {
     expect(
       weaveBarPercent({
         step: 1,
@@ -26,7 +45,6 @@ describe('weaveBarPercent', () => {
       }),
     ).toBe(50)
 
-    // Explicit 30s elapsed and 10s remaining -> 75%
     expect(
       weaveBarPercent({
         step: 2,
@@ -37,7 +55,6 @@ describe('weaveBarPercent', () => {
       }),
     ).toBe(75)
 
-    // Automatic estimate from historical estimate
     const percent = weaveBarPercent({
       step: 4,
       total: 8,
@@ -76,5 +93,18 @@ describe('weaveStatusLabel', () => {
         historicalEstimateMs: 40_000,
       }),
     ).toMatch(/~0:20 remaining/)
+  })
+
+  it('prefers live remaining over a historical countdown', () => {
+    expect(
+      weaveBusyStatus({
+        phase: 'weaving',
+        rite: 4,
+        total: 8,
+        elapsedMs: 20_000,
+        historicalEstimateMs: 40_000,
+        remainingMs: 70_000,
+      }),
+    ).toMatch(/~1:10 remaining/)
   })
 })

@@ -31,6 +31,8 @@ const OUTLIER_FACTOR = 3
 /** A sample from a mismatched configuration still says something about the machine. */
 const PRECISION_MISMATCH_WEIGHT = 0.15
 const GUIDANCE_MISMATCH_WEIGHT = 0.1
+/** Samples recorded before generates carried a checkpoint name were all Medium. */
+const LEGACY_GENERATE_MODEL = 'medium'
 
 export type GenerateTimingSample = {
   seconds: number
@@ -50,6 +52,8 @@ export type GenerateTimingSample = {
   tailMs?: number
   /** Peak CUDA allocation in GiB during this run. */
   peakVramGb?: number
+  /** Checkpoint this clip ran on. Untagged samples are treated as distilled Medium. */
+  model?: string
   /** Epoch ms the run finished, for recency weighting. */
   at?: number
 }
@@ -59,6 +63,11 @@ export type LoadTimingSample = {
   precision?: PrecisionMode
   /** Checkpoint loaded. Medium and Medium-Base are not the same wait. */
   model?: string
+  /**
+   * This wait included a weights download, not just a VRAM load. Excluded from
+   * the load estimate: a 9 GB first fetch is not the next click of Load model.
+   */
+  cold?: boolean
   at?: number
 }
 
@@ -145,10 +154,20 @@ function guided(cfg: number | undefined): boolean {
   return cfg != null && Number.isFinite(cfg) && cfg > 1
 }
 
+function generateCheckpoint(sample: Pick<GenerateTimingSample, 'model'>): string {
+  const named = sample.model?.trim()
+  return named || LEGACY_GENERATE_MODEL
+}
+
+function requestedCheckpoint(options: GenerateCostOptions | undefined): string {
+  const named = options?.model?.trim()
+  return named || LEGACY_GENERATE_MODEL
+}
+
 export function recordLoad(
   log: TimingLog,
   elapsedMs: number,
-  options?: { precision?: PrecisionMode; model?: string; at?: number },
+  options?: { precision?: PrecisionMode; model?: string; cold?: boolean; at?: number },
 ): TimingLog {
   if (!Number.isFinite(elapsedMs) || elapsedMs <= 0) return log
   return {
@@ -158,6 +177,7 @@ export function recordLoad(
       elapsedMs: Math.round(elapsedMs),
       precision: options?.precision,
       model: options?.model,
+      cold: options?.cold || undefined,
       at: options?.at ?? Date.now(),
     }),
   }
@@ -175,6 +195,7 @@ export function recordGenerate(
     stepMs?: number
     tailMs?: number
     peakVramGb?: number
+    model?: string
     at?: number
   },
 ): TimingLog {
@@ -182,6 +203,7 @@ export function recordGenerate(
   if (!Number.isFinite(elapsedMs) || elapsedMs <= 0) return log
   const positive = (value: number | undefined) =>
     value != null && Number.isFinite(value) && value > 0 ? Math.round(value) : undefined
+  const model = options?.model?.trim()
   return {
     ...log,
     buildId: log.buildId || getAppBuildId(),
@@ -199,6 +221,7 @@ export function recordGenerate(
         options?.peakVramGb != null && Number.isFinite(options.peakVramGb) && options.peakVramGb > 0
           ? Math.round(options.peakVramGb * 1000) / 1000
           : undefined,
+      model: model || undefined,
       at: options?.at ?? Date.now(),
     }),
   }
@@ -214,6 +237,10 @@ export function estimateLoadMs(
   const points: Weighted[] = []
   log.loads.forEach((sample, index) => {
     if (!(sample.elapsedMs > 0)) return
+    // A weights download is a different event from putting files already on
+    // disk into VRAM. Outlier trim only works once enough warm samples exist;
+    // tagging it cold drops it even as the sole entry.
+    if (sample.cold) return
     // A different checkpoint is a different file set, and the first load of one
     // is a multi-GB download. That is not a slower version of the wait being
     // estimated, it is a different event, so it is dropped rather than
@@ -244,6 +271,7 @@ function sampleBaseline(sample: GenerateTimingSample): {
       steps,
       precision: sample.precision,
       cfg: sample.cfg,
+      model: sample.model,
     }),
     steps,
   }
@@ -261,6 +289,11 @@ function sampleWeights(
     }
     if (guided(sample.cfg) !== guided(options?.cfg)) {
       weight *= GUIDANCE_MISMATCH_WEIGHT
+    }
+    // Medium-Base is a heavier DiT. Averaging its step cost into Balanced (or
+    // the reverse) makes Max quality estimates drift after a Balanced session.
+    if (generateCheckpoint(sample) !== requestedCheckpoint(options)) {
+      weight = 0
     }
     return { value: sample.elapsedMs, weight }
   })
@@ -418,6 +451,7 @@ export function estimateQueueMs(
     total += estimateGenerateMs(log, item.duration, {
       steps: item.steps,
       cfg: item.cfg,
+      model: item.model,
       precision: options?.precision,
       isMock: options?.isMock,
     })
@@ -425,6 +459,11 @@ export function estimateQueueMs(
   return total
 }
 
+/**
+ * Historical-minus-elapsed helper. Live remaining on screen comes from
+ * {@link liveRemainingMs} in `runTiming.ts` (PQ-83); this is only the
+ * pre-event countdown when no run track exists.
+ */
 export function estimateRemainingMs(args: {
   elapsedMs: number
   historicalTotalMs?: number
@@ -484,6 +523,7 @@ function parseLoad(raw: unknown): LoadTimingSample | undefined {
     elapsedMs: sample.elapsedMs,
     precision: sample.precision === 'fp32' || sample.precision === 'fp16' ? sample.precision : undefined,
     model: typeof sample.model === 'string' ? sample.model : undefined,
+    cold: sample.cold === true ? true : undefined,
     at: optionalNumber(sample.at),
   }
 }
@@ -503,6 +543,7 @@ function parseGenerate(raw: unknown): GenerateTimingSample | undefined {
     stepMs: optionalNumber(sample.stepMs),
     tailMs: optionalNumber(sample.tailMs),
     peakVramGb: optionalNumber(sample.peakVramGb),
+    model: typeof sample.model === 'string' && sample.model.trim() ? sample.model.trim() : undefined,
     at: optionalNumber(sample.at),
   }
 }

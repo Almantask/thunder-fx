@@ -99,6 +99,11 @@ All notable Thunder FX changes are listed here.
   Each generate records `peakVramGb` when CUDA reports it (PQ-79). Worker `print` goes
   to stderr; the JSON-lines channel is a private handle, and Rust skips non-JSON lines
   (PQ-80).
+- **Estimates know which checkpoint they measured.** Generate samples store the model
+  name, so Max quality (Medium-Base) no longer averages into Balanced (PQ-82). A load
+  that included a weights download is tagged `cold` and excluded from the load quote.
+  The progress bar uses `liveRemainingMs` or the historical total — never a synthetic
+  curve — and stays indeterminate until one of those exists (PQ-83).
 
 ### Fixed
 

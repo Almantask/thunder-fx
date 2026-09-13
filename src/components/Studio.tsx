@@ -329,7 +329,7 @@ export function Studio() {
         mode: modeFromCatalog(item),
         baseAvailable: engine.baseModelReady,
       })
-      return { duration: item.duration, steps: plan.steps, cfg: plan.cfg }
+      return { duration: item.duration, steps: plan.steps, cfg: plan.cfg, model: plan.model }
     })
   }
 
@@ -349,6 +349,7 @@ export function Studio() {
     cfg: runningPlan.cfg,
     precision: settings.precision,
     isMock: engine.mock,
+    model: runningPlan.model,
   }
   const runHistoricalEstimateMs = loadingModel
     ? estimateLoadMs(timing, {
@@ -879,9 +880,11 @@ export function Studio() {
     runRef.current = startRun('load', { at: started })
     const controller = new AbortController()
     loadAbortRef.current = controller
+    let sawDownload = false
     try {
       await loadModel(
         (ratio) => {
+          if (ratio > 0 && ratio < 1) sawDownload = true
           const now = Date.now()
           runRef.current = trackRun(runRef.current, { ratio, phase: 'loading' }, now, {
             kind: 'load',
@@ -894,16 +897,22 @@ export function Studio() {
             ratio,
           }))
         },
-        { signal: controller.signal, precision: settings.precision },
+        {
+          signal: controller.signal,
+          precision: settings.precision,
+          model: activePresetPlan.model,
+        },
       )
       if (!engineMockRef.current) {
         // Tagged with what was loaded: fp32 is a longer wait than fp16, and
         // Medium-Base is a different download again, so an untagged average of
-        // the three predicts none of them.
+        // the three predicts none of them. A hub download is tagged cold so a
+        // first-ever fetch cannot become the quote for the next Load click.
         rememberTiming(
           recordLoad(timingRef.current, Date.now() - started, {
             precision: settings.precision,
             model: activePresetPlan.model,
+            cold: sawDownload,
           }),
         )
       }
@@ -934,9 +943,11 @@ export function Studio() {
     if (installingBase || loadingModel || weaving) return
     setInstallingBase(true)
     const started = Date.now()
+    let sawDownload = false
     try {
       await loadModel(
         (ratio) => {
+          if (ratio > 0 && ratio < 1) sawDownload = true
           setWeave((current) => ({
             ...current,
             elapsedMs: Date.now() - started,
@@ -946,6 +957,15 @@ export function Studio() {
         },
         { precision: settings.precision, model: BASE_MODEL },
       )
+      if (!engineMockRef.current) {
+        rememberTiming(
+          recordLoad(timingRef.current, Date.now() - started, {
+            precision: settings.precision,
+            model: BASE_MODEL,
+            cold: sawDownload,
+          }),
+        )
+      }
       await refreshEngine()
       setEngine((current) => ({ ...current, loaded: true, baseModelReady: true }))
       toast.success('Medium-Base installed.', {
@@ -1105,6 +1125,7 @@ export function Studio() {
               steps: currentSteps,
               precision: settings.precision,
               cfg: runPlan.cfg,
+              model: runPlan.model,
             }),
             request.seconds,
           ),
@@ -1160,6 +1181,7 @@ export function Studio() {
                 steps: finalClip.steps ?? currentSteps,
                 precision: settings.precision,
                 cfg: runPlan.cfg,
+                model: runPlan.model,
                 peakVramGb: result.peakVramGb,
                 ...measured,
                 at: finishedAt,

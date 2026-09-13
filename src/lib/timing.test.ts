@@ -52,11 +52,16 @@ describe('recordLoad', () => {
   })
 
   it('keeps the configuration a load was measured under', () => {
-    const log = recordLoad(EMPTY_TIMING, 30_000, { precision: 'fp32', model: 'medium-base' })
+    const log = recordLoad(EMPTY_TIMING, 30_000, {
+      precision: 'fp32',
+      model: 'medium-base',
+      cold: true,
+    })
     expect(log.loads[0]).toMatchObject({
       elapsedMs: 30_000,
       precision: 'fp32',
       model: 'medium-base',
+      cold: true,
     })
   })
 })
@@ -100,6 +105,17 @@ describe('estimateLoadMs', () => {
     // The 9GB Medium-Base download is not a slow version of a Medium load.
     const log = recordLoad(EMPTY_TIMING, 400_000, { model: 'medium-base' })
     expect(estimateLoadMs(log, { model: 'medium' })).toBe(getBaselineLoadMs('fp16'))
+  })
+
+  it('excludes a cold download even when it is the only sample', () => {
+    const log = recordLoad(EMPTY_TIMING, 600_000, { model: 'medium', cold: true })
+    expect(estimateLoadMs(log, { model: 'medium' })).toBe(getBaselineLoadMs('fp16'))
+  })
+
+  it('uses a later warm load and ignores the cold download beside it', () => {
+    let log = recordLoad(EMPTY_TIMING, 600_000, { model: 'medium', cold: true })
+    log = recordLoad(log, 12_000, { model: 'medium' })
+    expect(estimateLoadMs(log, { model: 'medium' })).toBe(12_000)
   })
 
   it('leans on the newest loads when the machine changes pace', () => {
@@ -153,6 +169,33 @@ describe('estimateGenerateMs', () => {
     }
     expect(estimateGenerateMs(log, 8, { steps: 20, cfg: 4 })).toBeCloseTo(guidedTruth, -2)
     expect(estimateGenerateMs(log, 8, { steps: 20, cfg: 1 })).toBeCloseTo(plainTruth, -2)
+  })
+
+  it('keeps Medium-Base generates from drifting Balanced estimates', () => {
+    const mediumTruth = getBaselineGenerateMs(8, { steps: 20, cfg: 1, model: 'medium' }) * 2
+    const baseTruth = getBaselineGenerateMs(8, { steps: 50, cfg: 4, model: 'medium-base' }) * 2
+    let log = EMPTY_TIMING
+    for (let i = 0; i < 4; i += 1) {
+      log = recordGenerate(log, 8, mediumTruth, { steps: 20, cfg: 1, model: 'medium' })
+    }
+    for (let i = 0; i < 4; i += 1) {
+      log = recordGenerate(log, 8, baseTruth, { steps: 50, cfg: 4, model: 'medium-base' })
+    }
+    expect(
+      estimateGenerateMs(log, 8, { steps: 20, cfg: 1, model: 'medium' }),
+    ).toBeCloseTo(mediumTruth, -2)
+    expect(
+      estimateGenerateMs(log, 8, { steps: 50, cfg: 4, model: 'medium-base' }),
+    ).toBeCloseTo(baseTruth, -2)
+  })
+
+  it('treats untagged generate samples as distilled Medium', () => {
+    const mediumTruth = getBaselineGenerateMs(8, { steps: 20, cfg: 1, model: 'medium' }) * 2
+    const log = recordGenerate(EMPTY_TIMING, 8, mediumTruth, { steps: 20, cfg: 1 })
+    expect(estimateGenerateMs(log, 8, { steps: 20, cfg: 1, model: 'medium' })).toBe(mediumTruth)
+    expect(estimateGenerateMs(log, 8, { steps: 50, cfg: 4, model: 'medium-base' })).toBe(
+      getBaselineGenerateMs(8, { steps: 50, cfg: 4, model: 'medium-base' }),
+    )
   })
 
   it('fits a line across short and long clips', () => {
@@ -217,12 +260,15 @@ describe('estimateRemainingMs', () => {
 
 describe('timing persistence and build wiping', () => {
   it('round-trips a log through localStorage with matching build ID', () => {
-    const log = recordGenerate(recordLoad(EMPTY_TIMING, 45_000), 8, 40_000)
+    let log = recordLoad(EMPTY_TIMING, 45_000, { model: 'medium', cold: true })
+    log = recordGenerate(log, 8, 40_000, { model: 'medium-base', steps: 50, cfg: 4 })
     saveTimingLog(log)
     expect(localStorage.getItem(TIMING_STORAGE_KEY)).toBeTruthy()
     const loaded = loadTimingLog(log.buildId)
     expect(loaded.loads).toEqual(log.loads)
     expect(loaded.generates).toEqual(log.generates)
+    expect(loaded.loads[0]?.cold).toBe(true)
+    expect(loaded.generates[0]?.model).toBe('medium-base')
   })
 
   it('wipes previous estimates when a new exe build ID is detected', () => {

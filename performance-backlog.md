@@ -188,12 +188,12 @@ are closed.
 
 ### I. Time estimation
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-81** | [Reconcile the estimate baselines with the README measurements](#pq-81-reconcile-the-estimate-baselines-with-the-readme-measurements) | Reliability | High | S |
-| **PQ-82** | [Checkpoint and cold-load as features of the timing model](#pq-82-checkpoint-and-cold-load-as-features-of-the-timing-model) | Reliability | Medium | S |
-| **PQ-83** | [One estimator path](#pq-83-one-estimator-path) | Health | Medium | S |
-| **PQ-84** | [Re-fit the take-set estimate when batching lands](#pq-84-re-fit-the-take-set-estimate-when-batching-lands) | Reliability | Low | S |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-81** | [Reconcile the estimate baselines with the README measurements](#pq-81-reconcile-the-estimate-baselines-with-the-readme-measurements) | Reliability | High | S | **Done** |
+| **PQ-82** | [Checkpoint and cold-load as features of the timing model](#pq-82-checkpoint-and-cold-load-as-features-of-the-timing-model) | Reliability | Medium | S | **Done** |
+| **PQ-83** | [One estimator path](#pq-83-one-estimator-path) | Health | Medium | S | **Done** |
+| **PQ-84** | [Re-fit the take-set estimate when batching lands](#pq-84-re-fit-the-take-set-estimate-when-batching-lands) | Reliability | Low | S | |
 
 ### J. Code health
 
@@ -1718,6 +1718,8 @@ Delivered items, kept for the record.
 | **PQ-78** | Aggregate warning toasts during a queue run | Unreleased (reliability S-wave) |
 | **PQ-79** | Peak-VRAM telemetry per generation | Unreleased (reliability S-wave) |
 | **PQ-80** | Keep third-party `print` off the JSON-lines channel | Unreleased (reliability S-wave) |
+| **PQ-82** | Checkpoint and cold-load as features of the timing model | Unreleased (estimates S-wave) |
+| **PQ-83** | One estimator path | Unreleased (estimates S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

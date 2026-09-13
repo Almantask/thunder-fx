@@ -246,6 +246,28 @@ export function forgetMeta(index: ClipMetaIndex, id: string): ClipMetaIndex {
   return next
 }
 
+/**
+ * Drop sidecar rows whose WAV is neither in the library nor in the trash.
+ * An Explorer delete (or a hand-emptied folder) otherwise leaves the rating
+ * and tags behind forever.
+ */
+export function pruneMissingMeta(
+  index: ClipMetaIndex,
+  liveIds: Iterable<string>,
+  trashIds: Iterable<string> = [],
+): { index: ClipMetaIndex; removed: number } {
+  const keep = new Set<string>()
+  for (const id of liveIds) keep.add(id)
+  for (const id of trashIds) keep.add(id)
+  const next: ClipMetaIndex = {}
+  let removed = 0
+  for (const [id, row] of Object.entries(index)) {
+    if (keep.has(id)) next[id] = row
+    else removed += 1
+  }
+  return { index: next, removed }
+}
+
 /** Every tag in use, with counts, for the filter bar. Most used first. */
 export function tagCounts(index: ClipMetaIndex): { tag: string; count: number }[] {
   const counts = new Map<string, number>()

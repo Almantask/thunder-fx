@@ -142,6 +142,14 @@ export async function mockGenerate(
     topInstruments,
     resolvedCategory,
     resolvedIntensity,
+    {
+      seed,
+      cfg: request.cfg,
+      steps: total,
+      preset: plan.preset,
+      sampler: plan.sampler,
+      negative: request.negative,
+    },
   )
   wav = tagWav(wav, wavInfo)
 

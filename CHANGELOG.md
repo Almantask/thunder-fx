@@ -78,6 +78,11 @@ All notable Thunder FX changes are listed here.
   rather than 500 ms (PQ-22). PCM ↔ float uses 32768 both ways (PQ-23). Every TypeScript
   int16 write goes through a shared TPDF `quantise16` (PQ-24). Export resampling refuses
   rather than `np.interp` when soxr and torchaudio are both missing (PQ-26).
+- **Trash expires in the background.** The 30-day sweep runs in Rust after the window shows,
+  so opening Trash is a read (PQ-57). Moving a clip across volumes is refused instead of a
+  silent copy — keep the library and `.trash` on the same drive. A library scan fills seed,
+  CFG, steps, preset and sampler from the WAV's ISFT tag (PQ-59). Sidecar rows whose audio
+  is gone, and not in trash, are dropped on a successful scan (PQ-60).
 
 ### Fixed
 

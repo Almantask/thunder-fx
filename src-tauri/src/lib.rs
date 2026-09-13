@@ -230,6 +230,15 @@ impl PathScope {
         }
         roots
     }
+
+    /// Custom library folder when Settings set one; otherwise the built-in default.
+    fn library_or_default(&self) -> PathBuf {
+        self.library
+            .lock()
+            .ok()
+            .and_then(|lib| lib.clone())
+            .unwrap_or_else(library_dir)
+    }
 }
 
 fn scope_sidecar_bak(path: &Path) -> PathBuf {
@@ -1022,33 +1031,14 @@ async fn copy_file(scope: State<'_, PathScope>, src: String, dest: String) -> Re
 
 /// Rename within the library, used by both "rename clip" and "move to trash".
 ///
-/// `std::fs::rename` is instant on one volume but fails across volumes, and a
-/// library folder junctioned to another drive is a supported setup here — so
-/// the copy-then-delete fallback is load-bearing, not defensive.
+/// `std::fs::rename` is instant on one volume. A cross-volume copy would double
+/// a deleted clip when the library sits on another drive, so that is a hard
+/// error instead of a silent fallback.
 #[tauri::command]
 async fn move_file(scope: State<'_, PathScope>, src: String, dest: String) -> Result<(), String> {
     let src = ensure_allowed(&scope, &src)?;
     let dest = ensure_allowed(&scope, &dest)?;
-    run_blocking(move || {
-        if !src.exists() {
-            return Err(fail(format!("No such file: {}", src.to_string_lossy())));
-        }
-        if dest.exists() {
-            return Err(fail(format!("{} already exists", dest.to_string_lossy())));
-        }
-        if let Some(parent) = dest.parent() {
-            std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
-        }
-        match std::fs::rename(&src, &dest) {
-            Ok(()) => Ok(()),
-            Err(_) => {
-                std::fs::copy(&src, &dest).map_err(|e| fail(e.to_string()))?;
-                std::fs::remove_file(&src).map_err(|e| fail(e.to_string()))?;
-                Ok(())
-            }
-        }
-    })
-    .await
+    run_blocking(move || rename_same_volume(&src, &dest)).await
 }
 
 #[tauri::command]
@@ -1326,6 +1316,209 @@ fn format_utc_iso(time: SystemTime) -> String {
     format!("{y:04}-{m:02}-{d:02}T{hour:02}:{min:02}:{sec:02}Z")
 }
 
+fn days_from_civil(year: i32, month: u32, day: u32) -> i64 {
+    let y = year as i64 - if month <= 2 { 1 } else { 0 };
+    let era = if y >= 0 { y } else { y - 399 } / 400;
+    let yoe = (y - era * 400) as u32;
+    let mp = if month > 2 { month - 3 } else { month + 9 };
+    let doe = yoe * 365 + yoe / 4 - yoe / 100 + (153 * mp + 2) / 5 + day - 1;
+    era * 146097 + doe as i64 - 719468
+}
+
+fn parse_utc_iso(stamp: &str) -> Option<SystemTime> {
+    let raw = stamp.trim();
+    if raw.len() < 19 {
+        return None;
+    }
+    let bytes = raw.as_bytes();
+    let year: i32 = std::str::from_utf8(&bytes[0..4]).ok()?.parse().ok()?;
+    let month: u32 = std::str::from_utf8(&bytes[5..7]).ok()?.parse().ok()?;
+    let day: u32 = std::str::from_utf8(&bytes[8..10]).ok()?.parse().ok()?;
+    let hour: u32 = std::str::from_utf8(&bytes[11..13]).ok()?.parse().ok()?;
+    let min: u32 = std::str::from_utf8(&bytes[14..16]).ok()?.parse().ok()?;
+    let sec: u32 = std::str::from_utf8(&bytes[17..19]).ok()?.parse().ok()?;
+    if bytes[4] != b'-' || bytes[7] != b'-' || bytes[10] != b'T' || bytes[13] != b':' || bytes[16] != b':'
+    {
+        return None;
+    }
+    let unix_days = days_from_civil(year, month, day);
+    if unix_days < 0 {
+        return None;
+    }
+    let secs = unix_days as u64 * 86400 + u64::from(hour) * 3600 + u64::from(min) * 60 + u64::from(sec);
+    Some(UNIX_EPOCH + std::time::Duration::from_secs(secs))
+}
+
+const SOFTWARE_NAME: &str = "Thunder FX";
+const TRASH_DIRNAME: &str = ".trash";
+const TRASH_INDEX_FILENAME: &str = "thunder-fx-trash.json";
+const TRASH_RETENTION_SECS: u64 = 30 * 24 * 60 * 60;
+
+#[derive(Default)]
+struct GenerateStamp {
+    seed: Option<i64>,
+    cfg: Option<f64>,
+    steps: Option<u32>,
+    preset: Option<String>,
+    sampler: Option<String>,
+    negative: Option<String>,
+}
+
+fn percent_decode(input: &str) -> String {
+    let mut out = Vec::new();
+    let bytes = input.as_bytes();
+    let mut i = 0;
+    while i < bytes.len() {
+        if bytes[i] == b'%' && i + 2 < bytes.len() {
+            if let Ok(hex) = std::str::from_utf8(&bytes[i + 1..i + 3]) {
+                if let Ok(value) = u8::from_str_radix(hex, 16) {
+                    out.push(value);
+                    i += 3;
+                    continue;
+                }
+            }
+        }
+        out.push(bytes[i]);
+        i += 1;
+    }
+    String::from_utf8_lossy(&out).into_owned()
+}
+
+fn parse_software_stamp(software: &str) -> GenerateStamp {
+    let mut stamp = GenerateStamp::default();
+    let trimmed = software.trim();
+    if !trimmed.starts_with(SOFTWARE_NAME) {
+        return stamp;
+    }
+    let rest = trimmed[SOFTWARE_NAME.len()..].trim_start_matches([' ', '|']);
+    for token in rest.split_whitespace() {
+        let Some((key, raw)) = token.split_once('=') else {
+            continue;
+        };
+        let value = percent_decode(raw);
+        match key {
+            "seed" => stamp.seed = value.parse().ok(),
+            "cfg" => stamp.cfg = value.parse().ok(),
+            "steps" => stamp.steps = value.parse().ok(),
+            "preset" if !value.is_empty() => stamp.preset = Some(value),
+            "sampler" if !value.is_empty() => stamp.sampler = Some(value),
+            "neg" if !value.is_empty() => stamp.negative = Some(value),
+            _ => {}
+        }
+    }
+    stamp
+}
+
+#[derive(Serialize, Clone)]
+#[serde(rename_all = "camelCase")]
+struct ClipRecord {
+    id: String,
+    path: String,
+    prompt: String,
+    duration: f32,
+    created_at: String,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    seed: Option<i64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    cfg: Option<f64>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    negative: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    steps: Option<u32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    mode: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    instruments: Option<Vec<String>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    category: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    subcategory: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    intensity: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    preset: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    sampler: Option<String>,
+}
+
+fn is_cross_volume(err: &std::io::Error) -> bool {
+    err.kind() == std::io::ErrorKind::CrossesDevices
+        || matches!(err.raw_os_error(), Some(17) | Some(18))
+}
+
+fn rename_same_volume(src: &Path, dest: &Path) -> Result<(), String> {
+    if !src.exists() {
+        return Err(fail(format!("No such file: {}", src.to_string_lossy())));
+    }
+    if dest.exists() {
+        return Err(fail(format!("{} already exists", dest.to_string_lossy())));
+    }
+    if let Some(parent) = dest.parent() {
+        std::fs::create_dir_all(parent).map_err(|e| fail(e.to_string()))?;
+    }
+    match std::fs::rename(src, dest) {
+        Ok(()) => Ok(()),
+        Err(err) if is_cross_volume(&err) => Err(fail(
+            "Cannot move across drives. Keep the library and its .trash folder on the same volume.",
+        )),
+        Err(err) => Err(fail(err.to_string())),
+    }
+}
+
+fn trash_entry_expired(deleted_at: &str, now: SystemTime) -> bool {
+    let Some(then) = parse_utc_iso(deleted_at) else {
+        return false;
+    };
+    now.duration_since(then)
+        .ok()
+        .is_some_and(|age| age.as_secs() > TRASH_RETENTION_SECS)
+}
+
+fn sweep_trash_inner(library: &Path, now: SystemTime) -> Result<u32, String> {
+    let index_path = library.join(TRASH_INDEX_FILENAME);
+    if !index_path.exists() {
+        return Ok(0);
+    }
+    let text = match std::fs::read_to_string(&index_path) {
+        Ok(text) => text,
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(0),
+        Err(err) => return Err(fail(err.to_string())),
+    };
+    let mut parsed: serde_json::Value = match serde_json::from_str(&text) {
+        Ok(value) => value,
+        Err(_) => return Ok(0),
+    };
+    let Some(entries) = parsed.get_mut("entries").and_then(|v| v.as_array_mut()) else {
+        return Ok(0);
+    };
+    let mut kept = Vec::new();
+    let mut removed = 0u32;
+    for entry in entries.iter() {
+        let deleted_at = entry.get("deletedAt").and_then(|v| v.as_str()).unwrap_or("");
+        if trash_entry_expired(deleted_at, now) {
+            if let Some(path) = entry.get("trashPath").and_then(|v| v.as_str()) {
+                let target = PathBuf::from(path);
+                let file = if target.is_absolute() {
+                    target
+                } else {
+                    library.join(TRASH_DIRNAME).join(target)
+                };
+                let _ = std::fs::remove_file(file);
+            }
+            removed += 1;
+        } else {
+            kept.push(entry.clone());
+        }
+    }
+    if removed == 0 {
+        return Ok(0);
+    }
+    parsed["entries"] = serde_json::Value::Array(kept);
+    let encoded = serde_json::to_vec_pretty(&parsed).map_err(|e| fail(e.to_string()))?;
+    write_bytes_atomic(&index_path, &encoded)?;
+    Ok(removed)
+}
+
 fn is_uuid_or_hex_stem(stem: &str) -> bool {
     let cleaned = stem.trim();
     if cleaned.is_empty() {
@@ -1438,18 +1631,31 @@ fn prompt_from_info_fields(inam: &str, icmt: &str) -> String {
     comment.to_string()
 }
 
-fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<String>>) {
-    let mut duration = 0.0f32;
+#[derive(Default)]
+struct ParsedWavInfo {
+    duration: f32,
+    prompt: String,
+    mode: String,
+    instruments: Option<Vec<String>>,
+    category: Option<String>,
+    intensity: Option<String>,
+    stamp: GenerateStamp,
+}
+
+fn parse_wav_file_metadata(path: &Path) -> ParsedWavInfo {
+    let mut info = ParsedWavInfo {
+        mode: "sfx".to_string(),
+        ..ParsedWavInfo::default()
+    };
     let mut inam = String::new();
     let mut icmt = String::new();
-    let mut mode = "sfx".to_string();
-    let mut instruments: Option<Vec<String>> = None;
+    let mut isft = String::new();
 
     if let Ok(reader) = hound::WavReader::open(path) {
         let spec = reader.spec();
         let samples = reader.duration();
         if spec.sample_rate > 0 {
-            duration = (samples as f32) / (spec.sample_rate as f32);
+            info.duration = (samples as f32) / (spec.sample_rate as f32);
         }
     }
 
@@ -1504,6 +1710,12 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
                                         inam = trimmed.to_string();
                                     } else if sub_id == b"ICMT" && !trimmed.is_empty() {
                                         icmt = trimmed.to_string();
+                                    } else if sub_id == b"ISFT" && !trimmed.is_empty() {
+                                        isft = trimmed.to_string();
+                                    } else if sub_id == b"ISBJ" && !trimmed.is_empty() {
+                                        info.category = Some(trimmed.to_string());
+                                    } else if sub_id == b"IART" && !trimmed.is_empty() {
+                                        info.intensity = Some(trimmed.to_string());
                                     } else if sub_id == b"IKEY" && !trimmed.is_empty() {
                                         let list: Vec<String> = trimmed
                                             .split(';')
@@ -1511,16 +1723,16 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
                                             .filter(|s| !s.is_empty())
                                             .collect();
                                         if !list.is_empty() {
-                                            instruments = Some(list);
+                                            info.instruments = Some(list);
                                         }
                                     } else if sub_id == b"IGNR"
                                         && trimmed.eq_ignore_ascii_case("Instrumental")
                                     {
-                                        mode = "music".to_string();
+                                        info.mode = "music".to_string();
                                     } else if sub_id == b"IGNR"
                                         && trimmed.eq_ignore_ascii_case("Ambience")
                                     {
-                                        mode = "ambience".to_string();
+                                        info.mode = "ambience".to_string();
                                     }
                                 }
                             }
@@ -1543,10 +1755,11 @@ fn parse_wav_file_metadata(path: &Path) -> (f32, String, String, Option<Vec<Stri
         }
     }
     if prompt.to_lowercase().contains("tracktype: music") {
-        mode = "music".to_string();
+        info.mode = "music".to_string();
     }
-
-    (duration, prompt, mode, instruments)
+    info.prompt = prompt;
+    info.stamp = parse_software_stamp(&isft);
+    info
 }
 
 /// Dot-directories are skipped by both walkers below. `.trash` holds deleted
@@ -1691,7 +1904,7 @@ fn infer_metadata_from_path(
     (mode, category, subcategory, intensity)
 }
 
-fn clip_json_from_path(root: &Path, path: &Path) -> Option<serde_json::Value> {
+fn clip_record_from_path(root: &Path, path: &Path) -> Option<ClipRecord> {
     let file_stem = path
         .file_stem()
         .and_then(|s| s.to_str())
@@ -1707,10 +1920,11 @@ fn clip_json_from_path(root: &Path, path: &Path) -> Option<serde_json::Value> {
         .map(format_utc_iso)
         .unwrap_or_else(|_| "1970-01-01T00:00:00Z".to_string());
 
-    let (duration, mut prompt, parsed_mode, instruments) = parse_wav_file_metadata(path);
+    let parsed = parse_wav_file_metadata(path);
     let (path_mode, path_cat, path_subcat, path_intensity) = infer_metadata_from_path(root, path);
 
-    let final_mode = path_mode.unwrap_or(parsed_mode);
+    let final_mode = path_mode.unwrap_or(parsed.mode);
+    let mut prompt = parsed.prompt;
 
     if prompt.is_empty() || is_uuid_or_hex_stem(&prompt) {
         if let Some(ref sub) = path_subcat {
@@ -1736,25 +1950,35 @@ fn clip_json_from_path(root: &Path, path: &Path) -> Option<serde_json::Value> {
         }
     }
 
-    Some(serde_json::json!({
-        "id": file_stem,
-        "path": path.to_string_lossy(),
-        "prompt": prompt,
-        "duration": duration,
-        "createdAt": created_at,
-        "mode": final_mode,
-        "category": path_cat,
-        "subcategory": path_subcat,
-        "intensity": path_intensity,
-        "instruments": instruments
-    }))
+    Some(ClipRecord {
+        id: file_stem,
+        path: path.to_string_lossy().into_owned(),
+        prompt,
+        duration: parsed.duration,
+        created_at,
+        seed: parsed.stamp.seed,
+        cfg: parsed.stamp.cfg,
+        negative: parsed.stamp.negative,
+        steps: parsed.stamp.steps,
+        mode: Some(final_mode),
+        instruments: parsed.instruments,
+        category: parsed.category.or(path_cat),
+        subcategory: path_subcat,
+        intensity: parsed.intensity.or(path_intensity),
+        preset: parsed.stamp.preset,
+        sampler: parsed.stamp.sampler,
+    })
+}
+
+fn clip_json_from_path(root: &Path, path: &Path) -> Option<serde_json::Value> {
+    clip_record_from_path(root, path).and_then(|clip| serde_json::to_value(clip).ok())
 }
 
 fn ensure_scan_root(scope: &PathScope, dir: Option<String>) -> Result<PathBuf, String> {
     let root = dir
         .filter(|d| !d.trim().is_empty())
         .map(PathBuf::from)
-        .unwrap_or_else(library_dir);
+        .unwrap_or_else(|| scope.library_or_default());
     ensure_allowed(scope, &root.to_string_lossy())
 }
 
@@ -2008,6 +2232,12 @@ async fn scan_library_dir(
     run_blocking(move || scan_library_dir_inner(target)).await
 }
 
+#[tauri::command]
+async fn sweep_trash(scope: State<'_, PathScope>, dir: Option<String>) -> Result<u32, String> {
+    let root = ensure_scan_root(&scope, dir)?;
+    run_blocking(move || sweep_trash_inner(&root, SystemTime::now())).await
+}
+
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
@@ -2024,6 +2254,13 @@ pub fn run() {
             proc: Mutex::new(None),
         })
         .manage(PathScope::load())
+        .setup(|app| {
+            let lib = app.state::<PathScope>().library_or_default();
+            std::thread::spawn(move || {
+                let _ = sweep_trash_inner(&lib, SystemTime::now());
+            });
+            Ok(())
+        })
         .invoke_handler(tauri::generate_handler![
             engine_status,
             engine_probe,
@@ -2050,7 +2287,8 @@ pub fn run() {
             read_error_log,
             scan_library_dir,
             scan_library_categories,
-            scan_folder_tracks
+            scan_folder_tracks,
+            sweep_trash
         ])
         .run(tauri::generate_context!())
         .expect("error while running Thunder FX");
@@ -2475,6 +2713,7 @@ mod tests {
         "scan_library_dir",
         "scan_library_categories",
         "scan_folder_tracks",
+        "sweep_trash",
     ];
 
     #[test]
@@ -2523,6 +2762,146 @@ mod tests {
         assert_eq!(std::fs::read_to_string(&path).unwrap(), "{\"version\":2}\n");
         let bak = scope_sidecar_bak(&path);
         assert_eq!(std::fs::read_to_string(&bak).unwrap(), "{\"version\":1}\n");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    fn write_silent_wav(path: &Path) {
+        let spec = hound::WavSpec {
+            channels: 2,
+            sample_rate: 44100,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let mut writer = hound::WavWriter::create(path, spec).unwrap();
+        writer.write_sample(0i16).unwrap();
+        writer.write_sample(0i16).unwrap();
+        writer.finalize().unwrap();
+    }
+
+    fn append_list_info(path: &Path, fields: &[(&str, &str)]) {
+        let mut bytes = std::fs::read(path).unwrap();
+        let mut body = b"INFO".to_vec();
+        for (key, value) in fields {
+            let mut payload = value.as_bytes().to_vec();
+            payload.push(0);
+            let size = payload.len() as u32;
+            if payload.len() % 2 == 1 {
+                payload.push(0);
+            }
+            body.extend_from_slice(key.as_bytes());
+            body.extend_from_slice(&size.to_le_bytes());
+            body.extend_from_slice(&payload);
+        }
+        if body.len() % 2 == 1 {
+            body.push(0);
+        }
+        let mut list = b"LIST".to_vec();
+        list.extend_from_slice(&(body.len() as u32).to_le_bytes());
+        list.extend_from_slice(&body);
+        bytes.extend_from_slice(&list);
+        let riff_size = (bytes.len() - 8) as u32;
+        bytes[4..8].copy_from_slice(&riff_size.to_le_bytes());
+        std::fs::write(path, bytes).unwrap();
+    }
+
+    #[test]
+    fn software_stamp_round_trips_generate_knobs() {
+        let stamp = parse_software_stamp(
+            "Thunder FX | seed=7 cfg=1 steps=8 preset=speed sampler=pingpong",
+        );
+        assert_eq!(stamp.seed, Some(7));
+        assert_eq!(stamp.cfg, Some(1.0));
+        assert_eq!(stamp.steps, Some(8));
+        assert_eq!(stamp.preset.as_deref(), Some("speed"));
+        assert_eq!(stamp.sampler.as_deref(), Some("pingpong"));
+        assert!(parse_software_stamp("Thunder FX").seed.is_none());
+    }
+
+    #[test]
+    fn scan_recovers_seed_and_preset_from_riff_tags() {
+        let dir = std_temp().join(format!("thunder-fx-stamp-scan-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let wav_path = dir.join("sword-clang.wav");
+        write_silent_wav(&wav_path);
+        append_list_info(
+            &wav_path,
+            &[
+                ("INAM", "sword clang"),
+                ("ICMT", "sword clang"),
+                ("ISFT", "Thunder FX | seed=7 cfg=1 steps=8 preset=speed sampler=pingpong"),
+                ("IGNR", "Sound Effects"),
+            ],
+        );
+        let clip = clip_record_from_path(&dir, &wav_path).unwrap();
+        assert_eq!(clip.seed, Some(7));
+        assert_eq!(clip.cfg, Some(1.0));
+        assert_eq!(clip.steps, Some(8));
+        assert_eq!(clip.preset.as_deref(), Some("speed"));
+        assert_eq!(clip.sampler.as_deref(), Some("pingpong"));
+        assert_eq!(clip.prompt, "sword clang");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn sweep_trash_deletes_expired_files_and_keeps_fresh_ones() {
+        let dir = std_temp().join(format!("thunder-fx-sweep-{}", uuid::Uuid::new_v4()));
+        let trash = dir.join(TRASH_DIRNAME);
+        std::fs::create_dir_all(&trash).unwrap();
+        let old_wav = trash.join("old--1.wav");
+        let new_wav = trash.join("new--1.wav");
+        write_silent_wav(&old_wav);
+        write_silent_wav(&new_wav);
+        let index = serde_json::json!({
+            "version": 1,
+            "entries": [
+                {
+                    "id": "old",
+                    "originalPath": dir.join("old.wav").to_string_lossy(),
+                    "trashPath": old_wav.to_string_lossy(),
+                    "deletedAt": "2020-01-01T00:00:00Z",
+                    "clip": { "id": "old" }
+                },
+                {
+                    "id": "new",
+                    "originalPath": dir.join("new.wav").to_string_lossy(),
+                    "trashPath": new_wav.to_string_lossy(),
+                    "deletedAt": format_utc_iso(SystemTime::now()),
+                    "clip": { "id": "new" }
+                }
+            ]
+        });
+        std::fs::write(dir.join(TRASH_INDEX_FILENAME), serde_json::to_vec_pretty(&index).unwrap()).unwrap();
+        let removed = sweep_trash_inner(&dir, SystemTime::now()).unwrap();
+        assert_eq!(removed, 1);
+        assert!(!old_wav.exists());
+        assert!(new_wav.exists());
+        let kept: serde_json::Value =
+            serde_json::from_str(&std::fs::read_to_string(dir.join(TRASH_INDEX_FILENAME)).unwrap()).unwrap();
+        assert_eq!(kept["entries"].as_array().unwrap().len(), 1);
+        assert_eq!(kept["entries"][0]["id"], "new");
+        let _ = std::fs::remove_dir_all(&dir);
+    }
+
+    #[test]
+    fn library_or_default_prefers_the_scoped_folder() {
+        let custom = std_temp().join("thunder-fx-custom-lib");
+        let scope = PathScope {
+            granted: Mutex::new(Vec::new()),
+            library: Mutex::new(Some(custom.clone())),
+        };
+        assert_eq!(scope.library_or_default(), custom);
+    }
+
+    #[test]
+    fn rename_same_volume_moves_a_file() {
+        let dir = std_temp().join(format!("thunder-fx-rename-{}", uuid::Uuid::new_v4()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let src = dir.join("a.wav");
+        let dest = dir.join("b.wav");
+        std::fs::write(&src, b"audio").unwrap();
+        rename_same_volume(&src, &dest).unwrap();
+        assert!(!src.exists());
+        assert_eq!(std::fs::read(&dest).unwrap(), b"audio");
         let _ = std::fs::remove_dir_all(&dir);
     }
 }

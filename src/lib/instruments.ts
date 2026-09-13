@@ -1,4 +1,5 @@
 import type { GenerateMode } from '@/lib/types'
+import { formatSoftwareStamp, type GenerateStamp } from '@/lib/generateStamp'
 
 export type WavInfo = {
   title?: string
@@ -315,17 +316,9 @@ export function musicWavInfo(
   instruments = extractInstruments(prompt),
   category?: string,
   intensity?: string,
+  stamp?: GenerateStamp,
 ): WavInfo {
-  const title = titleFromPrompt(prompt)
-  return {
-    instruments,
-    software: 'Thunder FX',
-    genre: 'Instrumental',
-    title: title || 'Instrumental',
-    category: category?.trim() || undefined,
-    intensity: intensity?.trim() || undefined,
-    comment: wavPromptComment(prompt, instruments, category, intensity),
-  }
+  return clipWavInfo(prompt, 'music', instruments, category, intensity, stamp)
 }
 
 export function clipWavInfo(
@@ -334,12 +327,14 @@ export function clipWavInfo(
   instruments = extractInstruments(prompt),
   category?: string,
   intensity?: string,
+  stamp?: GenerateStamp,
 ): WavInfo {
   const title = titleFromPrompt(prompt)
+  const software = formatSoftwareStamp(stamp)
   if (mode === 'music') {
     return {
       instruments,
-      software: 'Thunder FX',
+      software,
       genre: 'Instrumental',
       title: title || 'Instrumental',
       category: category?.trim() || undefined,
@@ -350,7 +345,7 @@ export function clipWavInfo(
   if (mode === 'ambience') {
     return {
       instruments: [],
-      software: 'Thunder FX',
+      software,
       genre: 'Ambience',
       title: title || 'Ambience',
       category: category?.trim() || undefined,
@@ -360,7 +355,7 @@ export function clipWavInfo(
   }
   return {
     instruments: [],
-    software: 'Thunder FX',
+    software,
     genre: 'Sound Effects',
     title: title || 'Sound Effect',
     category: category?.trim() || undefined,

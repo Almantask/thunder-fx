@@ -27,5 +27,6 @@ commands.allow = [
   "set_library_dir",
   "scan_library_dir",
   "scan_library_categories",
-  "scan_folder_tracks"
+  "scan_folder_tracks",
+  "sweep_trash"
 ]

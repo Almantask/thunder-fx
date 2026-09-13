@@ -163,12 +163,15 @@ export async function pickDirectory(defaultPath?: string): Promise<string | null
 
 export async function scanDiskLibrary(dir?: string): Promise<Clip[]> {
   if (!isTauri()) return []
-  try {
-    const { invoke } = await import('@tauri-apps/api/core')
-    return await invoke<Clip[]>('scan_library_dir', { dir: dir?.trim() || null })
-  } catch {
-    return []
-  }
+  const { invoke } = await import('@tauri-apps/api/core')
+  return await invoke<Clip[]>('scan_library_dir', { dir: dir?.trim() || null })
+}
+
+/** Purge trash entries older than 30 days. Returns how many files were removed. */
+export async function sweepDiskTrash(dir?: string): Promise<number> {
+  if (!isTauri()) return 0
+  const { invoke } = await import('@tauri-apps/api/core')
+  return await invoke<number>('sweep_trash', { dir: dir?.trim() || null })
 }
 
 export async function deleteDiskFile(path: string): Promise<void> {

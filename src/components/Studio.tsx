@@ -32,9 +32,11 @@ import {
   exportSoundPack,
   generate,
   loadModel,
+  logClientError,
   pickDirectory,
   reportError,
   setLibraryDir,
+  sweepDiskTrash,
   unloadModel,
   writeEncodedFile,
 } from '@/lib/engine'
@@ -66,6 +68,7 @@ import {
   clipDisplayName,
   forgetMeta,
   getMeta,
+  pruneMissingMeta,
   renameMeta,
   setRating as setClipRating,
   tagCounts,
@@ -391,14 +394,35 @@ export function Studio() {
    * enough on entering the Library tab, far too expensive to run after each
    * clip in a queue — see {@link addClipToLibraryList}.
    */
-  async function refreshLibrary() {
+  async function refreshLibrary(fromMeta?: ClipMetaIndex) {
     let loadedClips: Clip[] = []
+    let scanned = false
     try {
       loadedClips = await library.list()
-    } catch {
+      scanned = true
+    } catch (err) {
+      reportError(err, 'Could not scan the library')
       loadedClips = []
     }
-    setClips(loadedClips.map(normalizeClip))
+    const normalized = loadedClips.map(normalizeClip)
+    setClips(normalized)
+    if (!scanned) return
+    let trashIds: string[] = []
+    try {
+      trashIds = (await trashStore.list()).map((entry) => entry.id)
+    } catch {
+      trashIds = []
+    }
+    const liveIds = normalized.map((clip) => clip.id)
+    setMeta((current) => {
+      const { index, removed } = pruneMissingMeta(fromMeta ?? current, liveIds, trashIds)
+      if (!removed) return fromMeta ?? current
+      void metaStore.save(index).catch((err: unknown) => {
+        reportError(err, 'Could not save clip metadata')
+      })
+      void logClientError(`Pruned ${removed} metadata row(s) whose audio is gone`)
+      return index
+    })
   }
 
   /** Splices one freshly generated clip into the list, newest first. */
@@ -583,7 +607,10 @@ export function Studio() {
   }, [settings.libraryDir])
 
   useEffect(() => {
-    void metaStore.load().then(setMeta).catch((err: unknown) => {
+    void metaStore.load().then((loaded) => {
+      setMeta(loaded)
+      void refreshLibrary(loaded)
+    }).catch((err: unknown) => {
       if (err instanceof SidecarCorruptError) {
         toast.error('Clip metadata file is unreadable.', {
           description: err.message,
@@ -600,6 +627,13 @@ export function Studio() {
       reportError(err, 'Could not load clip metadata')
     })
     void refreshTrash()
+    if (isTauri()) {
+      void sweepDiskTrash(settings.libraryDir)
+        .then(() => refreshTrash())
+        .catch((err: unknown) => {
+          reportError(err, 'Could not sweep expired trash')
+        })
+    }
     return () => {
       void metaStore.flush()
     }

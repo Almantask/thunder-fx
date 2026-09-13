@@ -83,8 +83,8 @@ export async function copyFile(src: string, dest: string): Promise<void> {
 }
 
 /**
- * Rename or move within a granted root. Rust falls back to copy-then-delete
- * when the two paths sit on different volumes.
+ * Rename or move within a granted root. Cross-volume copies are refused: the
+ * library and its `.trash` folder must stay on the same volume.
  */
 export async function moveFile(src: string, dest: string): Promise<void> {
   const { invoke } = await core()

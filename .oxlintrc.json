@@ -11,6 +11,7 @@
     "react/only-export-components": ["warn", { "allowConstantExport": true }],
     "react/react-in-jsx-scope": "off",
     "eslint/no-await-in-loop": "off",
-    "eslint/no-underscore-dangle": "off"
+    "eslint/no-underscore-dangle": "off",
+    "eslint/no-empty": ["error", { "allowEmptyCatch": true }]
   }
 }

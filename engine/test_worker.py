@@ -1013,6 +1013,29 @@ class ErrorLogTests(unittest.TestCase):
         self.assertIn("RuntimeError: omen", text)
         self.assertIn("Traceback", text)
         self.assertIn('"cmd": "generate"', text)
+        self.assertIn("ERROR [python]", text)
+        self.assertIn("T", text)
+        self.assertIn("Z", text)
+
+    def test_print_does_not_land_on_the_protocol_stream(self) -> None:
+        import io
+        import worker
+
+        proto = io.StringIO()
+        printed = io.StringIO()
+        previous = worker._protocol_out
+        old_stdout = sys.stdout
+        worker._protocol_out = proto
+        sys.stdout = printed
+        try:
+            print("not-json")
+            worker._emit({"id": "1", "event": "done"})
+        finally:
+            sys.stdout = old_stdout
+            worker._protocol_out = previous
+        self.assertIn("not-json", printed.getvalue())
+        self.assertIn('"event": "done"', proto.getvalue())
+        self.assertNotIn("not-json", proto.getvalue())
 
 
 class ClampStepsTests(unittest.TestCase):

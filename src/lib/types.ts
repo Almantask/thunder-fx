@@ -100,6 +100,8 @@ export type GenerateResult = {
   wav: ArrayBuffer
   /** Non-blocking notices from the engine, e.g. an over-long prompt. */
   warnings?: string[]
+  /** Peak CUDA allocation during this run, when the worker reported it. */
+  peakVramGb?: number
 }
 
 export type SetupProbe = {

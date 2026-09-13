@@ -48,6 +48,8 @@ export type GenerateTimingSample = {
   stepMs?: number
   /** Measured ms from the last step to the finished WAV: decode, master, write. */
   tailMs?: number
+  /** Peak CUDA allocation in GiB during this run. */
+  peakVramGb?: number
   /** Epoch ms the run finished, for recency weighting. */
   at?: number
 }
@@ -172,6 +174,7 @@ export function recordGenerate(
     leadMs?: number
     stepMs?: number
     tailMs?: number
+    peakVramGb?: number
     at?: number
   },
 ): TimingLog {
@@ -192,6 +195,10 @@ export function recordGenerate(
       leadMs: options?.leadMs != null && options.leadMs >= 0 ? Math.round(options.leadMs) : undefined,
       stepMs: positive(options?.stepMs),
       tailMs: options?.tailMs != null && options.tailMs >= 0 ? Math.round(options.tailMs) : undefined,
+      peakVramGb:
+        options?.peakVramGb != null && Number.isFinite(options.peakVramGb) && options.peakVramGb > 0
+          ? Math.round(options.peakVramGb * 1000) / 1000
+          : undefined,
       at: options?.at ?? Date.now(),
     }),
   }
@@ -495,6 +502,7 @@ function parseGenerate(raw: unknown): GenerateTimingSample | undefined {
     leadMs: optionalNumber(sample.leadMs),
     stepMs: optionalNumber(sample.stepMs),
     tailMs: optionalNumber(sample.tailMs),
+    peakVramGb: optionalNumber(sample.peakVramGb),
     at: optionalNumber(sample.at),
   }
 }

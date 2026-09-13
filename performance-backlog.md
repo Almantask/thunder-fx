@@ -175,16 +175,16 @@ are closed.
 
 ### H. Reliability and observability
 
-| ID | Item | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- |
-| **PQ-73** | [Log the reason, one timestamp format, and a level](#pq-73-log-the-reason-one-timestamp-format-and-a-level) | Reliability | Medium | S |
-| **PQ-74** | [Tests must not write to the user's real error log](#pq-74-tests-must-not-write-to-the-users-real-error-log) | DX | Medium | S |
-| **PQ-75** | [Rotate the error log and buffer its writes](#pq-75-rotate-the-error-log-and-buffer-its-writes) | Reliability | Medium | S |
-| **PQ-76** | [A watchdog on the TypeScript side, and scan failures that say so](#pq-76-a-watchdog-on-the-typescript-side-and-scan-failures-that-say-so) | Reliability | Medium | S |
-| **PQ-77** | [Nested error boundaries, and no silent catch blocks](#pq-77-nested-error-boundaries-and-no-silent-catch-blocks) | Reliability | Medium | S |
-| **PQ-78** | [Aggregate warning toasts during a queue run](#pq-78-aggregate-warning-toasts-during-a-queue-run) | Reliability | Low | S |
-| **PQ-79** | [Peak-VRAM telemetry per generation](#pq-79-peak-vram-telemetry-per-generation) | Perf | Low | S |
-| **PQ-80** | [Keep third-party `print` off the JSON-lines channel](#pq-80-keep-third-party-print-off-the-json-lines-channel) | Reliability | Low | S |
+| ID | Item | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-73** | [Log the reason, one timestamp format, and a level](#pq-73-log-the-reason-one-timestamp-format-and-a-level) | Reliability | Medium | S | **Done** |
+| **PQ-74** | [Tests must not write to the user's real error log](#pq-74-tests-must-not-write-to-the-users-real-error-log) | DX | Medium | S | **Done** |
+| **PQ-75** | [Rotate the error log and buffer its writes](#pq-75-rotate-the-error-log-and-buffer-its-writes) | Reliability | Medium | S | **Done** |
+| **PQ-76** | [A watchdog on the TypeScript side, and scan failures that say so](#pq-76-a-watchdog-on-the-typescript-side-and-scan-failures-that-say-so) | Reliability | Medium | S | **Done** |
+| **PQ-77** | [Nested error boundaries, and no silent catch blocks](#pq-77-nested-error-boundaries-and-no-silent-catch-blocks) | Reliability | Medium | S | **Done** |
+| **PQ-78** | [Aggregate warning toasts during a queue run](#pq-78-aggregate-warning-toasts-during-a-queue-run) | Reliability | Low | S | **Done** |
+| **PQ-79** | [Peak-VRAM telemetry per generation](#pq-79-peak-vram-telemetry-per-generation) | Perf | Low | S | **Done** |
+| **PQ-80** | [Keep third-party `print` off the JSON-lines channel](#pq-80-keep-third-party-print-off-the-json-lines-channel) | Reliability | Low | S | **Done** |
 
 ### I. Time estimation
 
@@ -1710,6 +1710,14 @@ Delivered items, kept for the record.
 | **PQ-68** | A timed-out command cancels the worker and marks it unhealthy | Unreleased (Rust shell S-wave) |
 | **PQ-69** | Capture the worker's stderr into the error log | Unreleased (Rust shell S-wave) |
 | **PQ-70** | Cache the resolved scope roots | Unreleased (Rust shell S-wave) |
+| **PQ-73** | Log the reason, one timestamp format, and a level | Unreleased (reliability S-wave) |
+| **PQ-74** | Tests must not write to the user's real error log | Unreleased (reliability S-wave) |
+| **PQ-75** | Rotate the error log and buffer its writes | Unreleased (reliability S-wave) |
+| **PQ-76** | A watchdog on the TypeScript side, and scan failures that say so | Unreleased (reliability S-wave) |
+| **PQ-77** | Nested error boundaries, and no silent catch blocks | Unreleased (reliability S-wave) |
+| **PQ-78** | Aggregate warning toasts during a queue run | Unreleased (reliability S-wave) |
+| **PQ-79** | Peak-VRAM telemetry per generation | Unreleased (reliability S-wave) |
+| **PQ-80** | Keep third-party `print` off the JSON-lines channel | Unreleased (reliability S-wave) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

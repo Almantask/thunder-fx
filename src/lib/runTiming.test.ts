@@ -4,6 +4,10 @@ import {
   liveRunRatio,
   liveStepMs,
   runMeasurements,
+  stallBudgetMs,
+  STALL_LOADING_MS,
+  STALL_MAX_MS,
+  STALL_MIN_MS,
   startRun,
   trackRun,
   type RunTrack,
@@ -198,5 +202,18 @@ describe('liveRunRatio', () => {
   it('reports a load by its download ratio', () => {
     const run = trackRun(startRun('load', { at: T0 }), { ratio: 0.4 }, T0 + 1_000)
     expect(liveRunRatio(run)).toBe(0.4)
+  })
+})
+
+describe('stallBudgetMs', () => {
+  it('uses a longer budget while the checkpoint is loading', () => {
+    expect(stallBudgetMs(1_000, 'loading')).toBe(STALL_LOADING_MS)
+  })
+
+  it('clamps 8× the expected step time between 30s and 3 minutes', () => {
+    expect(stallBudgetMs(1_000)).toBe(STALL_MIN_MS)
+    expect(stallBudgetMs(8_000)).toBe(64_000)
+    expect(stallBudgetMs(60_000)).toBe(STALL_MAX_MS)
+    expect(stallBudgetMs(undefined)).toBe(64_000)
   })
 })

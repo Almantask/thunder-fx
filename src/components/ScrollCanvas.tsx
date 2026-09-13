@@ -44,6 +44,7 @@ type ScrollCanvasProps = {
   onTrim: (start: number, end: number) => void
   onSeek: (seconds: number) => void
   emptyLabel?: string
+  stalled?: boolean
 }
 
 export function ScrollCanvas({
@@ -70,6 +71,7 @@ export function ScrollCanvas({
   onTrim,
   onSeek,
   emptyLabel = 'Describe a sound, then click Generate.',
+  stalled = false,
 }: ScrollCanvasProps) {
   const busy = weaving || loadingModel
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -350,7 +352,7 @@ export function ScrollCanvas({
         e.currentTarget.releasePointerCapture(e.pointerId)
       }
     } catch {
-      /* ignore */
+      // setPointerCapture is not required; mouse move still drives the trim.
     }
   }
 
@@ -369,7 +371,11 @@ export function ScrollCanvas({
             }
           >
             <p role="status" aria-live="polite" className="font-mono text-xs text-amber">
-              <span ref={statusRef} />
+              {stalled ? (
+                <span>Stalled · Cancel if it does not resume</span>
+              ) : (
+                <span ref={statusRef} />
+              )}
               <span className="sr-only">
                 {loadingModel || phase === 'loading'
                   ? 'Loading model'
@@ -472,7 +478,7 @@ export function ScrollCanvas({
             try {
               (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId)
             } catch {
-              /* ignore */
+              // setPointerCapture can throw on a detached node; the drag still works.
             }
             applyPointer(e.clientX, mode)
           }}

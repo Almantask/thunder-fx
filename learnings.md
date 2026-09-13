@@ -221,3 +221,13 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   respawns. Flush the stderr ring with the timeout so the log has the traceback.
 - **PQ-70 scope cache.** Tests that push onto `granted` directly must `invalidate_roots()`
   (or call `grant`); production only mutates through `grant` / `set_library`.
+- **PQ-73 log lines.** One UTC ISO stamp, a level, a source tag, the message with
+  newlines folded, then optional JSON context. Python local-time stamps and Rust unix
+  seconds cannot be sorted together; `2026-09-13T10:00:00Z ERROR [python] …` can.
+  Tracebacks go in `{"exception":…}` so the line stays one row.
+- **PQ-74 test logs.** `logs_dir()` honours `THUNDER_FX_LOG_DIR` / `THUNDER_FX_LOGS_DIR`.
+  Under `cfg(test)` the fallback is a per-process temp dir, never LocalAppData.
+- **PQ-76 stall.** `stallBudgetMs` is 8× expected step time, clamped 30s–3min, 2 min
+  during `loading`. Progress resets the timer; one `onStall` per quiet stretch.
+- **PQ-80 stdout.** `os.dup(1)` before pointing `sys.stdout` at stderr. Tests that
+  never call `main()` still `_emit` to `sys.stdout` until `_protocol_out` is set.

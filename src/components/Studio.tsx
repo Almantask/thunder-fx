@@ -10,6 +10,7 @@ import { GrimoireRail, type PackExportRequest } from '@/components/GrimoireRail'
 import { IncantationConsole } from '@/components/IncantationConsole'
 import { PromptCatalogDialog } from '@/components/PromptCatalogDialog'
 import { ScrollCanvas } from '@/components/ScrollCanvas'
+import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { SettingsPanel } from '@/components/SettingsPanel'
 import { TakesGrid, type TakeCandidate } from '@/components/TakesGrid'
 import { Titlebar } from '@/components/Titlebar'
@@ -135,7 +136,7 @@ import {
   trackRun,
   type RunTrack,
 } from '@/lib/runTiming'
-import type { QueueCostItem } from '@/lib/perfBenchmarks'
+import { phaseStepMs, type QueueCostItem } from '@/lib/perfBenchmarks'
 import type { Clip, EngineStatus, GenerateMode, KeepSettings, KeepTab, WeaveUiState } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
 
@@ -219,6 +220,7 @@ export function Studio() {
   const [queue, setQueue] = useState<CatalogEffect[]>(loadQueue)
   const [timing, setTiming] = useState(loadTimingLog)
   const [queueRunning, setQueueRunning] = useState(false)
+  const [weaveStalled, setWeaveStalled] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
   const loadAbortRef = useRef<AbortController | null>(null)
   const weaveStartedRef = useRef(0)
@@ -233,6 +235,7 @@ export function Studio() {
   const engineMockRef = useRef(false)
   const clipsRef = useRef(clips)
   const queueRunningRef = useRef(false)
+  const queueWarningsRef = useRef(new Map<string, number>())
   const queuedDuringRunRef = useRef(false)
   clipsRef.current = clips
   queueRunningRef.current = queueRunning
@@ -401,7 +404,10 @@ export function Studio() {
       loadedClips = await library.list()
       scanned = true
     } catch (err) {
-      reportError(err, 'Could not scan the library')
+      const message = reportError(err, 'Could not scan the library')
+      toast.error('Could not scan the library.', {
+        description: [message, settings.libraryDir.trim() || undefined].filter(Boolean).join('\n'),
+      })
       loadedClips = []
     }
     const normalized = loadedClips.map(normalizeClip)
@@ -411,6 +417,7 @@ export function Studio() {
     try {
       trashIds = (await trashStore.list()).map((entry) => entry.id)
     } catch {
+      // An unreadable trash index still lets the library list render.
       trashIds = []
     }
     const liveIds = normalized.map((clip) => clip.id)
@@ -446,7 +453,8 @@ export function Studio() {
   async function refreshTrash() {
     try {
       setTrashEntries(await trashStore.list())
-    } catch {
+    } catch (err) {
+      reportError(err, 'Could not list trash')
       setTrashEntries([])
     }
   }
@@ -970,6 +978,32 @@ export function Studio() {
     }
   }
 
+  function noteWarnings(warnings: string[]) {
+    if (!warnings.length) return
+    if (queueRunningRef.current) {
+      for (const warning of warnings) {
+        queueWarningsRef.current.set(warning, (queueWarningsRef.current.get(warning) ?? 0) + 1)
+      }
+      return
+    }
+    for (const warning of warnings) {
+      toast('Heads up', { description: warning })
+    }
+  }
+
+  function flushQueueWarnings() {
+    const rows = [...queueWarningsRef.current.entries()]
+    queueWarningsRef.current.clear()
+    if (!rows.length) return
+    const total = rows.reduce((sum, [, count]) => sum + count, 0)
+    const summary = rows
+      .map(([warning, count]) => (count > 1 ? `${warning} (×${count})` : warning))
+      .join('\n')
+    toast('Heads up', {
+      description: `${total} warning${total === 1 ? '' : 's'} during this queue.\n${summary}`,
+    })
+  }
+
   async function generateOne(
     request: {
       prompt: string
@@ -992,6 +1026,7 @@ export function Studio() {
   ): Promise<'ok' | 'abort' | 'error'> {
     const manageBusy = options.manageBusy ?? true
     const setActiveClip = options.setActiveClip ?? true
+    setWeaveStalled(false)
     // What the engine will actually run. A named preset owns its step count and
     // guidance, so the slider is only consulted for Custom -- estimating and
     // recording off the slider logged 8-step samples for 20-step runs.
@@ -1046,6 +1081,7 @@ export function Studio() {
               seconds: request.seconds,
               totalSteps: currentSteps,
             })
+            setWeaveStalled(false)
             setWeave({
               rite: p.step,
               totalRites: p.total || currentSteps,
@@ -1054,15 +1090,29 @@ export function Studio() {
               ratio: p.ratio,
             })
           },
+          onStall: () => {
+            setWeaveStalled(true)
+            toast('Generation looks stalled.', {
+              description: 'No progress from the worker. Cancel if it does not resume.',
+              action: {
+                label: 'Cancel',
+                onClick: () => requestDispel(),
+              },
+            })
+          },
+          expectedStepMs: phaseStepMs(
+            getMeasuredPhaseModel(timingRef.current, {
+              steps: currentSteps,
+              precision: settings.precision,
+              cfg: runPlan.cfg,
+            }),
+            request.seconds,
+          ),
         },
       )
       let finalClip = result.clip
       let finalWav = result.wav
-      // Non-blocking notices from the worker, such as a prompt past the length
-      // Stable Audio 3 was tuned on, or a negative prompt the preset ignores.
-      for (const warning of result.warnings ?? []) {
-        toast('Heads up', { description: warning })
-      }
+      noteWarnings(result.warnings ?? [])
       if (finalClip.mode === 'music' && !finalClip.instruments?.length) {
         const detected = extractInstruments(finalClip.prompt)
         if (detected.length) {
@@ -1110,6 +1160,7 @@ export function Studio() {
                 steps: finalClip.steps ?? currentSteps,
                 precision: settings.precision,
                 cfg: runPlan.cfg,
+                peakVramGb: result.peakVramGb,
                 ...measured,
                 at: finishedAt,
               },
@@ -1275,6 +1326,7 @@ export function Studio() {
     } finally {
       setQueueRunning(false)
       setWeaving(false)
+      flushQueueWarnings()
     }
   }
 
@@ -1631,6 +1683,7 @@ export function Studio() {
         </Hint>
       ) : null}
       {tab === 'library' ? (
+        <ErrorBoundary name="Library">
         <GrimoireRail
           clips={clips}
           selectedId={selectedId}
@@ -1673,15 +1726,18 @@ export function Studio() {
           trashCount={trashEntries.length}
           onCompare={(ids) => void openCompare(ids)}
         />
+        </ErrorBoundary>
       ) : null}
       {tab === 'generate' ? (
         <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
           <div className="flex min-h-0 flex-1 overflow-hidden">
+            <ErrorBoundary name="Waveform">
             <ScrollCanvas
               wav={wav}
               weaving={weaving}
               loadingModel={loadingModel}
               modelLoaded={engine.loaded}
+              stalled={weaveStalled}
               rite={weave.rite}
               totalRites={weave.totalRites}
               elapsedMs={weave.elapsedMs}
@@ -1708,6 +1764,7 @@ export function Studio() {
               }}
               emptyLabel={GENERATE_MODES[mode].emptyWaveform}
             />
+            </ErrorBoundary>
             <Altar
               hasClip={Boolean(wav)}
               weaving={weaving || loadingModel}
@@ -1849,6 +1906,7 @@ export function Studio() {
         />
       ) : null}
       {catalogOpen ? (
+      <ErrorBoundary name="Catalog">
       <PromptCatalogDialog
         open={catalogOpen}
         catalog={catalog}
@@ -1865,6 +1923,7 @@ export function Studio() {
           setCatalogOpen(false)
         }}
       />
+      </ErrorBoundary>
       ) : null}
       {takesOpen ? (
       <TakesGrid
@@ -1925,12 +1984,14 @@ export function Studio() {
       />
       ) : null}
       {compare ? (
+        <ErrorBoundary name="Compare">
         <CompareDialog
           open
           a={compare.a}
           b={compare.b}
           onOpenChange={(open) => !open && setCompare(null)}
         />
+        </ErrorBoundary>
       ) : null}
       {commandOpen ? (
       <CommandPalette

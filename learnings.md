@@ -149,3 +149,18 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   amplifies that conditioning — which is a plausible confound for the "instrumental measured
   -38% to -51% centroid" result above. Re-test with genre-forward prompts before concluding a
   checkpoint is worse for a whole content type.
+
+## 2026-09-13
+
+- **PQ-01 duration padding.** The library default of 6 s of extra latent on every clip is
+  training-time headroom, not something short one-shots need. Passing `duration_padding_sec`
+  of **0.5 s for sfx** and **1 s for music/ambience** is the smallest value that still leaves
+  a tail to decay; A/B the last 200 ms of one-shots on the reference GPU before shrinking it
+  further. `THUNDER_FX_TF32=0` is the bit-exact switch for PQ-02.
+- **PQ-02 TF32.** The Stable Audio constructor turns TF32 and cuDNN autotune off. Restoring
+  them after load is expected to change FP32 matmuls (conditioning, parts of the VAE) by an
+  inaudible amount; document a bit-difference on one fixed seed when a CUDA box is available.
+- **PQ-81 estimates.** The 12 s FP16 load baseline was a HDD-class guess against a measured
+  **3.5 s NVMe** cold load. Fast Preview **12.6 s** included the 6 s of discarded padding;
+  the phase model (~4.8 s for 1 s @ 4 steps, model already loaded) is now the first-run
+  number, reprinted by `scripts/bench_estimates.py`.

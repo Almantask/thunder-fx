@@ -15,7 +15,13 @@ import {
   serializeMetaFile,
   type ClipMetaIndex,
 } from '@/lib/clipMeta'
-import { joinPath, readFileBytes, writeTextFile } from '@/lib/tauriFs'
+import {
+  SidecarCorruptError,
+  corruptSidecarPath,
+  createDebouncedSaver,
+  isJsonParseable,
+} from '@/lib/sidecarFile'
+import { copyFile, joinPath, readFileBytes, writeTextFile, writeTextFileAtomic } from '@/lib/tauriFs'
 import { isTauri } from '@/lib/utils'
 
 export const META_STORAGE_KEY = 'thunder-fx.clip-meta'
@@ -23,6 +29,8 @@ export const META_STORAGE_KEY = 'thunder-fx.clip-meta'
 export type ClipMetaStore = {
   load(): Promise<ClipMetaIndex>
   save(index: ClipMetaIndex): Promise<void>
+  flush(): Promise<void>
+  acknowledgeCorrupt(): void
 }
 
 function decodeUtf8(buffer: ArrayBuffer): string {
@@ -46,26 +54,57 @@ export function createLocalStorageMetaStore(): ClipMetaStore {
         /* A full or blocked quota must not fail the action that triggered it. */
       }
     },
+    async flush() {
+      /* localStorage writes are already synchronous */
+    },
+    acknowledgeCorrupt() {
+      /* browser storage is not a sidecar */
+    },
   }
 }
 
 export function createDiskMetaStore(getLibraryDir: () => string): ClipMetaStore {
+  const saver = createDebouncedSaver<ClipMetaIndex>(async (index) => {
+    const dir = getLibraryDir()
+    if (!dir) return
+    await writeTextFileAtomic(joinPath(dir, META_FILENAME), serializeMetaFile(index))
+  })
+
   return {
     async load() {
       const dir = getLibraryDir()
       if (!dir) return {}
+      const path = joinPath(dir, META_FILENAME)
       try {
-        const bytes = await readFileBytes(joinPath(dir, META_FILENAME))
-        return bytes ? parseMetaFile(decodeUtf8(bytes)) : {}
-      } catch {
+        const bytes = await readFileBytes(path)
+        if (!bytes || bytes.byteLength === 0) return {}
+        const text = decodeUtf8(bytes)
+        if (!text.trim()) return {}
+        if (!isJsonParseable(text)) {
+          const backupPath = corruptSidecarPath(path)
+          try {
+            await copyFile(path, backupPath)
+          } catch {
+            await writeTextFile(backupPath, text)
+          }
+          saver.block()
+          throw new SidecarCorruptError(path, backupPath)
+        }
+        return parseMetaFile(text)
+      } catch (err) {
+        if (err instanceof SidecarCorruptError) throw err
         // A first run has no sidecar yet, which is not an error.
         return {}
       }
     },
     async save(index) {
-      const dir = getLibraryDir()
-      if (!dir) return
-      await writeTextFile(joinPath(dir, META_FILENAME), serializeMetaFile(index))
+      await saver.schedule(index)
+    },
+    async flush() {
+      await saver.flush()
+    },
+    acknowledgeCorrupt() {
+      saver.unblock()
     },
   }
 }
@@ -83,6 +122,12 @@ export function createMemoryMetaStore(seed: ClipMetaIndex = {}): ClipMetaStore {
     },
     async save(next) {
       index = { ...next }
+    },
+    async flush() {
+      /* already in memory */
+    },
+    acknowledgeCorrupt() {
+      /* nothing to acknowledge */
     },
   }
 }

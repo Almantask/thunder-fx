@@ -48,20 +48,23 @@ Quick wins first, then by area. `Status` is `Open` unless noted.
 
 ### Quick wins (High impact, S effort)
 
-| ID | Item | Area | Type | Impact | Effort |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **PQ-01** | [Stop denoising 6 s of padding on every clip](#pq-01-stop-denoising-6-s-of-padding-on-every-clip) | Engine | Perf | High | S |
-| **PQ-02** | [Re-enable TF32 and cuDNN autotune after the model constructs](#pq-02-re-enable-tf32-and-cudnn-autotune-after-the-model-constructs) | Engine | Perf | High | S |
-| **PQ-19** | [Real 24-bit export instead of padded 16-bit](#pq-19-real-24-bit-export-instead-of-padded-16-bit) | Fidelity | Fidelity | High | S |
-| **PQ-20** | [Bitrate and quality controls for Opus, Vorbis and MP3](#pq-20-bitrate-and-quality-controls-for-opus-vorbis-and-mp3) | Fidelity | Fidelity | High | S |
-| **PQ-29** | [One progress state object per engine event](#pq-29-one-progress-state-object-per-engine-event) | Frontend | Perf | High | S |
-| **PQ-30** | [Stop re-parsing the whole WAV on every Studio render](#pq-30-stop-re-parsing-the-whole-wav-on-every-studio-render) | Frontend | Perf | High | S |
-| **PQ-32** | [Engine status poll: stop colliding with a busy engine](#pq-32-engine-status-poll-stop-colliding-with-a-busy-engine) | Frontend | Reliability | High | S |
-| **PQ-40** | [`parseWav` must not copy the PCM](#pq-40-parsewav-must-not-copy-the-pcm) | Data path | Perf | High | S |
-| **PQ-56** | [Atomic, debounced writes for the meta, trash and scope files](#pq-56-atomic-debounced-writes-for-the-meta-trash-and-scope-files) | Library | Reliability | High | S |
-| **PQ-63** | [Allow-list the three commands the UI calls but the ACL omits](#pq-63-allow-list-the-three-commands-the-ui-calls-but-the-acl-omits) | Shell | Reliability | High | S |
-| **PQ-64** | [Scope-check the scan commands](#pq-64-scope-check-the-scan-commands) | Shell | Reliability | High | S |
-| **PQ-81** | [Reconcile the estimate baselines with the README measurements](#pq-81-reconcile-the-estimate-baselines-with-the-readme-measurements) | Estimates | Reliability | High | S |
+Wave 1 shipped in this change. Remaining High/S items live in the area tables below as they
+are closed.
+
+| ID | Item | Area | Type | Impact | Effort | Status |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **PQ-01** | [Stop denoising 6 s of padding on every clip](#pq-01-stop-denoising-6-s-of-padding-on-every-clip) | Engine | Perf | High | S | **Done** |
+| **PQ-02** | [Re-enable TF32 and cuDNN autotune after the model constructs](#pq-02-re-enable-tf32-and-cudnn-autotune-after-the-model-constructs) | Engine | Perf | High | S | **Done** |
+| **PQ-19** | [Real 24-bit export instead of padded 16-bit](#pq-19-real-24-bit-export-instead-of-padded-16-bit) | Fidelity | Fidelity | High | S | **Done (label)** |
+| **PQ-20** | [Bitrate and quality controls for Opus, Vorbis and MP3](#pq-20-bitrate-and-quality-controls-for-opus-vorbis-and-mp3) | Fidelity | Fidelity | High | S | **Done** |
+| **PQ-29** | [One progress state object per engine event](#pq-29-one-progress-state-object-per-engine-event) | Frontend | Perf | High | S | **Done** |
+| **PQ-30** | [Stop re-parsing the whole WAV on every Studio render](#pq-30-stop-re-parsing-the-whole-wav-on-every-studio-render) | Frontend | Perf | High | S | **Done** |
+| **PQ-32** | [Engine status poll: stop colliding with a busy engine](#pq-32-engine-status-poll-stop-colliding-with-a-busy-engine) | Frontend | Reliability | High | S | **Done** |
+| **PQ-40** | [`parseWav` must not copy the PCM](#pq-40-parsewav-must-not-copy-the-pcm) | Data path | Perf | High | S | **Done** |
+| **PQ-56** | [Atomic, debounced writes for the meta, trash and scope files](#pq-56-atomic-debounced-writes-for-the-meta-trash-and-scope-files) | Library | Reliability | High | S | **Done** |
+| **PQ-63** | [Allow-list the three commands the UI calls but the ACL omits](#pq-63-allow-list-the-three-commands-the-ui-calls-but-the-acl-omits) | Shell | Reliability | High | S | **Done** |
+| **PQ-64** | [Scope-check the scan commands](#pq-64-scope-check-the-scan-commands) | Shell | Reliability | High | S | **Done** |
+| **PQ-81** | [Reconcile the estimate baselines with the README measurements](#pq-81-reconcile-the-estimate-baselines-with-the-readme-measurements) | Estimates | Reliability | High | S | **Done** |
 
 ### A. Inference engine
 
@@ -1655,6 +1658,18 @@ Delivered items, kept for the record.
 
 | ID | Item | Released |
 | :--- | :--- | :--- |
+| **PQ-01** | Stop denoising 6 s of padding on every clip | Unreleased (this change) |
+| **PQ-02** | Re-enable TF32 and cuDNN autotune after the model constructs | Unreleased (this change) |
+| **PQ-19** | Label 24-bit as a 24-bit container (16-bit content) until a float master ships | Unreleased (this change) |
+| **PQ-20** | Bitrate and quality controls for Opus, Vorbis and MP3 | Unreleased (this change) |
+| **PQ-29** | One progress state object per engine event | Unreleased (this change) |
+| **PQ-30** | Stop re-parsing the whole WAV on every Studio render | Unreleased (this change) |
+| **PQ-32** | Engine status poll: stop colliding with a busy engine | Unreleased (this change) |
+| **PQ-40** | `parseWav` must not copy the PCM | Unreleased (this change) |
+| **PQ-56** | Atomic, debounced writes for the meta, trash and scope files | Unreleased (this change) |
+| **PQ-63** | Allow-list the three commands the UI calls but the ACL omits | Unreleased (this change) |
+| **PQ-64** | Scope-check the scan commands | Unreleased (this change) |
+| **PQ-81** | Reconcile the estimate baselines with the README measurements | Unreleased (this change) |
 | — | Audio over the IPC as raw bytes instead of base64 | Unreleased (`7f2c8ca`) |
 | — | Queues splice new clips instead of rescanning the library | Unreleased (`7f2c8ca`) |
 | — | Export resampling through a windowed sinc instead of linear interpolation | Unreleased (`1372510`) |

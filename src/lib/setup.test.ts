@@ -41,6 +41,9 @@ describe('setup and queue storage', () => {
 
   it('defaults the audio format to opus and keeps a saved one', () => {
     expect(loadSettings().defaultExportFormat).toBe('opus')
+    expect(loadSettings().defaultOpusBitrateKbps).toBe(128)
+    expect(loadSettings().defaultVorbisQuality).toBe(6)
+    expect(loadSettings().defaultMp3BitrateKbps).toBe(320)
 
     saveSettings({ ...loadSettings(), defaultExportFormat: 'flac' })
     expect(loadSettings().defaultExportFormat).toBe('flac')

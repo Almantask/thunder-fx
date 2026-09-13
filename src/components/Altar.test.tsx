@@ -19,6 +19,8 @@ const props = {
   sampleRate: 44100 as const,
   bitDepth: 16 as const,
   mono: false,
+  bitrateKbps: 128,
+  vorbisQuality: 6,
   onPlay: vi.fn(),
   onStop: vi.fn(),
   onLoop: vi.fn(),
@@ -28,6 +30,8 @@ const props = {
   onFormat: vi.fn(),
   onSampleRate: vi.fn(),
   onBitDepth: vi.fn(),
+  onBitrateKbps: vi.fn(),
+  onVorbisQuality: vi.fn(),
   onMono: vi.fn(),
   onExport: vi.fn(),
   onExportFormat: vi.fn(),
@@ -57,6 +61,7 @@ describe('Altar', () => {
     expect(onSampleRate).toHaveBeenCalledWith(48000)
     await user.selectOptions(screen.getByLabelText(/bit depth/i), '24')
     expect(onBitDepth).toHaveBeenCalledWith(24)
+    expect(screen.getByRole('option', { name: /24-bit container \(16-bit content\)/i })).toBeInTheDocument()
     await user.click(screen.getByLabelText(/mono downmix/i))
     expect(onMono).toHaveBeenCalledWith(true)
   })
@@ -80,7 +85,7 @@ describe('Altar', () => {
         <Altar {...props} format="mp3" onExport={onExport} />
       </TooltipProvider>,
     )
-    await user.click(screen.getByRole('button', { name: /export mp3 320/i }))
+    await user.click(screen.getByRole('button', { name: /export mp3/i }))
     expect(onExport).toHaveBeenCalled()
   })
 
@@ -110,5 +115,26 @@ describe('Altar', () => {
     await user.click(screen.getByRole('button', { name: /more formats/i }))
     await user.click(screen.getByRole('menuitem', { name: /export flac/i }))
     expect(onExportFormat).toHaveBeenCalledWith('flac')
+  })
+
+  it('offers bitrate for opus and quality for vorbis', async () => {
+    const user = userEvent.setup()
+    const onBitrateKbps = vi.fn()
+    const { rerender } = render(
+      <TooltipProvider>
+        <Altar {...props} format="opus" bitrateKbps={128} onBitrateKbps={onBitrateKbps} />
+      </TooltipProvider>,
+    )
+    await user.selectOptions(screen.getByLabelText(/export bitrate/i), '192')
+    expect(onBitrateKbps).toHaveBeenCalledWith(192)
+
+    const onVorbisQuality = vi.fn()
+    rerender(
+      <TooltipProvider>
+        <Altar {...props} format="ogg" vorbisQuality={6} onVorbisQuality={onVorbisQuality} />
+      </TooltipProvider>,
+    )
+    await user.selectOptions(screen.getByLabelText(/vorbis quality/i), '8')
+    expect(onVorbisQuality).toHaveBeenCalledWith(8)
   })
 })

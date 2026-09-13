@@ -47,7 +47,13 @@ import {
   type QualityPreset,
 } from '@/lib/qualityPreset'
 import type { AudioFormat, BitDepthOption, SampleRateOption } from '@/lib/audioExport'
-import { formatNeedsDesktop, prepareExportWav, resolveDefaultFormat } from '@/lib/audioExport'
+import {
+  defaultBitrateKbps,
+  formatNeedsDesktop,
+  needsBitrate,
+  prepareExportWav,
+  resolveDefaultFormat,
+} from '@/lib/audioExport'
 import {
   clipFilename,
   isUuidOrSymbol,
@@ -69,6 +75,7 @@ import {
   type LibraryFilter,
 } from '@/lib/clipMeta'
 import { createClipMetaStore } from '@/lib/clipMetaStore'
+import { SidecarCorruptError } from '@/lib/sidecarFile'
 import { createDiskTrash, createMemoryTrash, type TrashEntry } from '@/lib/trash'
 import {
   applyFade,
@@ -125,7 +132,7 @@ import {
   type RunTrack,
 } from '@/lib/runTiming'
 import type { QueueCostItem } from '@/lib/perfBenchmarks'
-import type { Clip, EngineStatus, GenerateMode, KeepSettings, KeepTab, WeavePhase } from '@/lib/types'
+import type { Clip, EngineStatus, GenerateMode, KeepSettings, KeepTab, WeaveUiState } from '@/lib/types'
 import { isTauri } from '@/lib/utils'
 
 import { extractInstruments, musicWavInfo } from '@/lib/instruments'
@@ -154,12 +161,12 @@ export function Studio() {
   const [query, setQuery] = useState('')
   const [weaving, setWeaving] = useState(false)
   const [loadingModel, setLoadingModel] = useState(false)
-  const [rite, setRite] = useState(0)
-  const [totalRites, setTotalRites] = useState(() => settings.qualitySteps ?? 20)
-  const [elapsedMs, setElapsedMs] = useState(0)
-  const [weavePhase, setWeavePhase] = useState<WeavePhase>('weaving')
-
-  const [weaveRatio, setWeaveRatio] = useState<number>()
+  const [weave, setWeave] = useState<WeaveUiState>(() => ({
+    rite: 0,
+    totalRites: settings.qualitySteps ?? 20,
+    elapsedMs: 0,
+    phase: 'weaving',
+  }))
   const [error, setError] = useState<string>()
   const [trimStart, setTrimStart] = useState(0)
   const [trimEnd, setTrimEnd] = useState(8)
@@ -171,6 +178,10 @@ export function Studio() {
   const [sampleRate, setSampleRate] = useState<SampleRateOption>(44100)
   const [bitDepth, setBitDepth] = useState<BitDepthOption>(16)
   const [mono, setMono] = useState(false)
+  const [bitrateKbps, setBitrateKbps] = useState(() =>
+    defaultBitrateKbps(resolveDefaultFormat(settings.defaultExportFormat, isTauri())),
+  )
+  const [vorbisQuality, setVorbisQuality] = useState(() => settings.defaultVorbisQuality)
   // Off by default: looping is a deliberate choice, not something a mode
   // switch turns on behind the user's back.
   const [generateSeamlessLoop, setGenerateSeamlessLoop] = useState(false)
@@ -276,8 +287,14 @@ export function Studio() {
         }
       : mockStatus(),
   )
+  const weavingRef = useRef(false)
+  const loadingModelRef = useRef(false)
+  const engineLoadedRef = useRef(false)
   engineMockRef.current = engine.mock
-  const clipDuration = wav ? wavDurationSeconds(wav) : duration
+  weavingRef.current = weaving
+  loadingModelRef.current = loadingModel
+  engineLoadedRef.current = engine.loaded
+  const clipDuration = useMemo(() => (wav ? wavDurationSeconds(wav) : duration), [wav, duration])
   const activeClip = selectedId ? clipsById.get(selectedId) : undefined
 
   // The steps slider no longer drives generation on its own, so time estimates
@@ -563,8 +580,26 @@ export function Studio() {
   }, [settings.libraryDir])
 
   useEffect(() => {
-    void metaStore.load().then(setMeta)
+    void metaStore.load().then(setMeta).catch((err: unknown) => {
+      if (err instanceof SidecarCorruptError) {
+        toast.error('Clip metadata file is unreadable.', {
+          description: err.message,
+          action: {
+            label: 'Start fresh',
+            onClick: () => {
+              metaStore.acknowledgeCorrupt()
+              setMeta({})
+            },
+          },
+        })
+        return
+      }
+      reportError(err, 'Could not load clip metadata')
+    })
     void refreshTrash()
+    return () => {
+      void metaStore.flush()
+    }
   }, [metaStore, trashStore])
 
   useEffect(() => {
@@ -579,10 +614,42 @@ export function Studio() {
 
   useEffect(() => {
     if (!isTauri()) return
-    const id = window.setInterval(() => {
-      void refreshEngine()
-    }, 4000)
-    return () => window.clearInterval(id)
+    let cancelled = false
+    let timer = 0
+
+    function delayMs(): number {
+      if (weavingRef.current || loadingModelRef.current) return 30_000
+      if (typeof document !== 'undefined' && document.hasFocus() && engineLoadedRef.current) {
+        return 4_000
+      }
+      return 20_000
+    }
+
+    async function tick() {
+      if (cancelled) return
+      const busy = weavingRef.current || loadingModelRef.current
+      if (!busy) {
+        await refreshEngine()
+      }
+      if (cancelled) return
+      timer = window.setTimeout(() => {
+        void tick()
+      }, delayMs())
+    }
+
+    void tick()
+    const onFocusChange = () => {
+      window.clearTimeout(timer)
+      void tick()
+    }
+    window.addEventListener('focus', onFocusChange)
+    window.addEventListener('blur', onFocusChange)
+    return () => {
+      cancelled = true
+      window.clearTimeout(timer)
+      window.removeEventListener('focus', onFocusChange)
+      window.removeEventListener('blur', onFocusChange)
+    }
   }, [])
 
   useEffect(() => {
@@ -755,10 +822,13 @@ export function Studio() {
     if (loadingModel || weaving || engine.loaded) return
     setError(undefined)
     setLoadingModel(true)
-    setRite(0)
-    setElapsedMs(0)
-    setWeavePhase('loading')
-    setWeaveRatio(undefined)
+    setWeave((current) => ({
+      ...current,
+      rite: 0,
+      elapsedMs: 0,
+      phase: 'loading',
+      ratio: undefined,
+    }))
     const started = Date.now()
     weaveStartedRef.current = started
     runRef.current = startRun('load', { at: started })
@@ -772,9 +842,12 @@ export function Studio() {
             kind: 'load',
             startedAt: started,
           })
-          setElapsedMs(now - started)
-          setWeaveRatio(ratio)
-          setWeavePhase('loading')
+          setWeave((current) => ({
+            ...current,
+            elapsedMs: now - started,
+            phase: 'loading',
+            ratio,
+          }))
         },
         { signal: controller.signal, precision: settings.precision },
       )
@@ -819,9 +892,12 @@ export function Studio() {
     try {
       await loadModel(
         (ratio) => {
-          setElapsedMs(Date.now() - started)
-          setWeaveRatio(ratio)
-          setWeavePhase('loading')
+          setWeave((current) => ({
+            ...current,
+            elapsedMs: Date.now() - started,
+            phase: 'loading',
+            ratio,
+          }))
         },
         { precision: settings.precision, model: BASE_MODEL },
       )
@@ -890,11 +966,12 @@ export function Studio() {
     const currentSteps = runPlan.steps
     setError(undefined)
     if (manageBusy) setWeaving(true)
-    setRite(0)
-    setTotalRites(currentSteps)
-    setElapsedMs(0)
-    setWeavePhase('weaving')
-    setWeaveRatio(undefined)
+    setWeave({
+      rite: 0,
+      totalRites: currentSteps,
+      elapsedMs: 0,
+      phase: 'weaving',
+    })
     const startedAt = Date.now()
     weaveStartedRef.current = startedAt
     runRef.current = startRun('generate', {
@@ -932,11 +1009,13 @@ export function Studio() {
               seconds: request.seconds,
               totalSteps: currentSteps,
             })
-            setRite(p.step)
-            if (p.total) setTotalRites(p.total)
-            setElapsedMs(p.elapsedMs)
-            if (p.phase) setWeavePhase(p.phase)
-            setWeaveRatio(p.ratio)
+            setWeave({
+              rite: p.step,
+              totalRites: p.total || currentSteps,
+              elapsedMs: p.elapsedMs,
+              phase: p.phase ?? 'weaving',
+              ratio: p.ratio,
+            })
           },
         },
       )
@@ -1219,6 +1298,8 @@ export function Studio() {
         sampleRate,
         bitDepth,
         mono,
+        bitrateKbps: needsBitrate(format) ? bitrateKbps : undefined,
+        vorbisQuality: format === 'ogg' ? vorbisQuality : undefined,
         defaultDir: settings.defaultExportDir,
       })
       toast.success(`${format.toUpperCase()} saved.`, { description: path ?? name })
@@ -1232,7 +1313,12 @@ export function Studio() {
   // rather than waiting for the next launch.
   function applySettings(next: KeepSettings) {
     if (next.defaultExportFormat !== settings.defaultExportFormat) {
-      setExportFmt(resolveDefaultFormat(next.defaultExportFormat, isTauri()))
+      const format = resolveDefaultFormat(next.defaultExportFormat, isTauri())
+      setExportFmt(format)
+      if (needsBitrate(format)) {
+        setBitrateKbps(format === 'opus' ? next.defaultOpusBitrateKbps : next.defaultMp3BitrateKbps)
+      }
+      if (format === 'ogg') setVorbisQuality(next.defaultVorbisQuality)
     }
     setSettings(next)
   }
@@ -1415,7 +1501,13 @@ export function Studio() {
       const batch = crypto.randomUUID()
       for (const file of files) {
         const dest = joinPath(temp, `thunder-fx-pack-${batch}-${file.name}`)
-        await writeEncodedFile({ buffer: file.buffer, path: dest, format: request.format })
+        await writeEncodedFile({
+          buffer: file.buffer,
+          path: dest,
+          format: request.format,
+          bitrateKbps: needsBitrate(request.format) ? bitrateKbps : undefined,
+          vorbisQuality: request.format === 'ogg' ? vorbisQuality : undefined,
+        })
         encodedPaths.push({ path: dest, name: file.name })
       }
     }
@@ -1482,7 +1574,7 @@ export function Studio() {
         }
         weaving={weaving}
         loadingModel={loadingModel}
-        weavePhase={weavePhase}
+        weavePhase={weave.phase}
         tab={tab}
         onTabChange={setTab}
         vramUsedGb={engine.vramUsedGb}
@@ -1549,12 +1641,12 @@ export function Studio() {
               weaving={weaving}
               loadingModel={loadingModel}
               modelLoaded={engine.loaded}
-              rite={rite}
-              totalRites={totalRites}
-              elapsedMs={elapsedMs}
+              rite={weave.rite}
+              totalRites={weave.totalRites}
+              elapsedMs={weave.elapsedMs}
               startedAt={weaveStartedRef.current}
-              phase={weavePhase}
-              ratio={weaveRatio}
+              phase={weave.phase}
+              ratio={weave.ratio}
               mode={mode}
               seed={activeClip?.seed}
               completedSubcategoryCount={completedSubcategoryCount}
@@ -1587,6 +1679,8 @@ export function Studio() {
               sampleRate={sampleRate}
               bitDepth={bitDepth}
               mono={mono}
+              bitrateKbps={bitrateKbps}
+              vorbisQuality={vorbisQuality}
               onPlay={togglePlay}
               onStop={() => {
                 playbackRef.current?.stop()
@@ -1597,9 +1691,18 @@ export function Studio() {
               onTrimStart={(v) => setTrimStart(Math.max(0, Math.min(v, trimEnd - 0.05)))}
               onTrimEnd={(v) => setTrimEnd(Math.min(clipDuration, Math.max(v, trimStart + 0.05)))}
               onAutoTrim={autoTrimSilence}
-              onFormat={setExportFmt}
+              onFormat={(value) => {
+                setExportFmt(value)
+                if (needsBitrate(value)) {
+                  setBitrateKbps(
+                    value === 'opus' ? settings.defaultOpusBitrateKbps : settings.defaultMp3BitrateKbps,
+                  )
+                }
+              }}
               onSampleRate={setSampleRate}
               onBitDepth={setBitDepth}
+              onBitrateKbps={setBitrateKbps}
+              onVorbisQuality={setVorbisQuality}
               onMono={setMono}
               onExport={() => void exportSelectedFormat()}
               onExportFormat={(format) => void exportFormat(format)}

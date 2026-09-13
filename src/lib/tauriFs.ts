@@ -63,6 +63,19 @@ export async function writeTextFile(path: string, text: string): Promise<void> {
   await writeFileBytes(path, toArrayBuffer(encoded))
 }
 
+/** Atomic write for JSON sidecars: tmp + fsync + rename, with a `.bak`. */
+export async function writeTextFileAtomic(path: string, text: string): Promise<void> {
+  if (!isTauri()) {
+    await writeTextFile(path, text)
+    return
+  }
+  const { invoke } = await core()
+  const encoded = new TextEncoder().encode(text)
+  await invoke('write_file_atomic', new Uint8Array(encoded), {
+    headers: { 'x-thunder-path': encodePathHeader(path) },
+  })
+}
+
 export async function copyFile(src: string, dest: string): Promise<void> {
   const { invoke } = await core()
   await invoke('copy_file', { src, dest })

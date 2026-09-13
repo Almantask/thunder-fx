@@ -68,6 +68,7 @@ describe('SettingsPanel', () => {
   it('warns that a compressed default falls back to wav in the browser', () => {
     renderPanel({ ...DEFAULT_SETTINGS, defaultExportFormat: 'mp3' })
     expect(screen.getByText(/needs the desktop app/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/default bitrate/i)).toHaveValue('320')
   })
 
   it('defaults to fp16 and lets you switch to full precision', async () => {

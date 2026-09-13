@@ -10,6 +10,7 @@ commands.allow = [
   "engine_warmup",
   "engine_unload",
   "write_file",
+  "write_file_atomic",
   "read_file",
   "copy_file",
   "delete_file",
@@ -21,6 +22,9 @@ commands.allow = [
   "error_log_path",
   "library_path",
   "read_error_log",
+  "move_file",
+  "reveal_path",
+  "set_library_dir",
   "scan_library_dir",
   "scan_library_categories",
   "scan_folder_tracks"

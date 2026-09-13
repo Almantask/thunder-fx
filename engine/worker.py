@@ -226,7 +226,46 @@ def _try_load_model(precision: str = "fp16", model_name: str = DEFAULT_MODEL):
             pass
         _model_precision = wanted
         _model_name = model_name
+        apply_inference_matmul_settings()
         return _model
+
+
+def apply_inference_matmul_settings() -> bool:
+    """Restore TF32 and cuDNN autotune after the library turns them off.
+
+    Those flags are training-time safety defaults. Inference wants the tensor
+    cores. `THUNDER_FX_TF32=0` turns this back off for a bit-exact A/B.
+    """
+    flag = os.environ.get("THUNDER_FX_TF32", "1").strip().lower()
+    if flag in {"0", "false", "no", "off"}:
+        return False
+    try:
+        import torch
+
+        torch.backends.cuda.matmul.allow_tf32 = True
+        torch.backends.cudnn.allow_tf32 = True
+        torch.backends.cudnn.benchmark = True
+        torch.set_float32_matmul_precision("high")
+        return True
+    except Exception:
+        return False
+
+
+def duration_padding_sec(mode: str) -> float:
+    """Seconds of extra latent `generate` denoises and then throws away."""
+    return DURATION_PADDING_SEC.get(mode, DEFAULT_DURATION_PADDING_SEC)
+
+
+def _call_model_generate(model, kwargs: dict):
+    """Pass only kwargs `generate` actually accepts, plus `**kwargs` if it has them."""
+    try:
+        params = inspect.signature(model.generate).parameters
+        accepts_var_kw = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values())
+        if not accepts_var_kw:
+            kwargs = {key: value for key, value in kwargs.items() if key in params}
+    except (TypeError, ValueError):
+        pass
+    return model.generate(**kwargs)
 
 
 def _python_float(value, default: float) -> float:
@@ -754,6 +793,11 @@ def _to_stereo_cpu(audio):
 # so they sit under dialogue the same way every time.
 TARGET_PEAK = 0.89125  # -1.0 dBFS
 LOUDNESS_TARGETS = {"ambience": -20.0, "music": -18.0}
+# Extra latent the sampler denoises, then truncates. The library default is 6 s,
+# which is most of the work on a short one-shot. 0.5 s is enough for a one-shot
+# tail to decay; beds get 1 s so a long swell can finish past the cut.
+DURATION_PADDING_SEC = {"sfx": 0.5, "ambience": 1.0, "music": 1.0}
+DEFAULT_DURATION_PADDING_SEC = 0.5
 # Below this there is no signal worth normalizing, only decode noise.
 SILENCE_FLOOR_DBFS = -60.0
 MAX_LOUDNESS_GAIN_DB = 24.0
@@ -1717,18 +1761,20 @@ def _generate_body(msg: dict) -> None:
             # counter carried over from the failed attempt would report a run
             # that is further along than it is.
             hook = _cancel_hook_kwargs(heartbeat, steps)
-            return model.generate(
-                prompt=model_prompt,
-                duration=gen_seconds,
-                steps=steps,
-                seed=seed,
-                cfg_scale=cfg,
-                negative_prompt=model_negative if negative_active else None,
-                sample_size=sample_size,
-                sampler_type=sampler,
-                chunked_decode=use_chunked,
-                **hook,
-            )
+            kwargs = {
+                "prompt": model_prompt,
+                "duration": gen_seconds,
+                "steps": steps,
+                "seed": seed,
+                "cfg_scale": cfg,
+                "negative_prompt": model_negative if negative_active else None,
+                "sample_size": sample_size,
+                "sampler_type": sampler,
+                "chunked_decode": use_chunked,
+                "duration_padding_sec": duration_padding_sec(mode_str),
+            }
+            kwargs.update(hook)
+            return _call_model_generate(model, kwargs)
 
         try:
             audio = run_generate(chunked)
@@ -1883,10 +1929,91 @@ def _downmix_mono(data):
 # Opus is defined only for these rates; libsndfile refuses anything else
 # instead of resampling for us.
 OPUS_RATES = (8000, 12000, 16000, 24000, 48000)
+DEFAULT_OPUS_BITRATE_KBPS = 128
+DEFAULT_VORBIS_QUALITY = 6.0
+DEFAULT_MP3_BITRATE_KBPS = 320
 
 
-def _write_mp3(data, sr: int, dest: Path) -> None:
+def _clamp_int(value, default: int, lo: int, hi: int) -> int:
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        parsed = default
+    return max(lo, min(hi, parsed))
+
+
+def _clamp_float(value, default: float, lo: float, hi: float) -> float:
+    try:
+        parsed = float(value)
+    except (TypeError, ValueError):
+        parsed = default
+    if not math.isfinite(parsed):
+        parsed = default
+    return max(lo, min(hi, parsed))
+
+
+def lossy_encode_ffmpeg_args(
+    fmt: str,
+    *,
+    bitrate_kbps: int,
+    quality: float,
+) -> list[str]:
+    """Encoder flags for a lossy export. Bitrate is kbps CBR/VBR target."""
+    if fmt == "opus":
+        return ["-c:a", "libopus", "-b:a", f"{int(bitrate_kbps)}k", "-vbr", "on"]
+    if fmt == "ogg":
+        return ["-c:a", "libvorbis", "-q:a", f"{quality:g}"]
+    if fmt == "mp3":
+        return ["-c:a", "libmp3lame", "-b:a", f"{int(bitrate_kbps)}k"]
+    raise RuntimeError(f"Unsupported lossy format: {fmt}")
+
+
+def _ffmpeg_bin() -> str | None:
+    import shutil
+
+    return shutil.which("ffmpeg")
+
+
+def _ffmpeg_write(data, sr: int, dest: Path, codec_args: list[str]) -> None:
+    import subprocess
+    import tempfile
+
+    ffmpeg = _ffmpeg_bin()
+    if not ffmpeg:
+        raise RuntimeError("ffmpeg is not on PATH")
+    import soundfile as sf
+
+    tmp_path = ""
     dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
+            tmp_path = tmp.name
+        sf.write(tmp_path, data, sr, format="WAV", subtype="PCM_16")
+        subprocess.run(
+            [ffmpeg, "-y", "-i", tmp_path, *codec_args, str(dest)],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    finally:
+        if tmp_path:
+            Path(tmp_path).unlink(missing_ok=True)
+
+
+def _soundfile_write(dest: Path, data, sr: int, **kwargs) -> None:
+    import soundfile as sf
+
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        sf.write(str(dest), data, sr, **kwargs)
+    except TypeError:
+        kwargs.pop("compression_level", None)
+        sf.write(str(dest), data, sr, **kwargs)
+
+
+def _write_mp3(data, sr: int, dest: Path, bitrate_kbps: int = DEFAULT_MP3_BITRATE_KBPS) -> str:
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    codec_args = lossy_encode_ffmpeg_args("mp3", bitrate_kbps=bitrate_kbps, quality=0)
     try:
         import torch
         import torchaudio
@@ -1896,40 +2023,25 @@ def _write_mp3(data, sr: int, dest: Path) -> None:
             tensor = tensor.unsqueeze(0)
         else:
             tensor = tensor.T.contiguous() if tensor.shape[1] <= 8 else tensor.contiguous()
-        torchaudio.save(str(dest), tensor.float(), sr, format="mp3")
-        return
+        torchaudio.save(
+            str(dest),
+            tensor.float(),
+            sr,
+            format="mp3",
+            compression=float(bitrate_kbps),
+        )
+        return "torchaudio-mp3"
     except Exception:
         pass
-    import shutil
-    import subprocess
-    import tempfile
+    if _ffmpeg_bin():
+        _ffmpeg_write(data, sr, dest, codec_args)
+        return "ffmpeg-libmp3lame"
+    import soundfile as sf
 
-    ffmpeg = shutil.which("ffmpeg")
-    if not ffmpeg:
-        # libsndfile 1.1+ writes MP3 itself. No bitrate control, so this is the
-        # fallback rather than the first choice for a 320 kbps export.
-        import soundfile as sf
-
-        if "MP3" in sf.available_formats():
-            sf.write(str(dest), data, sr, format="MP3", subtype="MPEG_LAYER_III")
-            return
-        raise RuntimeError("MP3 export needs ffmpeg on PATH (320 kbps CBR).")
-    tmp_path = ""
-    try:
-        import soundfile as sf
-
-        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-            tmp_path = tmp.name
-        sf.write(tmp_path, data, sr, format="WAV", subtype="PCM_16")
-        subprocess.run(
-            [ffmpeg, "-y", "-i", tmp_path, "-codec:a", "libmp3lame", "-b:a", "320k", str(dest)],
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-    finally:
-        if tmp_path:
-            Path(tmp_path).unlink(missing_ok=True)
+    if "MP3" in sf.available_formats():
+        _soundfile_write(dest, data, sr, format="MP3", subtype="MPEG_LAYER_III")
+        return "libsndfile-mp3"
+    raise RuntimeError(f"MP3 export needs ffmpeg on PATH ({bitrate_kbps} kbps CBR).")
 
 
 def cmd_encode_audio(msg: dict) -> None:
@@ -1949,6 +2061,18 @@ def cmd_encode_audio(msg: dict) -> None:
         bit_depth = int(msg.get("bit_depth") or msg.get("bitDepth") or 16)
     except (TypeError, ValueError):
         bit_depth = 16
+    bitrate = _clamp_int(
+        msg.get("bitrate") or msg.get("bitrateKbps"),
+        DEFAULT_OPUS_BITRATE_KBPS if fmt == "opus" else DEFAULT_MP3_BITRATE_KBPS,
+        16,
+        512,
+    )
+    quality = _clamp_float(
+        msg.get("quality") if msg.get("quality") is not None else msg.get("vorbisQuality"),
+        DEFAULT_VORBIS_QUALITY,
+        0.0,
+        10.0,
+    )
     mono = str(msg.get("mono") or "").strip().lower() in {"1", "true", "yes"}
     if not dest_path:
         _emit_error(msg_id, "encode_audio missing dest_path")
@@ -1962,12 +2086,41 @@ def cmd_encode_audio(msg: dict) -> None:
         if sample_rate > 0 and sample_rate != sr:
             data, sr = _resample_audio(data, int(sr), sample_rate)
         dest_path.parent.mkdir(parents=True, exist_ok=True)
+        encoder = "libsndfile"
         if fmt == "ogg":
-            sf.write(str(dest_path), data, sr, format="OGG", subtype="VORBIS")
+            codec_args = lossy_encode_ffmpeg_args("ogg", bitrate_kbps=bitrate, quality=quality)
+            if _ffmpeg_bin():
+                _ffmpeg_write(data, int(sr), dest_path, codec_args)
+                encoder = "ffmpeg-libvorbis"
+            else:
+                _soundfile_write(
+                    dest_path,
+                    data,
+                    sr,
+                    format="OGG",
+                    subtype="VORBIS",
+                    compression_level=quality / 10.0,
+                )
+                encoder = "libsndfile-vorbis"
         elif fmt == "opus":
             if int(sr) not in OPUS_RATES:
                 data, sr = _resample_audio(data, int(sr), 48000)
-            sf.write(str(dest_path), data, sr, format="OGG", subtype="OPUS")
+            codec_args = lossy_encode_ffmpeg_args("opus", bitrate_kbps=bitrate, quality=quality)
+            if _ffmpeg_bin():
+                _ffmpeg_write(data, int(sr), dest_path, codec_args)
+                encoder = "ffmpeg-libopus"
+            else:
+                # libsndfile Opus: compression_level 0–10 maps onto bitrate.
+                level = max(0.0, min(10.0, (bitrate - 16) / 48.0))
+                _soundfile_write(
+                    dest_path,
+                    data,
+                    sr,
+                    format="OGG",
+                    subtype="OPUS",
+                    compression_level=level,
+                )
+                encoder = "libsndfile-opus"
         elif fmt == "flac":
             subtype = "PCM_24" if bit_depth >= 24 else "PCM_16"
             sf.write(str(dest_path), data, sr, format="FLAC", subtype=subtype)
@@ -1978,10 +2131,21 @@ def cmd_encode_audio(msg: dict) -> None:
             subtype = "PCM_24" if bit_depth >= 24 else "PCM_16"
             sf.write(str(dest_path), data, sr, format="AIFF", subtype=subtype)
         elif fmt == "mp3":
-            _write_mp3(data, int(sr), dest_path)
+            encoder = _write_mp3(data, int(sr), dest_path, bitrate_kbps=bitrate)
         else:
             raise RuntimeError(f"Unsupported export format: {fmt}")
-        _emit({"id": msg_id, "event": "done", "path": str(dest_path), "format": fmt})
+        done = {
+            "id": msg_id,
+            "event": "done",
+            "path": str(dest_path),
+            "format": fmt,
+            "encoder": encoder,
+        }
+        if fmt in {"opus", "mp3"}:
+            done["bitrate"] = bitrate
+        if fmt == "ogg":
+            done["quality"] = quality
+        _emit(done)
     except Exception as exc:  # noqa: BLE001
         _emit_error(msg_id, str(exc), exc, context={"cmd": "encode_audio", "format": fmt})
 

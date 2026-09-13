@@ -12,7 +12,7 @@ import {
 } from '@/lib/goblinBand'
 import type { GenerateMode, WeavePhase } from '@/lib/types'
 import { formatClock } from '@/lib/utils'
-import { waveformPeaks } from '@/lib/wav'
+import { waveformPeaks, type WaveformPeaks } from '@/lib/wav'
 import { weaveBarPercent, weaveBusyStatus } from '@/lib/weaveProgress'
 
 type ScrollCanvasProps = {
@@ -74,7 +74,7 @@ export function ScrollCanvas({
   const busy = weaving || loadingModel
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const statusRef = useRef<HTMLSpanElement>(null)
-  const peaksRef = useRef<Float32Array>(new Float32Array(0))
+  const peaksRef = useRef<WaveformPeaks>({ min: new Float32Array(0), max: new Float32Array(0) })
   const riteRef = useRef(rite)
   const phaseRef = useRef<WeavePhase | undefined>(loadingModel ? 'loading' : phase)
   const ratioRef = useRef(ratio)
@@ -177,7 +177,7 @@ export function ScrollCanvas({
   })
 
   useEffect(() => {
-    peaksRef.current = wav ? waveformPeaks(wav, 240) : new Float32Array(0)
+    peaksRef.current = wav ? waveformPeaks(wav, 240) : { min: new Float32Array(0), max: new Float32Array(0) }
   }, [wav])
 
   const shouldAnimate = busy || targetVisualState !== 'hidden' || transitionRef.current !== null
@@ -194,13 +194,16 @@ export function ScrollCanvas({
       ctx.fillRect(0, 0, width, height)
       const peaks = peaksRef.current
       const mid = height / 2
-      if (!peaks.length) return
-      const bar = width / peaks.length
+      if (!peaks.max.length) return
+      const bar = width / peaks.max.length
       ctx.fillStyle = '#c4a35a'
-      for (let i = 0; i < peaks.length; i += 1) {
-        const h = Math.max(2, peaks[i] * (height * 0.78))
+      for (let i = 0; i < peaks.max.length; i += 1) {
+        const hi = Math.max(0, peaks.max[i] ?? 0) * (height * 0.39)
+        const lo = Math.max(0, -(peaks.min[i] ?? 0)) * (height * 0.39)
+        const top = mid - Math.max(1, hi)
+        const h = Math.max(2, hi + lo)
         ctx.globalAlpha = 0.85
-        ctx.fillRect(i * bar, mid - h / 2, Math.max(1, bar - 1), h)
+        ctx.fillRect(i * bar, top, Math.max(1, bar - 1), h)
       }
       ctx.globalAlpha = 1
       const x0 = (trimStart / duration) * width

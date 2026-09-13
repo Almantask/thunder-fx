@@ -13,8 +13,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
   AUDIO_FORMATS,
+  bitDepthLabel,
   formatLabel,
   isLosslessFormat,
+  needsBitrate,
+  needsVorbisQuality,
   type AudioFormat,
   type BitDepthOption,
   type SampleRateOption,
@@ -33,6 +36,8 @@ type AltarProps = {
   sampleRate: SampleRateOption
   bitDepth: BitDepthOption
   mono: boolean
+  bitrateKbps: number
+  vorbisQuality: number
   onPlay: () => void
   onStop: () => void
   onLoop: (loop: boolean) => void
@@ -42,6 +47,8 @@ type AltarProps = {
   onFormat: (value: AudioFormat) => void
   onSampleRate: (value: SampleRateOption) => void
   onBitDepth: (value: BitDepthOption) => void
+  onBitrateKbps: (value: number) => void
+  onVorbisQuality: (value: number) => void
   onMono: (value: boolean) => void
   onExport: () => void
   onExportFormat: (format: AudioFormat) => void
@@ -68,6 +75,8 @@ export function Altar({
   sampleRate,
   bitDepth,
   mono,
+  bitrateKbps,
+  vorbisQuality,
   onPlay,
   onStop,
   onLoop,
@@ -77,6 +86,8 @@ export function Altar({
   onFormat,
   onSampleRate,
   onBitDepth,
+  onBitrateKbps,
+  onVorbisQuality,
   onMono,
   onExport,
   onExportFormat,
@@ -212,7 +223,7 @@ export function Altar({
             </select>
           </div>
         </Hint>
-        <Hint className="w-full flex-col" label="16-bit PCM is the baseline. 24-bit is the game-engine and video master.">
+        <Hint className="w-full flex-col" label="16-bit PCM is the baseline. 24-bit currently writes a 24-bit container whose low byte is zeros; a float master is not stored yet.">
           <div className="w-full">
             <Label htmlFor="bit-depth">Bits</Label>
             <select
@@ -222,12 +233,59 @@ export function Altar({
               onChange={(e) => onBitDepth(Number(e.target.value) as BitDepthOption)}
               aria-label="Bit depth"
             >
-              <option value={16}>16-bit</option>
-              <option value={24}>24-bit</option>
+              <option value={16}>{bitDepthLabel(16)}</option>
+              <option value={24}>{bitDepthLabel(24)}</option>
             </select>
           </div>
         </Hint>
       </div>
+      {needsBitrate(format) ? (
+        <Hint
+          className="w-full flex-col"
+          label={
+            format === 'opus'
+              ? 'Opus VBR target. 128 kbps stereo is transparent for most game audio.'
+              : 'MP3 CBR. 320 kbps is the default; lower saves size.'
+          }
+        >
+          <div className="w-full">
+            <Label htmlFor="export-bitrate">Bitrate</Label>
+            <select
+              id="export-bitrate"
+              className={selectClass}
+              value={bitrateKbps}
+              onChange={(e) => onBitrateKbps(Number(e.target.value))}
+              aria-label="Export bitrate"
+            >
+              {[64, 96, 128, 160, 192, 256, 320].map((kbps) => (
+                <option key={kbps} value={kbps}>
+                  {kbps} kbps
+                </option>
+              ))}
+            </select>
+          </div>
+        </Hint>
+      ) : null}
+      {needsVorbisQuality(format) ? (
+        <Hint className="w-full flex-col" label="Vorbis quality 0–10. q6 is the default; higher is larger and cleaner.">
+          <div className="w-full">
+            <Label htmlFor="vorbis-quality">Vorbis quality</Label>
+            <select
+              id="vorbis-quality"
+              className={selectClass}
+              value={vorbisQuality}
+              onChange={(e) => onVorbisQuality(Number(e.target.value))}
+              aria-label="Vorbis quality"
+            >
+              {[0, 2, 4, 6, 8, 10].map((q) => (
+                <option key={q} value={q}>
+                  q{q}
+                </option>
+              ))}
+            </select>
+          </div>
+        </Hint>
+      ) : null}
       {formatCaveat ? <p className="text-xs text-muted">{formatCaveat}</p> : null}
       <Hint label="Downmix to one channel for 3D positional emitters in a game engine.">
         <label className="flex items-center gap-2 text-sm text-cream">

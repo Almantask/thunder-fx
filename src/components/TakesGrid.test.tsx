@@ -38,6 +38,7 @@ describe('TakesGrid', () => {
             { clip: clip('c', 13), wav },
             { clip: clip('d', 14), wav },
           ]}
+          parentSeed={4242}
           onOpenChange={vi.fn()}
           onKeep={onKeep}
           onDiscard={onDiscard}
@@ -45,6 +46,7 @@ describe('TakesGrid', () => {
       </TooltipProvider>,
     )
     expect(screen.getByRole('list', { name: /generation takes/i })).toBeInTheDocument()
+    expect(screen.getByText(/four seeds derived from one parent \(4242\)/i)).toBeInTheDocument()
     expect(screen.getAllByRole('button', { name: /keep/i }).length).toBeGreaterThanOrEqual(4)
     await user.click(screen.getByRole('button', { name: /play take 2/i }))
     await user.click(screen.getAllByRole('button', { name: /^keep$/i })[1]!)

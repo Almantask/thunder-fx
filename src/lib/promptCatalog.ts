@@ -2,7 +2,7 @@ import { clampGenerateSeconds } from '@/lib/duration'
 import { clipMode } from '@/lib/generateMode'
 import { extractInstruments, parseInstrumentKeywords } from '@/lib/instruments'
 import type { QualityPreset } from '@/lib/qualityPreset'
-import { randomSeed } from '@/lib/seed'
+import { deriveTakeSeed, randomSeed } from '@/lib/seed'
 import type { Clip } from '@/lib/types'
 
 export type PromptLibrary = 'fx' | 'ambience' | 'music'
@@ -30,6 +30,8 @@ export type CatalogEffect = {
   instruments?: string[]
   /** Explicit seed for this queue entry. Set when queueing more than one take so each take is a distinct variation, regardless of the Generate console's seed field. */
   seed?: number
+  /** Parent of derived take seeds. A take set of four reproduces from this one number. */
+  parentSeed?: number
   /** Quality preset captured when the item was queued, so a queue can mix presets. The Generate queue control can override it for one run. */
   preset?: QualityPreset
 }
@@ -190,19 +192,20 @@ export function clampQueueTakes(takes: number): number {
 /**
  * Expands a single catalog effect into `takes` queue entries. Beyond the
  * first, each entry gets a distinct id (so it survives mergeQueue's dedupe)
- * and an explicit random seed, so every take is a fresh variation no matter
- * what the Generate console's seed field is set to.
+ * and a seed derived from one parent, so a take set reproduces from one number.
  */
 export function expandEffectTakes(effect: CatalogEffect, takes: number): CatalogEffect[] {
   const count = clampQueueTakes(takes)
   if (count <= 1) return [effect]
-  const items: CatalogEffect[] = [{ ...effect, seed: randomSeed() }]
-  for (let n = 2; n <= count; n += 1) {
+  const parent = effect.seed && effect.seed > 0 ? effect.seed : randomSeed()
+  const items: CatalogEffect[] = []
+  for (let n = 1; n <= count; n += 1) {
     items.push({
       ...effect,
-      id: `${effect.id}::take-${n}`,
-      title: `${effect.title} (Take ${n})`,
-      seed: randomSeed(),
+      id: n === 1 ? effect.id : `${effect.id}::take-${n}`,
+      title: n === 1 ? effect.title : `${effect.title} (Take ${n})`,
+      seed: deriveTakeSeed(parent, n - 1),
+      parentSeed: parent,
     })
   }
   return items

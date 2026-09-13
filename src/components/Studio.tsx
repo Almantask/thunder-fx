@@ -39,7 +39,7 @@ import {
   writeEncodedFile,
 } from '@/lib/engine'
 import { copyFile, joinPath, moveFile, tempDir, writeFileBytes, writeTextFile } from '@/lib/tauriFs'
-import { randomSeed } from '@/lib/seed'
+import { deriveTakeSeed, resolveSeed } from '@/lib/seed'
 import {
   BASE_MODEL,
   resolvePresetPlan,
@@ -192,6 +192,7 @@ export function Studio() {
   const [queuePreset, setQueuePreset] = useState<QualityPreset | null>(null)
   const [installingBase, setInstallingBase] = useState(false)
   const [takes, setTakes] = useState<TakeCandidate[]>([])
+  const [takesParentSeed, setTakesParentSeed] = useState<number>()
   const [takesOpen, setTakesOpen] = useState(false)
   const [playhead, setPlayhead] = useState(0)
   const [tab, setTab] = useState<KeepTab>('generate')
@@ -1157,12 +1158,15 @@ export function Studio() {
     setPrompt(requestPrompt)
     if (!negative.trim() && requestNegative) setNegative(requestNegative)
     setTakes([])
+    setTakesParentSeed(undefined)
     setTakesOpen(false)
     setWeaving(true)
     const collected: TakeCandidate[] = []
+    const parsedParent = Number(seed)
+    const parentSeed = resolveSeed(Number.isFinite(parsedParent) ? parsedParent : -1)
     try {
       for (let i = 0; i < 4; i += 1) {
-        const seedValue = randomSeed()
+        const seedValue = deriveTakeSeed(parentSeed, i)
         const outcome = await generateOne(
           {
             prompt: requestPrompt,
@@ -1185,6 +1189,7 @@ export function Studio() {
         if (outcome !== 'ok') break
       }
       if (collected.length) {
+        setTakesParentSeed(parentSeed)
         setTakes(collected)
         setTakesOpen(true)
       }
@@ -1826,6 +1831,7 @@ export function Studio() {
       <TakesGrid
         open={takesOpen}
         takes={takes}
+        parentSeed={takesParentSeed}
         onOpenChange={setTakesOpen}
         onKeep={(ids) => {
           const kept = takes.filter((take) => ids.includes(take.clip.id))

@@ -34,6 +34,11 @@ import wave
 from contextlib import contextmanager
 from pathlib import Path
 
+# Must land before the first CUDA context. Expandable segments stop long
+# sessions from OOMing on fragmentation that is not a real memory shortage.
+if not os.environ.get("PYTORCH_CUDA_ALLOC_CONF"):
+    os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "expandable_segments:True"
+
 SAMPLE_RATE = 44100
 CHANNELS = 2
 TOTAL_RITES = 8
@@ -256,15 +261,148 @@ def duration_padding_sec(mode: str) -> float:
     return DURATION_PADDING_SEC.get(mode, DEFAULT_DURATION_PADDING_SEC)
 
 
+def _env_flag_enabled(name: str, default: str = "1") -> bool:
+    flag = os.environ.get(name, default).strip().lower()
+    return flag not in {"0", "false", "no", "off"}
+
+
+def kernel_warmup_enabled() -> bool:
+    return _env_flag_enabled("THUNDER_FX_KERNEL_WARMUP", "1")
+
+
+def choose_chunked_decode(seconds: float, *, free_bytes: int | None = None) -> bool:
+    """Chunked VAE decode when free VRAM cannot cover an unchunked pass.
+
+    `THUNDER_FX_CHUNKED_DECODE=0/1` overrides. No CUDA device → False (the
+    flag does not apply). Stats failure on a CUDA box → True (safe).
+    """
+    flag = os.environ.get("THUNDER_FX_CHUNKED_DECODE", "").strip().lower()
+    if flag in {"0", "false", "no", "off"}:
+        return False
+    if flag in {"1", "true", "yes", "on"}:
+        return True
+    if free_bytes is None:
+        try:
+            import torch
+
+            if not torch.cuda.is_available():
+                return False
+            free_bytes = int(torch.cuda.mem_get_info()[0])
+        except Exception:
+            return True
+    need = CHUNKED_DECODE_BASE_BYTES + int(max(0.0, seconds) * CHUNKED_DECODE_BYTES_PER_SEC)
+    return int(free_bytes) < need
+
+
+def _is_cuda_oom(exc: BaseException) -> bool:
+    try:
+        import torch
+
+        oom_type = getattr(torch.cuda, "OutOfMemoryError", ())
+        if oom_type and isinstance(exc, oom_type):
+            return True
+    except Exception:
+        pass
+    text = str(exc).lower()
+    return "out of memory" in text or "cuda oom" in text
+
+
+def _clear_cuda_cache() -> None:
+    try:
+        import torch
+
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+            if hasattr(torch.cuda, "ipc_collect"):
+                torch.cuda.ipc_collect()
+    except Exception:
+        pass
+
+
+def oom_user_message(*, seconds: float, already_chunked: bool) -> str:
+    stats = _vram_stats()
+    used = stats.get("vramUsedGb")
+    total = stats.get("vramTotalGb")
+    bits = ["CUDA ran out of memory"]
+    if isinstance(used, (int, float)) and isinstance(total, (int, float)) and total:
+        bits.append(f"({used:.1f} GB used of {total:.1f} GB)")
+    bits.append(
+        "Try a shorter clip, the Speed preset, or Unload model if another checkpoint is resident."
+    )
+    if already_chunked:
+        bits.append("Chunked VAE decode was already on, so retrying the same run would not help.")
+    elif seconds >= 60:
+        bits.append(f"A {seconds:.0f} s clip is large; shortening it is the most reliable fix.")
+    return " ".join(bits)
+
+
+def seed_torch(seed: int):
+    """Pin the process RNGs and return a device generator when CUDA is up.
+
+    The library seeds the global RNG and draws with `torch.randn`, so any other
+    draw between seeding and sampling changes the output. A per-generation
+    `torch.Generator` is passed when `generate` accepts it; the global seed
+    stays as the fallback.
+    """
+    import torch
+
+    value = max(1, int(seed) % (MAX_SEED + 1))
+    torch.manual_seed(value)
+    generator = None
+    try:
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(value)
+            generator = torch.Generator(device="cuda")
+        else:
+            generator = torch.Generator()
+        generator.manual_seed(value)
+    except Exception:
+        generator = None
+    return generator
+
+
+def kernel_warmup_kwargs(model) -> dict:
+    sample_size = SAMPLE_RATE
+    try:
+        sample_size = int(model.model_config["sample_size"])
+    except Exception:
+        pass
+    return {
+        "prompt": "warmup",
+        "duration": KERNEL_WARMUP_SECONDS,
+        "steps": KERNEL_WARMUP_STEPS,
+        "seed": 1,
+        "cfg_scale": 1.0,
+        "sample_size": sample_size,
+        "chunked_decode": True,
+        "duration_padding_sec": 0.0,
+    }
+
+
+def _warm_kernels(model) -> None:
+    seed_torch(1)
+    kwargs = kernel_warmup_kwargs(model)
+    kwargs.update(_cancel_hook_kwargs())
+    _call_model_generate(model, kwargs)
+    _clear_cuda_cache()
+
+
 def _call_model_generate(model, kwargs: dict):
-    """Pass only kwargs `generate` actually accepts, plus `**kwargs` if it has them."""
+    """Pass only kwargs `generate` actually accepts, plus `**kwargs` if it has them.
+
+    `generator` is only forwarded when it is a named parameter. The library's
+    `**kwargs` dump into `sample_diffusion`, which would treat an unexpected
+    generator as an error.
+    """
     try:
         params = inspect.signature(model.generate).parameters
         accepts_var_kw = any(p.kind == inspect.Parameter.VAR_KEYWORD for p in params.values())
+        if "generator" in kwargs and "generator" not in params:
+            kwargs.pop("generator")
         if not accepts_var_kw:
             kwargs = {key: value for key, value in kwargs.items() if key in params}
     except (TypeError, ValueError):
-        pass
+        kwargs.pop("generator", None)
     return model.generate(**kwargs)
 
 
@@ -766,13 +904,16 @@ def read_wav_info(path: Path) -> dict[str, str]:
     return fields
 
 
-def _to_stereo_cpu(audio):
-    """SA3 returns [batch, channels, samples]. Export wants [channels, samples]."""
+def _to_stereo(audio):
+    """SA3 returns [batch, channels, samples]. Export wants [channels, samples].
+
+    Stays on the tensor's device so mastering can run on the GPU and copy once.
+    """
     import torch
 
     if not torch.is_tensor(audio):
         audio = torch.as_tensor(audio)
-    wav = audio.detach().to(dtype=torch.float32, device="cpu").contiguous()
+    wav = audio.detach().to(dtype=torch.float32).contiguous()
     while wav.ndim > 2:
         wav = wav[0]
     if wav.ndim == 1:
@@ -784,6 +925,11 @@ def _to_stereo_cpu(audio):
     elif wav.shape[0] > CHANNELS:
         wav = wav[:CHANNELS]
     return wav.clamp(-1.0, 1.0)
+
+
+def _to_stereo_cpu(audio):
+    """CPU copy of `_to_stereo` for tests and the encode path."""
+    return _to_stereo(audio).to(device="cpu")
 
 
 # --- Loudness --------------------------------------------------------------
@@ -798,6 +944,13 @@ LOUDNESS_TARGETS = {"ambience": -20.0, "music": -18.0}
 # tail to decay; beds get 1 s so a long swell can finish past the cut.
 DURATION_PADDING_SEC = {"sfx": 0.5, "ambience": 1.0, "music": 1.0}
 DEFAULT_DURATION_PADDING_SEC = 0.5
+# Unchunked VAE decode of `seconds` of stereo needs a workspace plus a length
+# term. Decided from free VRAM, not from precision (PQ-08).
+CHUNKED_DECODE_BASE_BYTES = 1536 * 1024 * 1024
+CHUNKED_DECODE_BYTES_PER_SEC = 12 * 1024 * 1024
+KERNEL_WARMUP_SECONDS = 0.5
+KERNEL_WARMUP_STEPS = 2
+MAX_SEED = 2_147_483_646
 # Below this there is no signal worth normalizing, only decode noise.
 SILENCE_FLOOR_DBFS = -60.0
 MAX_LOUDNESS_GAIN_DB = 24.0
@@ -878,13 +1031,10 @@ def integrated_lufs(wav, sample_rate: int = SAMPLE_RATE):
     if total < block:
         return None
     # Mean square per 400 ms block, summed over channels (all weight 1.0 for
-    # stereo L/R under BS.1770).
+    # stereo L/R under BS.1770). unfold() is one kernel instead of a Python
+    # round-trip per block — a 380 s bed is ~3,800 of those.
     squares = weighted.to(torch.float64) ** 2
-    starts = range(0, total - block + 1, hop)
-    powers = torch.tensor(
-        [float(squares[:, i: i + block].mean(dim=-1).sum().item()) for i in starts],
-        dtype=torch.float64,
-    )
+    powers = squares.unfold(-1, block, hop).mean(dim=-1).sum(dim=0)
     if powers.numel() == 0:
         return None
     loud = -0.691 + 10.0 * torch.log10(powers.clamp(min=1e-12))
@@ -973,9 +1123,12 @@ def _save_generated_wav(
     loop: bool = False,
     fade_sec: float = 1.0,
     mode: str = "sfx",
-) -> None:
-    """Write 16-bit PCM stereo @ 44.1 kHz (the studio parser rejects float WAV)."""
-    wav = _to_stereo_cpu(audio)
+) -> float:
+    """Write 16-bit PCM stereo @ 44.1 kHz (the studio parser rejects float WAV).
+
+    Returns the duration actually written, which a seamless loop shortens.
+    """
+    wav = _to_stereo(audio)
     # The crossfade sums two correlated windows and can lift the peak, so it has
     # to happen before normalization rather than after it.
     if loop:
@@ -983,13 +1136,14 @@ def _save_generated_wav(
     if master:
         wav = _master_audio_cpu(wav, mode)
     pcm = _quantize_pcm16(wav)
-    interleaved = pcm.transpose(0, 1).contiguous().numpy().tobytes()
+    interleaved = pcm.transpose(0, 1).contiguous().cpu().numpy().tobytes()
     path.parent.mkdir(parents=True, exist_ok=True)
     with wave.open(str(path), "wb") as out:
         out.setnchannels(CHANNELS)
         out.setsampwidth(2)
         out.setframerate(SAMPLE_RATE)
         out.writeframes(interleaved)
+    return float(pcm.shape[-1]) / float(SAMPLE_RATE)
 
 
 def _wants_music(msg: dict) -> bool:
@@ -1101,6 +1255,7 @@ class _Heartbeat:
         self._total = total
         self._ratio: float | None = None
         self._last_emit = 0.0
+        self._quiet = False
         self._msg_id = msg_id
         self._started = started
         self._thread = threading.Thread(
@@ -1122,6 +1277,10 @@ class _Heartbeat:
         with self._lock:
             if phase is not None:
                 self._phase = phase
+                # Step events carry the sampling phase. Heartbeat only while
+                # load / decode / write have nothing else to say.
+                if phase != "weaving":
+                    self._quiet = False
             if step is not None:
                 self._step = step
             if total is not None:
@@ -1140,6 +1299,7 @@ class _Heartbeat:
         self.update(step=step, total=total, ratio=ratio)
         now = time.time()
         with self._lock:
+            self._quiet = True
             if step < self._total and now - self._last_emit < _STEP_EMIT_MIN_S:
                 return
             self._last_emit = now
@@ -1163,8 +1323,13 @@ class _Heartbeat:
 
     def _run(self) -> None:
         while not self._stop.wait(0.25):
-            phase, step, total, ratio = self._snapshot()
             with self._lock:
+                if self._quiet:
+                    continue
+                phase = self._phase
+                step = self._step
+                total = self._total
+                ratio = self._ratio
                 self._last_emit = time.time()
             _emit_progress(
                 self._msg_id,
@@ -1618,7 +1783,7 @@ def _generate_body(msg: dict) -> None:
     negative = str(msg.get("negative") or "") or None
     _cancel.clear()
     if seed <= 0:
-        seed = random.randint(1, 2_147_483_646)
+        seed = random.randint(1, MAX_SEED)
     music = _wants_music(msg)
     mode_str = _mode_str(msg)
     loop = _wants_seamless_loop(msg, music or mode_str == "ambience")
@@ -1737,7 +1902,8 @@ def _generate_body(msg: dict) -> None:
     heartbeat = _Heartbeat(msg_id, started, "weaving", total=steps).start()
     try:
         _emit_progress(msg_id, started, step=0, total=steps, phase="weaving")
-        chunked = _model_precision == "fp16"
+        chunked = choose_chunked_decode(gen_seconds)
+        generator = seed_torch(seed)
         gen_context = {
             "cmd": "generate",
             "prompt": model_prompt,
@@ -1750,6 +1916,7 @@ def _generate_body(msg: dict) -> None:
             "preset": plan["preset"],
             "precision": _model_precision,
             "seamlessLoop": loop,
+            "chunkedDecode": chunked,
         }
         # Without an explicit sample_size, generate() falls back to its own
         # default of 5292032 samples (120s) and _adapt_sample_size clamps every
@@ -1773,6 +1940,8 @@ def _generate_body(msg: dict) -> None:
                 "chunked_decode": use_chunked,
                 "duration_padding_sec": duration_padding_sec(mode_str),
             }
+            if generator is not None:
+                kwargs["generator"] = generator
             kwargs.update(hook)
             return _call_model_generate(model, kwargs)
 
@@ -1782,16 +1951,33 @@ def _generate_body(msg: dict) -> None:
             _emit_error(msg_id, "Generation cancelled", log=False)
             return
         except Exception as exc:  # noqa: BLE001
-            if "out of memory" in str(exc).lower() or "oom" in str(exc).lower():
-                _log_error("CUDA OOM; retrying with chunked decode", exc, context=gen_context)
-                chunked = True
-                try:
-                    audio = run_generate(True)
-                except GenerationCancelled:
-                    _emit_error(msg_id, "Generation cancelled", log=False)
-                    return
-            else:
+            if not _is_cuda_oom(exc):
                 _emit_error(msg_id, str(exc), exc, context=gen_context)
+                return
+            _clear_cuda_cache()
+            if chunked:
+                _emit_error(
+                    msg_id,
+                    oom_user_message(seconds=gen_seconds, already_chunked=True),
+                    exc,
+                    context=gen_context,
+                )
+                return
+            _log_error("CUDA OOM; retrying with chunked decode", exc, context=gen_context)
+            chunked = True
+            try:
+                audio = run_generate(True)
+            except GenerationCancelled:
+                _emit_error(msg_id, "Generation cancelled", log=False)
+                return
+            except Exception as retry_exc:  # noqa: BLE001
+                _clear_cuda_cache()
+                message = (
+                    oom_user_message(seconds=gen_seconds, already_chunked=True)
+                    if _is_cuda_oom(retry_exc)
+                    else str(retry_exc)
+                )
+                _emit_error(msg_id, message, retry_exc, context=gen_context)
                 return
         if _cancel.is_set():
             _emit_error(msg_id, "Generation cancelled", log=False)
@@ -1806,7 +1992,7 @@ def _generate_body(msg: dict) -> None:
             ratio=0.95,
         )
         try:
-            _save_generated_wav(
+            written_duration = _save_generated_wav(
                 out, audio, master=True, loop=loop, fade_sec=fade, mode=mode_str
             )
         except Exception as exc:  # noqa: BLE001
@@ -1835,7 +2021,7 @@ def _generate_body(msg: dict) -> None:
                 "event": "done",
                 "path": str(out),
                 "seed": seed,
-                "duration": seconds,
+                "duration": written_duration,
                 "steps": steps,
                 "prompt": prompt,
                 "mode": mode_str,
@@ -2204,6 +2390,25 @@ def _warmup_body(msg: dict) -> None:
         if _model is None:
             _emit_error(msg_id, f"{label} failed to load")
             return
+        warmup_ms = 0
+        if kernel_warmup_enabled():
+            heartbeat.update(phase="loading")
+            _emit_progress(
+                msg_id,
+                started,
+                step=0,
+                phase="loading",
+                message="Warming kernels",
+            )
+            warm_started = time.time()
+            try:
+                _warm_kernels(_model)
+            except GenerationCancelled:
+                _emit_error(msg_id, "Model load cancelled", log=False)
+                return
+            except Exception as exc:  # noqa: BLE001
+                _log_error("Kernel warmup failed; model is loaded", exc)
+            warmup_ms = int((time.time() - warm_started) * 1000)
         _emit(
             {
                 "id": msg_id,
@@ -2212,6 +2417,7 @@ def _warmup_body(msg: dict) -> None:
                 "model": wanted_model,
                 "presetUnavailable": plan["unavailable"],
                 "elapsedMs": int((time.time() - started) * 1000),
+                "kernelWarmupMs": warmup_ms,
             }
         )
     except Exception as exc:  # noqa: BLE001

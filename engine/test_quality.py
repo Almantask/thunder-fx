@@ -641,5 +641,86 @@ class LossyEncodeArgsTests(unittest.TestCase):
         )
 
 
+class ChunkedDecodeTests(unittest.TestCase):
+    def test_env_override_wins(self) -> None:
+        from worker import choose_chunked_decode
+
+        previous = os.environ.get("THUNDER_FX_CHUNKED_DECODE")
+        try:
+            os.environ["THUNDER_FX_CHUNKED_DECODE"] = "0"
+            self.assertFalse(choose_chunked_decode(380.0, free_bytes=1))
+            os.environ["THUNDER_FX_CHUNKED_DECODE"] = "1"
+            self.assertTrue(choose_chunked_decode(1.0, free_bytes=20 * 1024**3))
+        finally:
+            if previous is None:
+                os.environ.pop("THUNDER_FX_CHUNKED_DECODE", None)
+            else:
+                os.environ["THUNDER_FX_CHUNKED_DECODE"] = previous
+
+    def test_long_clips_chunk_when_vram_is_tight(self) -> None:
+        from worker import choose_chunked_decode
+
+        gib = 1024**3
+        self.assertFalse(choose_chunked_decode(8.0, free_bytes=8 * gib))
+        self.assertTrue(choose_chunked_decode(380.0, free_bytes=2 * gib))
+        self.assertFalse(choose_chunked_decode(380.0, free_bytes=12 * gib))
+
+
+class OomRetryTests(unittest.TestCase):
+    def test_detects_cuda_oom_without_matching_oom_substrings(self) -> None:
+        from worker import _is_cuda_oom
+
+        self.assertTrue(_is_cuda_oom(RuntimeError("CUDA out of memory")))
+        self.assertTrue(_is_cuda_oom(RuntimeError("CUDA OOM: tried to allocate")))
+        self.assertFalse(_is_cuda_oom(RuntimeError("file not found")))
+        self.assertFalse(_is_cuda_oom(RuntimeError("groom the library")))
+
+    def test_already_chunked_message_says_retrying_will_not_help(self) -> None:
+        from worker import oom_user_message
+
+        text = oom_user_message(seconds=380.0, already_chunked=True)
+        self.assertIn("out of memory", text.lower())
+        self.assertIn("already on", text.lower())
+        self.assertIn("shorter clip", text.lower())
+
+
+class KernelWarmupTests(unittest.TestCase):
+    def test_kwargs_are_a_short_two_step_run(self) -> None:
+        from worker import KERNEL_WARMUP_SECONDS, KERNEL_WARMUP_STEPS, kernel_warmup_kwargs
+
+        class Dummy:
+            model_config = {"sample_size": 16777216}
+
+        kwargs = kernel_warmup_kwargs(Dummy())
+        self.assertEqual(kwargs["duration"], KERNEL_WARMUP_SECONDS)
+        self.assertEqual(kwargs["steps"], KERNEL_WARMUP_STEPS)
+        self.assertEqual(kwargs["sample_size"], 16777216)
+        self.assertTrue(kwargs["chunked_decode"])
+        self.assertEqual(kwargs["duration_padding_sec"], 0.0)
+
+    def test_env_flag_skips_warmup(self) -> None:
+        from worker import kernel_warmup_enabled
+
+        previous = os.environ.get("THUNDER_FX_KERNEL_WARMUP")
+        os.environ["THUNDER_FX_KERNEL_WARMUP"] = "0"
+        try:
+            self.assertFalse(kernel_warmup_enabled())
+        finally:
+            if previous is None:
+                os.environ.pop("THUNDER_FX_KERNEL_WARMUP", None)
+            else:
+                os.environ["THUNDER_FX_KERNEL_WARMUP"] = previous
+
+
+class AllocatorConfTests(unittest.TestCase):
+    def test_worker_sets_expandable_segments_when_unset(self) -> None:
+        import worker  # noqa: F401
+
+        conf = os.environ.get("PYTORCH_CUDA_ALLOC_CONF", "")
+        self.assertTrue(conf)
+        if "max_split_size" not in conf:
+            self.assertIn("expandable_segments:True", conf)
+
+
 if __name__ == "__main__":
     unittest.main()

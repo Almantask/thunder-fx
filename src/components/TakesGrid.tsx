@@ -21,12 +21,13 @@ export type TakeCandidate = {
 type TakesGridProps = {
   open: boolean
   takes: TakeCandidate[]
+  parentSeed?: number
   onOpenChange: (open: boolean) => void
   onKeep: (ids: string[]) => void
   onDiscard: (ids: string[]) => void
 }
 
-export function TakesGrid({ open, takes, onOpenChange, onKeep, onDiscard }: TakesGridProps) {
+export function TakesGrid({ open, takes, parentSeed, onOpenChange, onKeep, onDiscard }: TakesGridProps) {
   const [playingId, setPlayingId] = useState<string | null>(null)
   const [kept, setKept] = useState<Set<string>>(() => new Set())
   const playbackRef = useRef<PlaybackHandle | null>(null)
@@ -92,7 +93,9 @@ export function TakesGrid({ open, takes, onOpenChange, onKeep, onDiscard }: Take
       <DialogContent className="max-w-3xl" aria-describedby="takes-grid-desc">
         <DialogTitle>Four takes</DialogTitle>
         <DialogDescription id="takes-grid-desc">
-          Same prompt, four random seeds. Keep the ones you want in the library.
+          Same prompt, four seeds derived from one parent
+          {Number.isFinite(parentSeed) ? ` (${parentSeed})` : ''}. Keep the ones you want in
+          the library.
         </DialogDescription>
         <ul className="mt-4 grid grid-cols-2 gap-3" aria-label="Generation takes">
           {tiles.map((take) => {

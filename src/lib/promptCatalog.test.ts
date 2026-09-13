@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { deriveTakeSeed } from '@/lib/seed'
 import {
   catalogFromFiles,
   clampQueueTakes,
@@ -209,15 +210,28 @@ describe('queue helpers', () => {
     expect(takes[0]!.id).toBe(first!.id)
     expect(takes[1]!.id).toBe(`${first!.id}::take-2`)
     expect(takes[2]!.id).toBe(`${first!.id}::take-3`)
-    // every take (including the first) gets an explicit random seed
+    // every take (including the first) gets an explicit derived seed
     for (const take of takes) {
       expect(Number.isInteger(take.seed)).toBe(true)
       expect(take.seed).toBeGreaterThan(0)
       expect(take.prompt).toBe(first!.prompt)
+      expect(take.parentSeed).toBe(takes[0]!.parentSeed)
     }
     const seeds = new Set(takes.map((t) => t.seed))
     expect(seeds.size).toBe(3)
     expect(takes[1]!.title).toBe(`${first!.title} (Take 2)`)
+  })
+
+  it('derives take seeds from a parent seed so a set reproduces', () => {
+    const catalog = catalogFromFiles({ '/prompts/combat.md': combatMd })
+    const [first] = catalog[0]?.effects ?? []
+    const takes = expandEffectTakes({ ...first!, seed: 42 }, 3)
+    expect(takes.map((take) => take.seed)).toEqual([
+      deriveTakeSeed(42, 0),
+      deriveTakeSeed(42, 1),
+      deriveTakeSeed(42, 2),
+    ])
+    expect(takes.every((take) => take.parentSeed === 42)).toBe(true)
   })
 
   it('expands a whole selection and re-adding the same take count dedupes', () => {

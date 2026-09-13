@@ -560,10 +560,22 @@ LOOP_NEGATIVE_CUE = (
 )
 
 
+MIN_CROSSFADE_SEC = 0.05
+MAX_CROSSFADE_SEC = 3.0
+DEFAULT_CROSSFADE_SEC = 1.0
+ZERO_CROSS_SEARCH_MS = 5.0
+
+
+def clamp_crossfade_sec(seconds: float) -> float:
+    if not math.isfinite(seconds):
+        return DEFAULT_CROSSFADE_SEC
+    return max(MIN_CROSSFADE_SEC, min(MAX_CROSSFADE_SEC, seconds))
+
+
 def loop_overlap_seconds(seconds: float) -> float:
     if not math.isfinite(seconds) or seconds <= 0:
-        return 1.0
-    return max(0.5, min(3.0, seconds * 0.05))
+        return DEFAULT_CROSSFADE_SEC
+    return clamp_crossfade_sec(seconds * 0.05)
 
 
 def ensure_loop_prompt(prompt: str) -> str:
@@ -682,25 +694,114 @@ def _clamp_pcm16(value: float) -> int:
     return max(-32768, min(32767, int(round(value))))
 
 
+def _sum_frame(frames: list[tuple[int, int]], frame: int) -> int:
+    left, right = frames[frame]
+    return left + right
+
+
+def _find_zero_crossing(
+    summed: list[int],
+    frame: int,
+    window: int,
+    slope_sign: int | None = None,
+    *,
+    pick: str = "start",
+    min_frame: int = 0,
+) -> int:
+    """Quietest sign-change near `frame` on the summed stereo row.
+
+    Mirrors findZeroCrossing in src/lib/pcm.ts. A loud same-sign trough or a
+    chord-boundary jump is not a loop join: the quietest real crossing wins,
+    and `pick="end"` returns the sample after it so last→first is that pair.
+    """
+    total = len(summed)
+    if total < 2:
+        return 0
+    target = max(0, min(frame, total - 1))
+    lo = max(0, target - window)
+    hi = min(total - 2, target + window)
+    pick_end = pick == "end"
+    require_min = min_frame > 0
+
+    def choose(require_slope: bool, require_min_frame: bool) -> int | None:
+        best: int | None = None
+        best_amp = 1 << 30
+        best_dist = total
+        for f in range(lo, hi + 1):
+            a = summed[f]
+            b = summed[f + 1]
+            if not (a == 0 or a * b <= 0):
+                continue
+            if require_slope and slope_sign:
+                slope = b - a
+                if slope == 0 or (1 if slope > 0 else -1) != slope_sign:
+                    continue
+            join = f + 1 if pick_end else f
+            if join >= total:
+                continue
+            if require_min_frame and join < min_frame:
+                continue
+            amp = max(abs(a), abs(b))
+            dist = abs(join - target)
+            if amp < best_amp or (amp == best_amp and dist < best_dist):
+                best = join
+                best_amp = amp
+                best_dist = dist
+        return best
+
+    matched_min = choose(True, require_min)
+    if matched_min is not None:
+        return matched_min
+    any_min = choose(False, require_min)
+    if any_min is not None:
+        return any_min
+    if require_min:
+        matched = choose(True, False)
+        if matched is not None:
+            return matched
+        any_cross = choose(False, False)
+        if any_cross is not None:
+            return any_cross
+
+    fallback_from = max(0, max(min_frame, target - window) if require_min else target - window)
+    fallback_to = min(total - 1, target + window)
+    best = max(fallback_from, min(fallback_to, target))
+    best_abs = abs(summed[best])
+    for f in range(fallback_from, fallback_to + 1):
+        amp = abs(summed[f])
+        if amp < best_abs:
+            best_abs = amp
+            best = f
+    return best
+
+
 def _make_seamless_loop_frames(
     frames: list[tuple[int, int]],
     fade_sec: float,
     sample_rate: int = SAMPLE_RATE,
 ) -> list[tuple[int, int]]:
     total = len(frames)
-    fade_wanted = int(round(max(0.5, min(3.0, fade_sec)) * sample_rate))
-    fade = max(2, min(fade_wanted, total // 3))
-    if total < fade * 2 + 1:
+    fade_wanted = int(round(clamp_crossfade_sec(fade_sec) * sample_rate))
+    fade_frames = max(2, min(fade_wanted, total // 3))
+    if total < fade_frames * 2 + 1:
         return frames
+    summed = [_sum_frame(frames, f) for f in range(total)]
+    search = int(round(ZERO_CROSS_SEARCH_MS / 1000.0 * sample_rate))
+    nominal_tail = total - fade_frames
+    tail_slope = summed[min(nominal_tail + 1, total - 1)] - summed[nominal_tail]
+    slope_sign = 1 if tail_slope > 0 else (-1 if tail_slope < 0 else 0)
+    tail_join = _find_zero_crossing(
+        summed, nominal_tail, search, slope_sign, pick="end", min_frame=nominal_tail
+    )
+    head_join = _find_zero_crossing(summed, 0, search, slope_sign)
+    fade = max(2, min(fade_frames, total - tail_join, total - head_join))
     out: list[tuple[int, int]] = []
     for i in range(fade):
         t = 1.0 if fade == 1 else i / (fade - 1)
         head_gain = math.sin((t * math.pi) / 2)
         tail_gain = math.cos((t * math.pi) / 2)
-        head_l, head_r = frames[i]
-        tail_l, tail_r = frames[total - fade + i]
-        # An equal-power sum of two near-full-scale samples reaches ~1.41x, so
-        # clamp before it overflows the 16-bit range on write.
+        head_l, head_r = frames[head_join + i]
+        tail_l, tail_r = frames[tail_join + i]
         out.append(
             (
                 _clamp_pcm16(tail_l * tail_gain + head_l * head_gain),
@@ -711,43 +812,55 @@ def _make_seamless_loop_frames(
     return out
 
 
-ZERO_CROSS_SEARCH_MS = 5.0
-
-
-def _nearest_zero_crossing(row, frame: int, window: int, total: int) -> int:
-    """Frame with the smallest amplitude within +/- `window` of `frame`.
-
-    Joining near a zero crossing stops the crossfade from summing two waveforms
-    that are out of phase, which is what makes a loop point click. Mirrors
-    nearestZeroCrossing in src/lib/seamlessLoop.ts.
-    """
-    if total < 2:
-        return 0
-    best = max(0, min(frame, total - 1))
-    best_abs = abs(float(row[best]))
+def _nearest_zero_crossing(
+    row,
+    frame: int,
+    window: int,
+    total: int,
+    slope_sign: int | None = None,
+    *,
+    pick: str = "start",
+    min_frame: int = 0,
+) -> int:
+    """Sign-change nearest `frame` on a 1-D summed row. Mirrors src/lib/pcm.ts."""
     lo = max(0, frame - window)
     hi = min(total - 1, frame + window)
-    for f in range(lo, hi + 1):
-        a = abs(float(row[f]))
-        if a < best_abs:
-            best_abs = a
-            best = f
-    return best
+    window_vals = [int(round(float(row[f]))) for f in range(lo, hi + 1)]
+    local_min = max(0, min_frame - lo)
+    return lo + _find_zero_crossing(
+        window_vals,
+        frame - lo,
+        window,
+        slope_sign,
+        pick=pick,
+        min_frame=local_min,
+    )
 
 
 def _make_seamless_loop_tensor(wav, fade_sec: float, sample_rate: int = SAMPLE_RATE):
     import torch
 
     total = int(wav.shape[-1])
-    fade_wanted = int(round(max(0.5, min(3.0, fade_sec)) * sample_rate))
+    fade_wanted = int(round(clamp_crossfade_sec(fade_sec) * sample_rate))
     fade_frames = max(2, min(fade_wanted, total // 3))
     if total < fade_frames * 2 + 1:
         return wav
 
     search = int(round(ZERO_CROSS_SEARCH_MS / 1000.0 * sample_rate))
-    row = wav[0]
-    head_join = _nearest_zero_crossing(row, 0, search, total)
-    tail_join = _nearest_zero_crossing(row, total - fade_frames, search, total)
+    summed = wav.sum(dim=0) if wav.dim() == 2 else wav
+    nominal_tail = total - fade_frames
+    tail_slope = float(summed[min(nominal_tail + 1, total - 1)] - summed[nominal_tail])
+    slope_sign = 1 if tail_slope > 0 else (-1 if tail_slope < 0 else 0)
+    tail_join = _nearest_zero_crossing(
+        summed,
+        nominal_tail,
+        search,
+        total,
+        slope_sign,
+        pick="end",
+        min_frame=nominal_tail,
+    )
+    head_join = _nearest_zero_crossing(summed, 0, search, total, slope_sign)
     fade = max(2, min(fade_frames, total - tail_join, total - head_join))
 
     t = torch.linspace(0, 1, fade, dtype=wav.dtype, device=wav.device)
@@ -1103,7 +1216,7 @@ def _quantize_pcm16(wav, dither: bool = True):
     """
     import torch
 
-    scaled = wav * 32767.0
+    scaled = wav * 32768.0
     if dither:
         # Triangular PDF, +/-1 LSB peak, from the difference of two uniforms.
         noise = torch.rand_like(scaled) - torch.rand_like(scaled)
@@ -2052,11 +2165,9 @@ def cmd_encode_ogg(msg: dict) -> None:
 def _resample_audio(data, sr: int, target_sr: int):
     """Resample [frames] or [frames, channels] float audio.
 
-    torchaudio's windowed-sinc resampler is used rather than the old linear
-    interpolation, which had no anti-alias filter and imaged badly on the
-    44.1 -> 48 kHz conversion every DAW/game-engine export asks for. soxr stays
-    as a first choice for callers that happen to have it; plain interpolation is
-    now only a last resort when neither is importable.
+    soxr is a hard dependency of the engine. torchaudio's windowed-sinc
+    resampler is the fallback when soxr cannot load. There is no linear
+    interpolation path: that aliased 44.1 → 48 kHz conversions.
     """
     if target_sr <= 0 or sr == target_sr:
         return data, sr
@@ -2077,25 +2188,11 @@ def _resample_audio(data, sr: int, target_sr: int):
         out = F.resample(tensor, sr, target_sr).numpy()
         out = out.T if arr.ndim == 2 else out[0]
         return out.astype(arr.dtype, copy=False), target_sr
-    except Exception:
-        pass
-    try:
-        import numpy as np
-    except Exception as exc:  # noqa: BLE001
-        raise RuntimeError(f"Resample needs numpy, torchaudio or soxr: {exc}") from exc
-    n = int(data.shape[0])
-    new_n = max(1, int(round(n * target_sr / sr)))
-    x_old = np.linspace(0.0, 1.0, n, endpoint=False)
-    x_new = np.linspace(0.0, 1.0, new_n, endpoint=False)
-    if data.ndim == 1:
-        return np.interp(x_new, x_old, data).astype(data.dtype, copy=False), target_sr
-    chans = [
-        np.interp(x_new, x_old, data[:, c] if data.shape[1] <= 8 else data[c])
-        for c in range(data.shape[1] if data.shape[1] <= 8 else data.shape[0])
-    ]
-    if data.shape[1] <= 8:
-        return np.stack(chans, axis=1).astype(data.dtype, copy=False), target_sr
-    return np.stack(chans, axis=0).astype(data.dtype, copy=False), target_sr
+    except Exception as exc:
+        raise RuntimeError(
+            "Resample needs soxr or torchaudio. The linear fallback was removed "
+            f"because it aliased. Original error: {exc}"
+        ) from exc
 
 
 def _downmix_mono(data):

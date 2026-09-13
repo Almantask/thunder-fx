@@ -1,5 +1,6 @@
 import { clampGenerateSeconds } from '@/lib/duration'
 import { parseInstrumentKeywords, type WavInfo } from '@/lib/instruments'
+import { fadeGain, pcm16ToFloatSample, quantise16, TRIM_FADE_SEC } from '@/lib/pcm'
 
 export const SAMPLE_RATE = 44_100
 export const CHANNELS = 2
@@ -291,6 +292,31 @@ export function trimWav(
   const frames = end - start
   const pcm = new Int16Array(frames * wav.channels)
   pcm.set(wav.pcm.subarray(start * wav.channels, end * wav.channels))
+
+  // A hard cut through a non-zero sample is a click. A few milliseconds of
+  // equal-power ramp at each edge is inaudible as a fade and removes the step.
+  let fadeIn = Math.max(1, Math.round(TRIM_FADE_SEC * wav.sampleRate))
+  let fadeOut = fadeIn
+  if (fadeIn + fadeOut > frames) {
+    fadeIn = Math.max(1, Math.floor(frames / 2))
+    fadeOut = Math.max(1, frames - fadeIn)
+  }
+  for (let f = 0; f < fadeIn; f += 1) {
+    const gain = fadeGain((f + 1) / fadeIn)
+    for (let c = 0; c < wav.channels; c += 1) {
+      const i = f * wav.channels + c
+      pcm[i] = quantise16(pcm16ToFloatSample(pcm[i] ?? 0) * gain, true, i)
+    }
+  }
+  for (let f = 0; f < fadeOut; f += 1) {
+    const frame = frames - 1 - f
+    if (frame < 0) break
+    const gain = fadeGain((f + 1) / fadeOut)
+    for (let c = 0; c < wav.channels; c += 1) {
+      const i = frame * wav.channels + c
+      pcm[i] = quantise16(pcm16ToFloatSample(pcm[i] ?? 0) * gain, true, i)
+    }
+  }
   return writeWav({ ...wav, pcm })
 }
 

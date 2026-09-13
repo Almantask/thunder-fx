@@ -27,9 +27,11 @@ describe('seamlessLoop', () => {
 })
 
 describe('loopOverlapSeconds', () => {
-  it('uses a longer blend on long beds and a floor on short clips', () => {
+  it('uses a longer blend on long beds and a 50 ms floor on short clips', () => {
     expect(loopOverlapSeconds(20)).toBe(1)
     expect(loopOverlapSeconds(90)).toBe(3)
-    expect(loopOverlapSeconds(8)).toBe(0.5)
+    expect(loopOverlapSeconds(8)).toBeCloseTo(0.4)
+    expect(loopOverlapSeconds(2)).toBeCloseTo(0.1)
+    expect(loopOverlapSeconds(1)).toBeCloseTo(0.05)
   })
 })

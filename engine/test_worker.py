@@ -1051,7 +1051,9 @@ class SeamlessLoopTests(unittest.TestCase):
 
         self.assertEqual(loop_overlap_seconds(20), 1.0)
         self.assertEqual(loop_overlap_seconds(90), 3.0)
-        self.assertEqual(loop_overlap_seconds(8), 0.5)
+        self.assertAlmostEqual(loop_overlap_seconds(8), 0.4)
+        self.assertAlmostEqual(loop_overlap_seconds(2), 0.1)
+        self.assertAlmostEqual(loop_overlap_seconds(1), 0.05)
 
     def test_prompt_asks_for_matching_ends(self) -> None:
         from worker import LOOP_PROMPT_CUE, ensure_loop_prompt

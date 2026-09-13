@@ -9,6 +9,7 @@ dependencies = [
   "torchaudio==2.7.1+cu128",
   "stable-audio-3",
   "flash-attn",
+  "soxr>=0.5.0",
 ]
 
 [tool.uv]

@@ -187,3 +187,14 @@ A continuous journal of learnings, prompt engineering breakthroughs, model behav
   value. The TypeScript `toArrayBuffer` whole-buffer reuse is the half that ships now.
 - **PQ-53 release profile.** `panic = "abort"` is what the backlog asked for. A panic in a
   plugin then takes the process down instead of unwinding; that is the size/start trade.
+- **PQ-22 loop joins.** A chord change is a loud sign flip, not a zero crossing. Ranking
+  crossings by amplitude (quietest pair) beats nearest-sign-change, which otherwise lands on
+  the bar boundary of the mock (and of a lot of real music). The tail join has to be the
+  sample *after* the crossing so last→first *is* that pair, and must not move before the
+  nominal cut or the wrap stops being adjacent samples.
+- **PQ-23/24 quantise.** `32768` both ways plus a clamp to `[−32768, 32767]` is the mapping
+  that round-trips `−32768` exactly. TPDF from an index-hashed pair of uniforms matches the
+  engine's triangular PDF; skip it on true zeros so one-shots still start and end silent.
+- **PQ-26 soxr.** `np.interp` was the path that actually ran and aliased 44.1 → 48 kHz.
+  Pinning `soxr>=0.5.0` and raising if neither soxr nor torchaudio loads is the only way the
+  changelog claim stays true on a broken install.

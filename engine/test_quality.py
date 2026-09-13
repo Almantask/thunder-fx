@@ -324,7 +324,7 @@ class LoudnessTests(unittest.TestCase):
 
         # A constant half-LSB would quantize identically every sample without
         # dither; with it the error decorrelates and both neighbours appear.
-        wav = torch.full((2, 8192), 0.5 / 32767.0)
+        wav = torch.full((2, 8192), 0.5 / 32768.0)
         values = set(_quantize_pcm16(wav).flatten().tolist())
         self.assertTrue(len(values) > 1, values)
 
@@ -365,7 +365,7 @@ class SeamlessLoopTensorTests(unittest.TestCase):
         row = 0.8 * torch.sin(2 * math.pi * 220.0 * t + 1.1)
         wav = torch.stack([row, row])
         looped = _make_seamless_loop_tensor(wav, 1.0)
-        # The head of the crossfade is picked at minimum amplitude, so the first
+        # The head of the crossfade is picked at a sign change, so the first
         # sample starts near zero rather than mid-swing.
         self.assertLess(abs(float(looped[0, 0])), abs(float(wav[0, 0])))
 
@@ -434,6 +434,17 @@ class ResampleTests(unittest.TestCase):
         self.assertAlmostEqual(freqs[int(np.argmax(spectrum))], 20000, delta=50)
         worst_alias = spectrum[freqs < 15000].max() / spectrum.max()
         self.assertLess(20 * math.log10(worst_alias + 1e-12), -60.0)
+
+    def test_linear_interpolation_fallback_is_gone(self) -> None:
+        import inspect
+
+        from worker import _resample_audio
+
+        source = inspect.getsource(_resample_audio)
+        self.assertNotIn("np.interp", source)
+        self.assertIn("soxr", source)
+        self.assertIn("torchaudio", source)
+        self.assertIn("aliased", source)
 
 
 class DegradationDetectorTests(unittest.TestCase):

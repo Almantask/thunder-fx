@@ -6,6 +6,59 @@ Generation uses [Stable Audio 3 Medium](https://stability.ai/) locally. There is
 
 The UI is a dark gold-and-leather studio. It does not use Wizards of the Coast trademarks or art.
 
+![Generate tab: modes, quality presets, prompt, and the resting goblin band](docs/screenshots/generate.png)
+
+## Screenshots
+
+Three tabs — **Library**, **Generate**, and **Settings** — plus first-run setup. Shots below are the studio UI (`npm run dev` uses a mock engine; the Windows app is the same layout).
+
+| Screen | What it shows |
+| :--- | :--- |
+| **Generate** | Sound effects / Ambience / Instrumental, quality presets, prompt, queue, waveform |
+| **Shape** | Fade, reverse, gain, normalize, pitch & speed, variants — no extra GPU time |
+| **Browse prompts** | Bundled FX, Ambience, and Instrumental catalogs; preview, use, or queue |
+| **Library** | Search, favourites, ratings, tags, trash, compare, sound packs |
+| **Settings** | Folders, export format, quality default, precision, updates, error log |
+| **Setup** | Licenses, hardware check, then download Medium weights |
+
+### Generate
+
+Type a prompt, pick a mode and a quality preset (**Max speed** / **Balanced** / **Max quality**), then **Generate**. **Browse prompts** fills the prompt or a queue; **Generate 4 takes** rolls variations.
+
+![Generated clip with waveform, Shape editing, trim/export, and a prompt queue](docs/screenshots/generate-clip.png)
+
+After a clip: waveform with In/Out trim, play, export (WAV, and other formats on desktop), and the **Shape** panel for fades, reverse, gain, normalize, pitch, and pitch variants.
+
+![Browse prompts catalog with FX Combat / Sword entries and a full prompt preview](docs/screenshots/browse-prompts.png)
+
+**Browse prompts** opens shipped catalogs. Filter **FX**, **Ambience**, or **Instrumental**. **Preview** shows the full prompt; **Use** fills Generate; checked items go on the queue.
+
+### Library
+
+![Empty library with starter prompts for sound effects](docs/screenshots/library-empty.png)
+
+An empty library offers starter prompts for the current mode.
+
+![Library with two clips, favourites, ratings, tags, Compare, and Trash](docs/screenshots/library.png)
+
+Saved clips, newest first, grouped by category. Star a favourite, rate 0–5, tag, rename (renames the WAV), or reject. **Compare** A/B two clips with levels matched. **Delete** moves to trash with Undo.
+
+![Level-matched A/B compare dialog](docs/screenshots/compare.png)
+
+### Settings and setup
+
+![Settings: library folder, export format, quality preset, and precision](docs/screenshots/settings.png)
+
+Library and export folders, default format (WAV, AIFF, FLAC, Opus, OGG, MP3), Hugging Face token, default duration and quality, precision, error log, and in-place updates on signed release builds.
+
+![Command palette (Ctrl+K)](docs/screenshots/command-palette.png)
+
+**Ctrl+K** opens a command palette for tabs, generate, load/unload model, and the prompt catalog.
+
+![First-run setup: accept Stability and Gemma licenses](docs/screenshots/setup.png)
+
+First launch walks licenses, a hardware check, then the Medium download before the studio opens.
+
 ## What you can do
 
 Three tabs: **Library**, **Generate**, and **Settings**.
@@ -13,11 +66,11 @@ Three tabs: **Library**, **Generate**, and **Settings**.
 ### Generate
 
 - Type a prompt and click **Generate**.
-- **Sound effects** (default) or **Instrumental**. Same model either way. Instrumental uses a music-style prompt and a negative prompt that tries to avoid vocals.
+- **Sound effects** (default), **Ambience**, or **Instrumental**. Same model either way. Instrumental uses a music-style prompt and a negative prompt that tries to avoid vocals.
 - Clips can be **0.5 seconds to 6 minutes 20 seconds**. Instrumental defaults to 20 seconds.
 - **Max speed / Balanced / Max quality** picks how the clip is generated. See [Quality presets](#quality-presets).
 - **Load model** puts the model into GPU memory. Do that once after you open the app. **Generate** only makes a clip.
-- **Browse prompts** opens bundled lists. Filter **FX** (`prompts/fx`) or **Ambience** (`prompts/ambience`, tabletop-style beds such as forest or tavern). **Preview** shows the full prompt. **Use** fills the current prompt. Check items — or a whole category — to add them to a queue.
+- **Browse prompts** opens bundled lists. Filter **FX** (`prompts/fx`), **Ambience** (`prompts/ambience`, tabletop-style beds such as forest or tavern), or **Instrumental**. **Preview** shows the full prompt. **Use** fills the current prompt. Check items — or a whole category — to add them to a queue.
 - **Generate queue** runs queued prompts one after another and saves each clip. **Cancel** stops the clip in progress; the rest stay queued.
 - After you have loaded or generated on this machine, **Load model**, **Generate**, and **Generate queue** show a `~m:ss` estimate. While work is in progress, the waveform clock also shows estimated remaining time.
 - After a clip: waveform, play, trim in/out, export **WAV**. **OGG** export needs the desktop app, not the browser mock.
@@ -353,6 +406,7 @@ flowchart TD
 - `engine/` — JSON-lines Python engine
 - `src-tauri/` — Tauri 2 window, trim, engine spawn
 - `docs/designs/` — scene specs + HTML prototypes
+- `docs/screenshots/` — README studio shots (`scripts/capture-readme-screenshots.mjs`)
 - `features/` — Gherkin acceptance specs
 - `prompts/fx` — sound-effect prompts (Browse prompts → FX)
 - `prompts/ambience` — ambience prompts (Browse prompts → Ambience)

@@ -50,7 +50,10 @@ def audio_blocks(result) -> list:
 
 
 class StdioEndToEnd(unittest.TestCase):
-    def run_session(self, body, timeout: float = 180.0):
+    # Generous: each case spawns a server and a worker, and the whole suite
+    # measured 149s idle but 594s while two release builds were running --
+    # where a 180s cap failed three cases on timing alone.
+    def run_session(self, body, timeout: float = 600.0):
         """Drive one client session against a fresh server."""
         outcome: dict = {}
 

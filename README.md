@@ -269,6 +269,93 @@ engine\.venv\Scripts\python.exe scripts/bench_sampler.py
 It sweeps sampler × steps × content type into `bench/`, with a `metrics.csv` and a blind A/B
 player at `bench/index.html`.
 
+## MCP server (generate from an agent)
+
+Thunder FX ships an **MCP server**, so an agent — Claude Code, Claude Desktop, Cursor — can
+generate sound effects, ambience and instrumental beds on this machine and drop them straight
+into the library. Stdio transport only: there is no network listener in it, and it is meant for
+local runs.
+
+```bash
+claude mcp add thunder-fx -- <repo>\engine\.venv\Scripts\python.exe -u <repo>\engine\mcp_server.py
+```
+
+For a client that reads `mcp.json` instead:
+
+```json
+{
+  "mcpServers": {
+    "thunder-fx": {
+      "command": "<repo>\\engine\\.venv\\Scripts\\python.exe",
+      "args": ["-u", "<repo>\\engine\\mcp_server.py"]
+    }
+  }
+}
+```
+
+It needs the CUDA engine env from [GPU generation](#gpu-generation-cuda); the `mcp` dependency
+comes in with `uv sync`. Nothing is spawned and no model is loaded until the first generate call,
+so a client that only browses the catalog never touches the GPU.
+
+> [!NOTE]
+> The **first** generate call pays the model load. On an NVMe `HF_HUB_CACHE` that is a few
+> seconds; measured here with the cache on a mechanical drive it was **~7.5 minutes**, and the
+> clip itself then took seconds. Progress streams throughout, but a client with a short hard
+> tool timeout can still give up on that first call — so keep `HF_HUB_CACHE` on an SSD, or call
+> `engine_status` once and let the load finish before asking for audio.
+
+### Tools
+
+| Tool | What it does |
+| :--- | :--- |
+| `generate_sound_effect` | One-shot, 2s default, −1 dBFS peak |
+| `generate_ambience` | Looping bed, 30s default, −20 LUFS |
+| `generate_instrumental` | Music bed or stinger, 20s default, −18 LUFS, `bpm` and `instruments` |
+| `search_prompt_catalog` | Search `prompts/` in its trained wording |
+| `list_prompt_categories` | What material the catalog holds |
+| `search_library` | Existing clips, with the same favourite / rating / tag filters as the app |
+| `get_clip` | One clip's details, optionally played back |
+| `export_clip` | Encode a clip to opus/ogg/mp3/flac/wav/aiff at a path you name |
+| `engine_status` | Model loaded, VRAM, GPU, library path |
+
+A generate call returns the WAV path plus the **prompt as the model actually received it**, and
+short clips (≤15s by default) also come back as inline Opus so the agent can hear the take it
+just asked for. A two-minute bed returns a path only — inlining those is how a client's context
+gets destroyed. Generation blocks and streams progress, cold model load included.
+
+**The library is read-only over MCP apart from `export_clip`.** No rating, tagging, renaming,
+deleting or trash: an agent should not be editing triage decisions, and delete is destructive.
+
+### Quality is pinned, deliberately
+
+Every generation runs **Balanced on `medium` at fp16**, and no tool parameter can change it.
+That is this engine's best quality:speed:VRAM point, and it is measured rather than assumed —
+`medium` at Balanced sits in the ~6.2–7.6 GB band, [Balanced is the ceiling on that
+checkpoint](#quality-presets), and Max quality would pull in `medium-base` for a gain that does
+not even hold for instrumental. `medium-base` is never loaded by the server.
+
+That also means **no negative-prompt parameter**: at CFG 1 the model has no guidance branch, so
+the field would silently do nothing. Vocal suppression for music comes from the trained
+`VocalType: Instrumental` tag instead.
+
+The model is dropped out of VRAM after 10 minutes idle, so the server does not squat on ~6 GB
+while registered. A lock file stops two servers each loading the model; if a CUDA OOM happens
+while the desktop app is open, the error says so rather than reporting a bare OOM.
+
+| Variable | Default | Meaning |
+| :--- | ---: | :--- |
+| `THUNDER_FX_MCP_INLINE_MAX_SECONDS` | `15` | Longest clip returned as inline audio |
+| `THUNDER_FX_MCP_INLINE_BITRATE_KBPS` | `64` | Opus bitrate for inline audio |
+| `THUNDER_FX_MCP_IDLE_UNLOAD_S` | `600` | Idle seconds before unloading; `0` disables |
+| `THUNDER_FX_MCP_ALLOW_MULTIPLE` | unset | Permit a second server instance |
+
+Design notes: [docs/designs/mcp-integration-design.md](docs/designs/mcp-integration-design.md).
+
+```bash
+engine\.venv\Scripts\python.exe -m unittest engine.test_mcp_server engine.test_mcp_stdio
+```
+
+
 ## Prompt format
 
 Prompts are normalised into the shape Stable Audio 3 was trained on before they reach the

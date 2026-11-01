@@ -1700,6 +1700,11 @@ def _generate_body(msg: dict) -> None:
                 "duration": actual_duration,
                 "steps": steps,
                 "prompt": prompt,
+                # The prompt as rewritten for the model, which is not the
+                # caller's text: control tags and the Length tag are added and
+                # a BPM is lifted into the trailing slot. Callers that show or
+                # log "what was actually generated" need this one.
+                "modelPrompt": model_prompt,
                 "mode": mode_str,
                 "category": cat_str,
                 "subcategory": subcat_str,
@@ -1838,6 +1843,11 @@ def _generate_body(msg: dict) -> None:
                 "duration": seconds,
                 "steps": steps,
                 "prompt": prompt,
+                # The prompt as rewritten for the model, which is not the
+                # caller's text: control tags and the Length tag are added and
+                # a BPM is lifted into the trailing slot. Callers that show or
+                # log "what was actually generated" need this one.
+                "modelPrompt": model_prompt,
                 "mode": mode_str,
                 "category": cat_str,
                 "subcategory": subcat_str,

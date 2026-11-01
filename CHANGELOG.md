@@ -6,6 +6,25 @@ All notable Thunder FX changes are listed here.
 
 ### Added
 
+- **MCP server**, so an agent can generate audio here rather than only a person at the app.
+  `engine/mcp_server.py` speaks MCP over stdio — no network listener, local runs only — and owns
+  its own `worker.py`, so it reuses the engine wholesale rather than reimplementing prompt
+  normalisation, mastering or the library layout. Nine tools: three generators (sound effect,
+  ambience, instrumental, each with its own duration default and loudness target), the shipped
+  prompt catalog, read access to the library, export, and status. A generate call returns the WAV
+  path plus the prompt **as the model actually received it**, and short clips (≤15s) come back as
+  inline Opus so an agent can hear the take it asked for.
+- **Quality over MCP is pinned to Balanced on `medium` at fp16, with no knob to change it.** That
+  is the measured best quality:speed:VRAM point, so a parameter would only offer a slower,
+  hungrier path that is not reliably better — and `medium-base` is never loaded. It also means no
+  negative-prompt parameter, because at CFG 1 the model has no guidance branch and the field would
+  silently do nothing. The library is read-only over MCP apart from export: an agent should not be
+  editing triage decisions, and delete is destructive.
+- `modelPrompt` on the engine's `generate` done event — the prompt after normalisation, which is
+  not the caller's text once control tags, the `Length:` tag and a lifted `BPM:` are in it. The
+  event previously reported only the text as given, so "what actually generated this" was not
+  recoverable from the result.
+
 - **Library triage.** A generated library outgrew what could be found in it: a queue run and
   "Generate 4 takes" produce far more audio than anyone can name or sort. Clips now carry
   **favourites, a 0-5 rating, free-text tags and a reject flag**, with a filter bar for

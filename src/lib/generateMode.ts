@@ -247,6 +247,25 @@ function lengthPhrase(seconds: number): string {
   return `Length: ${n} second${n === 1 ? '' : 's'}`
 }
 
+/**
+ * Remove every metadata tag `normalizePrompt` re-emits.
+ *
+ * For callers that only want the human part of a prompt -- a filename stem,
+ * say. A caller that wants a tempo has no route other than writing `BPM: N`
+ * into the prompt text, since normalizePrompt is what lifts it into the
+ * trailing tag slot, so a stem built without this keeps the tag.
+ *
+ * Twin of `strip_prompt_tags` in engine/worker.py.
+ */
+export function stripPromptTags(prompt: string): string {
+  return (prompt ?? '')
+    .replace(TRACK_TYPE_TAG, '')
+    .replace(VOCAL_TYPE_TAG, ' ')
+    .replace(LENGTH_TAG, '')
+    .replace(BPM_TAG, '')
+    .replace(INLINE_BPM, '')
+}
+
 export function promptWordCount(prompt: string): number {
   return prompt.trim() ? prompt.trim().split(/\s+/).length : 0
 }

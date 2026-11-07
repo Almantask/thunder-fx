@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  MAX_SLUG,
   MAX_STEM_LENGTH,
   clipFilename,
   promptName,
@@ -23,6 +24,53 @@ describe('clipFilename', () => {
 
   it('falls back when the prompt is empty', () => {
     expect(slugifyPrompt('!!!')).toBe('sound')
+  })
+})
+
+describe('slugifyPrompt', () => {
+  // A caller that wants a tempo has to write `BPM: N` into the prompt, so the
+  // stem has to strip the tags or the filename carries them -- and the length
+  // cut landing inside `bpm-70` left names ending in a bare `-bpm`.
+  it('strips the BPM tag instead of leaving a -bpm stub', () => {
+    const slug = slugifyPrompt('a slow mournful lute melody in a stone hall. BPM: 70')
+    expect(slug).toBe('a-slow-mournful-lute-melody-in-a-stone-hall')
+  })
+
+  it('strips an inline BPM', () => {
+    expect(slugifyPrompt('warm tavern lute, 100 BPM, hand drum')).toBe(
+      'warm-tavern-lute-hand-drum',
+    )
+  })
+
+  it('strips the Length tag', () => {
+    expect(slugifyPrompt('a heavy oak door slamming. Length: 2 seconds')).toBe(
+      'a-heavy-oak-door-slamming',
+    )
+  })
+
+  it('strips TrackType and VocalType', () => {
+    expect(
+      slugifyPrompt(
+        'TrackType: Music, VocalType: Instrumental, a lute melody. BPM: 70. Length: 10 seconds',
+      ),
+    ).toBe('a-lute-melody')
+  })
+
+  it('never cuts a word in half', () => {
+    const prompt = 'a heavy iron sword drawn from a leather scabbard in a stone hall'
+    const full = prompt.split(' ').join('-')
+    const slug = slugifyPrompt(prompt)
+    expect(slug.length).toBeLessThanOrEqual(MAX_SLUG)
+    expect(full.startsWith(slug)).toBe(true)
+    expect(full[slug.length]).toBe('-')
+  })
+
+  it('truncates a single over-long word', () => {
+    expect(slugifyPrompt('x'.repeat(80))).toBe('x'.repeat(MAX_SLUG))
+  })
+
+  it('falls back when only tags are left', () => {
+    expect(slugifyPrompt('TrackType: Music, BPM: 90. Length: 5 seconds')).toBe('sound')
   })
 })
 

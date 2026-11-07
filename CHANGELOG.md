@@ -74,6 +74,14 @@ All notable Thunder FX changes are listed here.
 
 ### Fixed
 
+- **Prompt tags leaked into generated filenames.** A tempo can only reach the engine as
+  `BPM: N` in the prompt text, since the normaliser is what lifts it into the trailing tag
+  slot — so the filename slug kept it, and the 48-character cut landing inside `bpm-70` left
+  music clips named `...-stone-hall-bpm-10s-cc17c8ea.wav`. The slug now strips every tag the
+  normaliser re-emits (TrackType, VocalType, BPM, Length) and backs off to the last whole
+  word rather than cutting one in half. Both twins fixed: the engine's filenames and the
+  studio's export and pack names.
+
 - **A decimal could not be typed into the Shape number fields.** The controlled inputs re-parsed
   on every keystroke, so "0.5" passed through "0." — which `Number` reads as 0 — and the dot was
   discarded, landing the next digit as "05". Sub-second fades were unreachable. The fields keep

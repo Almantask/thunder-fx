@@ -1197,6 +1197,69 @@ class WavInfoFieldsTests(unittest.TestCase):
         self.assertNotEqual(a["ICMT"], b["ICMT"])
 
 
+class SlugifyPromptTests(unittest.TestCase):
+    """Filenames come from the caller's prompt, which may carry model tags.
+
+    Callers that set a tempo have no choice but to put `BPM: N` in the prompt
+    text -- normalize_prompt is what lifts it into the trailing tag slot -- so
+    the slug has to strip every tag the normaliser re-emits, or the tag leaks
+    into the filename.
+    """
+
+    def test_strips_the_bpm_tag(self) -> None:
+        from worker import _slugify_prompt
+
+        slug = _slugify_prompt("a slow mournful lute melody in a stone hall. BPM: 70")
+        self.assertNotIn("bpm", slug)
+        self.assertNotIn("70", slug)
+        self.assertTrue(slug.startswith("a-slow-mournful-lute-melody"))
+
+    def test_strips_an_inline_bpm(self) -> None:
+        from worker import _slugify_prompt
+
+        self.assertNotIn("bpm", _slugify_prompt("warm tavern lute, 100 BPM, hand drum"))
+
+    def test_strips_the_length_tag(self) -> None:
+        from worker import _slugify_prompt
+
+        slug = _slugify_prompt("a heavy oak door slamming. Length: 2 seconds")
+        self.assertEqual(slug, "a-heavy-oak-door-slamming")
+
+    def test_strips_tracktype_and_vocaltype(self) -> None:
+        from worker import _slugify_prompt
+
+        slug = _slugify_prompt(
+            "TrackType: Music, VocalType: Instrumental, a lute melody. BPM: 70. "
+            "Length: 10 seconds"
+        )
+        self.assertEqual(slug, "a-lute-melody")
+
+    def test_never_cuts_a_word_in_half(self) -> None:
+        from worker import _slugify_prompt
+
+        prompt = "a heavy iron sword drawn from a leather scabbard in a stone hall"
+        full = "-".join(prompt.split())
+        slug = _slugify_prompt(prompt)
+        self.assertLessEqual(len(slug), 48)
+        self.assertTrue(full.startswith(slug), slug)
+        self.assertEqual(full[len(slug)], "-", f"cut mid-word: {slug}")
+
+    def test_a_single_long_word_is_still_truncated(self) -> None:
+        from worker import _slugify_prompt
+
+        slug = _slugify_prompt("x" * 80)
+        self.assertEqual(slug, "x" * 48)
+
+    def test_tags_only_falls_back(self) -> None:
+        from worker import _slugify_prompt
+
+        self.assertEqual(_slugify_prompt("TrackType: Music, BPM: 90. Length: 5 seconds"), "sound")
+
+    def test_empty_falls_back(self) -> None:
+        from worker import _slugify_prompt
+
+        self.assertEqual(_slugify_prompt(""), "sound")
+
 if __name__ == "__main__":
     unittest.main()
 

@@ -656,11 +656,39 @@ def _resolve_instruments(msg: dict) -> list[str]:
     return names
 
 
+def strip_prompt_tags(prompt: str) -> str:
+    """Remove every metadata tag `normalize_prompt` re-emits.
+
+    For callers that only want the human part of a prompt -- a filename stem,
+    say. A caller that wants a tempo has no route other than writing `BPM: N`
+    into the prompt text, since normalize_prompt is what lifts it into the
+    trailing tag slot, so a stem built without this keeps the tag.
+
+    Twin of `stripPromptTags` in src/lib/generateMode.ts.
+    """
+    text = re.sub(r"tracktype:\s*\w+,?", "", str(prompt or ""), flags=re.I)
+    text = _VOCAL_TYPE_RE.sub(" ", text)
+    text = _LENGTH_TAG_RE.sub("", text)
+    text = _BPM_TAG_RE.sub("", text)
+    return _INLINE_BPM_RE.sub("", text)
+
+
 def _slugify_prompt(prompt: str, max_len: int = 48) -> str:
-    cleaned = re.sub(r"tracktype:\s*\w+,?", "", prompt, flags=re.I).lower()
-    cleaned = re.sub(r"[^a-z0-9]+", "-", cleaned).strip("-")
-    cleaned = cleaned[:max_len].rstrip("-")
-    return cleaned or "sound"
+    """Build a filename stem from the caller's prompt text.
+
+    The tags go first, or they leak into the filename -- and the length cut
+    landing inside `bpm-70` left music names ending in a bare `-bpm`.
+    """
+    cleaned = re.sub(r"[^a-z0-9]+", "-", strip_prompt_tags(prompt).lower()).strip("-")
+    if len(cleaned) > max_len:
+        cut = cleaned[:max_len]
+        if cleaned[max_len] != "-" and "-" in cut:
+            # The cut landed inside a word, so drop the partial one. A single
+            # word longer than the budget has no boundary to fall back to and
+            # is simply truncated.
+            cut = cut.rpartition("-")[0]
+        cleaned = cut
+    return cleaned.strip("-") or "sound"
 
 
 def _wav_info_fields(

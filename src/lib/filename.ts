@@ -1,6 +1,7 @@
 import type { AudioFormat } from '@/lib/audioExport'
+import { stripPromptTags } from '@/lib/generateMode'
 
-const MAX_SLUG = 48
+export const MAX_SLUG = 48
 
 export function isUuidOrSymbol(text: string): boolean {
   const cleaned = text.trim()
@@ -51,14 +52,21 @@ export function slugToTitle(slug: string): string {
 }
 
 export function slugifyPrompt(prompt: string): string {
-  const slug = prompt
+  const cleaned = stripPromptTags(prompt)
     .toLowerCase()
     .replace(/tracktype:\s*\w+,?/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
-    .slice(0, MAX_SLUG)
-    .replace(/-+$/g, '')
-  return slug || 'sound'
+  let slug = cleaned
+  if (cleaned.length > MAX_SLUG) {
+    slug = cleaned.slice(0, MAX_SLUG)
+    // The cut landed inside a word, so drop the partial one. A single word
+    // longer than the budget has no boundary to fall back to.
+    if (cleaned[MAX_SLUG] !== '-' && slug.includes('-')) {
+      slug = slug.slice(0, slug.lastIndexOf('-'))
+    }
+  }
+  return slug.replace(/^-+|-+$/g, '') || 'sound'
 }
 
 const GENERIC_PREFIXES = /^(instrumental|music|sfx|sound effects?|ambience)$/i
